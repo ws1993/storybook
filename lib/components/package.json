@@ -48,7 +48,8 @@
     "react-popper-tooltip": "^2.11.0",
     "react-syntax-highlighter": "^12.2.1",
     "react-textarea-autosize": "^8.1.1",
-    "ts-dedent": "^1.1.1"
+    "ts-dedent": "^1.1.1",
+    "uuid": "^8.0.0"
   },
   "devDependencies": {
     "css": "^2.2.4",
