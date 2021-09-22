@@ -1,14 +1,25 @@
+import React from 'react';
 import deprecate from 'util-deprecate';
 import dedent from 'ts-dedent';
-import { sanitize } from '@storybook/csf';
 import mapValues from 'lodash/mapValues';
+import countBy from 'lodash/countBy';
+import {
+  StoryId,
+  ComponentTitle,
+  StoryKind,
+  StoryName,
+  Args,
+  ArgTypes,
+  Parameters,
+  sanitize,
+} from '@storybook/csf';
 
-import { StoryId, StoryKind, Args, Parameters, combineParameters } from '../index';
+import { combineParameters } from '../index';
 import merge from './merge';
 import { Provider } from '../modules/provider';
 import { ViewMode } from '../modules/addons';
 
-export { StoryId };
+export type { StoryId };
 
 export interface Root {
   id: StoryId;
@@ -19,6 +30,8 @@ export interface Root {
   isComponent: false;
   isRoot: true;
   isLeaf: false;
+  renderLabel?: (item: Root) => React.ReactNode;
+  startCollapsed?: boolean;
 }
 
 export interface Group {
@@ -31,6 +44,7 @@ export interface Group {
   isComponent: boolean;
   isRoot: false;
   isLeaf: false;
+  renderLabel?: (item: Group) => React.ReactNode;
   // MDX docs-only stories are "Group" type
   parameters?: {
     docsOnly?: boolean;
@@ -49,6 +63,8 @@ export interface Story {
   isComponent: boolean;
   isRoot: false;
   isLeaf: true;
+  renderLabel?: (item: Story) => React.ReactNode;
+  prepared: boolean;
   parameters?: {
     fileName: string;
     options: {
@@ -58,7 +74,9 @@ export interface Story {
     viewMode?: ViewMode;
     [parameterName: string]: any;
   };
-  args: Args;
+  args?: Args;
+  argTypes?: ArgTypes;
+  initialArgs?: Args;
 }
 
 export interface StoryInput {
@@ -66,7 +84,6 @@ export interface StoryInput {
   name: string;
   refId?: string;
   kind: StoryKind;
-  children: string[];
   parameters: {
     fileName: string;
     options: {
@@ -76,8 +93,8 @@ export interface StoryInput {
     viewMode?: ViewMode;
     [parameterName: string]: any;
   };
-  isLeaf: boolean;
-  args: Args;
+  args?: Args;
+  initialArgs?: Args;
 }
 
 export interface StoriesHash {
@@ -90,6 +107,18 @@ export type GroupsList = (Root | Group)[];
 
 export interface StoriesRaw {
   [id: string]: StoryInput;
+}
+
+type Path = string;
+export interface StoryIndexStory {
+  id: StoryId;
+  name: StoryName;
+  title: ComponentTitle;
+  importPath: Path;
+}
+export interface StoryIndex {
+  v: number;
+  stories: Record<StoryId, StoryIndexStory>;
 }
 
 export type SetStoriesPayload =
@@ -107,6 +136,14 @@ export type SetStoriesPayload =
       v?: number;
       stories: StoriesRaw;
     } & Record<string, never>);
+
+const warnLegacyShowRoots = deprecate(
+  () => {},
+  dedent`
+    The 'showRoots' config option is deprecated and will be removed in Storybook 7.0. Use 'sidebar.showRoots' instead.
+    Read more about it in the migration guide: https://github.com/storybookjs/storybook/blob/master/MIGRATION.md
+  `
+);
 
 const warnChangedDefaultHierarchySeparators = deprecate(
   () => {},
@@ -132,23 +169,49 @@ export const denormalizeStoryParameters = ({
   }));
 };
 
+const STORY_KIND_PATH_SEPARATOR = /\s*\/\s*/;
+
+export const transformStoryIndexToStoriesHash = (
+  index: StoryIndex,
+  { provider }: { provider: Provider }
+): StoriesHash => {
+  const countByTitle = countBy(Object.values(index.stories), 'title');
+  const input = Object.entries(index.stories).reduce((acc, [id, { title, name, importPath }]) => {
+    const docsOnly = name === 'Page' && countByTitle[title] === 1;
+    acc[id] = {
+      id,
+      kind: title,
+      name,
+      parameters: { fileName: importPath, options: {}, docsOnly },
+    };
+    return acc;
+  }, {} as StoriesRaw);
+
+  return transformStoriesRawToStoriesHash(input, { provider, prepared: false });
+};
+
 export const transformStoriesRawToStoriesHash = (
   input: StoriesRaw,
-  { provider }: { provider: Provider }
+  { provider, prepared = true }: { provider: Provider; prepared?: Story['prepared'] }
 ): StoriesHash => {
   const values = Object.values(input).filter(Boolean);
   const usesOldHierarchySeparator = values.some(({ kind }) => kind.match(/\.|\|/)); // dot or pipe
 
   const storiesHashOutOfOrder = values.reduce((acc, item) => {
     const { kind, parameters } = item;
-    const { showRoots } = provider.getConfig();
+    const { sidebar = {}, showRoots: deprecatedShowRoots } = provider.getConfig();
+    const { showRoots = deprecatedShowRoots, collapsedRoots = [], renderLabel } = sidebar;
+
+    if (typeof deprecatedShowRoots !== 'undefined') {
+      warnLegacyShowRoots();
+    }
 
     const setShowRoots = typeof showRoots !== 'undefined';
     if (usesOldHierarchySeparator && !setShowRoots) {
       warnChangedDefaultHierarchySeparators();
     }
 
-    const groups = kind.split('/').map((part) => part.trim());
+    const groups = kind.trim().split(STORY_KIND_PATH_SEPARATOR);
     const root = (!setShowRoots || showRoots) && groups.length > 1 ? [groups.shift()] : [];
 
     const rootAndGroups = [...root, ...groups].reduce((list, name, index) => {
@@ -174,6 +237,8 @@ export const transformStoriesRawToStoriesHash = (
           isComponent: false,
           isLeaf: false,
           isRoot: true,
+          renderLabel,
+          startCollapsed: collapsedRoots.includes(id),
         });
       } else {
         list.push({
@@ -185,6 +250,7 @@ export const transformStoriesRawToStoriesHash = (
           isComponent: false,
           isLeaf: false,
           isRoot: false,
+          renderLabel,
           parameters: {
             docsOnly: parameters?.docsOnly,
             viewMode: parameters?.viewMode,
@@ -207,15 +273,16 @@ export const transformStoriesRawToStoriesHash = (
       });
     });
 
-    const story: Story = {
+    acc[item.id] = {
       ...item,
       depth: rootAndGroups.length,
       parent: rootAndGroups[rootAndGroups.length - 1].id,
       isLeaf: true,
       isComponent: false,
       isRoot: false,
+      renderLabel,
+      prepared,
     };
-    acc[item.id] = story;
 
     return acc;
   }, {} as StoriesHash);
