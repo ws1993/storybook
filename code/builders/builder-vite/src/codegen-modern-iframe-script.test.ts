@@ -6,7 +6,7 @@ const projectRoot = 'projectRoot';
 describe('generateModernIframeScriptCodeFromPreviews', () => {
   it('handle one annotation', async () => {
     const result = await generateModernIframeScriptCodeFromPreviews({
-      previewAnnotations: ['previewAnnotations'],
+      previewAnnotations: ['/user/previewAnnotations'],
       projectRoot,
       frameworkName: 'frameworkName',
     });
@@ -14,7 +14,7 @@ describe('generateModernIframeScriptCodeFromPreviews', () => {
   });
   it('handle multiple annotations', async () => {
     const result = await generateModernIframeScriptCodeFromPreviews({
-      previewAnnotations: ['previewAnnotations1', 'previewAnnotations2'],
+      previewAnnotations: ['/user/previewAnnotations1', '/user/previewAnnotations2'],
       projectRoot,
       frameworkName: 'frameworkName',
     });

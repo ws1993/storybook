@@ -4,12 +4,12 @@ exports[`generateModernIframeScriptCodeFromPreviews > handle multiple annotation
 "import { composeConfigs, PreviewWeb, ClientApi } from 'storybook/internal/preview-api';
 import '/virtual:/@storybook/builder-vite/setup-addons.js';
 import { importFn } from '/virtual:/@storybook/builder-vite/storybook-stories.js';
-import previewAnnotations1_2032 from "/previewAnnotations1";
-import previewAnnotations2_2033 from "/previewAnnotations2";
+import previewAnnotations1_2526 from "/user/previewAnnotations1";
+import previewAnnotations2_2527 from "/user/previewAnnotations2";
 const getProjectAnnotations = (hmrPreviewAnnotationModules = []) => {
   const configs = [
-    hmrPreviewAnnotationModules.at(0) ?? previewAnnotations1_2032,
-    hmrPreviewAnnotationModules.at(1) ?? previewAnnotations2_2033
+    hmrPreviewAnnotationModules.at(0) ?? previewAnnotations1_2526,
+    hmrPreviewAnnotationModules.at(1) ?? previewAnnotations2_2527
   ]
   return composeConfigs(configs);
 }
@@ -24,7 +24,7 @@ if (import.meta.hot) {
     window.__STORYBOOK_PREVIEW__.onStoriesChanged({ importFn: newModule.importFn });
   });
 
-  import.meta.hot.accept(["/previewAnnotations1","/previewAnnotations2"], (previewAnnotationModules) => {
+  import.meta.hot.accept(["/user/previewAnnotations1","/user/previewAnnotations2"], (previewAnnotationModules) => {
     // getProjectAnnotations has changed so we need to patch the new one in
     window.__STORYBOOK_PREVIEW__.onGetProjectAnnotationsChanged({ getProjectAnnotations: () => getProjectAnnotations(previewAnnotationModules) });
   });
@@ -35,10 +35,10 @@ exports[`generateModernIframeScriptCodeFromPreviews > handle one annotation 1`] 
 "import { composeConfigs, PreviewWeb, ClientApi } from 'storybook/internal/preview-api';
 import '/virtual:/@storybook/builder-vite/setup-addons.js';
 import { importFn } from '/virtual:/@storybook/builder-vite/storybook-stories.js';
-import previewAnnotations_1983 from "/previewAnnotations";
+import previewAnnotations_2477 from "/user/previewAnnotations";
 const getProjectAnnotations = (hmrPreviewAnnotationModules = []) => {
   const configs = [
-    hmrPreviewAnnotationModules.at(0) ?? previewAnnotations_1983
+    hmrPreviewAnnotationModules.at(0) ?? previewAnnotations_2477
   ]
   return composeConfigs(configs);
 }
@@ -53,7 +53,7 @@ if (import.meta.hot) {
     window.__STORYBOOK_PREVIEW__.onStoriesChanged({ importFn: newModule.importFn });
   });
 
-  import.meta.hot.accept(["/previewAnnotations"], (previewAnnotationModules) => {
+  import.meta.hot.accept(["/user/previewAnnotations"], (previewAnnotationModules) => {
     // getProjectAnnotations has changed so we need to patch the new one in
     window.__STORYBOOK_PREVIEW__.onGetProjectAnnotationsChanged({ getProjectAnnotations: () => getProjectAnnotations(previewAnnotationModules) });
   });
