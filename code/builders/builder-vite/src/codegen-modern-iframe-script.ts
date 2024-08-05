@@ -42,7 +42,7 @@ export async function generateModernIframeScriptCodeFromPreviews(options: {
       '_' +
       hash(previewAnnotation);
     variables.push(variable);
-    imports.push(genImport(previewAnnotation, variable));
+    imports.push(genImport(previewAnnotation, { name: '*', as: variable }));
   }
 
   // This is pulled out to a variable because it is reused in both the initial page load

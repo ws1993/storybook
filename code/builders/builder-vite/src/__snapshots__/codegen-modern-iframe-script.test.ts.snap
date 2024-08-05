@@ -4,8 +4,8 @@ exports[`generateModernIframeScriptCodeFromPreviews > handle multiple annotation
 "import { composeConfigs, PreviewWeb, ClientApi } from 'storybook/internal/preview-api';
 import '/virtual:/@storybook/builder-vite/setup-addons.js';
 import { importFn } from '/virtual:/@storybook/builder-vite/storybook-stories.js';
-import previewAnnotations1_2526 from "/user/previewAnnotations1";
-import previewAnnotations2_2527 from "/user/previewAnnotations2";
+import * as previewAnnotations1_2526 from "/user/previewAnnotations1";
+import * as previewAnnotations2_2527 from "/user/previewAnnotations2";
 const getProjectAnnotations = (hmrPreviewAnnotationModules = []) => {
   const configs = [
     hmrPreviewAnnotationModules.at(0) ?? previewAnnotations1_2526,
@@ -35,7 +35,7 @@ exports[`generateModernIframeScriptCodeFromPreviews > handle one annotation 1`] 
 "import { composeConfigs, PreviewWeb, ClientApi } from 'storybook/internal/preview-api';
 import '/virtual:/@storybook/builder-vite/setup-addons.js';
 import { importFn } from '/virtual:/@storybook/builder-vite/storybook-stories.js';
-import previewAnnotations_2477 from "/user/previewAnnotations";
+import * as previewAnnotations_2477 from "/user/previewAnnotations";
 const getProjectAnnotations = (hmrPreviewAnnotationModules = []) => {
   const configs = [
     hmrPreviewAnnotationModules.at(0) ?? previewAnnotations_2477
