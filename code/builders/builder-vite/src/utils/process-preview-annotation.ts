@@ -1,3 +1,6 @@
+import { isAbsolute, relative, resolve } from 'node:path';
+
+import { stripAbsNodeModulesPath } from 'storybook/internal/common';
 import type { PreviewAnnotation } from 'storybook/internal/types';
 import { normalize, resolve, isAbsolute } from 'pathe';
 
