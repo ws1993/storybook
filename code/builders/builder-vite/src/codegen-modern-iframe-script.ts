@@ -19,7 +19,10 @@ export async function generateModernIframeScriptCode(options: Options, projectRo
     options
   );
   return generateModernIframeScriptCodeFromPreviews({
-    previewAnnotations: [...previewAnnotations, previewOrConfigFile],
+    previewAnnotations: [
+      ...previewAnnotations.map((p) => (typeof p === 'string' ? p : p.absolute)),
+      previewOrConfigFile,
+    ],
     projectRoot,
     frameworkName,
   });
@@ -33,7 +36,7 @@ export async function generateModernIframeScriptCodeFromPreviews(options: {
   const { projectRoot, frameworkName } = options;
   const previewAnnotationURLs = options.previewAnnotations
     .filter((path) => path !== undefined)
-    .map((path) => processPreviewAnnotation(path, projectRoot));
+    .map((path) => processPreviewAnnotation(path as string, projectRoot));
 
   const variables: string[] = [];
   const imports: string[] = [];
