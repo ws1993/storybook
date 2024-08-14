@@ -1,8 +1,6 @@
-import { isAbsolute, relative, resolve } from 'node:path';
+import { isAbsolute, normalize, resolve } from 'node:path';
 
-import { stripAbsNodeModulesPath } from 'storybook/internal/common';
 import type { PreviewAnnotation } from 'storybook/internal/types';
-import { normalize, resolve, isAbsolute } from 'pathe';
 
 /**
  * Preview annotations can take several forms, so we normalize them here to absolute file paths.

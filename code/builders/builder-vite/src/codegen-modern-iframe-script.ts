@@ -1,12 +1,12 @@
 import { getFrameworkName, loadPreviewOrConfigFile } from 'storybook/internal/common';
 import type { Options, PreviewAnnotation } from 'storybook/internal/types';
 
-import { processPreviewAnnotation } from './utils/process-preview-annotation';
-import { virtualAddonSetupFile, virtualStoriesFile } from './virtual-file-names';
-
 import { genArrayFromRaw, genImport, genSafeVariableName } from 'knitwork';
 import { filename } from 'pathe/utils';
 import { dedent } from 'ts-dedent';
+
+import { processPreviewAnnotation } from './utils/process-preview-annotation';
+import { virtualAddonSetupFile, virtualStoriesFile } from './virtual-file-names';
 
 export async function generateModernIframeScriptCode(options: Options, projectRoot: string) {
   const { presets, configDir } = options;
