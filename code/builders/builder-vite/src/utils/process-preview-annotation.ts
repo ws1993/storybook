@@ -1,10 +1,8 @@
 import type { PreviewAnnotation } from 'storybook/internal/types';
 
-import { normalize, resolve, isAbsolute } from 'pathe';
+import { isAbsolute, normalize, resolve } from 'pathe';
 
-/**
- * Preview annotations can take several forms, so we normalize them here to absolute file paths.
- */
+/** Preview annotations can take several forms, so we normalize them here to absolute file paths. */
 export function processPreviewAnnotation(path: PreviewAnnotation, projectRoot: string) {
   // If entry is an object, take the absolute specifier.
   // This is so that webpack can use an absolute path, and
