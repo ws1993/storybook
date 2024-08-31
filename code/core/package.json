@@ -1,6 +1,6 @@
 {
   "name": "@storybook/core",
-  "version": "8.3.0-alpha.8",
+  "version": "8.3.0-beta.1",
   "description": "Storybook framework-agnostic API",
   "keywords": [
     "storybook"
@@ -157,6 +157,11 @@
       "import": "./dist/cli/index.js",
       "require": "./dist/cli/index.cjs"
     },
+    "./babel": {
+      "types": "./dist/babel/index.d.ts",
+      "import": "./dist/babel/index.js",
+      "require": "./dist/babel/index.cjs"
+    },
     "./cli/bin": {
       "types": "./dist/cli/bin/index.d.ts",
       "import": "./dist/cli/bin/index.js",
@@ -253,6 +258,9 @@
       "cli": [
         "./dist/cli/index.d.ts"
       ],
+      "babel": [
+        "./dist/babel/index.d.ts"
+      ],
       "cli/bin": [
         "./dist/cli/bin/index.d.ts"
       ]
@@ -278,6 +286,7 @@
     "process": "^0.11.10",
     "recast": "^0.23.5",
     "semver": "^7.6.2",
+    "util": "^0.12.5",
     "ws": "^8.2.3"
   },
   "devDependencies": {
@@ -410,7 +419,6 @@
     "typescript": "^5.3.2",
     "unique-string": "^3.0.0",
     "use-resize-observer": "^9.1.0",
-    "util": "^0.12.4",
     "watchpack": "^2.2.0"
   },
   "publishConfig": {

@@ -1,3 +1,37 @@
+## 8.3.0-beta.1
+
+- ConfigFile: Fix `as const satisfies` modifiers - [#29000](https://github.com/storybookjs/storybook/pull/29000), thanks @shilman!
+- Core: Move `util` to regular dependency - [#29008](https://github.com/storybookjs/storybook/pull/29008), thanks @ndelangen!
+- Next.js-Vite: Streamline Next.js dir option - [#28995](https://github.com/storybookjs/storybook/pull/28995), thanks @valentinpalkovic!
+- Next.js: Fix wrong Next.js framework reference - [#28992](https://github.com/storybookjs/storybook/pull/28992), thanks @valentinpalkovic!
+- Vue3: Add vite plugin for portable stories - [#29004](https://github.com/storybookjs/storybook/pull/29004), thanks @yannbf!
+
+## 8.3.0-beta.0
+
+Empty release identical to `v8.3.0-alpha.11`
+
+## 8.3.0-alpha.11
+
+- Addon Vitest: Fix tests potentially not existing in non-isolate mode - [#28993](https://github.com/storybookjs/storybook/pull/28993), thanks @yannbf!
+- Builder-Vite: Fix 'condition node never be used' warning - [#28989](https://github.com/storybookjs/storybook/pull/28989), thanks @valentinpalkovic!
+- CLI: Update spawn options in proxy.ts to support Windows - [#28990](https://github.com/storybookjs/storybook/pull/28990), thanks @valentinpalkovic!
+- Next.js-Vite: Update next and vite-plugin-storybook-nextjs dependencies - [#28994](https://github.com/storybookjs/storybook/pull/28994), thanks @valentinpalkovic!
+
+## 8.3.0-alpha.10
+
+- Addon Vitest: Fix postinstall file types - [#28978](https://github.com/storybookjs/storybook/pull/28978), thanks @shilman!
+- CLI: Fix dedent import in package managers - [#28980](https://github.com/storybookjs/storybook/pull/28980), thanks @shilman!
+- Core: De-duplicate babel use in core - [#28972](https://github.com/storybookjs/storybook/pull/28972), thanks @ndelangen!
+- Vitest: Fix add command - [#28975](https://github.com/storybookjs/storybook/pull/28975), thanks @ghengeveld!
+
+## 8.3.0-alpha.9
+
+- Addon Viewport: Add default options via parameters - [#28944](https://github.com/storybookjs/storybook/pull/28944), thanks @ndelangen!
+- CLI: Make PackageJson optional for starting a dev server - [#28594](https://github.com/storybookjs/storybook/pull/28594), thanks @tobiasdiez!
+- Svelte: Fix events not being logged in Actions when a story has decorators - [#28247](https://github.com/storybookjs/storybook/pull/28247), thanks @JReinhold!
+- Vitest: Fix default viewport - [#28943](https://github.com/storybookjs/storybook/pull/28943), thanks @kasperpeulen!
+- Vitest: Implement add command for vitest addon - [#28920](https://github.com/storybookjs/storybook/pull/28920), thanks @kasperpeulen!
+
 ## 8.3.0-alpha.8
 
 - Addon Vitest: Improve transformation logic to avoid duplicate tests - [#28929](https://github.com/storybookjs/storybook/pull/28929), thanks @yannbf!

@@ -42,6 +42,7 @@ export const sandbox: Task = {
       install,
       addStories,
       extendMain,
+      extendPreview,
       init,
       addExtraDependencies,
       setImportMap,
@@ -81,7 +82,12 @@ export const sandbox: Task = {
       await addStories(details, options);
     }
 
-    const extraDeps = details.template.modifications?.extraDependencies ?? [];
+    const extraDeps = [
+      ...(details.template.modifications?.extraDependencies ?? []),
+      // The storybook package forwards some CLI commands to @storybook/cli with npx.
+      // Adding the dep makes sure that even npx will use the linked workspace version.
+      '@storybook/cli',
+    ];
     if (!details.template.skipTasks?.includes('vitest-integration')) {
       extraDeps.push(
         'happy-dom',
@@ -114,6 +120,8 @@ export const sandbox: Task = {
     });
 
     await extendMain(details, options);
+
+    await extendPreview(details, options);
 
     await setImportMap(details.sandboxDir);
 
