@@ -1,21 +1,21 @@
 {
-  "name": "@storybook/experimental-addon-vitest",
-  "version": "8.3.0-beta.1",
+  "name": "@storybook/experimental-addon-test",
+  "version": "8.3.0-beta.3",
   "description": "Integrate Vitest with Storybook",
   "keywords": [
     "storybook-addons",
-    "addon-vitest",
+    "addon-test",
     "vitest",
     "testing"
   ],
-  "homepage": "https://github.com/storybookjs/storybook/tree/next/code/addons/vitest",
+  "homepage": "https://github.com/storybookjs/storybook/tree/next/code/addons/test",
   "bugs": {
     "url": "https://github.com/storybookjs/storybook/issues"
   },
   "repository": {
     "type": "git",
     "url": "https://github.com/storybookjs/storybook.git",
-    "directory": "code/addons/vitest"
+    "directory": "code/addons/test"
   },
   "funding": {
     "type": "opencollective",
@@ -29,7 +29,7 @@
       "import": "./dist/index.js",
       "require": "./dist/index.cjs"
     },
-    "./plugin": {
+    "./vite-plugin": {
       "types": "./dist/plugin/index.d.ts",
       "import": "./dist/plugin/index.js",
       "require": "./dist/plugin/index.cjs"
@@ -73,8 +73,11 @@
     "@storybook/csf": "^0.1.11"
   },
   "devDependencies": {
+    "@types/semver": "^7",
     "@vitest/browser": "^2.0.0",
+    "boxen": "^8.0.1",
     "find-up": "^7.0.0",
+    "semver": "^7.6.3",
     "tinyrainbow": "^1.2.0",
     "ts-dedent": "^2.2.0",
     "vitest": "^2.0.0"
