@@ -6,7 +6,7 @@ import { filename } from 'pathe/utils';
 import { dedent } from 'ts-dedent';
 
 import { processPreviewAnnotation } from './utils/process-preview-annotation';
-import { virtualAddonSetupFile, virtualStoriesFile } from './virtual-file-names';
+import { SB_VIRTUAL_FILES, getResolvedVirtualModuleId } from './virtual-file-names';
 
 export async function generateModernIframeScriptCode(options: Options, projectRoot: string) {
   const { presets, configDir } = options;
@@ -77,9 +77,9 @@ export async function generateModernIframeScriptCodeFromPreviews(options: {
 
     return dedent`
     if (import.meta.hot) {
-      import.meta.hot.accept('${virtualStoriesFile}', (newModule) => {
-        // importFn has changed so we need to patch the new one in
-        window.__STORYBOOK_PREVIEW__.onStoriesChanged({ importFn: newModule.importFn });
+      import.meta.hot.accept('${getResolvedVirtualModuleId(SB_VIRTUAL_FILES.VIRTUAL_STORIES_FILE)}', (newModule) => {
+      // importFn has changed so we need to patch the new one in
+      window.__STORYBOOK_PREVIEW__.onStoriesChanged({ importFn: newModule.importFn });
       });
 
       import.meta.hot.accept(${JSON.stringify(previewAnnotationURLs)}, (previewAnnotationModules) => {
@@ -99,8 +99,8 @@ export async function generateModernIframeScriptCodeFromPreviews(options: {
    */
   const code = dedent`
   import { composeConfigs, PreviewWeb, ClientApi } from 'storybook/internal/preview-api';
-  import '${virtualAddonSetupFile}';
-  import { importFn } from '${virtualStoriesFile}';
+  import '${SB_VIRTUAL_FILES.VIRTUAL_ADDON_SETUP_FILE}';
+  import { importFn } from '${SB_VIRTUAL_FILES.VIRTUAL_STORIES_FILE}';
   ${imports.join('\n')}
   ${getPreviewAnnotationsFunction}
 
