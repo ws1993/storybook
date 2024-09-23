@@ -78,8 +78,8 @@ export async function generateModernIframeScriptCodeFromPreviews(options: {
     return dedent`
     if (import.meta.hot) {
       import.meta.hot.accept('${getResolvedVirtualModuleId(SB_VIRTUAL_FILES.VIRTUAL_STORIES_FILE)}', (newModule) => {
-      // importFn has changed so we need to patch the new one in
-      window.__STORYBOOK_PREVIEW__.onStoriesChanged({ importFn: newModule.importFn });
+        // importFn has changed so we need to patch the new one in
+        window.__STORYBOOK_PREVIEW__.onStoriesChanged({ importFn: newModule.importFn });
       });
 
       import.meta.hot.accept(${JSON.stringify(previewAnnotationURLs)}, (previewAnnotationModules) => {
