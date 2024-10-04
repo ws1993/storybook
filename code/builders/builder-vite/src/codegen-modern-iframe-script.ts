@@ -59,7 +59,7 @@ export async function generateModernIframeScriptCodeFromPreviews(options: {
       variables.map(
         (previewAnnotation, index) =>
           // Prefer the updated module from an HMR update, otherwise the original module
-          `hmrPreviewAnnotationModules.at(${index}) ?? ${previewAnnotation}`
+          `hmrPreviewAnnotationModules[${index}] ?? ${previewAnnotation}`
       ),
       '  '
     )}
