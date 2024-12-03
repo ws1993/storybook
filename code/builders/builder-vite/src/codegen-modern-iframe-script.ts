@@ -98,9 +98,14 @@ export async function generateModernIframeScriptCodeFromPreviews(options: {
    * @todo Inline variable and remove `noinspection`
    */
   const code = dedent`
-  import { composeConfigs, PreviewWeb, ClientApi } from 'storybook/internal/preview-api';
+  import { setup } from '@storybook/core/preview/runtime';
   import '${SB_VIRTUAL_FILES.VIRTUAL_ADDON_SETUP_FILE}';
+
+  setup();
+ 
+  import { composeConfigs, PreviewWeb, ClientApi } from 'storybook/internal/preview-api';
   import { importFn } from '${SB_VIRTUAL_FILES.VIRTUAL_STORIES_FILE}';
+  
   ${imports.join('\n')}
   ${getPreviewAnnotationsFunction}
 
