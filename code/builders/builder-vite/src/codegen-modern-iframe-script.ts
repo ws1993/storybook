@@ -99,6 +99,7 @@ export async function generateModernIframeScriptCodeFromPreviews(options: {
    */
   const code = dedent`
   import { setup } from '@storybook/core/preview/runtime';
+
   import '${SB_VIRTUAL_FILES.VIRTUAL_ADDON_SETUP_FILE}';
 
   setup();
