@@ -1,3 +1,33 @@
+## 8.5.0-alpha.20
+
+- Addon Test: Add `@vitest/coverage-v8` during postinstall if no coverage reporter is installed - [#29993](https://github.com/storybookjs/storybook/pull/29993), thanks @ghengeveld!
+- Addon Test: Add support for previewHead - [#29808](https://github.com/storybookjs/storybook/pull/29808), thanks @ndelangen!
+- Addon Test: Always run Vitest in watch mode internally - [#29749](https://github.com/storybookjs/storybook/pull/29749), thanks @JReinhold!
+- Addon Test: Filter out falsy test results in TestProviderRender - [#30001](https://github.com/storybookjs/storybook/pull/30001), thanks @valentinpalkovic!
+- Addon Test: Handle undefined storyId - [#29998](https://github.com/storybookjs/storybook/pull/29998), thanks @ghengeveld!
+- Addon Test: Make component tests status row link to the story's tests panel - [#29992](https://github.com/storybookjs/storybook/pull/29992), thanks @ghengeveld!
+- Addon Test: Merge viteFinal config into vitest config - [#29806](https://github.com/storybookjs/storybook/pull/29806), thanks @ndelangen!
+- Addon Test: Prompt switch to `experimental-nextjs-vite` - [#29814](https://github.com/storybookjs/storybook/pull/29814), thanks @ndelangen!
+- Addon Test: Use ProgressSpinner for stop button in Testing Module - [#29997](https://github.com/storybookjs/storybook/pull/29997), thanks @ghengeveld!
+
+## 8.5.0-alpha.19
+
+- Addon A11y: Create a11y test provider and revamp a11y addon - [#29643](https://github.com/storybookjs/storybook/pull/29643), thanks @valentinpalkovic!
+- Addon Test: Fix indexing behavior - [#29836](https://github.com/storybookjs/storybook/pull/29836), thanks @yannbf!
+- Addon Test: Fix run request while booting or restarting Vitest - [#29829](https://github.com/storybookjs/storybook/pull/29829), thanks @ghengeveld!
+- Addon Test: Serve `staticDirs` with Vitest - [#29811](https://github.com/storybookjs/storybook/pull/29811), thanks @ghengeveld!
+- RNW-Vite: Add tsconfig path aliases support - [#29953](https://github.com/storybookjs/storybook/pull/29953), thanks @shilman!
+- RNW-Vite: Fix flow plugin including too many things - [#29952](https://github.com/storybookjs/storybook/pull/29952), thanks @dannyhw!
+
+## 8.5.0-alpha.18
+
+- Addon Test: Clarify message when `vitest` detects missing deps - [#29763](https://github.com/storybookjs/storybook/pull/29763), thanks @ndelangen!
+- Addon Test: Refactor test addon to include stories automatically - [#29367](https://github.com/storybookjs/storybook/pull/29367), thanks @yannbf!
+- Addon Test: Replace `glob` with `tinyglobby` - [#29817](https://github.com/storybookjs/storybook/pull/29817), thanks @ghengeveld!
+- Addon Test: Support Storybook environment variables in Vitest - [#29792](https://github.com/storybookjs/storybook/pull/29792), thanks @ghengeveld!
+- Composition: Hide contextMenu on composed storybooks - [#29803](https://github.com/storybookjs/storybook/pull/29803), thanks @ndelangen!
+- Vue: Properly resolve Vite plugin - [#29795](https://github.com/storybookjs/storybook/pull/29795), thanks @tobiasdiez!
+
 ## 8.5.0-alpha.17
 
 - CLI: Fix new-frameworks automigration - [#29804](https://github.com/storybookjs/storybook/pull/29804), thanks @yannbf!
