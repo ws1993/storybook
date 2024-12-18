@@ -368,7 +368,7 @@
     "js-yaml": "^4.1.0",
     "lazy-universal-dotenv": "^4.0.0",
     "leven": "^4.0.0",
-    "markdown-to-jsx": "7.7.2",
+    "markdown-to-jsx": "^7.7.2",
     "memfs": "^4.11.1",
     "memoizerific": "^1.11.3",
     "nanoid": "^4.0.2",

@@ -6113,7 +6113,7 @@ __metadata:
     "@types/color-convert": "npm:^2.0.0"
     color-convert: "npm:^2.0.1"
     es-toolkit: "npm:^1.22.0"
-    markdown-to-jsx: "npm:7.7.2"
+    markdown-to-jsx: "npm:^7.7.2"
     memoizerific: "npm:^1.11.3"
     polished: "npm:^4.2.2"
     react-colorful: "npm:^5.1.2"
@@ -6440,7 +6440,7 @@ __metadata:
     jsdoc-type-pratt-parser: "npm:^4.0.0"
     lazy-universal-dotenv: "npm:^4.0.0"
     leven: "npm:^4.0.0"
-    markdown-to-jsx: "npm:7.7.2"
+    markdown-to-jsx: "npm:^7.7.2"
     memfs: "npm:^4.11.1"
     memoizerific: "npm:^1.11.3"
     nanoid: "npm:^4.0.2"
@@ -20234,7 +20234,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"markdown-to-jsx@npm:7.7.2":
+"markdown-to-jsx@npm:^7.7.2":
   version: 7.7.2
   resolution: "markdown-to-jsx@npm:7.7.2"
   peerDependencies:
