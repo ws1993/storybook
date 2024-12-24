@@ -88,7 +88,7 @@ export class VitestManager {
 
     try {
       await this.vitest.init();
-    } catch (e) {
+    } catch (e: any) {
       let message = 'Failed to initialize Vitest';
       const isV8 = e.message?.includes('@vitest/coverage-v8');
       const isIstanbul = e.message?.includes('@vitest/coverage-istanbul');
@@ -148,7 +148,7 @@ export class VitestManager {
       ])) as StoryIndex;
       const storyIds = requestStoryIds || Object.keys(index.entries);
       return storyIds.map((id) => index.entries[id]).filter((story) => story.type === 'story');
-    } catch (e) {
+    } catch (e: any) {
       log('Failed to fetch story index: ' + e.message);
       return [];
     }
@@ -316,20 +316,21 @@ export class VitestManager {
     const id = slash(file);
     this.vitest?.logger.clearHighlightCache(id);
     this.updateLastChanged(id);
-    this.storyCountForCurrentRun = 0;
 
     // when watch mode is disabled, don't trigger any tests (below)
     // but still invalidate the cache for the changed file, which is handled above
     if (!this.testManager.config.watchMode) {
       return;
     }
+
+    this.storyCountForCurrentRun = 0;
     await this.runAffectedTests(file);
   }
 
   async registerVitestConfigListener() {
     this.vitest?.server?.watcher.on('change', async (file) => {
       file = normalize(file);
-      const isConfig = file === this.vitest.server.config.configFile;
+      const isConfig = file === this.vitest?.server.config.configFile;
       if (isConfig) {
         log('Restarting Vitest due to config change');
         await this.closeVitest();
