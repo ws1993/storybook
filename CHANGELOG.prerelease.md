@@ -1,3 +1,51 @@
+## 8.5.0-beta.6
+
+- Addon Test: Always use installed version of vitest - [#30134](https://github.com/storybookjs/storybook/pull/30134), thanks @kasperpeulen!
+- Addon Test: Fix documentation links - [#30128](https://github.com/storybookjs/storybook/pull/30128), thanks @yannbf!
+- Addon Test: Use correct vitest config file path - [#30135](https://github.com/storybookjs/storybook/pull/30135), thanks @kasperpeulen!
+- Automigration: Improve addon-a11y-addon-test - [#30127](https://github.com/storybookjs/storybook/pull/30127), thanks @valentinpalkovic!
+
+## 8.5.0-beta.5
+
+- Addon Test: Only reset story count on file change when watch mode is enabled - [#30121](https://github.com/storybookjs/storybook/pull/30121), thanks @ghengeveld!
+- Build: Revert Downgrade to esbuild 0.24.0 - [#30120](https://github.com/storybookjs/storybook/pull/30120), thanks @yannbf!
+- Core: Fix `ERR_PACKAGE_PATH_NOT_EXPORTED` in `@storybook/node-logger`  - [#30093](https://github.com/storybookjs/storybook/pull/30093), thanks @JReinhold!
+- React: Use Act wrapper in Storybook for component rendering - [#30037](https://github.com/storybookjs/storybook/pull/30037), thanks @valentinpalkovic!
+- Vite: Add extra entries to `optimizeDeps` - [#30117](https://github.com/storybookjs/storybook/pull/30117), thanks @ndelangen!
+
+## 8.5.0-beta.4
+
+- Addon Themes: Deprecate useThemeParameters - [#30111](https://github.com/storybookjs/storybook/pull/30111), thanks @yannbf!
+- Build: Downgrade to esbuild 0.24.0 - [#30116](https://github.com/storybookjs/storybook/pull/30116), thanks @yannbf!
+- CLI: Re-Add Nuxt support - [#28607](https://github.com/storybookjs/storybook/pull/28607), thanks @valentinpalkovic!
+- Core: Prevent infinite rerendering caused by comparison by reference - [#30081](https://github.com/storybookjs/storybook/pull/30081), thanks @ghengeveld!
+
+## 8.5.0-beta.3
+
+- Addon A11y: Fix skipped status handling in Testing Module - [#30077](https://github.com/storybookjs/storybook/pull/30077), thanks @valentinpalkovic!
+- Core: Float context menu button on top of story titles in sidebar - [#30080](https://github.com/storybookjs/storybook/pull/30080), thanks @ghengeveld!
+- Onboarding: Replace `react-confetti` with `@neoconfetti/react` - [#30098](https://github.com/storybookjs/storybook/pull/30098), thanks @ndelangen!
+
+## 8.5.0-beta.2
+
+- Addon Test: Clear coverage data when starting or watching - [#30072](https://github.com/storybookjs/storybook/pull/30072), thanks @ghengeveld!
+- Addon Test: Improve error message on missing coverage package - [#30088](https://github.com/storybookjs/storybook/pull/30088), thanks @JReinhold!
+- UI: Fix test provider event handling on startup - [#30083](https://github.com/storybookjs/storybook/pull/30083), thanks @ghengeveld!
+- UI: Keep failing stories in the sidebar, disregarding filters - [#30086](https://github.com/storybookjs/storybook/pull/30086), thanks @JReinhold!
+
+## 8.5.0-beta.1
+
+- Addon A11y: Add conditional rendering for a11y violation number in Testing Module - [#30073](https://github.com/storybookjs/storybook/pull/30073), thanks @valentinpalkovic!
+- Addon A11y: Remove warnings API - [#30049](https://github.com/storybookjs/storybook/pull/30049), thanks @kasperpeulen!
+- Addon A11y: Show errors of axe properly - [#30050](https://github.com/storybookjs/storybook/pull/30050), thanks @kasperpeulen!
+- Addon Test: Fix printing null% for coverage - [#30061](https://github.com/storybookjs/storybook/pull/30061), thanks @ghengeveld!
+- Telemetry: Add metadata distinguishing "apps" from "design systems" - [#30070](https://github.com/storybookjs/storybook/pull/30070), thanks @tmeasday!
+
+## 8.5.0-beta.0
+
+- Automigration: Improve setup file transformation and version range handling for a11y migration - [#30060](https://github.com/storybookjs/storybook/pull/30060), thanks @valentinpalkovic!
+- Next.js: Support v15.1.1 - [#30068](https://github.com/storybookjs/storybook/pull/30068), thanks @valentinpalkovic!
+
 ## 8.5.0-alpha.22
 
 - Addon Docs: Dynamically import rehype - [#29544](https://github.com/storybookjs/storybook/pull/29544), thanks @valentinpalkovic!

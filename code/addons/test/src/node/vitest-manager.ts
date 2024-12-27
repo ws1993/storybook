@@ -52,7 +52,7 @@ export class VitestManager {
       join(packageDir, 'dist/node/coverage-reporter.js'),
       {
         testManager: this.testManager,
-        coverageOptions: this.vitest?.config?.coverage as ResolvedCoverageOptions<'v8'>,
+        coverageOptions: this.vitest?.config?.coverage as ResolvedCoverageOptions<'v8'> | undefined,
       },
     ];
     const coverageOptions = (
@@ -88,16 +88,22 @@ export class VitestManager {
 
     try {
       await this.vitest.init();
-    } catch (e) {
+    } catch (e: any) {
+      let message = 'Failed to initialize Vitest';
       const isV8 = e.message?.includes('@vitest/coverage-v8');
       const isIstanbul = e.message?.includes('@vitest/coverage-istanbul');
 
-      if (e.message?.includes('Error: Failed to load url') && (isIstanbul || isV8)) {
+      if (
+        (e.message?.includes('Failed to load url') && (isIstanbul || isV8)) ||
+        // Vitest will sometimes not throw the correct missing-package-detection error, so we have to check for this as well
+        (e instanceof TypeError &&
+          e?.message === "Cannot read properties of undefined (reading 'name')")
+      ) {
         const coveragePackage = isIstanbul ? 'coverage-istanbul' : 'coverage-v8';
-        e.message = `Please install the @vitest/${coveragePackage} package to run with coverage`;
+        message += `\n\nPlease install the @vitest/${coveragePackage} package to collect coverage\n`;
       }
-
-      this.testManager.reportFatalError('Failed to init Vitest', e);
+      this.testManager.reportFatalError(message, e);
+      return;
     }
 
     await this.setupWatchers();
@@ -142,7 +148,7 @@ export class VitestManager {
       ])) as StoryIndex;
       const storyIds = requestStoryIds || Object.keys(index.entries);
       return storyIds.map((id) => index.entries[id]).filter((story) => story.type === 'story');
-    } catch (e) {
+    } catch (e: any) {
       log('Failed to fetch story index: ' + e.message);
       return [];
     }
@@ -193,7 +199,7 @@ export class VitestManager {
           this.filterStories(story, spec.moduleId, { include, exclude, skip })
         );
         if (matches.length) {
-          if (!this.testManager.watchMode) {
+          if (!this.testManager.config.watchMode) {
             // Clear the file cache if watch mode is not enabled
             this.updateLastChanged(spec.moduleId);
           }
@@ -310,20 +316,21 @@ export class VitestManager {
     const id = slash(file);
     this.vitest?.logger.clearHighlightCache(id);
     this.updateLastChanged(id);
-    this.storyCountForCurrentRun = 0;
 
     // when watch mode is disabled, don't trigger any tests (below)
     // but still invalidate the cache for the changed file, which is handled above
-    if (!this.testManager.watchMode) {
+    if (!this.testManager.config.watchMode) {
       return;
     }
+
+    this.storyCountForCurrentRun = 0;
     await this.runAffectedTests(file);
   }
 
   async registerVitestConfigListener() {
     this.vitest?.server?.watcher.on('change', async (file) => {
       file = normalize(file);
-      const isConfig = file === this.vitest.server.config.configFile;
+      const isConfig = file === this.vitest?.server.config.configFile;
       if (isConfig) {
         log('Restarting Vitest due to config change');
         await this.closeVitest();

@@ -173,6 +173,7 @@ export class StorybookReporter implements Reporter {
       } as TestingModuleProgressReportProgress,
       details: {
         testResults,
+        config: this.testManager.config,
       },
     };
   }
@@ -219,7 +220,7 @@ export class StorybookReporter implements Reporter {
       (t) => t.status === 'failed' && t.results.length === 0
     );
 
-    const reducedTestSuiteFailures = new Set<string>();
+    const reducedTestSuiteFailures = new Set<string | undefined>();
 
     testSuiteFailures.forEach((t) => {
       reducedTestSuiteFailures.add(t.message);
@@ -239,7 +240,7 @@ export class StorybookReporter implements Reporter {
               message: Array.from(reducedTestSuiteFailures).reduce(
                 (acc, curr) => `${acc}\n${curr}`,
                 ''
-              ),
+              )!,
             }
           : {
               name: `${unhandledErrors.length} unhandled error${unhandledErrors?.length > 1 ? 's' : ''}`,
