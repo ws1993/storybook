@@ -2,7 +2,9 @@ import type {
   Addon_Comparator,
   Addon_StorySortParameter,
   Addon_StorySortParameterV7,
+  IndexEntry,
   IndexEntryLegacy,
+  StoryIndexEntry,
 } from 'storybook/internal/types';
 import type { Parameters, Path, Renderer } from 'storybook/internal/types';
 import type { PreparedStory } from 'storybook/internal/types';

@@ -14,6 +14,12 @@ import {
   UPDATE_GLOBALS,
   UPDATE_STORY_ARGS,
 } from 'storybook/internal/core-events';
+import type {
+  ArgTypesRequestPayload,
+  ArgTypesResponsePayload,
+  RequestData,
+  ResponseData,
+} from 'storybook/internal/core-events';
 import {
   CalledPreviewMethodBeforeInitializationError,
   MissingRenderToCanvasError,
@@ -34,12 +40,6 @@ import type {
   StoryId,
   StoryIndex,
   StoryRenderOptions,
-} from 'storybook/internal/types';
-import type {
-  ArgTypesRequestPayload,
-  ArgTypesResponsePayload,
-  RequestData,
-  ResponseData,
 } from 'storybook/internal/types';
 
 import type { CleanupCallback } from '@storybook/csf';

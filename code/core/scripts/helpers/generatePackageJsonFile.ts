@@ -54,30 +54,30 @@ export async function generatePackageJsonFile(entries: ReturnType<typeof getEntr
    * "Bundler"` If we even decide to only support `"moduleResolution": "Bundler"`, we should be able
    * to remove this part, but that would be a breaking change.
    */
-  pkgJson.typesVersions = {
-    '*': {
-      '*': ['./dist/index.d.ts'],
-      ...entries.reduce<Record<string, string[]>>((acc, entry) => {
-        if (!entry.dts) {
-          return acc;
-        }
+  // pkgJson.typesVersions = {
+  //   '*': {
+  //     '*': ['./dist/index.d.ts'],
+  //     ...entries.reduce<Record<string, string[]>>((acc, entry) => {
+  //       if (!entry.dts) {
+  //         return acc;
+  //       }
 
-        let main = slash(relative(cwd, entry.file).replace('src', 'dist'));
-        if (main === './dist/index.ts' || main === './dist/index.tsx') {
-          main = '.';
-        }
-        const key = main.replace(/\/index\.tsx?/, '').replace(/\.tsx?/, '');
+  //       let main = slash(relative(cwd, entry.file).replace('src', 'dist'));
+  //       if (main === './dist/index.ts' || main === './dist/index.tsx') {
+  //         main = '.';
+  //       }
+  //       const key = main.replace(/\/index\.tsx?/, '').replace(/\.tsx?/, '');
 
-        if (key === 'dist') {
-          return acc;
-        }
+  //       if (key === 'dist') {
+  //         return acc;
+  //       }
 
-        const content = ['./' + main.replace(/\.tsx?/, '.d.ts')];
-        acc[key.replace('dist/', 'internal/')] = content;
-        return acc;
-      }, {}),
-    },
-  };
+  //       const content = ['./' + main.replace(/\.tsx?/, '.d.ts')];
+  //       acc[key.replace('dist/', 'internal/')] = content;
+  //       return acc;
+  //     }, {}),
+  //   },
+  // };
 
   await writeFile(location, `${sortPackageJson(JSON.stringify(pkgJson, null, 2))}\n`, {});
 }

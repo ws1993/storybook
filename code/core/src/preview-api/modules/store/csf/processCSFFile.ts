@@ -3,7 +3,7 @@ import type {
   CSFFile,
   ModuleExports,
   NormalizedComponentAnnotations,
-} from 'storybook/internal/csf-tools';
+} from 'storybook/internal/types';
 import type { ComponentTitle, Parameters, Path, Renderer } from 'storybook/internal/types';
 
 import { isExportStory } from '@storybook/csf';

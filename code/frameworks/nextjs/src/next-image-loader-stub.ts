@@ -72,4 +72,5 @@ const nextImageLoaderStub: RawLoaderDefinition<LoaderOptions> = async function N
 
 nextImageLoaderStub.raw = true;
 
+// @ts-expect-error (TODO)
 export = nextImageLoaderStub;
