@@ -6314,6 +6314,8 @@ __metadata:
   peerDependenciesMeta:
     prettier:
       optional: true
+  bin:
+    core: ./bin/index.cjs
   languageName: unknown
   linkType: soft
 

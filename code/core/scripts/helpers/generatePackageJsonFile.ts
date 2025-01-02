@@ -40,7 +40,7 @@ export async function generatePackageJsonFile(entries: ReturnType<typeof getEntr
       main
         .replace(/\/index\.tsx?/, '')
         .replace(/\.tsx?/, '')
-        .replace('dist/', '')
+        .replace('dist/', 'internal/')
     ] = content;
     return acc;
   }, {});

@@ -193,6 +193,10 @@
     },
     "./internal/preview/runtime": {
       "import": "./core/preview/runtime.js"
+    },
+    "./internal/bin": {
+      "import": "./core/bin/index.js",
+      "require": "./core/bin/index.cjs"
     }
   },
   "main": "dist/index.cjs",
