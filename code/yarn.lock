@@ -26665,24 +26665,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"storybook-renamed@workspace:lib/cli":
-  version: 0.0.0-use.local
-  resolution: "storybook-renamed@workspace:lib/cli"
-  dependencies:
-    storybook: "workspace:*"
-    typescript: "npm:^5.3.2"
-  peerDependencies:
-    prettier: ^2 || ^3
-  peerDependenciesMeta:
-    prettier:
-      optional: true
-  bin:
-    getstorybook: ./bin/index.cjs
-    sb: ./bin/index.cjs
-    storybook: ./bin/index.cjs
-  languageName: unknown
-  linkType: soft
-
 "storybook@workspace:*, storybook@workspace:^, storybook@workspace:core":
   version: 0.0.0-use.local
   resolution: "storybook@workspace:core"

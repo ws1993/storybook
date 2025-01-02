@@ -60,7 +60,6 @@ export default {
   '@storybook/web-components-vite': '8.5.0-beta.7',
   '@storybook/web-components-webpack5': '8.5.0-beta.7',
   '@storybook/blocks': '8.5.0-beta.7',
-  'storybook-renamed': '8.5.0-beta.7',
   sb: '8.5.0-beta.7',
   '@storybook/cli': '8.5.0-beta.7',
   '@storybook/codemod': '8.5.0-beta.7',
