@@ -1,2 +1,2 @@
-export * from '@storybook/core/client-logger';
-export type * from '@storybook/core/client-logger';
+export * from 'storybook/internal/client-logger';
+export type * from 'storybook/internal/client-logger';

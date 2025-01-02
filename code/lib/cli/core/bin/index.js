@@ -1,1 +1,1 @@
-export * from '@storybook/core/bin';
+export * from 'storybook/internal/bin';

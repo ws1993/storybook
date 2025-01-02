@@ -1,2 +1,2 @@
-export * from '@storybook/core/index';
-export type * from '@storybook/core/index';
+export * from 'storybook/internal/index';
+export type * from 'storybook/internal/index';

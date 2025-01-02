@@ -1,1 +1,1 @@
-export * from '@storybook/core/manager/globals-runtime';
+export * from 'storybook/internal/manager/globals-runtime';

@@ -1,1 +1,1 @@
-export * from '@storybook/core/babel';
+export * from 'storybook/internal/babel';

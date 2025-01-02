@@ -1,1 +1,1 @@
-export * from '@storybook/core/client-logger';
+export * from 'storybook/internal/client-logger';

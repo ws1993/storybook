@@ -1,5 +1,5 @@
 {
-  "name": "@storybook/core",
+  "name": "storybook",
   "version": "8.5.0-beta.7",
   "description": "Storybook framework-agnostic API",
   "keywords": [
@@ -187,82 +187,82 @@
       "*": [
         "./dist/index.d.ts"
       ],
-      "node-logger": [
+      "internal/node-logger": [
         "./dist/node-logger/index.d.ts"
       ],
-      "client-logger": [
+      "internal/client-logger": [
         "./dist/client-logger/index.d.ts"
       ],
-      "theming": [
+      "internal/theming": [
         "./dist/theming/index.d.ts"
       ],
-      "theming/create": [
+      "internal/theming/create": [
         "./dist/theming/create.d.ts"
       ],
-      "core-server": [
+      "internal/core-server": [
         "./dist/core-server/index.d.ts"
       ],
-      "core-events": [
+      "internal/core-events": [
         "./dist/core-events/index.d.ts"
       ],
-      "manager-errors": [
+      "internal/manager-errors": [
         "./dist/manager-errors.d.ts"
       ],
-      "preview-errors": [
+      "internal/preview-errors": [
         "./dist/preview-errors.d.ts"
       ],
-      "server-errors": [
+      "internal/server-errors": [
         "./dist/server-errors.d.ts"
       ],
-      "channels": [
+      "internal/channels": [
         "./dist/channels/index.d.ts"
       ],
-      "types": [
+      "internal/types": [
         "./dist/types/index.d.ts"
       ],
-      "csf-tools": [
+      "internal/csf-tools": [
         "./dist/csf-tools/index.d.ts"
       ],
-      "common": [
+      "internal/common": [
         "./dist/common/index.d.ts"
       ],
-      "builder-manager": [
+      "internal/builder-manager": [
         "./dist/builder-manager/index.d.ts"
       ],
-      "telemetry": [
+      "internal/telemetry": [
         "./dist/telemetry/index.d.ts"
       ],
-      "preview-api": [
+      "internal/preview-api": [
         "./dist/preview-api/index.d.ts"
       ],
-      "manager-api": [
+      "internal/manager-api": [
         "./dist/manager-api/index.d.ts"
       ],
-      "router": [
+      "internal/router": [
         "./dist/router/index.d.ts"
       ],
-      "components": [
+      "internal/components": [
         "./dist/components/index.d.ts"
       ],
-      "docs-tools": [
+      "internal/docs-tools": [
         "./dist/docs-tools/index.d.ts"
       ],
-      "manager/globals-module-info": [
+      "internal/manager/globals-module-info": [
         "./dist/manager/globals-module-info.d.ts"
       ],
-      "manager/globals": [
+      "internal/manager/globals": [
         "./dist/manager/globals.d.ts"
       ],
-      "preview/globals": [
+      "internal/preview/globals": [
         "./dist/preview/globals.d.ts"
       ],
-      "cli": [
+      "internal/cli": [
         "./dist/cli/index.d.ts"
       ],
-      "babel": [
+      "internal/babel": [
         "./dist/babel/index.d.ts"
       ],
-      "cli/bin": [
+      "internal/cli/bin": [
         "./dist/cli/bin/index.d.ts"
       ]
     }

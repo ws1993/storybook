@@ -1,1 +1,1 @@
-module.exports = require('@storybook/core/babel');
+module.exports = require('storybook/internal/babel');

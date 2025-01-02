@@ -1,1 +1,1 @@
-export * from '@storybook/core/manager-errors';
+export * from 'storybook/internal/manager-errors';

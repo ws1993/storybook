@@ -1,5 +1,5 @@
 {
-  "name": "storybook",
+  "name": "storybook-renamed",
   "version": "8.5.0-beta.7",
   "description": "Storybook's CLI - install, dev, build, upgrade, and more",
   "keywords": [
@@ -197,6 +197,156 @@
     "./internal/bin": {
       "import": "./core/bin/index.js",
       "require": "./core/bin/index.cjs"
+    },
+    "./internal/internal/babel": {
+      "types": "./core/babel/index.d.ts",
+      "import": "./core/babel/index.js",
+      "require": "./core/babel/index.cjs"
+    },
+    "./internal/internal/bin": {
+      "import": "./core/bin/index.js",
+      "require": "./core/bin/index.cjs"
+    },
+    "./internal/internal/builder-manager": {
+      "types": "./core/builder-manager/index.d.ts",
+      "import": "./core/builder-manager/index.js",
+      "require": "./core/builder-manager/index.cjs"
+    },
+    "./internal/internal/channels": {
+      "types": "./core/channels/index.d.ts",
+      "import": "./core/channels/index.js",
+      "require": "./core/channels/index.cjs"
+    },
+    "./internal/internal/cli": {
+      "types": "./core/cli/index.d.ts",
+      "import": "./core/cli/index.js",
+      "require": "./core/cli/index.cjs"
+    },
+    "./internal/internal/cli/bin": {
+      "types": "./core/cli/bin/index.d.ts",
+      "import": "./core/cli/bin/index.js",
+      "require": "./core/cli/bin/index.cjs"
+    },
+    "./internal/internal/client-logger": {
+      "types": "./core/client-logger/index.d.ts",
+      "import": "./core/client-logger/index.js",
+      "require": "./core/client-logger/index.cjs"
+    },
+    "./internal/internal/common": {
+      "types": "./core/common/index.d.ts",
+      "import": "./core/common/index.js",
+      "require": "./core/common/index.cjs"
+    },
+    "./internal/internal/components": {
+      "types": "./core/components/index.d.ts",
+      "import": "./core/components/index.js",
+      "require": "./core/components/index.cjs"
+    },
+    "./internal/internal/core-events": {
+      "types": "./core/core-events/index.d.ts",
+      "import": "./core/core-events/index.js",
+      "require": "./core/core-events/index.cjs"
+    },
+    "./internal/internal/core-server": {
+      "types": "./core/core-server/index.d.ts",
+      "import": "./core/core-server/index.js",
+      "require": "./core/core-server/index.cjs"
+    },
+    "./internal/internal/core-server/presets/common-manager": {
+      "import": "./core/core-server/presets/common-manager.js"
+    },
+    "./internal/internal/core-server/presets/common-override-preset": {
+      "import": "./core/core-server/presets/common-override-preset.js",
+      "require": "./core/core-server/presets/common-override-preset.cjs"
+    },
+    "./internal/internal/core-server/presets/common-preset": {
+      "import": "./core/core-server/presets/common-preset.js",
+      "require": "./core/core-server/presets/common-preset.cjs"
+    },
+    "./internal/internal/csf-tools": {
+      "types": "./core/csf-tools/index.d.ts",
+      "import": "./core/csf-tools/index.js",
+      "require": "./core/csf-tools/index.cjs"
+    },
+    "./internal/internal/docs-tools": {
+      "types": "./core/docs-tools/index.d.ts",
+      "import": "./core/docs-tools/index.js",
+      "require": "./core/docs-tools/index.cjs"
+    },
+    "./internal/internal/manager-api": {
+      "types": "./core/manager-api/index.d.ts",
+      "import": "./core/manager-api/index.js",
+      "require": "./core/manager-api/index.cjs"
+    },
+    "./internal/internal/manager-errors": {
+      "types": "./core/manager-errors.d.ts",
+      "import": "./core/manager-errors.js"
+    },
+    "./internal/internal/manager/globals": {
+      "types": "./core/manager/globals.d.ts",
+      "import": "./core/manager/globals.js",
+      "require": "./core/manager/globals.cjs"
+    },
+    "./internal/internal/manager/globals-module-info": {
+      "types": "./core/manager/globals-module-info.d.ts",
+      "import": "./core/manager/globals-module-info.js",
+      "require": "./core/manager/globals-module-info.cjs"
+    },
+    "./internal/internal/manager/globals-runtime": {
+      "import": "./core/manager/globals-runtime.js"
+    },
+    "./internal/internal/node-logger": {
+      "types": "./core/node-logger/index.d.ts",
+      "import": "./core/node-logger/index.js",
+      "require": "./core/node-logger/index.cjs"
+    },
+    "./internal/internal/preview-api": {
+      "types": "./core/preview-api/index.d.ts",
+      "import": "./core/preview-api/index.js",
+      "require": "./core/preview-api/index.cjs"
+    },
+    "./internal/internal/preview-errors": {
+      "types": "./core/preview-errors.d.ts",
+      "import": "./core/preview-errors.js",
+      "require": "./core/preview-errors.cjs"
+    },
+    "./internal/internal/preview/globals": {
+      "types": "./core/preview/globals.d.ts",
+      "import": "./core/preview/globals.js",
+      "require": "./core/preview/globals.cjs"
+    },
+    "./internal/internal/preview/runtime": {
+      "import": "./core/preview/runtime.js"
+    },
+    "./internal/internal/router": {
+      "types": "./core/router/index.d.ts",
+      "import": "./core/router/index.js",
+      "require": "./core/router/index.cjs"
+    },
+    "./internal/internal/server-errors": {
+      "types": "./core/server-errors.d.ts",
+      "import": "./core/server-errors.js",
+      "require": "./core/server-errors.cjs"
+    },
+    "./internal/internal/telemetry": {
+      "types": "./core/telemetry/index.d.ts",
+      "import": "./core/telemetry/index.js",
+      "require": "./core/telemetry/index.cjs"
+    },
+    "./internal/internal/theming": {
+      "types": "./core/theming/index.d.ts",
+      "import": "./core/theming/index.js",
+      "require": "./core/theming/index.cjs"
+    },
+    "./internal/internal/theming/create": {
+      "types": "./core/theming/create.d.ts",
+      "import": "./core/theming/create.js",
+      "require": "./core/theming/create.cjs"
+    },
+    "./internal/internal/types": {
+      "types": "./core/types/index.d.ts",
+      "import": "./core/types/index.js",
+      "require": "./core/types/index.cjs"
     }
   },
   "main": "dist/index.cjs",
@@ -207,82 +357,82 @@
       "internal/*": [
         "./core/index.d.ts"
       ],
-      "internal/babel": [
+      "internal/internal/babel": [
         "./core/babel/index.d.ts"
       ],
-      "internal/builder-manager": [
+      "internal/internal/builder-manager": [
         "./core/builder-manager/index.d.ts"
       ],
-      "internal/channels": [
+      "internal/internal/channels": [
         "./core/channels/index.d.ts"
       ],
-      "internal/cli": [
+      "internal/internal/cli": [
         "./core/cli/index.d.ts"
       ],
-      "internal/cli/bin": [
+      "internal/internal/cli/bin": [
         "./core/cli/bin/index.d.ts"
       ],
-      "internal/client-logger": [
+      "internal/internal/client-logger": [
         "./core/client-logger/index.d.ts"
       ],
-      "internal/common": [
+      "internal/internal/common": [
         "./core/common/index.d.ts"
       ],
-      "internal/components": [
+      "internal/internal/components": [
         "./core/components/index.d.ts"
       ],
-      "internal/core-events": [
+      "internal/internal/core-events": [
         "./core/core-events/index.d.ts"
       ],
-      "internal/core-server": [
+      "internal/internal/core-server": [
         "./core/core-server/index.d.ts"
       ],
-      "internal/csf-tools": [
+      "internal/internal/csf-tools": [
         "./core/csf-tools/index.d.ts"
       ],
-      "internal/docs-tools": [
+      "internal/internal/docs-tools": [
         "./core/docs-tools/index.d.ts"
       ],
-      "internal/manager-api": [
+      "internal/internal/manager-api": [
         "./core/manager-api/index.d.ts"
       ],
-      "internal/manager-errors": [
+      "internal/internal/manager-errors": [
         "./core/manager-errors.d.ts"
       ],
-      "internal/manager/globals": [
+      "internal/internal/manager/globals": [
         "./core/manager/globals.d.ts"
       ],
-      "internal/manager/globals-module-info": [
+      "internal/internal/manager/globals-module-info": [
         "./core/manager/globals-module-info.d.ts"
       ],
-      "internal/node-logger": [
+      "internal/internal/node-logger": [
         "./core/node-logger/index.d.ts"
       ],
-      "internal/preview-api": [
+      "internal/internal/preview-api": [
         "./core/preview-api/index.d.ts"
       ],
-      "internal/preview-errors": [
+      "internal/internal/preview-errors": [
         "./core/preview-errors.d.ts"
       ],
-      "internal/preview/globals": [
+      "internal/internal/preview/globals": [
         "./core/preview/globals.d.ts"
       ],
-      "internal/router": [
+      "internal/internal/router": [
         "./core/router/index.d.ts"
       ],
-      "internal/server-errors": [
+      "internal/internal/server-errors": [
         "./core/server-errors.d.ts"
       ],
-      "internal/telemetry": [
+      "internal/internal/telemetry": [
         "./core/telemetry/index.d.ts"
       ],
-      "internal/theming": [
+      "internal/internal/theming": [
         "./core/theming/index.d.ts"
       ],
-      "internal/theming/create": [
+      "internal/internal/theming/create": [
         "./core/theming/create.d.ts"
       ],
-      "internal/types": [
+      "internal/internal/types": [
         "./core/types/index.d.ts"
       ],
       "*": [
@@ -319,7 +469,7 @@
     "sb": "node ./bin/index.js"
   },
   "dependencies": {
-    "@storybook/core": "workspace:*"
+    "storybook": "workspace:*"
   },
   "devDependencies": {
     "typescript": "^5.3.2"

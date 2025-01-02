@@ -1,2 +1,2 @@
-export * from '@storybook/core/manager/globals';
-export type * from '@storybook/core/manager/globals';
+export * from 'storybook/internal/manager/globals';
+export type * from 'storybook/internal/manager/globals';

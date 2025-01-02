@@ -1,1 +1,1 @@
-module.exports = require('@storybook/core/csf-tools');
+module.exports = require('storybook/internal/csf-tools');

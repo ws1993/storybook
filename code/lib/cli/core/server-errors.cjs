@@ -1,1 +1,1 @@
-module.exports = require('@storybook/core/server-errors');
+module.exports = require('storybook/internal/server-errors');

@@ -1,1 +1,1 @@
-module.exports = require('@storybook/core/manager-api');
+module.exports = require('storybook/internal/manager-api');

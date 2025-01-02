@@ -1,1 +1,1 @@
-export * from '@storybook/core/manager/globals';
+export * from 'storybook/internal/manager/globals';

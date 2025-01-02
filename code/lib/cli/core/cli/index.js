@@ -1,1 +1,1 @@
-export * from '@storybook/core/cli';
+export * from 'storybook/internal/cli';

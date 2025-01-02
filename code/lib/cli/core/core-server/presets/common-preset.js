@@ -1,1 +1,1 @@
-export * from '@storybook/core/core-server/presets/common-preset';
+export * from 'storybook/internal/core-server/presets/common-preset';

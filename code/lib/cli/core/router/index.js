@@ -1,1 +1,1 @@
-export * from '@storybook/core/router';
+export * from 'storybook/internal/router';

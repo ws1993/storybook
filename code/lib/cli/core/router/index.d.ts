@@ -1,2 +1,2 @@
-export * from '@storybook/core/router';
-export type * from '@storybook/core/router';
+export * from 'storybook/internal/router';
+export type * from 'storybook/internal/router';

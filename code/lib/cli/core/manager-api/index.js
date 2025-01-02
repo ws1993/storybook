@@ -1,1 +1,1 @@
-export * from '@storybook/core/manager-api';
+export * from 'storybook/internal/manager-api';

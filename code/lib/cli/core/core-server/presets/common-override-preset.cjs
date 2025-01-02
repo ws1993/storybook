@@ -1,1 +1,1 @@
-module.exports = require('@storybook/core/core-server/presets/common-override-preset');
+module.exports = require('storybook/internal/core-server/presets/common-override-preset');

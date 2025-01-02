@@ -1,1 +1,1 @@
-export * from '@storybook/core/preview/runtime';
+export * from 'storybook/internal/preview/runtime';

@@ -30,15 +30,15 @@ export const generateMapperContent = (input: string) => {
     .replace('.mjs', '')
     .replace('.js', '');
   if (input.endsWith('.js')) {
-    return `export * from '@storybook/core/${value}';\n`;
+    return `export * from 'storybook/internal/${value}';\n`;
   }
   if (input.endsWith('.cjs')) {
-    return `module.exports = require('@storybook/core/${value}');\n`;
+    return `module.exports = require('storybook/internal/${value}');\n`;
   }
   if (input.endsWith('.d.ts')) {
     return dedent`
-      export * from '@storybook/core/${value}';
-      export type * from '@storybook/core/${value}';\n
+      export * from 'storybook/internal/${value}';
+      export type * from 'storybook/internal/${value}';\n
     `;
   }
   // eslint-disable-next-line local-rules/no-uncategorized-errors

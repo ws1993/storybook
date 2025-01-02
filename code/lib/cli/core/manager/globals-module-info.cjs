@@ -1,1 +1,1 @@
-module.exports = require('@storybook/core/manager/globals-module-info');
+module.exports = require('storybook/internal/manager/globals-module-info');

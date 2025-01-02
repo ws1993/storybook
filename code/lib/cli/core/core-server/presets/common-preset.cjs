@@ -1,1 +1,1 @@
-module.exports = require('@storybook/core/core-server/presets/common-preset');
+module.exports = require('storybook/internal/core-server/presets/common-preset');

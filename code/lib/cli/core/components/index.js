@@ -1,1 +1,1 @@
-export * from '@storybook/core/components';
+export * from 'storybook/internal/components';

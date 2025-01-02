@@ -1,2 +1,2 @@
-export * from '@storybook/core/babel';
-export type * from '@storybook/core/babel';
+export * from 'storybook/internal/babel';
+export type * from 'storybook/internal/babel';

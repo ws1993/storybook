@@ -1,1 +1,1 @@
-export * from '@storybook/core/docs-tools';
+export * from 'storybook/internal/docs-tools';

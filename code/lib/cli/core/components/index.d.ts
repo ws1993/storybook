@@ -1,2 +1,2 @@
-export * from '@storybook/core/components';
-export type * from '@storybook/core/components';
+export * from 'storybook/internal/components';
+export type * from 'storybook/internal/components';

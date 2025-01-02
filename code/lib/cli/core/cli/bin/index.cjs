@@ -1,1 +1,1 @@
-module.exports = require('@storybook/core/cli/bin');
+module.exports = require('storybook/internal/cli/bin');

@@ -1,1 +1,1 @@
-export * from '@storybook/core/index';
+export * from 'storybook/internal/index';

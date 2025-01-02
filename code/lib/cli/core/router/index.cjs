@@ -1,1 +1,1 @@
-module.exports = require('@storybook/core/router');
+module.exports = require('storybook/internal/router');
