@@ -182,6 +182,91 @@
   "main": "dist/index.cjs",
   "module": "dist/index.js",
   "types": "dist/index.d.ts",
+  "typesVersions": {
+    "*": {
+      "*": [
+        "./dist/index.d.ts"
+      ],
+      "internal/node-logger": [
+        "./dist/node-logger/index.d.ts"
+      ],
+      "internal/client-logger": [
+        "./dist/client-logger/index.d.ts"
+      ],
+      "internal/theming": [
+        "./dist/theming/index.d.ts"
+      ],
+      "internal/theming/create": [
+        "./dist/theming/create.d.ts"
+      ],
+      "internal/core-server": [
+        "./dist/core-server/index.d.ts"
+      ],
+      "internal/core-events": [
+        "./dist/core-events/index.d.ts"
+      ],
+      "internal/manager-errors": [
+        "./dist/manager-errors.d.ts"
+      ],
+      "internal/preview-errors": [
+        "./dist/preview-errors.d.ts"
+      ],
+      "internal/server-errors": [
+        "./dist/server-errors.d.ts"
+      ],
+      "internal/channels": [
+        "./dist/channels/index.d.ts"
+      ],
+      "internal/types": [
+        "./dist/types/index.d.ts"
+      ],
+      "internal/csf-tools": [
+        "./dist/csf-tools/index.d.ts"
+      ],
+      "internal/common": [
+        "./dist/common/index.d.ts"
+      ],
+      "internal/builder-manager": [
+        "./dist/builder-manager/index.d.ts"
+      ],
+      "internal/telemetry": [
+        "./dist/telemetry/index.d.ts"
+      ],
+      "internal/preview-api": [
+        "./dist/preview-api/index.d.ts"
+      ],
+      "internal/manager-api": [
+        "./dist/manager-api/index.d.ts"
+      ],
+      "internal/router": [
+        "./dist/router/index.d.ts"
+      ],
+      "internal/components": [
+        "./dist/components/index.d.ts"
+      ],
+      "internal/docs-tools": [
+        "./dist/docs-tools/index.d.ts"
+      ],
+      "internal/manager/globals-module-info": [
+        "./dist/manager/globals-module-info.d.ts"
+      ],
+      "internal/manager/globals": [
+        "./dist/manager/globals.d.ts"
+      ],
+      "internal/preview/globals": [
+        "./dist/preview/globals.d.ts"
+      ],
+      "internal/cli": [
+        "./dist/cli/index.d.ts"
+      ],
+      "internal/babel": [
+        "./dist/babel/index.d.ts"
+      ],
+      "internal/cli/bin": [
+        "./dist/cli/bin/index.d.ts"
+      ]
+    }
+  },
   "bin": "./bin/index.cjs",
   "files": [
     "dist/**/*",
