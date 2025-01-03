@@ -187,6 +187,20 @@ export class ConfigFile {
     this.fileName = fileName;
   }
 
+  _parseExportsObject(exportsObject: t.ObjectExpression, parent?: t.Node) {
+    this._exportsObject = exportsObject;
+    (exportsObject.properties as t.ObjectProperty[]).forEach((p) => {
+      const exportName = propKey(p);
+      if (exportName) {
+        let exportVal = p.value;
+        if (t.isIdentifier(exportVal)) {
+          exportVal = _findVarInitialization(exportVal.name, parent as t.Program) as any;
+        }
+        this._exports[exportName] = exportVal as t.Expression;
+      }
+    });
+  }
+
   parse() {
     // eslint-disable-next-line @typescript-eslint/no-this-alias
     const self = this;
@@ -202,17 +216,7 @@ export class ConfigFile {
           decl = unwrap(decl);
 
           if (t.isObjectExpression(decl)) {
-            self._exportsObject = decl;
-            (decl.properties as t.ObjectProperty[]).forEach((p) => {
-              const exportName = propKey(p);
-              if (exportName) {
-                let exportVal = p.value;
-                if (t.isIdentifier(exportVal)) {
-                  exportVal = _findVarInitialization(exportVal.name, parent as t.Program) as any;
-                }
-                self._exports[exportName] = exportVal as t.Expression;
-              }
-            });
+            self._parseExportsObject(decl, parent);
           } else {
             logger.warn(
               getCsfParsingErrorMessage({
@@ -312,6 +316,18 @@ export class ConfigFile {
                 );
               }
             }
+          }
+        },
+      },
+      CallExpression: {
+        enter: ({ node }) => {
+          if (
+            t.isIdentifier(node.callee) &&
+            node.callee.name === 'defineConfig' &&
+            node.arguments.length === 1 &&
+            t.isObjectExpression(node.arguments[0])
+          ) {
+            self._parseExportsObject(node.arguments[0]);
           }
         },
       },

@@ -243,6 +243,20 @@ describe('ConfigFile', () => {
         ).toEqual('bar');
       });
     });
+
+    describe('factory config', () => {
+      it('found scalar', () => {
+        expect(
+          getField(
+            ['core', 'builder'],
+            dedent`
+            import { defineConfig } from '@storybook/react-vite/preview';
+            export const foo = defineConfig({ core: { builder: 'webpack5' } });
+            `
+          )
+        ).toEqual('webpack5');
+      });
+    });
   });
 
   describe('setField', () => {
@@ -476,6 +490,73 @@ describe('ConfigFile', () => {
         ).toMatchInlineSnapshot(`
           const core = { builder: 'webpack5' };
           export { core };
+        `);
+      });
+    });
+
+    describe('factory config', () => {
+      it('missing export', () => {
+        expect(
+          setField(
+            ['core', 'builder'],
+            'webpack5',
+            dedent`
+              import { defineConfig } from '@storybook/react-vite/preview';
+              export const foo = defineConfig({
+                addons: [],
+              });
+            `
+          )
+        ).toMatchInlineSnapshot(`
+          import { defineConfig } from '@storybook/react-vite/preview';
+          export const foo = defineConfig({
+            addons: [],
+
+            core: {
+              builder: 'webpack5'
+            }
+          });
+        `);
+      });
+      it('missing field', () => {
+        expect(
+          setField(
+            ['core', 'builder'],
+            'webpack5',
+            dedent`
+              import { defineConfig } from '@storybook/react-vite/preview';
+              export const foo = defineConfig({
+                core: { foo: 'bar' },
+              });
+            `
+          )
+        ).toMatchInlineSnapshot(`
+          import { defineConfig } from '@storybook/react-vite/preview';
+          export const foo = defineConfig({
+            core: {
+              foo: 'bar',
+              builder: 'webpack5'
+            },
+          });
+        `);
+      });
+      it('found scalar', () => {
+        expect(
+          setField(
+            ['core', 'builder'],
+            'webpack5',
+            dedent`
+              import { defineConfig } from '@storybook/react-vite/preview';
+              export const foo = defineConfig({
+                core: { builder: 'webpack4' },
+              });
+            `
+          )
+        ).toMatchInlineSnapshot(`
+          import { defineConfig } from '@storybook/react-vite/preview';
+          export const foo = defineConfig({
+            core: { builder: 'webpack5' },
+          });
         `);
       });
     });
