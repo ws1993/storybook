@@ -1,16 +1,14 @@
-import type { ComponentProps, ComponentType } from 'react';
+import type { ComponentType } from 'react';
 
 import { composeConfigs } from 'storybook/internal/preview-api';
-import { prepareStory } from 'storybook/internal/preview-api';
-import type { NormalizedProjectAnnotations } from 'storybook/internal/types';
-
 import type {
   Args,
   ComponentAnnotations,
+  NormalizedProjectAnnotations,
   ProjectAnnotations,
   Renderer,
   StoryAnnotations,
-} from '@storybook/csf';
+} from 'storybook/internal/types';
 
 import type { ReactRenderer } from './types';
 
@@ -18,8 +16,8 @@ export function defineConfig(config: PreviewConfigData<ReactRenderer>) {
   return new PreviewConfig(config);
 }
 
-interface PreviewConfigData<TRenderer extends Renderer> {
-  addons: ProjectAnnotations<TRenderer>[];
+interface PreviewConfigData<TRenderer extends Renderer> extends ProjectAnnotations<TRenderer> {
+  addons?: ProjectAnnotations<TRenderer>[];
 }
 
 class PreviewConfig<TRenderer extends Renderer> {
@@ -27,7 +25,7 @@ class PreviewConfig<TRenderer extends Renderer> {
 
   constructor(data: PreviewConfigData<TRenderer>) {
     const { addons, ...rest } = data;
-    this.annotations = composeConfigs([rest, ...addons]);
+    this.annotations = composeConfigs([rest, ...(addons ?? [])]);
   }
 
   readonly meta = <TComponent extends ComponentType<any>, TMetaArgs extends Args>(

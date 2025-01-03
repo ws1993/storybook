@@ -4,13 +4,14 @@ import React from 'react';
 import { FaceHappyIcon } from '@storybook/icons';
 import type { Meta, StoryObj } from '@storybook/react';
 
+import { config } from '../../../../../.storybook/preview';
 import { Button } from './Button';
 
-const meta = {
+const meta = config.meta({
   title: 'Button',
   component: Button,
   args: { children: 'Button' },
-} satisfies Meta<typeof Button>;
+});
 
 export default meta;
 type Story = StoryObj<typeof meta>;

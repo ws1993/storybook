@@ -17,6 +17,7 @@ import {
 import { DocsContext } from '@storybook/blocks';
 import { global } from '@storybook/global';
 import type { Decorator, Loader, ReactRenderer } from '@storybook/react';
+import { defineConfig } from '@storybook/react/preview';
 
 import { DocsPageWrapper } from '../lib/blocks/src/components';
 import { isChromatic } from './isChromatic';
@@ -361,3 +362,9 @@ export const parameters = {
 };
 
 export const tags = ['test', 'vitest', '!a11ytest'];
+
+export const config = defineConfig({
+  parameters,
+  tags,
+  decorators,
+});
