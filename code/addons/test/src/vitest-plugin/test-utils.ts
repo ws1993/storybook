@@ -27,11 +27,12 @@ export const testStory = (
   return async (context: TestContext & TaskContext & { story: ComposedStoryFn }) => {
     const composedStory = composeStory(
       story,
-      meta,
+      'isCSFFactory' in story ? (meta as any).annotations : meta,
       { initialGlobals: (await getInitialGlobals?.()) ?? {} },
       undefined,
       exportName
     );
+
     if (composedStory === undefined || skipTags?.some((tag) => composedStory.tags.includes(tag))) {
       context.skip();
     }

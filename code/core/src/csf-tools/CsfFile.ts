@@ -679,7 +679,7 @@ export class CsfFile {
             if (t.isImportDeclaration(configParent)) {
               if (isValidPreviewPath(configParent.source.value)) {
                 const metaNode = node.arguments[0] as t.ObjectExpression;
-                self._metaVariableName = callee.object.name;
+                self._metaVariableName = callee.property.name;
                 self._metaIsFactory = true;
                 self._parseMeta(metaNode, self._ast.program);
               } else {
