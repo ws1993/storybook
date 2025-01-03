@@ -58,4 +58,6 @@ class Story<TRenderer extends Renderer, TArgs extends Args> {
     public meta: Meta<TRenderer, TArgs>,
     public config: PreviewConfig<TRenderer>
   ) {}
+
+  readonly isCSFFactory = true;
 }

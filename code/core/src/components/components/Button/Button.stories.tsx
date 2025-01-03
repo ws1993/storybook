@@ -9,6 +9,7 @@ import { Button } from './Button';
 
 // eslint-disable-next-line storybook/default-exports
 const meta = config.meta({
+  id: 'button-component',
   title: 'Button',
   component: Button,
   args: { children: 'Button' },

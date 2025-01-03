@@ -46,6 +46,26 @@ export function processCSFFile<TRenderer extends Renderer>(
   // eslint-disable-next-line @typescript-eslint/naming-convention
   const { default: defaultExport, __namedExportsOrder, ...namedExports } = moduleExports;
 
+  const firstStory: any = Object.values(namedExports)[0];
+  if (!defaultExport && 'isCSFFactory' in firstStory) {
+    const meta: NormalizedComponentAnnotations<TRenderer> =
+      normalizeComponentAnnotations<TRenderer>(firstStory.meta.annotations, title, importPath);
+    checkDisallowedParameters(meta.parameters);
+
+    const csfFile: CSFFile<TRenderer> = { meta, stories: {}, moduleExports };
+
+    Object.keys(namedExports).forEach((key) => {
+      if (isExportStory(key, meta)) {
+        const storyMeta = normalizeStory(key, namedExports[key].annotations, meta);
+        checkDisallowedParameters(storyMeta.parameters);
+
+        csfFile.stories[storyMeta.id] = storyMeta;
+      }
+    });
+
+    return csfFile;
+  }
+
   const meta: NormalizedComponentAnnotations<TRenderer> = normalizeComponentAnnotations<TRenderer>(
     defaultExport,
     title,
