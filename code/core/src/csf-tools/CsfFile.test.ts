@@ -2408,6 +2408,23 @@ describe('CsfFile', () => {
         `);
       });
 
+      it.only('local defineConfig', () => {
+        expect(() =>
+          parse(
+            dedent`
+            import { defineConfig } from '@storybook/react/preview';
+            const config = defineConfig({ });
+            const meta = config.meta({ component: 'foo' });
+            export const A = meta.story({})
+        `
+          )
+        ).toThrowErrorMatchingInlineSnapshot(`
+          [BadMetaError: CSF: meta() factory must be imported from .storybook/preview configuration (line 4, col 28)
+
+          More info: https://storybook.js.org/docs/writing-stories#default-export]
+        `);
+      });
+
       it('mixed factories and non-factories', () => {
         expect(() =>
           parse(

@@ -521,8 +521,8 @@ export class CsfFile {
                     self._options.fileName
                   );
                 } else if (!self._metaIsFactory && storyIsFactory) {
-                  throw new MixedFactoryError(
-                    'expected non-factory story',
+                  throw new BadMetaError(
+                    'meta() factory must be imported from .storybook/preview configuration',
                     storyNode as t.Node,
                     self._options.fileName
                   );
