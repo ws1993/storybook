@@ -521,11 +521,19 @@ export class CsfFile {
                     self._options.fileName
                   );
                 } else if (!self._metaIsFactory && storyIsFactory) {
-                  throw new BadMetaError(
-                    'meta() factory must be imported from .storybook/preview configuration',
-                    storyNode as t.Node,
-                    self._options.fileName
-                  );
+                  if (self._metaNode) {
+                    throw new MixedFactoryError(
+                      'expected non-factory story',
+                      storyNode as t.Node,
+                      self._options.fileName
+                    );
+                  } else {
+                    throw new BadMetaError(
+                      'meta() factory must be imported from .storybook/preview configuration',
+                      storyNode as t.Node,
+                      self._options.fileName
+                    );
+                  }
                 }
                 const parameters: { [key: string]: any } = {};
                 if (t.isObjectExpression(storyNode)) {

@@ -2408,7 +2408,7 @@ describe('CsfFile', () => {
         `);
       });
 
-      it.only('local defineConfig', () => {
+      it('local defineConfig', () => {
         expect(() =>
           parse(
             dedent`
