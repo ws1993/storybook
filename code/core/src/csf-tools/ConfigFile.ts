@@ -187,14 +187,14 @@ export class ConfigFile {
     this.fileName = fileName;
   }
 
-  _parseExportsObject(exportsObject: t.ObjectExpression, parent?: t.Node) {
+  _parseExportsObject(exportsObject: t.ObjectExpression) {
     this._exportsObject = exportsObject;
     (exportsObject.properties as t.ObjectProperty[]).forEach((p) => {
       const exportName = propKey(p);
       if (exportName) {
         let exportVal = p.value;
         if (t.isIdentifier(exportVal)) {
-          exportVal = _findVarInitialization(exportVal.name, parent as t.Program) as any;
+          exportVal = _findVarInitialization(exportVal.name, this._ast.program) as any;
         }
         this._exports[exportName] = exportVal as t.Expression;
       }
@@ -216,7 +216,7 @@ export class ConfigFile {
           decl = unwrap(decl);
 
           if (t.isObjectExpression(decl)) {
-            self._parseExportsObject(decl, parent);
+            self._parseExportsObject(decl);
           } else {
             logger.warn(
               getCsfParsingErrorMessage({

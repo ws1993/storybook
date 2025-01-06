@@ -256,6 +256,21 @@ describe('ConfigFile', () => {
           )
         ).toEqual('webpack5');
       });
+      it('tags', () => {
+        expect(
+          getField(
+            ['tags'],
+            dedent`
+              import { defineConfig } from '@storybook/react-vite/preview';
+              const parameters = {};
+              export const config = defineConfig({
+                parameters,
+                tags: ['test', 'vitest', '!a11ytest'],
+              });
+            `
+          )
+        ).toEqual(['test', 'vitest', '!a11ytest']);
+      });
     });
   });
 
