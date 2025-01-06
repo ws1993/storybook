@@ -275,7 +275,13 @@ export function composeStories<TModule extends Store_CSFExports>(
   globalConfig: ProjectAnnotations<Renderer>,
   composeStoryFn: ComposeStoryFn = defaultComposeStory
 ) {
-  const { default: meta, __esModule, __namedExportsOrder, ...stories } = storiesImport;
+  const { default: metaExport, __esModule, __namedExportsOrder, ...stories } = storiesImport;
+  let meta = metaExport;
+  const firstStory = Object.values(stories)[0] as any;
+  if (!meta && 'isCSFFactory' in firstStory) {
+    meta = firstStory.meta.annotations;
+  }
+
   const composedStories = Object.entries(stories).reduce((storiesMap, [exportsName, story]) => {
     if (!isExportStory(exportsName, meta)) {
       return storiesMap;

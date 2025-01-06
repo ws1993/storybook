@@ -59,7 +59,9 @@ class Story<TRenderer extends Renderer, TArgs extends Args> {
     public annotations: StoryAnnotations<TRenderer, TArgs>,
     public meta: Meta<TRenderer, TArgs>,
     public config: PreviewConfig<TRenderer>
-  ) {}
+  ) {
+    Object.assign(this, annotations);
+  }
 
   readonly isCSFFactory = true;
 }

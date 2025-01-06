@@ -2,7 +2,6 @@ import type { ReactNode } from 'react';
 import React from 'react';
 
 import { FaceHappyIcon } from '@storybook/icons';
-import type { Meta, StoryObj } from '@storybook/react';
 
 import { config } from '../../../../../.storybook/preview';
 import { Button } from './Button';
