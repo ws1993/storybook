@@ -10,10 +10,15 @@ import type {
   StoryAnnotations,
 } from 'storybook/internal/types';
 
+import * as reactAnnotations from './entry-preview';
+import * as reactDocsAnnotations from './entry-preview-docs';
 import type { ReactRenderer } from './types';
 
 export function defineConfig(config: PreviewConfigData<ReactRenderer>) {
-  return new PreviewConfig(config);
+  return new PreviewConfig({
+    ...config,
+    addons: [reactAnnotations, reactDocsAnnotations, ...(config.addons ?? [])],
+  });
 }
 
 interface PreviewConfigData<TRenderer extends Renderer> extends ProjectAnnotations<TRenderer> {
