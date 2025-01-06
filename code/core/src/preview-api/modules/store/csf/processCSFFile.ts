@@ -47,6 +47,7 @@ export function processCSFFile<TRenderer extends Renderer>(
   const { default: defaultExport, __namedExportsOrder, ...namedExports } = moduleExports;
 
   const firstStory: any = Object.values(namedExports)[0];
+  // CSF4
   if (!defaultExport && 'isCSFFactory' in firstStory) {
     const meta: NormalizedComponentAnnotations<TRenderer> =
       normalizeComponentAnnotations<TRenderer>(firstStory.meta.annotations, title, importPath);
@@ -62,6 +63,8 @@ export function processCSFFile<TRenderer extends Renderer>(
         csfFile.stories[storyMeta.id] = storyMeta;
       }
     });
+
+    csfFile.projectAnnotations = firstStory.config.annotations;
 
     return csfFile;
   }

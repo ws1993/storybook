@@ -33,6 +33,8 @@ class PreviewConfig<TRenderer extends Renderer> {
   ) => {
     return new Meta<TRenderer, TMetaArgs>(meta as ComponentAnnotations<TRenderer, TMetaArgs>, this);
   };
+
+  readonly isCSFFactoryPreview = true;
 }
 
 class Meta<TRenderer extends Renderer, TArgs extends Args> {

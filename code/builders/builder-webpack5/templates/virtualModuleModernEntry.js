@@ -5,7 +5,21 @@ import { global } from '@storybook/global';
 
 import { importFn } from '{{storiesFilename}}';
 
-const getProjectAnnotations = () => composeConfigs(['{{previewAnnotations_requires}}']);
+const getProjectAnnotations = () => {
+  const previewAnnotations = ['{{previewAnnotations_requires}}'];
+  // the last one in this array is the user preview
+  const preview = previewAnnotations[previewAnnotations.length - 1];
+
+  const csfFactoryPreview = Object.values(preview).find((module) => {
+    return 'isCSFFactoryPreview' in module;
+  });
+
+  if (csfFactoryPreview) {
+    return csfFactoryPreview.annotations;
+  }
+
+  return composeConfigs(previewAnnotations);
+};
 
 const channel = createBrowserChannel({ page: 'preview' });
 addons.setChannel(channel);

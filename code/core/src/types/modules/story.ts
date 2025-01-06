@@ -98,6 +98,7 @@ export type NormalizedStoryAnnotations<TRenderer extends Renderer = Renderer> = 
 export type CSFFile<TRenderer extends Renderer = Renderer> = {
   meta: NormalizedComponentAnnotations<TRenderer>;
   stories: Record<StoryId, NormalizedStoryAnnotations<TRenderer>>;
+  projectAnnotations?: NormalizedProjectAnnotations<TRenderer>;
   moduleExports: ModuleExports;
 };
 

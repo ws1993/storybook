@@ -14,7 +14,7 @@ export async function generateModernIframeScriptCode(options: Options, projectRo
     [],
     options
   );
-  const previewAnnotationURLs = [...previewAnnotations, previewOrConfigFile]
+  const [previewFileUrl, ...previewAnnotationURLs] = [...previewAnnotations, previewOrConfigFile]
     .filter(Boolean)
     .map((path) => processPreviewAnnotation(path, projectRoot));
 
@@ -23,6 +23,15 @@ export async function generateModernIframeScriptCode(options: Options, projectRo
   // modules are provided, the rest are null.  We can just re-import everything again in that case.
   const getPreviewAnnotationsFunction = `
   const getProjectAnnotations = async (hmrPreviewAnnotationModules = []) => {
+    const preview = await import('${previewFileUrl}');
+    const csfFactoryPreview = Object.values(preview).find(module => {
+      return 'isCSFFactoryPreview' in module
+    });
+    
+    if (csfFactoryPreview) {
+      return csfFactoryPreview.annotations;
+    }
+   
     const configs = await Promise.all([${previewAnnotationURLs
       .map(
         (previewAnnotation, index) =>
@@ -30,7 +39,7 @@ export async function generateModernIframeScriptCode(options: Options, projectRo
           `hmrPreviewAnnotationModules[${index}] ?? import('${previewAnnotation}')`
       )
       .join(',\n')}])
-    return composeConfigs(configs);
+    return composeConfigs([...configs, preview]);
   }`;
 
   // eslint-disable-next-line @typescript-eslint/no-shadow
