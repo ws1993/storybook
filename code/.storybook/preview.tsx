@@ -121,7 +121,7 @@ const ThemedSetRoot = () => {
 // eslint-disable-next-line no-underscore-dangle
 const preview = (window as any).__STORYBOOK_PREVIEW__ as PreviewWeb<ReactRenderer> | undefined;
 const channel = (window as any).__STORYBOOK_ADDONS_CHANNEL__ as Channel | undefined;
-export const loaders = [
+const loaders = [
   /**
    * This loader adds a DocsContext to the story, which is required for the most Blocks to work. A
    * story will specify which stories they need in the index with:
@@ -170,7 +170,7 @@ export const loaders = [
   },
 ] as Loader[];
 
-export const decorators = [
+const decorators = [
   // This decorator adds the DocsContext created in the loader above
   (Story, { loaded: { docsContext } }) =>
     docsContext ? (
@@ -308,7 +308,7 @@ export const decorators = [
   },
 ] satisfies Decorator[];
 
-export const parameters = {
+const parameters = {
   options: {
     storySort: (a, b) =>
       a.title === b.title ? 0 : a.id.localeCompare(b.id, undefined, { numeric: true }),
@@ -361,10 +361,9 @@ export const parameters = {
   },
 };
 
-export const tags = ['test', 'vitest', '!a11ytest'];
-
 export const config = defineConfig({
   parameters,
-  tags,
   decorators,
+  loaders,
+  tags: ['test', 'vitest', '!a11ytest'],
 });
