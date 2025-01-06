@@ -131,6 +131,7 @@ describe('CsfFile', () => {
               __isArgsStory: false
               __id: foo-bar--basic
             __stats:
+              factory: false
               play: false
               render: false
               loaders: false
@@ -162,6 +163,7 @@ describe('CsfFile', () => {
           - id: foo-bar--a
             name: A
             __stats:
+              factory: false
               play: false
               render: false
               loaders: false
@@ -191,6 +193,7 @@ describe('CsfFile', () => {
           - id: foo-bar--include-a
             name: Include A
             __stats:
+              factory: false
               play: false
               render: false
               loaders: false
@@ -218,6 +221,7 @@ describe('CsfFile', () => {
           - id: foo-bar--a
             name: Some story
             __stats:
+              factory: false
               play: false
               render: false
               loaders: false
@@ -246,6 +250,7 @@ describe('CsfFile', () => {
           - id: default-title--a
             name: A
             __stats:
+              factory: false
               play: false
               render: false
               loaders: false
@@ -257,6 +262,7 @@ describe('CsfFile', () => {
           - id: default-title--b
             name: B
             __stats:
+              factory: false
               play: false
               render: false
               loaders: false
@@ -285,6 +291,7 @@ describe('CsfFile', () => {
           - id: custom-id--a
             name: A
             __stats:
+              factory: false
               play: false
               render: false
               loaders: false
@@ -296,6 +303,7 @@ describe('CsfFile', () => {
           - id: custom-id--b
             name: B
             __stats:
+              factory: false
               play: false
               render: false
               loaders: false
@@ -324,6 +332,7 @@ describe('CsfFile', () => {
           - id: custom-meta-id--just-custom-meta-id
             name: Just Custom Meta Id
             __stats:
+              factory: false
               play: false
               render: false
               loaders: false
@@ -335,6 +344,7 @@ describe('CsfFile', () => {
           - id: custom-id
             name: Custom Paremeters Id
             __stats:
+              factory: false
               play: false
               render: false
               loaders: false
@@ -364,6 +374,7 @@ describe('CsfFile', () => {
           - id: foo-bar-baz--a
             name: A
             __stats:
+              factory: false
               play: false
               render: false
               loaders: false
@@ -375,6 +386,7 @@ describe('CsfFile', () => {
           - id: foo-bar-baz--b
             name: B
             __stats:
+              factory: false
               play: false
               render: false
               loaders: false
@@ -408,6 +420,7 @@ describe('CsfFile', () => {
               __isArgsStory: true
               __id: foo-bar--a
             __stats:
+              factory: false
               play: false
               render: false
               loaders: false
@@ -422,6 +435,7 @@ describe('CsfFile', () => {
               __isArgsStory: true
               __id: foo-bar--b
             __stats:
+              factory: false
               play: false
               render: false
               loaders: false
@@ -455,6 +469,7 @@ describe('CsfFile', () => {
               __isArgsStory: true
               __id: foo-bar--a
             __stats:
+              factory: false
               play: false
               render: false
               loaders: false
@@ -469,6 +484,7 @@ describe('CsfFile', () => {
               __isArgsStory: true
               __id: foo-bar--b
             __stats:
+              factory: false
               play: false
               render: false
               loaders: false
@@ -499,6 +515,7 @@ describe('CsfFile', () => {
           - id: foo-bar-baz--a
             name: A
             __stats:
+              factory: false
               play: false
               render: false
               loaders: false
@@ -510,6 +527,7 @@ describe('CsfFile', () => {
           - id: foo-bar-baz--b
             name: B
             __stats:
+              factory: false
               play: false
               render: false
               loaders: false
@@ -540,6 +558,7 @@ describe('CsfFile', () => {
           - id: foo-bar-baz--a
             name: A
             __stats:
+              factory: false
               play: false
               render: false
               loaders: false
@@ -551,6 +570,7 @@ describe('CsfFile', () => {
           - id: foo-bar-baz--b
             name: B
             __stats:
+              factory: false
               play: false
               render: false
               loaders: false
@@ -579,6 +599,7 @@ describe('CsfFile', () => {
           - id: default-title--a
             name: A
             __stats:
+              factory: false
               play: false
               render: false
               loaders: false
@@ -590,6 +611,7 @@ describe('CsfFile', () => {
           - id: default-title--b
             name: B
             __stats:
+              factory: false
               play: false
               render: false
               loaders: false
@@ -622,6 +644,7 @@ describe('CsfFile', () => {
               __isArgsStory: true
               __id: foo-bar--a
             __stats:
+              factory: false
               play: false
               render: false
               loaders: false
@@ -653,6 +676,7 @@ describe('CsfFile', () => {
               __isArgsStory: false
               __id: foo-bar--a
             __stats:
+              factory: false
               play: false
               render: false
               loaders: false
@@ -685,6 +709,7 @@ describe('CsfFile', () => {
               __id: foo-bar--page
               docsOnly: true
             __stats:
+              factory: false
               play: false
               render: false
               loaders: false
@@ -722,6 +747,7 @@ describe('CsfFile', () => {
               __id: foo-bar--page
               docsOnly: true
             __stats:
+              factory: false
               play: false
               render: false
               loaders: false
@@ -754,6 +780,7 @@ describe('CsfFile', () => {
               __isArgsStory: false
               __id: foo-bar--a
             __stats:
+              factory: false
               play: false
               render: false
               loaders: false
@@ -768,6 +795,7 @@ describe('CsfFile', () => {
               __isArgsStory: true
               __id: foo-bar--b
             __stats:
+              factory: false
               play: false
               render: false
               loaders: false
@@ -840,6 +868,7 @@ describe('CsfFile', () => {
               __isArgsStory: true
               __id: foo-bar--b
             __stats:
+              factory: false
               play: false
               render: false
               loaders: false
@@ -854,6 +883,7 @@ describe('CsfFile', () => {
               __isArgsStory: false
               __id: foo-bar--a
             __stats:
+              factory: false
               play: false
               render: false
               loaders: false
@@ -968,6 +998,7 @@ describe('CsfFile', () => {
           - id: default-title--a
             name: A
             __stats:
+              factory: false
               play: false
               render: false
               loaders: false
@@ -979,6 +1010,7 @@ describe('CsfFile', () => {
           - id: default-title--b
             name: B
             __stats:
+              factory: false
               play: false
               render: false
               loaders: false
@@ -1032,6 +1064,7 @@ describe('CsfFile', () => {
           - id: foo-bar--a
             name: A
             __stats:
+              factory: false
               play: false
               render: false
               loaders: false
@@ -1043,6 +1076,7 @@ describe('CsfFile', () => {
           - id: foo-bar--b
             name: B
             __stats:
+              factory: false
               play: false
               render: false
               loaders: false
@@ -1120,6 +1154,7 @@ describe('CsfFile', () => {
               __isArgsStory: false
               __id: foo-bar--a
             __stats:
+              factory: false
               play: false
               render: true
               loaders: false
@@ -1152,6 +1187,7 @@ describe('CsfFile', () => {
               __isArgsStory: true
               __id: foo-bar--a
             __stats:
+              factory: false
               play: false
               render: true
               loaders: false
@@ -1182,6 +1218,7 @@ describe('CsfFile', () => {
               __isArgsStory: true
               __id: foo-bar--a
             __stats:
+              factory: false
               play: false
               render: false
               loaders: false
@@ -1214,6 +1251,7 @@ describe('CsfFile', () => {
               __isArgsStory: true
               __id: foo-bar--a
             __stats:
+              factory: false
               play: false
               render: false
               loaders: false
@@ -1295,6 +1333,7 @@ describe('CsfFile', () => {
           - id: foo-bar--a
             name: A
             __stats:
+              factory: false
               play: false
               render: false
               loaders: false
@@ -1328,6 +1367,7 @@ describe('CsfFile', () => {
           - id: foo-bar--a
             name: A
             __stats:
+              factory: false
               play: false
               render: true
               loaders: false
@@ -1363,6 +1403,7 @@ describe('CsfFile', () => {
           - id: foo-bar--a
             name: A
             __stats:
+              factory: false
               play: false
               render: true
               loaders: false
@@ -1423,6 +1464,7 @@ describe('CsfFile', () => {
           - id: foo-bar--a
             name: A
             __stats:
+              factory: false
               play: true
               render: false
               loaders: false
@@ -1458,6 +1500,7 @@ describe('CsfFile', () => {
           - id: foo-bar--a
             name: A
             __stats:
+              factory: false
               play: true
               render: true
               loaders: false
@@ -1489,6 +1532,7 @@ describe('CsfFile', () => {
           - id: foo-bar--a
             name: A
             __stats:
+              factory: false
               play: true
               render: false
               loaders: false
@@ -1519,6 +1563,7 @@ describe('CsfFile', () => {
           - id: foo-bar--a
             name: A
             __stats:
+              factory: false
               play: true
               render: false
               loaders: false
@@ -1552,6 +1597,7 @@ describe('CsfFile', () => {
           - id: foo-bar--a
             name: A
             __stats:
+              factory: false
               play: true
               render: false
               loaders: false
@@ -1585,6 +1631,7 @@ describe('CsfFile', () => {
           - id: foo-bar--a
             name: A
             __stats:
+              factory: false
               play: true
               render: true
               loaders: true
@@ -1617,6 +1664,7 @@ describe('CsfFile', () => {
           - id: foo-bar--a
             name: A
             __stats:
+              factory: false
               play: true
               render: false
               loaders: false
@@ -1667,6 +1715,7 @@ describe('CsfFile', () => {
             - play-fn
           __id: component-id--a
           __stats:
+            factory: false
             play: true
             render: false
             loaders: false
@@ -1687,6 +1736,7 @@ describe('CsfFile', () => {
             - play-fn
           __id: component-id--b
           __stats:
+            factory: false
             play: true
             render: false
             loaders: false
@@ -1725,6 +1775,7 @@ describe('CsfFile', () => {
             - component-tag
           __id: custom-story-id
           __stats:
+            factory: false
             play: false
             render: false
             loaders: false
@@ -1768,6 +1819,7 @@ describe('CsfFile', () => {
             - inherit-tag-dup
           __id: custom-foo-title--a
           __stats:
+            factory: false
             play: false
             render: false
             loaders: false
@@ -1826,6 +1878,7 @@ describe('CsfFile', () => {
           tags: []
           __id: custom-foo-title--a
           __stats:
+            factory: false
             play: false
             render: true
             loaders: false
@@ -1863,6 +1916,7 @@ describe('CsfFile', () => {
           tags: []
           __id: custom-foo-title--a
           __stats:
+            factory: false
             play: false
             render: true
             loaders: false
@@ -1900,6 +1954,7 @@ describe('CsfFile', () => {
           tags: []
           __id: custom-foo-title--a
           __stats:
+            factory: false
             play: false
             render: true
             loaders: false
@@ -1937,6 +1992,7 @@ describe('CsfFile', () => {
           tags: []
           __id: custom-foo-title--a
           __stats:
+            factory: false
             play: false
             render: true
             loaders: false
@@ -1967,6 +2023,7 @@ describe('CsfFile', () => {
           - id: foo-bar--a
             name: A
             __stats:
+              factory: false
               play: false
               render: false
               loaders: false
@@ -1997,6 +2054,7 @@ describe('CsfFile', () => {
           - id: foo-bar--a
             name: A
             __stats:
+              factory: false
               play: false
               render: false
               loaders: false
@@ -2026,6 +2084,7 @@ describe('CsfFile', () => {
           - id: foo-bar--a
             name: A
             __stats:
+              factory: false
               play: false
               render: false
               loaders: false
@@ -2052,6 +2111,7 @@ describe('CsfFile', () => {
           - id: foo-bar--a
             name: A
             __stats:
+              factory: false
               play: false
               render: false
               loaders: false
@@ -2084,6 +2144,7 @@ describe('CsfFile', () => {
             - id: default-title--a
               name: A
               __stats:
+                factory: true
                 play: false
                 render: false
                 loaders: false
@@ -2095,6 +2156,7 @@ describe('CsfFile', () => {
             - id: default-title--b
               name: B
               __stats:
+                factory: true
                 play: false
                 render: false
                 loaders: false
@@ -2123,6 +2185,7 @@ describe('CsfFile', () => {
             - id: default-title--a
               name: A
               __stats:
+                factory: true
                 play: false
                 render: false
                 loaders: false
@@ -2153,6 +2216,7 @@ describe('CsfFile', () => {
             - id: default-title--a
               name: A
               __stats:
+                factory: true
                 play: false
                 render: false
                 loaders: false
@@ -2164,6 +2228,7 @@ describe('CsfFile', () => {
             - id: default-title--b
               name: B
               __stats:
+                factory: true
                 play: false
                 render: false
                 loaders: false
@@ -2192,6 +2257,7 @@ describe('CsfFile', () => {
             - id: default-title--a
               name: bar
               __stats:
+                factory: true
                 play: false
                 render: false
                 loaders: false
@@ -2225,6 +2291,7 @@ describe('CsfFile', () => {
                 __isArgsStory: false
                 __id: foo-bar--a
               __stats:
+                factory: true
                 play: false
                 render: true
                 loaders: false
@@ -2258,6 +2325,7 @@ describe('CsfFile', () => {
                 __isArgsStory: true
                 __id: foo-bar--a
               __stats:
+                factory: true
                 play: false
                 render: true
                 loaders: false

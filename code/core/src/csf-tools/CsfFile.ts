@@ -567,7 +567,9 @@ export class CsfFile {
                   id: 'FIXME',
                   name,
                   parameters,
-                  __stats: {},
+                  __stats: {
+                    factory: storyIsFactory,
+                  },
                 };
               }
             });
