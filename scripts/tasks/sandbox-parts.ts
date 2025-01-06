@@ -19,7 +19,7 @@ import { join, relative, resolve, sep } from 'path';
 import slash from 'slash';
 import dedent from 'ts-dedent';
 
-import { babelParse } from '../../code/core/src/babel/babelParse';
+import { babelParse, types as t } from '../../code/core/src/babel';
 import { detectLanguage } from '../../code/core/src/cli/detect';
 import { SupportedLanguage } from '../../code/core/src/cli/project_types';
 import { JsPackageManagerFactory, versions as storybookPackages } from '../../code/core/src/common';
@@ -822,6 +822,22 @@ export const extendPreview: Task['run'] = async ({ template, sandboxDir }) => {
   logger.log('📝 Extending preview.js');
   const previewConfig = await readConfig({ cwd: sandboxDir, fileName: 'preview' });
 
+  if (template.expected.framework === '@storybook/react-vite') {
+    // add CSF4 style config
+    previewConfig.setImport(['defineConfig'], '@storybook/react/preview');
+    previewConfig.setBodyDeclaration(
+      t.exportNamedDeclaration(
+        t.variableDeclaration('const', [
+          t.variableDeclarator(
+            t.identifier('config'),
+            t.callExpression(t.identifier('defineConfig'), [t.identifier('preview')])
+          ),
+        ]),
+        []
+      )
+    );
+  }
+
   if (template.expected.builder.includes('vite')) {
     previewConfig.setFieldValue(['tags'], ['vitest', '!a11ytest']);
   }
@@ -837,6 +853,7 @@ export async function setImportMap(cwd: string) {
       storybook: './template-stories/core/utils.mock.ts',
       default: './template-stories/core/utils.ts',
     },
+    '#*': ['./*', './*.ts', './*.tsx'],
   };
 
   await writeJson(join(cwd, 'package.json'), packageJson, { spaces: 2 });
