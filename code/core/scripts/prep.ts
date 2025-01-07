@@ -1,9 +1,11 @@
 /* eslint-disable local-rules/no-uncategorized-errors */
-import { existsSync, mkdirSync, watch } from 'node:fs';
+import { existsSync, watch } from 'node:fs';
 import { mkdir, rm, writeFile } from 'node:fs/promises';
 import { dirname, join } from 'node:path';
 
-import type { Metafile } from 'esbuild';
+import type { Plugin as EsbuildPlugin, Metafile } from 'esbuild';
+// eslint-disable-next-line import/no-extraneous-dependencies
+import replacePlugin from 'esbuild-plugin-text-replace';
 
 import {
   dedent,
@@ -124,6 +126,16 @@ async function run() {
       platform: 'neutral',
       mainFields: ['main', 'module', 'node'],
       conditions: ['node', 'module', 'import', 'require'],
+      plugins: [
+        replacePlugin({
+          include: /node_modules\/ink/,
+          pattern: [[`process.env['DEV']`, `'false'`]],
+        }) as any as EsbuildPlugin,
+      ],
+      define: {
+        'process.env.NODE_ENV': '"production"',
+        'process.env.DEV': '"false"',
+      },
     } satisfies EsbuildContextOptions;
 
     const browserAliases = {

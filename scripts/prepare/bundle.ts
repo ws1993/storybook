@@ -1,8 +1,9 @@
 import { writeFile } from 'node:fs/promises';
 import { dirname, join, parse, posix, relative, resolve, sep } from 'node:path';
 
-import type { Metafile } from 'esbuild';
+import type { Plugin as EsbuildPlugin, Metafile } from 'esbuild';
 import aliasPlugin from 'esbuild-plugin-alias';
+import replacePlugin from 'esbuild-plugin-text-replace';
 // eslint-disable-next-line depend/ban-dependencies
 import * as fs from 'fs-extra';
 // eslint-disable-next-line depend/ban-dependencies
@@ -14,7 +15,7 @@ import { build } from 'tsup';
 import type { PackageJson } from 'type-fest';
 
 import { exec } from '../utils/exec';
-import { esbuild } from './tools';
+import { esbuild, nodeInternals } from './tools';
 
 /* TYPES */
 
@@ -107,7 +108,7 @@ const run = async ({ cwd, flags }: { cwd: string; flags: string[] }) => {
         silent: true,
         treeshake: true,
         entry: nonPresetEntries,
-        shims: false,
+        shims: true,
         watch,
         outDir: OUT_DIR,
         sourcemap: false,
@@ -116,22 +117,41 @@ const run = async ({ cwd, flags }: { cwd: string; flags: string[] }) => {
         target: platform === 'node' ? ['node18'] : ['chrome100', 'safari15', 'firefox91'],
         clean: false,
         ...(dtsBuild === 'esm' ? dtsConfig : {}),
-        platform: platform || 'browser',
+        platform: platform === 'node' ? 'neutral' : 'browser',
         define: {
           // tsup replaces 'process.env.NODE_ENV' during build time. We don't want to do this. Instead, the builders (vite/webpack) should replace it
           // Then, the variable can be set accordingly in dev/build mode
           'process.env.NODE_ENV': 'process.env.NODE_ENV',
         },
+        ...(platform === 'node'
+          ? {
+              banner: {
+                js: dedent`
+                  import ESM_COMPAT_Module from "node:module";
+                  import { fileURLToPath as ESM_COMPAT_fileURLToPath } from 'node:url';
+                  import { dirname as ESM_COMPAT_dirname } from 'node:path';
+                  const __filename = ESM_COMPAT_fileURLToPath(import.meta.url);
+                  const __dirname = ESM_COMPAT_dirname(__filename);
+                  const require = ESM_COMPAT_Module.createRequire(import.meta.url);
+                `,
+              },
+            }
+          : {}),
         esbuildPlugins:
           platform === 'node'
-            ? []
+            ? [
+                replacePlugin({
+                  include: /node_modules\/ink/,
+                  pattern: [[`process.env['DEV']`, `'false'`]],
+                }) as any as EsbuildPlugin,
+              ]
             : [
                 aliasPlugin({
                   process: resolve('../node_modules/process/browser.js'),
                   util: resolve('../node_modules/util/util.js'),
                 }),
               ],
-        external: externals,
+        external: [...externals, ...(platform === 'node' ? nodeInternals : [])],
 
         esbuildOptions: (c) => {
           c.conditions = ['module'];

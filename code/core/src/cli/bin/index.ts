@@ -89,6 +89,14 @@ command('dev')
     await dev({ ...options, packageJson: pkg }).catch(() => process.exit(1));
   });
 
+command('ink')
+  .option('-n, --name <name>', 'The name (this is a dummy parameter)')
+  .action(async (options) => {
+    const { run } = await import('../ink/app');
+    console.log({ run });
+    await run(options);
+  });
+
 command('build')
   .option('-o, --output-dir <dir-name>', 'Directory where to store built files')
   .option('-c, --config-dir <dir-name>', 'Directory where to load Storybook configurations from')
@@ -108,7 +116,9 @@ command('build')
   .option('--docs', 'Build a documentation-only site using addon-docs')
   .option('--test', 'Build stories optimized for testing purposes.')
   .action(async (options) => {
-    process.env.NODE_ENV = process.env.NODE_ENV || 'production';
+    const { env } = process;
+    env.NODE_ENV = env.NODE_ENV || 'production';
+
     logger.setLevel(options.loglevel);
     consoleLogger.log(picocolors.bold(`${pkg.name} v${pkg.version}\n`));
 

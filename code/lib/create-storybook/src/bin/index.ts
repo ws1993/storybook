@@ -21,6 +21,7 @@ program
     // default value is false, but if the user sets STORYBOOK_DISABLE_TELEMETRY, it can be true
     process.env.STORYBOOK_DISABLE_TELEMETRY && process.env.STORYBOOK_DISABLE_TELEMETRY !== 'false'
   )
+  .option('--ink', 'Use the ink app', false)
   .option('--debug', 'Get more logs in debug mode', false)
   .option('--enable-crash-reports', 'Enable sending crash reports to telemetry data')
   .option('-f --force', 'Force add Storybook')
@@ -46,8 +47,12 @@ program
     '--no-dev',
     'Complete the initialization of Storybook without launching the Storybook development server'
   )
-  .action((options: CommandOptions) => {
-    initiate(options).catch(() => process.exit(1));
+  .action(({ ink, ...options }: CommandOptions) => {
+    if (ink) {
+      console.log('Ink app is not supported yet.');
+    } else {
+      initiate(options).catch(() => process.exit(1));
+    }
   })
   .version(String(pkg.version))
   .parse(process.argv);
