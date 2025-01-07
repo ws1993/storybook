@@ -1,3 +1,4 @@
+/* eslint-disable import/namespace */
 import * as React from 'react';
 import { Fragment, useEffect } from 'react';
 
