@@ -338,7 +338,9 @@
       "./src/core-path.ts",
       "./src/index.ts"
     ],
-    "platform": "node"
+    "formats": [
+      "node-esm"
+    ]
   },
   "gitHead": "e6a7fd8a655c69780bc20b9749c2699e44beae16"
 }

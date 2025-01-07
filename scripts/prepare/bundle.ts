@@ -19,7 +19,7 @@ import { esbuild, nodeInternals } from './tools';
 
 /* TYPES */
 
-type Formats = 'esm' | 'cjs';
+type Formats = 'esm' | 'cjs' | 'node-esm';
 type BundlerConfig = {
   entries: string[];
   externals: string[];
@@ -117,46 +117,77 @@ const run = async ({ cwd, flags }: { cwd: string; flags: string[] }) => {
         target: platform === 'node' ? ['node18'] : ['chrome100', 'safari15', 'firefox91'],
         clean: false,
         ...(dtsBuild === 'esm' ? dtsConfig : {}),
-        platform: platform === 'node' ? 'neutral' : 'browser',
+        platform: platform || 'browser',
         define: {
           // tsup replaces 'process.env.NODE_ENV' during build time. We don't want to do this. Instead, the builders (vite/webpack) should replace it
           // Then, the variable can be set accordingly in dev/build mode
           'process.env.NODE_ENV': 'process.env.NODE_ENV',
         },
 
-        ...(platform === 'node'
-          ? {
-              banner: {
-                js: dedent`
-                  import ESM_COMPAT_Module from "node:module";
-                  import { fileURLToPath as ESM_COMPAT_fileURLToPath } from 'node:url';
-                  import { dirname as ESM_COMPAT_dirname } from 'node:path';
-                  const __filename = ESM_COMPAT_fileURLToPath(import.meta.url);
-                  const __dirname = ESM_COMPAT_dirname(__filename);
-                  const require = ESM_COMPAT_Module.createRequire(import.meta.url);
-                `,
-              },
-            }
-          : {}),
         esbuildPlugins:
           platform === 'node'
-            ? [
-                replacePlugin({
-                  include: /node_modules\/ink/,
-                  pattern: [[`process.env['DEV']`, `'false'`]],
-                }) as any as EsbuildPlugin,
-              ]
+            ? []
             : [
                 aliasPlugin({
                   process: resolve('../node_modules/process/browser.js'),
                   util: resolve('../node_modules/util/util.js'),
                 }),
               ],
-        external: [...externals, ...(platform === 'node' ? nodeInternals : [])],
+        external: externals,
 
         esbuildOptions: (c) => {
           c.conditions = ['module'];
-          c.platform = platform === 'node' ? 'neutral' : 'browser';
+          c.platform = platform === 'node' ? 'node' : 'browser';
+          Object.assign(c, getESBuildOptions(optimized));
+        },
+      })
+    );
+  }
+  if (formats.includes('node-esm')) {
+    tasks.push(
+      build({
+        noExternal,
+        silent: true,
+        treeshake: true,
+        entry: nonPresetEntries,
+        shims: true,
+        watch,
+        outDir: OUT_DIR,
+        sourcemap: false,
+        metafile: true,
+        format: ['esm'],
+        target: ['node18'],
+        clean: false,
+        ...(dtsBuild === 'esm' ? dtsConfig : {}),
+        platform: 'neutral',
+        define: {
+          // tsup replaces 'process.env.NODE_ENV' during build time. We don't want to do this. Instead, the builders (vite/webpack) should replace it
+          // Then, the variable can be set accordingly in dev/build mode
+          'process.env.NODE_ENV': 'process.env.NODE_ENV',
+        },
+
+        banner: {
+          js: dedent`
+            import ESM_COMPAT_Module from "node:module";
+            import { fileURLToPath as ESM_COMPAT_fileURLToPath } from 'node:url';
+            import { dirname as ESM_COMPAT_dirname } from 'node:path';
+            const __filename = ESM_COMPAT_fileURLToPath(import.meta.url);
+            const __dirname = ESM_COMPAT_dirname(__filename);
+            const require = ESM_COMPAT_Module.createRequire(import.meta.url);
+          `,
+        },
+
+        esbuildPlugins: [
+          replacePlugin({
+            include: /node_modules\/ink/,
+            pattern: [[`process.env['DEV']`, `'false'`]],
+          }) as any as EsbuildPlugin,
+        ],
+        external: [...externals, ...nodeInternals],
+
+        esbuildOptions: (c) => {
+          c.conditions = ['module'];
+          c.platform = 'neutral';
           Object.assign(c, getESBuildOptions(optimized));
         },
       })
@@ -288,7 +319,7 @@ async function saveMetafiles({
 
   await Promise.all(
     formats.map(async (format) => {
-      const fromFilename = `metafile-${format}.json`;
+      const fromFilename = format === 'node-esm' ? `metafile-esm.json` : `metafile-${format}.json`;
       const currentMetafile = await fs.readJson(join(OUT_DIR, fromFilename));
       metafile.inputs = { ...metafile.inputs, ...currentMetafile.inputs };
       metafile.outputs = { ...metafile.outputs, ...currentMetafile.outputs };
