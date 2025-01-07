@@ -26,10 +26,10 @@ export const testStory = (
 ) => {
   return async (context: TestContext & TaskContext & { story: ComposedStoryFn }) => {
     const composedStory = composeStory(
-      story,
+      'isCSFFactory' in story ? (story as any).annotations : story,
       'isCSFFactory' in story ? (meta as any).annotations : meta,
       { initialGlobals: (await getInitialGlobals?.()) ?? {} },
-      undefined,
+      'isCSFFactory' in story ? (story as any).config?.annotations : undefined,
       exportName
     );
 

@@ -30,7 +30,7 @@ class PreviewConfig<TRenderer extends Renderer> {
 
   constructor(data: PreviewConfigData<TRenderer>) {
     const { addons, ...rest } = data;
-    this.annotations = composeConfigs([rest, ...(addons ?? [])]);
+    this.annotations = composeConfigs([...(addons ?? []), rest]);
   }
 
   readonly meta = <TComponent extends ComponentType<any>, TMetaArgs extends Args>(
@@ -64,9 +64,7 @@ class Story<TRenderer extends Renderer, TArgs extends Args> {
     public annotations: StoryAnnotations<TRenderer, TArgs>,
     public meta: Meta<TRenderer, TArgs>,
     public config: PreviewConfig<TRenderer>
-  ) {
-    Object.assign(this, annotations);
-  }
+  ) {}
 
   readonly isCSFFactory = true;
 }
