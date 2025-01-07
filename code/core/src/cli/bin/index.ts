@@ -93,7 +93,6 @@ command('ink')
   .option('-n, --name <name>', 'The name (this is a dummy parameter)')
   .action(async (options) => {
     const { run } = await import('../ink/app');
-    console.log({ run });
     await run(options);
   });
 

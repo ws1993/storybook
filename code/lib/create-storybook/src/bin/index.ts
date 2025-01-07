@@ -47,9 +47,10 @@ program
     '--no-dev',
     'Complete the initialization of Storybook without launching the Storybook development server'
   )
-  .action(({ ink, ...options }: CommandOptions) => {
+  .action(async ({ ink, ...options }: CommandOptions) => {
     if (ink) {
-      console.log('Ink app is not supported yet.');
+      const { run } = await import('../ink/app');
+      await run({});
     } else {
       initiate(options).catch(() => process.exit(1));
     }
