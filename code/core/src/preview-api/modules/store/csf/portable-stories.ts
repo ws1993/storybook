@@ -89,6 +89,21 @@ export function setProjectAnnotations<TRenderer extends Renderer = Renderer>(
 
 const cleanups: CleanupCallback[] = [];
 
+export function getAnnotations<TRenderer extends Renderer = Renderer, TArgs extends Args = Args>(
+  story: LegacyStoryAnnotationsOrFn<TRenderer>,
+  meta?: ComponentAnnotations<TRenderer, TArgs>,
+  projectAnnotations?: ProjectAnnotations<TRenderer>
+) {
+  const isCsfFactory =
+    (typeof story === 'function' || typeof story === 'object') && 'isCSFFactory' in story;
+
+  return {
+    storyAnnotations: isCsfFactory ? (story as any)?.annotations : story,
+    componentAnnotations: isCsfFactory ? (story as any)?.meta?.annotations : meta,
+    projectAnnotations: isCsfFactory ? (story as any)?.config?.annotations : projectAnnotations,
+  };
+}
+
 export function composeStory<TRenderer extends Renderer = Renderer, TArgs extends Args = Args>(
   storyAnnotations: LegacyStoryAnnotationsOrFn<TRenderer>,
   componentAnnotations: ComponentAnnotations<TRenderer, TArgs>,
@@ -277,26 +292,24 @@ export function composeStories<TModule extends Store_CSFExports>(
 ) {
   const { default: metaExport, __esModule, __namedExportsOrder, ...stories } = storiesImport;
   let meta = metaExport;
-  const firstStory = Object.values(stories)[0] as any;
-  if (!meta && 'isCSFFactory' in firstStory) {
-    meta = firstStory.meta.annotations;
-  }
 
-  const composedStories = Object.entries(stories).reduce((storiesMap, [exportsName, story]) => {
-    if (!isExportStory(exportsName, meta)) {
-      return storiesMap;
-    }
+  const composedStories = Object.entries(stories).reduce(
+    (storiesMap, [exportsName, story]: [string, any]) => {
+      const { storyAnnotations, componentAnnotations } = getAnnotations(story);
+      if (!meta && componentAnnotations) {
+        meta = componentAnnotations;
+      }
 
-    const result = Object.assign(storiesMap, {
-      [exportsName]: composeStoryFn(
-        story as LegacyStoryAnnotationsOrFn,
-        meta,
-        globalConfig,
-        exportsName
-      ),
-    });
-    return result;
-  }, {});
+      if (!isExportStory(exportsName, meta)) {
+        return storiesMap;
+      }
+      const result = Object.assign(storiesMap, {
+        [exportsName]: composeStoryFn(storyAnnotations, meta, globalConfig, exportsName),
+      });
+      return result;
+    },
+    {}
+  );
 
   return composedStories;
 }

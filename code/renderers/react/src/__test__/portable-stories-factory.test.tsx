@@ -21,7 +21,7 @@ import * as ButtonStories from './Button.csf4.stories';
 import * as ComponentWithErrorStories from './ComponentWithError.stories';
 
 const HooksStory = composeStory(
-  ButtonStories.HooksStory,
+  ButtonStories.HooksStory.annotations,
   ButtonStories.CSF3Primary.meta.annotations
 );
 
@@ -42,7 +42,7 @@ afterEach(() => {
 
 // example with composeStory, returns a single story composed with args/decorators
 const Secondary = composeStory(
-  ButtonStories.CSF2Secondary,
+  ButtonStories.CSF2Secondary.annotations,
   ButtonStories.CSF3Primary.meta.annotations
 );
 describe('renders', () => {
@@ -108,7 +108,7 @@ describe('projectAnnotations', () => {
       },
     ]);
     const WithEnglishText = composeStory(
-      ButtonStories.CSF2StoryWithLocale,
+      ButtonStories.CSF2StoryWithLocale.annotations,
       ButtonStories.CSF3Primary.meta.annotations
     );
     const { getByText } = render(<WithEnglishText />);
@@ -119,7 +119,7 @@ describe('projectAnnotations', () => {
 
   it('renders with custom projectAnnotations via composeStory params', () => {
     const WithPortugueseText = composeStory(
-      ButtonStories.CSF2StoryWithLocale,
+      ButtonStories.CSF2StoryWithLocale.annotations,
       ButtonStories.CSF3Primary.meta.annotations,
       {
         initialGlobals: { locale: 'pt' },
@@ -132,7 +132,7 @@ describe('projectAnnotations', () => {
 
   it('has action arg from argTypes when addon-actions annotations are added', () => {
     const Story = composeStory(
-      ButtonStories.WithActionArgType,
+      ButtonStories.WithActionArgType.annotations,
       ButtonStories.CSF3Primary.meta.annotations,
       addonActionsPreview as ProjectAnnotations<ReactRenderer>
     );
@@ -143,7 +143,7 @@ describe('projectAnnotations', () => {
 describe('CSF3', () => {
   it('renders with inferred globalRender', () => {
     const Primary = composeStory(
-      ButtonStories.CSF3Button,
+      ButtonStories.CSF3Button.annotations,
       ButtonStories.CSF3Primary.meta.annotations
     );
 
@@ -154,7 +154,7 @@ describe('CSF3', () => {
 
   it('renders with custom render function', () => {
     const Primary = composeStory(
-      ButtonStories.CSF3ButtonWithRender,
+      ButtonStories.CSF3ButtonWithRender.annotations,
       ButtonStories.CSF3Primary.meta.annotations
     );
 
@@ -164,7 +164,7 @@ describe('CSF3', () => {
 
   it('renders with play function without canvas element', async () => {
     const CSF3InputFieldFilled = composeStory(
-      ButtonStories.CSF3InputFieldFilled,
+      ButtonStories.CSF3InputFieldFilled.annotations,
       ButtonStories.CSF3Primary.meta.annotations
     );
     await CSF3InputFieldFilled.run();
@@ -175,19 +175,22 @@ describe('CSF3', () => {
 
   it('renders with play function with canvas element', async () => {
     const CSF3InputFieldFilled = composeStory(
-      ButtonStories.CSF3InputFieldFilled,
+      ButtonStories.CSF3InputFieldFilled.annotations,
       ButtonStories.CSF3Primary.meta.annotations
     );
 
-    const div = document.createElement('div');
-    document.body.appendChild(div);
+    let divElement;
+    try {
+      divElement = document.createElement('div');
+      document.body.appendChild(divElement);
 
-    await CSF3InputFieldFilled.run({ canvasElement: div });
+      await CSF3InputFieldFilled.run({ canvasElement: divElement });
 
-    const input = screen.getByTestId('input') as HTMLInputElement;
-    expect(input.value).toEqual('Hello world!');
-
-    document.body.removeChild(div);
+      const input = screen.getByTestId('input') as HTMLInputElement;
+      expect(input.value).toEqual('Hello world!');
+    } finally {
+      document.body.removeChild(divElement);
+    }
   });
 
   it('renders with hooks', async () => {
@@ -201,7 +204,7 @@ describe('CSF3', () => {
 // common in addons that need to communicate between manager and preview
 it('should pass with decorators that need addons channel', () => {
   const PrimaryWithChannels = composeStory(
-    ButtonStories.CSF3Primary,
+    ButtonStories.CSF3Primary.annotations,
     ButtonStories.CSF3Primary.meta.annotations,
     {
       decorators: [
