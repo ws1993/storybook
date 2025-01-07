@@ -825,12 +825,43 @@ export const extendPreview: Task['run'] = async ({ template, sandboxDir }) => {
   if (template.expected.framework === '@storybook/react-vite') {
     // add CSF4 style config
     previewConfig.setImport(['defineConfig'], '@storybook/react/preview');
+    // and all of the addons/previewAnnotations that are needed
+    previewConfig.setImport(null, '../src/stories/components');
+    previewConfig.setImport({ namespace: 'addonA11yAnnotations' }, '@storybook/addon-a11y/preview');
+    previewConfig.setImport(
+      { namespace: 'addonActionsAnnotations' },
+      '@storybook/addon-actions/preview'
+    );
+    previewConfig.setImport(
+      { namespace: 'addonTestAnnotations' },
+      '@storybook/experimental-addon-test/preview'
+    );
+    previewConfig.setImport({ namespace: 'coreAnnotations' }, '../template-stories/core/preview');
+    previewConfig.setImport(
+      { namespace: 'toolbarAnnotations' },
+      '../template-stories/addons/toolbars/preview'
+    );
+
     previewConfig.setBodyDeclaration(
       t.exportNamedDeclaration(
         t.variableDeclaration('const', [
           t.variableDeclarator(
             t.identifier('config'),
-            t.callExpression(t.identifier('defineConfig'), [t.identifier('preview')])
+            t.callExpression(t.identifier('defineConfig'), [
+              t.objectExpression([
+                t.spreadElement(t.identifier('preview')),
+                t.objectProperty(
+                  t.identifier('addons'),
+                  t.arrayExpression([
+                    t.identifier('addonA11yAnnotations'),
+                    t.identifier('addonActionsAnnotations'),
+                    t.identifier('addonTestAnnotations'),
+                    t.identifier('coreAnnotations'),
+                    t.identifier('toolbarAnnotations'),
+                  ])
+                ),
+              ]),
+            ])
           ),
         ]),
         []
