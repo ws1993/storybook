@@ -185,7 +185,7 @@ const run = async ({ cwd, flags }: { cwd: string; flags: string[] }) => {
         external: [...externals, ...nodeInternals],
 
         esbuildOptions: (c) => {
-          c.conditions = ['module'];
+          c.conditions = ['node', 'module'];
           c.platform = 'neutral';
           Object.assign(c, getESBuildOptions(optimized));
         },
