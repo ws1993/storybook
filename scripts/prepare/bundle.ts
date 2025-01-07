@@ -123,6 +123,7 @@ const run = async ({ cwd, flags }: { cwd: string; flags: string[] }) => {
           // Then, the variable can be set accordingly in dev/build mode
           'process.env.NODE_ENV': 'process.env.NODE_ENV',
         },
+
         ...(platform === 'node'
           ? {
               banner: {
@@ -155,7 +156,7 @@ const run = async ({ cwd, flags }: { cwd: string; flags: string[] }) => {
 
         esbuildOptions: (c) => {
           c.conditions = ['module'];
-          c.platform = platform || 'browser';
+          c.platform = platform === 'node' ? 'neutral' : 'browser';
           Object.assign(c, getESBuildOptions(optimized));
         },
       })

@@ -22,6 +22,12 @@
   "author": "Storybook Team",
   "type": "module",
   "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "node": "./dist/index.cjs",
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs"
+    },
     "./bin/index.cjs": {
       "node": "./bin/index.cjs",
       "require": "./bin/index.cjs"

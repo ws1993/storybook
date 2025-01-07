@@ -21,12 +21,10 @@
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
-      "node": "./dist/index.cjs",
-      "import": "./dist/index.js",
-      "require": "./dist/index.cjs"
+      "import": "./dist/index.js"
     },
     "./bin/index.cjs": {
-      "node": "./bin/index.cjs",
+      "import": "./bin/index.js",
       "require": "./bin/index.cjs"
     },
     "./package.json": "./package.json"
