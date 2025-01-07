@@ -38,7 +38,6 @@
     },
     "./core-path": {
       "types": "./dist/core-path.d.ts",
-      "node": "./dist/core-path.cjs",
       "import": "./dist/core-path.js",
       "require": "./dist/core-path.cjs"
     },
@@ -339,6 +338,7 @@
       "./src/index.ts"
     ],
     "formats": [
+      "cjs",
       "node-esm"
     ]
   },
