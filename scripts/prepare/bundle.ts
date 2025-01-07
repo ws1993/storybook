@@ -9,13 +9,12 @@ import * as fs from 'fs-extra';
 // eslint-disable-next-line depend/ban-dependencies
 import { glob } from 'glob';
 import slash from 'slash';
-import { dedent } from 'ts-dedent';
 import type { Options } from 'tsup';
 import { build } from 'tsup';
 import type { PackageJson } from 'type-fest';
 
 import { exec } from '../utils/exec';
-import { esbuild, nodeInternals } from './tools';
+import { dedent, esbuild, nodeInternals } from './tools';
 
 /* TYPES */
 
@@ -108,7 +107,7 @@ const run = async ({ cwd, flags }: { cwd: string; flags: string[] }) => {
         silent: true,
         treeshake: true,
         entry: nonPresetEntries,
-        shims: true,
+        shims: false,
         watch,
         outDir: OUT_DIR,
         sourcemap: false,
@@ -137,7 +136,7 @@ const run = async ({ cwd, flags }: { cwd: string; flags: string[] }) => {
 
         esbuildOptions: (c) => {
           c.conditions = ['module'];
-          c.platform = platform === 'node' ? 'node' : 'browser';
+          c.platform = platform || 'browser';
           Object.assign(c, getESBuildOptions(optimized));
         },
       })
