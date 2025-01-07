@@ -18,11 +18,17 @@ import { DocsContext } from '@storybook/blocks';
 import { global } from '@storybook/global';
 import type { Decorator, Loader, ReactRenderer } from '@storybook/react';
 
+import { Terminal } from '@xterm/xterm';
+import '@xterm/xterm/css/xterm.css';
+import { render } from 'ink';
+
 import { DocsPageWrapper } from '../lib/blocks/src/components';
 import { isChromatic } from './isChromatic';
 
 const { document } = global;
 globalThis.CONFIG_TYPE = 'DEVELOPMENT';
+
+console.log({ Terminal, render });
 
 const ThemeBlock = styled.div<{ side: 'left' | 'right'; layout: string }>(
   {

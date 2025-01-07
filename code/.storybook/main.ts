@@ -1,5 +1,8 @@
 import { join } from 'node:path';
 
+import { nodePolyfills } from 'vite-plugin-node-polyfills';
+import topLevelAwait from 'vite-plugin-top-level-await';
+
 import type { StorybookConfig } from '../frameworks/react-vite';
 
 const componentsPath = join(__dirname, '../core/src/components');
@@ -138,9 +141,37 @@ const config: StorybookConfig = {
   viteFinal: async (viteConfig, { configType }) => {
     const { mergeConfig } = await import('vite');
 
+    // console.log(viteConfig);
+
     return mergeConfig(viteConfig, {
+      plugins: [
+        nodePolyfills({
+          globals: {
+            process: false,
+            global: false,
+            Buffer: false,
+          },
+          overrides: {
+            process: require.resolve(join(__dirname, './mocks/node-process.ts')),
+            module: require.resolve(join(__dirname, './mocks/node-module.ts')),
+            util: require.resolve(join(__dirname, './mocks/node-util.ts')),
+            stream: require.resolve('stream-browserify'),
+            buffer: require.resolve('buffer/'),
+            assert: require.resolve('assert/'),
+            os: require.resolve('os-browserify/browser'),
+            tty: require.resolve('tty-browserify'),
+          },
+        }),
+        topLevelAwait(),
+      ],
       resolve: {
         alias: {
+          // ink related
+          'is-in-ci': require.resolve(join(__dirname, './mocks/is-in-ci.js')),
+          'yoga-wasm-web/auto': 'https://cdn.jsdelivr.net/npm/yoga-wasm-web@0.3.3/dist/browser.js',
+          'yoga-wasm-web': 'https://cdn.jsdelivr.net/npm/yoga-wasm-web@0.3.3/+esm',
+
+          // storybook related
           ...(configType === 'DEVELOPMENT'
             ? {
                 '@storybook/components': componentsPath,
@@ -154,7 +185,13 @@ const config: StorybookConfig = {
       },
       optimizeDeps: {
         force: true,
-        include: ['@storybook/blocks'],
+        include: [
+          '@storybook/blocks',
+          'vite-plugin-node-polyfills/shims/buffer',
+          'vite-plugin-node-polyfills/shims/global',
+          '@xterm/xterm',
+          'ink',
+        ],
       },
       build: {
         // disable sourcemaps in CI to not run out of memory
