@@ -19,7 +19,20 @@ import { global } from '@storybook/global';
 import type { Decorator, Loader, ReactRenderer } from '@storybook/react';
 import { defineConfig } from '@storybook/react/preview';
 
+// TODO add empty preview
+// import * as storysource from '@storybook/addon-storysource';
+// import * as designs from '@storybook/addon-designs/preview';
+// import * as test from '@storybook/experimental-addon-test/preview';
+import * as a11y from '@storybook/addon-a11y/preview';
+// @ts-expect-error Must be typed
+import * as essentials from '@storybook/addon-essentials/preview';
+// @ts-expect-error Must be typed
+import * as addonThemes from '@storybook/addon-themes/preview';
+
+import * as addonsPreview from '../addons/toolbars/template/stories/preview';
+import * as templatePreview from '../core/template/stories/preview';
 import { DocsPageWrapper } from '../lib/blocks/src/components';
+import '../renderers/react/template/components/index';
 import { isChromatic } from './isChromatic';
 
 const { document } = global;
@@ -362,6 +375,7 @@ const parameters = {
 };
 
 export const config = defineConfig({
+  addons: [addonThemes, essentials, a11y, addonsPreview, templatePreview],
   parameters,
   decorators,
   loaders,
