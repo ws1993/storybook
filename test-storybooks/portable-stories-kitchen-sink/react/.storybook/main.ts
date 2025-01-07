@@ -17,6 +17,13 @@ const config: StorybookConfig = {
   },
   viteFinal: (config) => ({
     ...config,
+    resolve: {
+      ...config.resolve,
+      alias: {
+        ...config.resolve?.alias,
+        'test-alias': join(__dirname, 'aliased.ts'),
+      },
+    },
     optimizeDeps: {
       ...config.optimizeDeps,
       include: [
@@ -34,17 +41,5 @@ const config: StorybookConfig = {
     }
   </style>`,
   staticDirs: [{ from: './test-static-dirs', to:'test-static-dirs' }],
-  viteFinal: (config) => {
-    return {
-      ...config,
-      resolve: {
-        ...config.resolve,
-        alias: {
-          ...config.resolve?.alias,
-          'test-alias': join(__dirname, 'aliased.ts'),
-        },
-      }
-    };
-  },
 };
 export default config;
