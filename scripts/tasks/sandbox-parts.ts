@@ -822,7 +822,10 @@ export const extendPreview: Task['run'] = async ({ template, sandboxDir }) => {
   logger.log('📝 Extending preview.js');
   const previewConfig = await readConfig({ cwd: sandboxDir, fileName: 'preview' });
 
-  if (template.expected.framework === '@storybook/react-vite') {
+  if (
+    template.expected.framework === '@storybook/react-vite' &&
+    !template.skipTasks.includes('vitest-integration')
+  ) {
     // add CSF4 style config
     previewConfig.setImport(['defineConfig'], '@storybook/react/preview');
     // and all of the addons/previewAnnotations that are needed
