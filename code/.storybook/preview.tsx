@@ -25,8 +25,8 @@ import { defineConfig } from '@storybook/react/preview';
 // import * as designs from '@storybook/addon-designs/preview';
 // import * as test from '@storybook/experimental-addon-test/preview';
 import * as a11y from '@storybook/addon-a11y/preview';
-// @ts-expect-error TODO: @kasperpeulen investigate the issue with /preview entrypoint
-import * as essentials from '@storybook/addon-essentials/preview-TODO-INVESTIGATE-THIS';
+// @ts-expect-error Must be typed
+import * as essentials from '@storybook/addon-essentials/entry-preview';
 // @ts-expect-error Must be typed
 import * as addonThemes from '@storybook/addon-themes/preview';
 

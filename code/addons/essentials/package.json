@@ -27,7 +27,7 @@
       "import": "./dist/index.mjs",
       "require": "./dist/index.js"
     },
-    "./preview-TODO-INVESTIGATE-THIS": {
+    "./entry-preview": {
       "types": "./dist/preview.d.ts",
       "import": "./dist/preview.mjs",
       "require": "./dist/preview.js"
