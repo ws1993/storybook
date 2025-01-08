@@ -3,6 +3,8 @@ import React from 'react';
 import { debounce } from 'es-toolkit';
 import { Box, Text, render } from 'ink';
 
+import { Demo } from './Demo';
+
 declare global {
   // eslint-disable-next-line no-var
   var CLI_APP_INSTANCE: ReturnType<typeof render> | undefined;
@@ -40,13 +42,7 @@ export async function run(options: Options) {
       state.height = process.stdout.rows || 40;
 
       process.stdout.write('\x1Bc');
-      rerender(
-        <Box>
-          <Text>
-            {state.name} - {state.width} x {state.height}
-          </Text>
-        </Box>
-      );
+      rerender(<Demo {...state} />);
     },
     8,
     { edges: ['trailing'] }

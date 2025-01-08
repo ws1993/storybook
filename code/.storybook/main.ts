@@ -96,6 +96,10 @@ const config: StorybookConfig = {
       directory: '../addons/test/template/stories',
       titlePrefix: 'addons/test',
     },
+    {
+      directory: '../lib/create-storybook/src/ink',
+      titlePrefix: 'CLI/create-storybook',
+    },
   ],
   addons: [
     '@storybook/addon-themes',
@@ -165,7 +169,8 @@ const config: StorybookConfig = {
       resolve: {
         alias: {
           // ink related
-          'is-in-ci': require.resolve(join(__dirname, './mocks/is-in-ci.js')),
+          'cli-cursor': require.resolve(join(__dirname, './mocks/cli-cursor.ts')),
+          'is-in-ci': require.resolve(join(__dirname, './mocks/is-in-ci.ts')),
           'yoga-wasm-web/auto': 'https://cdn.jsdelivr.net/npm/yoga-wasm-web@0.3.3/dist/browser.js',
           'yoga-wasm-web': 'https://cdn.jsdelivr.net/npm/yoga-wasm-web@0.3.3/+esm',
 
