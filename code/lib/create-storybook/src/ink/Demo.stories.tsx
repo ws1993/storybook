@@ -8,10 +8,6 @@ import { render } from 'ink';
 
 import { Demo } from './Demo';
 
-interface Options {
-  name?: string[];
-}
-
 interface Stream extends EventEmitter {
   output: string;
   columns: number;
