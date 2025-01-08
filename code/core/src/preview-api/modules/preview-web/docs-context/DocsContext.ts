@@ -162,7 +162,9 @@ export class DocsContext<TRenderer extends Renderer> implements DocsContextProps
       return { type: 'meta', csfFile } as TResolvedExport;
     }
 
-    const story = this.exportToStory.get(moduleExportOrType);
+    const story = this.exportToStory.get(
+      'isCSFFactory' in moduleExportOrType ? moduleExportOrType.annotations : moduleExportOrType
+    );
 
     if (story) {
       return { type: 'story', story } as TResolvedExport;

@@ -1,4 +1,4 @@
-import type { ComponentType } from 'react';
+import type { ComponentProps, ComponentType } from 'react';
 
 import { composeConfigs } from 'storybook/internal/preview-api';
 import type {
@@ -9,6 +9,8 @@ import type {
   Renderer,
   StoryAnnotations,
 } from 'storybook/internal/types';
+
+import type { SetOptional } from 'type-fest';
 
 import * as reactAnnotations from './entry-preview';
 import * as reactDocsAnnotations from './entry-preview-docs';
@@ -33,36 +35,37 @@ class PreviewConfig<TRenderer extends Renderer> {
     this.annotations = composeConfigs([...(addons ?? []), rest]);
   }
 
-  readonly meta = <TComponent extends ComponentType<any>, TMetaArgs extends Args>(
+  readonly meta = <
+    TComponent extends ComponentType<any>,
+    TMetaArgs extends Partial<ComponentProps<TComponent>>,
+  >(
     meta: ComponentAnnotations<TRenderer, any> & { component: TComponent; args: TMetaArgs }
   ) => {
-    return new Meta<TRenderer, TMetaArgs>(meta as ComponentAnnotations<TRenderer, TMetaArgs>, this);
+    return new Meta<TRenderer, ComponentProps<TComponent>, TMetaArgs>(meta, this);
   };
 
   readonly isCSFFactoryPreview = true;
 }
 
-class Meta<TRenderer extends Renderer, TArgs extends Args> {
+class Meta<TRenderer extends Renderer, TArgs extends Args, TRequiredArgs extends Args> {
   readonly annotations: ComponentAnnotations<TRenderer, TArgs>;
 
   readonly config: PreviewConfig<TRenderer>;
 
-  constructor(
-    annotations: ComponentAnnotations<TRenderer, TArgs>,
-    config: PreviewConfig<TRenderer>
-  ) {
+  constructor(annotations: ComponentAnnotations<TRenderer, any>, config: PreviewConfig<TRenderer>) {
     this.annotations = annotations;
     this.config = config;
   }
 
-  readonly story = (story: StoryAnnotations<TRenderer, TArgs>) =>
-    new Story(story, this, this.config);
+  readonly story = (
+    story: StoryAnnotations<TRenderer, TArgs, SetOptional<TArgs, keyof TArgs & keyof TRequiredArgs>>
+  ) => new Story(story as any, this, this.config);
 }
 
-class Story<TRenderer extends Renderer, TArgs extends Args> {
+class Story<TRenderer extends Renderer, TArgs extends Args, TRequiredArgs extends Args> {
   constructor(
     public annotations: StoryAnnotations<TRenderer, TArgs>,
-    public meta: Meta<TRenderer, TArgs>,
+    public meta: Meta<TRenderer, TArgs, TRequiredArgs>,
     public config: PreviewConfig<TRenderer>
   ) {}
 
