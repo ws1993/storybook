@@ -87,13 +87,8 @@ export class SbPage {
 
   async waitForStoryLoaded() {
     try {
-      // wait for the story to be visitedz
+      // wait for the story to be visited
       await this.page.waitForURL((url) => url.search.includes(`path`));
-
-      // TODO: Remove this once docs are actually working
-      if (this.page.url().includes('/docs/')) {
-        return;
-      }
 
       const root = this.previewRoot();
       // Wait until there is at least one child (a story element) in the preview iframe
