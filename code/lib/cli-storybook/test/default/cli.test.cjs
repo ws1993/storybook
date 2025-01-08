@@ -17,7 +17,7 @@ describe('Help command', () => {
   it('should prints out "init" command', () => {
     const { status, stdout, stderr } = run(['help']);
 
-    // expect(status).toBe(0);
+    expect(status).toBe(0);
     expect(stderr.toString()).toBe('');
     expect(stdout.toString()).toContain('init');
     expect(stdout.toString()).toContain('Initialize Storybook into your project');
