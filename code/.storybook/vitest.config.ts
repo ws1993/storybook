@@ -1,6 +1,7 @@
 import { defaultExclude, defineProject, mergeConfig } from 'vitest/config';
 
 import Inspect from 'vite-plugin-inspect';
+import topLevelAwait from 'vite-plugin-top-level-await';
 
 import { vitestCommonConfig } from '../vitest.workspace';
 
@@ -31,6 +32,7 @@ export default mergeConfig(
         })
       ),
       ...extraPlugins,
+      topLevelAwait(),
     ],
     test: {
       name: 'storybook-ui',
@@ -39,6 +41,7 @@ export default mergeConfig(
         '../node_modules/**',
         '**/__mockdata__/**',
         '../**/__mockdata__/**',
+        '**/ink/**', // these stories need a lot of node dependencies aliased, which breaks portable stories
         '**/Zoom.stories.tsx', // expected to fail in Vitest because of fetching /iframe.html to cause ECONNREFUSED
         '**/lib/blocks/src/**', // won't work because of https://github.com/storybookjs/storybook/issues/29783
       ],

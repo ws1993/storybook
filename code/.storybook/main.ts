@@ -141,8 +141,6 @@ const config: StorybookConfig = {
   viteFinal: async (viteConfig, { configType }) => {
     const { mergeConfig } = await import('vite');
 
-    // console.log(viteConfig);
-
     return mergeConfig(viteConfig, {
       plugins: [
         nodePolyfills({
