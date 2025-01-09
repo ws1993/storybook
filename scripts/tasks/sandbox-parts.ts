@@ -847,6 +847,10 @@ export const extendPreview: Task['run'] = async ({ template, sandboxDir }) => {
     previewConfig.setImport(['defineConfig'], '@storybook/react/preview');
     // and all of the addons/previewAnnotations that are needed
     previewConfig.setImport(null, '../src/stories/components');
+    previewConfig.setImport(
+      { namespace: 'addonEssentialsAnnotations' },
+      '@storybook/addon-essentials/entry-preview'
+    );
     previewConfig.setImport({ namespace: 'addonA11yAnnotations' }, '@storybook/addon-a11y/preview');
     previewConfig.setImport(
       { namespace: 'addonActionsAnnotations' },
@@ -873,6 +877,7 @@ export const extendPreview: Task['run'] = async ({ template, sandboxDir }) => {
                 t.objectProperty(
                   t.identifier('addons'),
                   t.arrayExpression([
+                    t.identifier('addonEssentialsAnnotations'),
                     t.identifier('addonA11yAnnotations'),
                     t.identifier('addonActionsAnnotations'),
                     t.identifier('addonTestAnnotations'),
