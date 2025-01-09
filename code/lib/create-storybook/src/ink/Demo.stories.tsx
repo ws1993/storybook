@@ -57,7 +57,9 @@ const meta = {
         };
         stdout.setEncoding = () => {};
         stdout.setRawMode = () => {};
+        // @ts-expect-error (TODO)
         stdout.ref = () => {};
+        // @ts-expect-error (TODO)
         stdout.unref = () => {};
         stdout.resume = () => {};
         stdout.pause = () => {};
