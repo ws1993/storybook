@@ -7,8 +7,14 @@ import { Terminal } from '@xterm/xterm';
 import '@xterm/xterm/css/xterm.css';
 import EventEmitter from 'events';
 import { render } from 'ink';
+import * as IntlSegmeterPolyfill from 'intl-segmenter-polyfill-rs';
 
 import { Demo } from './Demo';
+
+if (Intl.Segmenter === undefined) {
+  // @ts-expect-error (TODO remove when chromatic capture has updated their firefox version)
+  Intl.Segmenter = IntlSegmeterPolyfill.Segmenter;
+}
 
 interface Stream extends EventEmitter {
   output: string;

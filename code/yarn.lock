@@ -7098,6 +7098,7 @@ __metadata:
     http-server: "npm:^14.1.1"
     husky: "npm:^4.3.7"
     ink: "npm:^5.1.0"
+    intl-segmenter-polyfill-rs: "npm:^0.1.7"
     lint-staged: "npm:^13.2.2"
     mock-require: "npm:^3.0.3"
     nx: "npm:20.2.2"
@@ -18067,6 +18068,13 @@ __metadata:
     hasown: "npm:^2.0.0"
     side-channel: "npm:^1.0.4"
   checksum: 10c0/f8b294a4e6ea3855fc59551bbf35f2b832cf01fd5e6e2a97f5c201a071cc09b49048f856e484b67a6c721da5e55736c5b6ddafaf19e2dbeb4a3ff1821680de6c
+  languageName: node
+  linkType: hard
+
+"intl-segmenter-polyfill-rs@npm:^0.1.7":
+  version: 0.1.7
+  resolution: "intl-segmenter-polyfill-rs@npm:0.1.7"
+  checksum: 10c0/3c2f1ce8953b31ede0b1987a9b8cffadb1d294cb08c66f337b1d47ae72854aded1519cfd2ef2b4d78a727ce90fed3a293e4850eda7e136d0ea519d6fa52ed8ea
   languageName: node
   linkType: hard
 
