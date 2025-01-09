@@ -179,7 +179,11 @@ const run = async ({ cwd, flags }: { cwd: string; flags: string[] }) => {
         esbuildPlugins: [
           replacePlugin({
             include: /node_modules\/ink/,
-            pattern: [[`process.env['DEV']`, `'false'`]],
+            pattern: [
+              //
+              [`process.env['DEV']`, `'false'`],
+              [`await import('./devtools.js')`, ''],
+            ],
           }) as any as EsbuildPlugin,
         ],
         external: [...externals, ...nodeInternals],
