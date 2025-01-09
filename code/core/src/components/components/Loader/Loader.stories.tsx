@@ -43,3 +43,5 @@ export const ProgressBar = () => (
 );
 
 export const ProgressError = () => <Loader error={new Error('Connection closed')} />;
+
+export const Debug = () => <div>for chromatic: {navigator.userAgent}</div>;

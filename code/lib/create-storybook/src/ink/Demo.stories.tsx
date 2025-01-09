@@ -3,11 +3,9 @@ import React from 'react';
 
 import type { Meta, StoryObj } from '@storybook/react';
 
-// import { Terminal } from '@xterm/xterm';
 import '@xterm/xterm/css/xterm.css';
 import EventEmitter from 'events';
 
-// import { render } from 'ink';
 import { Demo } from './Demo';
 
 interface Stream extends EventEmitter {
@@ -123,9 +121,3 @@ type Story = StoryObj<typeof meta>;
 export default meta;
 
 export const Small: Story = {};
-
-export const Debug: Story = {
-  render: () => {
-    return <div>for chromatic: {navigator.userAgent}</div>;
-  },
-};
