@@ -28,7 +28,30 @@ declare global {
   var __XTERM_INSTANCES__: any;
 }
 
+const customViewports = {
+  small: {
+    name: 'Small',
+    styles: {
+      width: '380px',
+      height: '500px',
+    },
+  },
+  large: {
+    name: 'Large',
+    styles: {
+      width: '880px',
+      height: '500px',
+    },
+  },
+};
+
 const meta = {
+  globals: {
+    sb_theme: 'light',
+  },
+  parameters: {
+    layout: 'centered',
+  },
   component: Demo,
   args: {
     name: 'world',
@@ -111,4 +134,4 @@ type Story = StoryObj<typeof meta>;
 
 export default meta;
 
-export const First: Story = {};
+export const Small: Story = {};
