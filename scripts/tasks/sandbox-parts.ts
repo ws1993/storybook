@@ -447,33 +447,50 @@ export async function setupVitest(details: TemplateDetails, options: PassedOptio
     : template.expected.renderer;
   const viteConfigPath = template.name.includes('JavaScript') ? 'vite.config.js' : 'vite.config.ts';
 
-  await writeFile(
-    join(sandboxDir, '.storybook/vitest.setup.ts'),
-    dedent`import { beforeAll } from 'vitest'
-    import { setProjectAnnotations } from '${storybookPackage}'
-    import * as rendererDocsAnnotations from '${template.expected.renderer}/dist/entry-preview-docs.mjs'
-    import * as addonA11yAnnotations from '@storybook/addon-a11y/preview'
-    import * as addonActionsAnnotations from '@storybook/addon-actions/preview'
-    import * as addonTestAnnotations from '@storybook/experimental-addon-test/preview'
-    import '../src/stories/components'
-    import * as coreAnnotations from '../template-stories/core/preview'
-    import * as toolbarAnnotations from '../template-stories/addons/toolbars/preview'
-    import * as projectAnnotations from './preview'
-    ${isVue ? 'import * as vueAnnotations from "../src/stories/renderers/vue3/preview.js"' : ''}
+  const setupFilePath = join(sandboxDir, '.storybook/vitest.setup.ts');
 
-    const annotations = setProjectAnnotations([
-      ${isVue ? 'vueAnnotations,' : ''}
-      rendererDocsAnnotations,
-      coreAnnotations,
-      toolbarAnnotations,
-      addonActionsAnnotations,
-      addonTestAnnotations,
-      addonA11yAnnotations,
-      projectAnnotations,
-    ])
+  const shouldUseCsf4 = template.expected.framework === '@storybook/react-vite';
+  if (shouldUseCsf4) {
+    await writeFile(
+      setupFilePath,
+      dedent`import { beforeAll } from 'vitest'
+      import { setProjectAnnotations } from '${storybookPackage}'
+      import * as projectAnnotations from './preview'
 
-    beforeAll(annotations.beforeAll)`
-  );
+      // setProjectAnnotations still kept to support non-CSF4 story tests
+      const annotations = setProjectAnnotations(projectAnnotations.config.annotations)
+      beforeAll(annotations.beforeAll)
+      `
+    );
+  } else {
+    await writeFile(
+      setupFilePath,
+      dedent`import { beforeAll } from 'vitest'
+      import { setProjectAnnotations } from '${storybookPackage}'
+      import * as rendererDocsAnnotations from '${template.expected.renderer}/dist/entry-preview-docs.mjs'
+      import * as addonA11yAnnotations from '@storybook/addon-a11y/preview'
+      import * as addonActionsAnnotations from '@storybook/addon-actions/preview'
+      import * as addonTestAnnotations from '@storybook/experimental-addon-test/preview'
+      import '../src/stories/components'
+      import * as coreAnnotations from '../template-stories/core/preview'
+      import * as toolbarAnnotations from '../template-stories/addons/toolbars/preview'
+      import * as projectAnnotations from './preview'
+      ${isVue ? 'import * as vueAnnotations from "../src/stories/renderers/vue3/preview.js"' : ''}
+  
+      const annotations = setProjectAnnotations([
+        ${isVue ? 'vueAnnotations,' : ''}
+        rendererDocsAnnotations,
+        coreAnnotations,
+        toolbarAnnotations,
+        addonActionsAnnotations,
+        addonTestAnnotations,
+        addonA11yAnnotations,
+        projectAnnotations,
+      ])
+  
+      beforeAll(annotations.beforeAll)`
+    );
+  }
 
   await writeFile(
     join(sandboxDir, 'vitest.workspace.ts'),
