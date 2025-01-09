@@ -199,6 +199,9 @@ const config: StorybookConfig = {
         sourcemap: process.env.CI !== 'true',
         target: ['chrome100'],
       },
+      esbuild: {
+        target: ['chrome100'],
+      },
       server: {
         watch: {
           // Something odd happens with tsconfig and nx which causes Storybook to keep reloading, so we ignore them
