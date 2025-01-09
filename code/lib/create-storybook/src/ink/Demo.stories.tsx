@@ -1,6 +1,8 @@
 /* eslint-disable no-underscore-dangle */
 import React from 'react';
 
+import type { Meta, StoryObj } from '@storybook/react';
+
 import { Terminal } from '@xterm/xterm';
 import '@xterm/xterm/css/xterm.css';
 import EventEmitter from 'events';
@@ -21,7 +23,12 @@ interface Stream extends EventEmitter {
   isTTY: boolean;
 }
 
-export default {
+declare global {
+  // eslint-disable-next-line no-var, @typescript-eslint/naming-convention
+  var __XTERM_INSTANCES__: any;
+}
+
+const meta = {
   component: Demo,
   args: {
     name: 'world',
@@ -96,6 +103,10 @@ export default {
       return <div id={`terminal--${id}`}></div>;
     },
   ],
-};
+} satisfies Meta<typeof Demo>;
 
-export const First = {};
+type Story = StoryObj<typeof meta>;
+
+export default meta;
+
+export const First: Story = {};
