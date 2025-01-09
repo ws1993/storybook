@@ -1,7 +1,6 @@
 import { join } from 'node:path';
 
 import { nodePolyfills } from 'vite-plugin-node-polyfills';
-import topLevelAwait from 'vite-plugin-top-level-await';
 
 import type { StorybookConfig } from '../frameworks/react-vite';
 
