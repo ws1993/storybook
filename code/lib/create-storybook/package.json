@@ -74,7 +74,7 @@
     "@xterm/xterm": "^5.5.0",
     "boxen": "^7.1.1",
     "es-toolkit": "^1.22.0",
-    "ink": "patch:ink@npm%3A5.1.0#~/.yarn/patches/ink-npm-5.1.0-5eb899d847.patch",
+    "ink": "^5.1.0",
     "picocolors": "^1.1.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
