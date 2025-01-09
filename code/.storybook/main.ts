@@ -164,7 +164,6 @@ const config: StorybookConfig = {
             tty: require.resolve('tty-browserify'),
           },
         }),
-        topLevelAwait(),
       ],
       resolve: {
         alias: {
@@ -199,6 +198,7 @@ const config: StorybookConfig = {
       build: {
         // disable sourcemaps in CI to not run out of memory
         sourcemap: process.env.CI !== 'true',
+        target: ['chrome100'],
       },
       server: {
         watch: {
