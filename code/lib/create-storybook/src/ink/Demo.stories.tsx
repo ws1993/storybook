@@ -123,3 +123,9 @@ type Story = StoryObj<typeof meta>;
 export default meta;
 
 export const Small: Story = {};
+
+export const Debug: Story = {
+  render: () => {
+    return <div>for chromatic: {navigator.userAgent}</div>;
+  },
+};
