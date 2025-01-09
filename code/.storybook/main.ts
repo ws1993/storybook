@@ -1,6 +1,7 @@
 import { join } from 'node:path';
 
 import { nodePolyfills } from 'vite-plugin-node-polyfills';
+import topLevelAwait from 'vite-plugin-top-level-await';
 
 import type { StorybookConfig } from '../frameworks/react-vite';
 
@@ -163,6 +164,7 @@ const config: StorybookConfig = {
             tty: require.resolve('tty-browserify'),
           },
         }),
+        ...(configType === 'DEVELOPMENT' ? [topLevelAwait()] : []),
       ],
       resolve: {
         alias: {
@@ -199,9 +201,7 @@ const config: StorybookConfig = {
         sourcemap: process.env.CI !== 'true',
         target: ['chrome100'],
       },
-      esbuild: {
-        target: ['chrome100'],
-      },
+
       server: {
         watch: {
           // Something odd happens with tsconfig and nx which causes Storybook to keep reloading, so we ignore them
