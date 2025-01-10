@@ -178,7 +178,7 @@ const run = async ({ cwd, flags }: { cwd: string; flags: string[] }) => {
 
         esbuildPlugins: [
           replacePlugin({
-            include: /node_modules\/ink/,
+            include: RegExp(join('node_modules', 'ink')),
             pattern: [
               //
               [`process.env['DEV']`, `'false'`],
