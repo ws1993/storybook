@@ -8,7 +8,6 @@ import { action } from '@storybook/addon-actions';
 import { defineConfig } from '../preview';
 import { Button } from './Button';
 
-// eslint-disable-next-line storybook/default-exports
 const config = defineConfig({ args: { children: 'TODO: THIS IS NOT WORKING YET' } });
 
 const meta = config.meta({

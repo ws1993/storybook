@@ -6,7 +6,6 @@ import { FaceHappyIcon } from '@storybook/icons';
 import { config } from '../../../../../.storybook/preview';
 import { Button } from './Button';
 
-// eslint-disable-next-line storybook/default-exports
 const meta = config.meta({
   id: 'button-component',
   title: 'Button',
