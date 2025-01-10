@@ -1,6 +1,7 @@
 import type { ComponentProps, ComponentType } from 'react';
 
 import { composeConfigs } from 'storybook/internal/preview-api';
+import { normalizeProjectAnnotations } from 'storybook/internal/preview-api';
 import type {
   Args,
   ComponentAnnotations,
@@ -32,7 +33,7 @@ class PreviewConfig<TRenderer extends Renderer> {
 
   constructor(data: PreviewConfigData<TRenderer>) {
     const { addons, ...rest } = data;
-    this.annotations = composeConfigs([...(addons ?? []), rest]);
+    this.annotations = normalizeProjectAnnotations(composeConfigs([...(addons ?? []), rest]));
   }
 
   readonly meta = <

@@ -53,6 +53,7 @@ export {
   userOrAutoTitleFromSpecifier,
   userOrAutoTitle,
   sortStoriesV7,
+  normalizeProjectAnnotations,
 } from './store';
 
 export { createPlaywrightTest } from './modules/store/csf/portable-stories';
