@@ -1,7 +1,6 @@
 import { defaultExclude, defineProject, mergeConfig } from 'vitest/config';
 
 import Inspect from 'vite-plugin-inspect';
-import topLevelAwait from 'vite-plugin-top-level-await';
 
 import { vitestCommonConfig } from '../vitest.workspace';
 
@@ -32,7 +31,6 @@ export default mergeConfig(
         })
       ),
       ...extraPlugins,
-      topLevelAwait(),
     ],
     test: {
       name: 'storybook-ui',
