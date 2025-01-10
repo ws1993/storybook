@@ -234,7 +234,7 @@ describe('success', () => {
         ..."
     `);
   });
-  test.only('CSF4 Variances', async () => {
+  test('CSF4 Variances', async () => {
     const newArgs = { bordered: true, initial: 'test1' };
 
     const before = await format(await readFile(FILES.csf4Variances, 'utf-8'), {
