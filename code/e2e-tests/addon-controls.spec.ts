@@ -9,10 +9,6 @@ const templateName = process.env.STORYBOOK_TEMPLATE_NAME || '';
 test.describe('addon-controls', () => {
   test('should change component when changing controls', async ({ page }) => {
     test.skip(templateName.includes('react-native-web'), 'React Native CSS behaves differently');
-    test.skip(
-      templateName.includes('svelte-vite/default-ts'),
-      'TODO: this is skipped until https://github.com/storybookjs/storybook/issues/30223 is resolved'
-    );
 
     await page.goto(storybookUrl);
     const sbPage = new SbPage(page, expect);
