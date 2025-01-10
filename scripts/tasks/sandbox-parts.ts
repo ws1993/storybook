@@ -901,6 +901,21 @@ export const extendPreview: Task['run'] = async ({ template, sandboxDir }) => {
   await writeConfig(previewConfig);
 };
 
+export const runMigrations: Task['run'] = async ({ sandboxDir, template }, { dryRun, debug }) => {
+  if (
+    template.expected.framework === '@storybook/react-vite' &&
+    !template.skipTasks.includes('vitest-integration')
+  ) {
+    await executeCLIStep(steps.migrate, {
+      cwd: sandboxDir,
+      argument: 'csf-3-to-4',
+      optionValues: { glob: 'src/stories/*.stories.*' },
+      dryRun,
+      debug,
+    });
+  }
+};
+
 export async function setImportMap(cwd: string) {
   const packageJson = await readJson(join(cwd, 'package.json'));
 

@@ -73,6 +73,15 @@ export const steps = {
     icon: '🖥 ',
     options: createOptions({}),
   },
+  migrate: {
+    command: 'migrate',
+    hasArgument: true,
+    description: 'Run codemods',
+    icon: '🚀',
+    options: createOptions({
+      glob: { type: 'string' },
+    }),
+  },
 };
 
 export async function executeCLIStep<TOptions extends OptionSpecifier>(

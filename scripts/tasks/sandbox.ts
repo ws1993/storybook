@@ -64,6 +64,7 @@ export const sandbox: Task = {
       addExtraDependencies,
       setImportMap,
       setupVitest,
+      runMigrations,
     } = await import('./sandbox-parts');
 
     const extraDeps = [
@@ -146,6 +147,8 @@ export const sandbox: Task = {
     await extendPreview(details, options);
 
     await setImportMap(details.sandboxDir);
+
+    await runMigrations(details, options);
 
     logger.info(`✅ Storybook sandbox created at ${details.sandboxDir}`);
   },
