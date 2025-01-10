@@ -273,7 +273,17 @@ describe('success', () => {
       +     initial: "test1",
       +   },
       + });
-      + "
+      + 
+        export const WithArgs = meta.story({
+          args: {
+            foo: "bar",
+        
+      +     bordered: true,
+      +     initial: "test1",
+      + 
+          },
+        });
+        "
     `);
   });
   test('Export Variances', async () => {
