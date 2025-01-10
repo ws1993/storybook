@@ -53,22 +53,12 @@ export default async function transform(info: FileInfo) {
     }
   });
 
-  if (!foundConfigImport) {
-    const configImport = babel.types.importDeclaration(
-      [
-        babel.types.importSpecifier(
-          babel.types.identifier('config'),
-          babel.types.identifier('config')
-        ),
-      ],
-      babel.types.stringLiteral('#.storybook/preview')
-    );
-    programNode.body.unshift(configImport);
-  }
+  let hasMeta = false;
 
   file.path.traverse({
     // Meta export
     ExportDefaultDeclaration: (path) => {
+      hasMeta = true;
       const declaration = path.node.declaration;
 
       /**
@@ -134,7 +124,7 @@ export default async function transform(info: FileInfo) {
     ExportNamedDeclaration: (path) => {
       const declaration = path.node.declaration;
 
-      if (!declaration || !isVariableDeclaration(declaration)) {
+      if (!declaration || !isVariableDeclaration(declaration) || !hasMeta) {
         return;
       }
 
@@ -167,6 +157,19 @@ export default async function transform(info: FileInfo) {
       });
     },
   });
+
+  if (hasMeta && !foundConfigImport) {
+    const configImport = babel.types.importDeclaration(
+      [
+        babel.types.importSpecifier(
+          babel.types.identifier('config'),
+          babel.types.identifier('config')
+        ),
+      ],
+      babel.types.stringLiteral('#.storybook/preview')
+    );
+    programNode.body.unshift(configImport);
+  }
 
   // Generate the transformed code
   const { code } = babel.transformFromAstSync(fileNode, info.source, {
