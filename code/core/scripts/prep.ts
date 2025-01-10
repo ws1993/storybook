@@ -1,7 +1,7 @@
 /* eslint-disable local-rules/no-uncategorized-errors */
 import { existsSync, watch } from 'node:fs';
 import { mkdir, rm, writeFile } from 'node:fs/promises';
-import { dirname, join } from 'node:path';
+import { dirname, join, sep } from 'node:path';
 
 import type { Plugin as EsbuildPlugin, Metafile } from 'esbuild';
 // eslint-disable-next-line import/no-extraneous-dependencies
@@ -128,7 +128,7 @@ async function run() {
       conditions: ['node', 'module', 'import', 'require'],
       plugins: [
         replacePlugin({
-          include: RegExp(join('node_modules', 'ink')),
+          include: sep === '/' ? /node_modules\/ink/ : /node_modules\\\\ink/,
           pattern: [
             //
             [`process.env['DEV']`, `'false'`],
