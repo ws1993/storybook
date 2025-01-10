@@ -128,7 +128,7 @@ async function run() {
       conditions: ['node', 'module', 'import', 'require'],
       plugins: [
         replacePlugin({
-          include: sep === '/' ? /node_modules\/ink/ : /node_modules\\\\ink/,
+          include: sep === '/' ? /node_modules\/ink/ : /node_modules\\ink/,
           pattern: [
             //
             [`process.env['DEV']`, `'false'`],
