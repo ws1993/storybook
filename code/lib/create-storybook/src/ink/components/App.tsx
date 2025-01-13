@@ -3,14 +3,9 @@ import type { ComponentProps } from 'react';
 
 import { Box, Text, useFocusManager, useInput } from 'ink';
 
+import type { State } from '../app';
 import { Question } from './Question';
 import { Rainbow } from './Rainbow';
-
-type Props = {
-  name: string | undefined;
-  width: number;
-  height: number;
-};
 
 const ContentBox = ({ text, ...rest }: { text: string } & ComponentProps<typeof Box>) => {
   const lines = text.split('\n');
@@ -21,7 +16,7 @@ const ContentBox = ({ text, ...rest }: { text: string } & ComponentProps<typeof 
   );
 };
 
-export function App({ width, height }: Props) {
+export function App({ width, height }: State) {
   const { focus } = useFocusManager();
   const [content, setContent] = useState('Hello World!');
 
@@ -49,7 +44,7 @@ export function App({ width, height }: Props) {
       paddingTop={1}
       paddingBottom={1}
       width={width}
-      height={height}
+      // height={height}
       flexDirection="column"
       gap={1}
     >
@@ -85,7 +80,7 @@ export function App({ width, height }: Props) {
             question="Which renderer/framework do you use?"
             initial={['react']}
             onChange={(selected) => {
-              console.log(selected);
+              // console.log(selected);
             }}
             options={{
               nextjs: 'NextJS',
@@ -105,7 +100,7 @@ export function App({ width, height }: Props) {
             question="Which features interest you?"
             initial={['ct', 'a11y']}
             onChange={(selected) => {
-              console.log(selected);
+              // console.log(selected);
             }}
             options={{
               ct: 'Component testing',

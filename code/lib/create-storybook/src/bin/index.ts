@@ -91,7 +91,6 @@ legacyProgram
     const d = modernInputs.safeParse(options);
 
     if (d.success) {
-      console.log({ options });
       // modern CLI app
       const { run } = await import('../ink/app');
       await run(d.data);

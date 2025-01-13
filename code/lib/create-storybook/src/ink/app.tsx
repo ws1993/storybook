@@ -1,11 +1,11 @@
 import React from 'react';
 
 import { debounce } from 'es-toolkit';
-import { Box, Text, render } from 'ink';
+import { render } from 'ink';
 import type { z } from 'zod';
 
 import type { modernInputs as inputs } from '../bin/modernInputs';
-import { Demo } from './Demo';
+import { App } from './components/App';
 
 declare global {
   // eslint-disable-next-line no-var
@@ -42,11 +42,7 @@ export async function run(options: z.infer<typeof inputs>) {
   };
 
   // process.stdout.write('\x1Bc');
-  globalThis.CLI_APP_INSTANCE = render(
-    <Box>
-      <Text>HELLO</Text>
-    </Box>
-  );
+  globalThis.CLI_APP_INSTANCE = render(<App {...state} />);
 
   const { rerender, waitUntilExit } = globalThis.CLI_APP_INSTANCE;
 
@@ -55,8 +51,8 @@ export async function run(options: z.infer<typeof inputs>) {
       state.width = process.stdout.columns || 120;
       state.height = process.stdout.rows || 40;
 
-      process.stdout.write('\x1Bc');
-      rerender(<Demo {...state} />);
+      // process.stdout.write('\x1Bc');
+      rerender(<App {...state} />);
     },
     8,
     { edges: ['trailing'] }
