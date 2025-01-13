@@ -1,5 +1,6 @@
 import { z } from 'zod';
 
+// TODO: sync this/pull this from core
 export const supportedFrameworks = [
   'angular',
   'auto',

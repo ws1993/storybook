@@ -13,6 +13,13 @@ const IS_NON_STORYBOOK_SANDBOX = process.env.IN_STORYBOOK_SANDBOX !== 'true';
 
 addToGlobalContext('cliVersion', version);
 
+/**
+ * Create a commander application with flags for both legacy and modern. We then check the options
+ * given by commander with zod. If zod validates the options, we run the modern version of the app.
+ * If zod fails to validate the options, we check why, and if it's because of a legacy flag, we run
+ * the legacy version of the app.
+ */
+
 const createStorybookProgram = program.name('Initialize Storybook into your project.');
 
 const modernProgram = Object.entries(modernInputs.shape).reduce((acc, [key, schema]) => {
@@ -85,11 +92,12 @@ legacyProgram
 
     if (d.success) {
       console.log({ options });
-      //
+      // modern CLI app
       const { run } = await import('../ink/app');
       await run(d.data);
     } else if (d.error) {
       if (d.error.errors.some((e) => e.code === 'unrecognized_keys')) {
+        // legacy CLI app
         options.debug = options.debug ?? false;
         options.dev = options.dev ?? (IS_NON_CI && IS_NON_STORYBOOK_SANDBOX);
 
