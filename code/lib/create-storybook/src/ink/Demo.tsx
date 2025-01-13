@@ -2,16 +2,12 @@ import React from 'react';
 
 import { Box, Text } from 'ink';
 
-export function Demo(state: {
-  name: string | string[];
-  width: number;
-  height: number;
-}): React.ReactNode {
+import type { State } from './app';
+
+export function Demo(state: State) {
   return (
     <Box>
-      <Text>
-        {state.name} - {state.width} x {state.height}
-      </Text>
+      <Text>HELLO</Text>
     </Box>
   );
 }

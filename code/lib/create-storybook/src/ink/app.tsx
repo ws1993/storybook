@@ -2,7 +2,9 @@ import React from 'react';
 
 import { debounce } from 'es-toolkit';
 import { Box, Text, render } from 'ink';
+import type { z } from 'zod';
 
+import type { modernInputs as inputs } from '../bin/modernInputs';
 import { Demo } from './Demo';
 
 declare global {
@@ -14,23 +16,35 @@ if (globalThis.CLI_APP_INSTANCE) {
   globalThis.CLI_APP_INSTANCE.unmount();
 }
 
-interface Options {
-  name?: string[];
-}
+export type State = {
+  features: {
+    docs: z.infer<typeof inputs>['featuresDocs'];
+    test: z.infer<typeof inputs>['featuresTest'];
+    onboarding: z.infer<typeof inputs>['featuresOnboarding'];
+    essentials: z.infer<typeof inputs>['featuresEssentials'];
+    examples: z.infer<typeof inputs>['featuresExamples'];
+  };
+  width: number;
+  height: number;
+};
 
-export async function run(options: Options) {
-  const state = {
-    name: options.name || 'stranger',
+export async function run(options: z.infer<typeof inputs>) {
+  const state: State = {
+    features: {
+      docs: options.featuresDocs,
+      test: options.featuresTest,
+      onboarding: options.featuresOnboarding,
+      essentials: options.featuresEssentials,
+      examples: options.featuresExamples,
+    },
     width: process.stdout.columns || 120,
     height: process.stdout.rows || 40,
   };
 
-  process.stdout.write('\x1Bc');
+  // process.stdout.write('\x1Bc');
   globalThis.CLI_APP_INSTANCE = render(
     <Box>
-      <Text>
-        {state.name} - {state.width} x {state.height}
-      </Text>
+      <Text>HELLO</Text>
     </Box>
   );
 
