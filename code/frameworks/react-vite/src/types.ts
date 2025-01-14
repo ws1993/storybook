@@ -1,4 +1,3 @@
-import { defineConfig as commonDefineConfig } from 'storybook/internal/common';
 import type {
   CompatibleString,
   StorybookConfig as StorybookConfigBase,
@@ -64,7 +63,3 @@ export type StorybookConfig = Omit<
   StorybookConfigFramework & {
     typescript?: Partial<TypescriptOptions>;
   };
-
-export function defineConfig(config: StorybookConfig) {
-  return commonDefineConfig<StorybookConfig>(config);
-}

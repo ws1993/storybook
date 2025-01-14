@@ -87,6 +87,12 @@
       "import": "./dist/export-mocks/router/index.mjs",
       "require": "./dist/export-mocks/router/index.js"
     },
+    "./main": {
+      "types": "./dist/csf-factory/defineMainConfig.d.ts",
+      "node": "./dist/csf-factory/defineMainConfig.js",
+      "import": "./dist/csf-factory/defineMainConfig.mjs",
+      "require": "./dist/csf-factory/defineMainConfig.js"
+    },
     "./package.json": "./package.json"
   },
   "main": "dist/index.js",
@@ -209,6 +215,7 @@
       "./src/image-context.ts",
       "./src/index.ts",
       "./src/preset.ts",
+      "./src/csf-factory/defineMainConfig.ts",
       "./src/preview.tsx",
       "./src/export-mocks/index.ts",
       "./src/export-mocks/cache/index.ts",

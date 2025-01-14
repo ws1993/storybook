@@ -20,6 +20,21 @@
     "url": "https://opencollective.com/storybook"
   },
   "license": "MIT",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "node": "./dist/index.js",
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.js"
+    },
+    "./main": {
+      "types": "./dist/csf-factory/defineMainConfig.d.ts",
+      "node": "./dist/csf-factory/defineMainConfig.js",
+      "import": "./dist/csf-factory/defineMainConfig.js",
+      "require": "./dist/csf-factory/defineMainConfig.js"
+    },
+    "./package.json": "./package.json"
+  },
   "main": "dist/index.js",
   "module": "dist/index.mjs",
   "types": "dist/index.d.ts",

@@ -1,4 +1,3 @@
-import { defineConfig as commonDefineConfig } from 'storybook/internal/common';
 import { CompatibleString } from 'storybook/internal/types';
 
 import {
@@ -48,8 +47,4 @@ export type StorybookConfig = Omit<
 export interface AngularOptions {
   enableIvy?: boolean;
   enableNgcc?: boolean;
-}
-
-export function defineConfig(config: StorybookConfig) {
-  return commonDefineConfig<StorybookConfig>(config);
 }

@@ -1,4 +1,3 @@
-import { defineConfig as commonDefineConfig } from 'storybook/internal/common';
 import type { CompatibleString } from 'storybook/internal/types';
 
 import type {
@@ -48,8 +47,4 @@ export type StorybookConfig = Omit<
 declare global {
   // eslint-disable-next-line no-underscore-dangle, @typescript-eslint/naming-convention, no-var
   var __EMBER_GENERATED_DOC_JSON__: any;
-}
-
-export function defineConfig(config: StorybookConfig) {
-  return commonDefineConfig<StorybookConfig>(config);
 }

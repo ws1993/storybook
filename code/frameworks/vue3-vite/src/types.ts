@@ -1,4 +1,3 @@
-import { defineConfig as commonDefineConfig } from 'storybook/internal/common';
 import type {
   CompatibleString,
   StorybookConfig as StorybookConfigBase,
@@ -100,7 +99,3 @@ export type VueDocgenInfoEntry<
     ? VueDocgenInfo<'vue-component-meta'>[Exclude<TKey, 'expose'>]
     : VueDocgenInfo<'vue-docgen-api'>[Exclude<TKey, 'exposed'>]
 >;
-
-export function defineConfig(config: StorybookConfig) {
-  return commonDefineConfig<StorybookConfig>(config);
-}

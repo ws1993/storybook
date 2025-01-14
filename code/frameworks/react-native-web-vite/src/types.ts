@@ -1,4 +1,3 @@
-import { defineConfig as commonDefineConfig } from 'storybook/internal/common';
 import type { CompatibleString } from 'storybook/internal/types';
 
 import type {
@@ -31,7 +30,3 @@ export type StorybookConfig = Omit<StorybookConfigBase, 'framework'> & {
         options: FrameworkOptions;
       };
 };
-
-export function defineConfig(config: StorybookConfig) {
-  return commonDefineConfig<StorybookConfig>(config);
-}
