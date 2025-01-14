@@ -42,6 +42,7 @@ export * from './utils/formatter';
 export * from './utils/get-story-id';
 export * from './utils/posix';
 export * from './js-package-manager';
+export * from './defineConfig';
 
 export { versions };
 
