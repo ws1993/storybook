@@ -1,11 +1,14 @@
 import type { Meta, StoryObj } from '@storybook/react';
 
-import { Init, Main } from './Init';
+import { Main } from './Init';
 import { xtermDecorator } from './xtermDecorator';
 
-const meta: Meta<typeof Init> = {
-  component: Init,
+const meta: Meta<typeof Main> = {
+  component: Main,
   args: {
+    features: ['onboarding', 'examples', 'essentials'],
+    intents: ['dev', 'docs', 'test'],
+    ignoreGitNotClean: false,
     width: 120,
     height: 50,
   },

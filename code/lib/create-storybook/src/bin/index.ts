@@ -40,7 +40,9 @@ const modernProgram = Object.entries(modernInputs.shape).reduce((acc, [key, sche
     .join('-')
     .toLowerCase();
 
-  if (typeName.match('String')) {
+  if (typeName.match('Array')) {
+    acc.option(`--${flag} <options...>`, description, value);
+  } else if (typeName.match('String')) {
     acc.option(`--${flag} <option>`, description, value);
   } else if (typeName.match('Enum')) {
     acc.option(`--${flag} <option>`, description, value);

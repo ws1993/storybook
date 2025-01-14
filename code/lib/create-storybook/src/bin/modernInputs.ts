@@ -30,31 +30,16 @@ export const supportedFrameworks = [
 ] as const;
 
 export const modernInputs = z.strictObject({
-  featuresDocs: z //
-    .boolean()
+  intents: z //
+    .array(z.enum(['dev', 'docs', 'test']))
     .optional()
-    .describe('enable/disable docs features')
-    .default(true),
-  featuresTest: z //
-    .boolean()
+    .describe('what are you using Storybook for?')
+    .default(['dev', 'docs', 'test']),
+  features: z //
+    .array(z.enum(['onboarding', 'examples', 'essentials']))
     .optional()
-    .describe('enable/disable testing features')
-    .default(true),
-  featuresEssentials: z //
-    .boolean()
-    .optional()
-    .describe('add most useful addons')
-    .default(true),
-  featuresOnboarding: z
-    .boolean()
-    .optional()
-    .describe('get a tutorial when you start storybook for the first time')
-    .default(true),
-  featuresExamples: z
-    .boolean()
-    .optional()
-    .describe('add some example stories to help you get started')
-    .default(true),
+    .describe('what are you using Storybook for?')
+    .default(['onboarding', 'examples', 'essentials']),
 
   directory: z //
     .string()

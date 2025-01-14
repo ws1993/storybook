@@ -16,43 +16,34 @@ if (globalThis.CLI_APP_INSTANCE) {
   globalThis.CLI_APP_INSTANCE.unmount();
 }
 
-export type State = {
-  features: {
-    docs: z.infer<typeof inputs>['featuresDocs'];
-    test: z.infer<typeof inputs>['featuresTest'];
-    onboarding: z.infer<typeof inputs>['featuresOnboarding'];
-    essentials: z.infer<typeof inputs>['featuresEssentials'];
-    examples: z.infer<typeof inputs>['featuresExamples'];
-  };
+export type Input = {
+  intents: z.infer<typeof inputs>['intents'];
+  features: z.infer<typeof inputs>['features'];
+  ignoreGitNotClean?: z.infer<typeof inputs>['ignoreGitNotClean'];
   width: number;
   height: number;
 };
 
 export async function run(options: z.infer<typeof inputs>) {
-  const state: State = {
-    features: {
-      docs: options.featuresDocs,
-      test: options.featuresTest,
-      onboarding: options.featuresOnboarding,
-      essentials: options.featuresEssentials,
-      examples: options.featuresExamples,
-    },
+  const input: Input = {
+    features: options.features,
+    intents: ['dev', ...options.intents],
     width: process.stdout.columns || 120,
     height: process.stdout.rows || 40,
   };
 
   // process.stdout.write('\x1Bc');
-  globalThis.CLI_APP_INSTANCE = render(<App {...state} />);
+  globalThis.CLI_APP_INSTANCE = render(<App {...input} />);
 
   const { rerender, waitUntilExit } = globalThis.CLI_APP_INSTANCE;
 
   const update = debounce(
     () => {
-      state.width = process.stdout.columns || 120;
-      state.height = process.stdout.rows || 40;
+      input.width = process.stdout.columns || 120;
+      input.height = process.stdout.rows || 40;
 
       // process.stdout.write('\x1Bc');
-      rerender(<App {...state} />);
+      rerender(<App {...input} />);
     },
     8,
     { edges: ['trailing'] }

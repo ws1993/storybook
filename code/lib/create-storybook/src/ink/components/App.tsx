@@ -4,7 +4,7 @@ import type { ComponentProps } from 'react';
 import { Box, Text, useFocusManager, useInput } from 'ink';
 
 import { version } from '../../../package.json';
-import type { State } from '../app';
+import type { Input } from '../app';
 import { Question } from './Question';
 import { Rainbow } from './Rainbow';
 
@@ -17,7 +17,7 @@ const ContentBox = ({ text, ...rest }: { text: string } & ComponentProps<typeof 
   );
 };
 
-export function App({ width, height }: State) {
+export function App({ width, height }: Input) {
   const { focus } = useFocusManager();
   const [content, setContent] = useState('Hello World!');
 
