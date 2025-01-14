@@ -4,8 +4,11 @@ import { Box, Text, useInput } from 'ink';
 
 import type { Input } from './app';
 
-type GitResult = 'loading' | 'clean' | 'none' | 'unclean';
+function getKeys<T extends Record<string, unknown>>(obj: T): (keyof T)[] {
+  return Object.keys(obj) as (keyof T)[];
+}
 
+type GitResult = 'loading' | 'clean' | 'none' | 'unclean';
 /** Check if the user has pending changes */
 async function checkGitStatus(): Promise<GitResult> {
   // slow delay for demo effect
@@ -121,9 +124,6 @@ const steps = {
 } satisfies Record<string, FC<{ state: State; dispatch: any }>>;
 
 const keys = getKeys(steps);
-function getKeys<T extends Record<string, unknown>>(obj: T): (keyof T)[] {
-  return Object.keys(obj) as (keyof T)[];
-}
 
 const ACTIONS = {
   NEXT: 'NEXT',
