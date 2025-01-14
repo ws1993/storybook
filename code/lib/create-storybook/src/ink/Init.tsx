@@ -148,7 +148,14 @@ interface OtherAction {
 
 type Action = NextAction | DirectoryAction | OtherAction;
 type Step = keyof typeof steps;
-type State = Pick<Input, 'features' | 'intents'> & { step: Step; directory?: string };
+type State = Pick<Input, 'features' | 'intents'> & {
+  step: Step;
+  directory: string;
+  framework: string;
+
+  // unsure about this one
+  install: boolean | null;
+};
 
 function reducer(state: State, action: Action): State {
   switch (action.type) {
@@ -169,10 +176,20 @@ function reducer(state: State, action: Action): State {
   }
 }
 
-export function Main({ features, intents, ignoreGitNotClean }: Input) {
+export function Main({
+  features,
+  intents,
+  ignoreGitNotClean,
+  directory,
+  framework,
+  install,
+}: Input) {
   const [state, dispatch] = useReducer(reducer, {
     features,
     intents,
+    directory: directory ?? '.',
+    framework: framework ?? 'auto',
+    install: install ?? null,
     step: ignoreGitNotClean ? 'VERSION' : 'GIT',
   });
 

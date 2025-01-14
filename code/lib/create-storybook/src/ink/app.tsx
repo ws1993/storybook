@@ -19,6 +19,9 @@ if (globalThis.CLI_APP_INSTANCE) {
 export type Input = {
   intents: z.infer<typeof inputs>['intents'];
   features: z.infer<typeof inputs>['features'];
+  directory: z.infer<typeof inputs>['directory'];
+  framework: z.infer<typeof inputs>['framework'];
+  install: z.infer<typeof inputs>['install'];
   ignoreGitNotClean?: z.infer<typeof inputs>['ignoreGitNotClean'];
   width: number;
   height: number;
