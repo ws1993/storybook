@@ -3,6 +3,7 @@ import type { ComponentProps } from 'react';
 
 import { Box, Text, useFocusManager, useInput } from 'ink';
 
+import { version } from '../../../package.json';
 import type { State } from '../app';
 import { Question } from './Question';
 import { Rainbow } from './Rainbow';
@@ -54,7 +55,7 @@ export function App({ width, height }: State) {
         </Box>
         <Box flexShrink={0}>
           <Text color={'grey'}>Version </Text>
-          <Rainbow text={'9.0.0'} />
+          <Rainbow text={version} />
         </Box>
       </Box>
 
