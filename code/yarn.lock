@@ -359,6 +359,21 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@antfu/ni@npm:^23.2.0":
+  version: 23.2.0
+  resolution: "@antfu/ni@npm:23.2.0"
+  bin:
+    na: bin/na.mjs
+    nci: bin/nci.mjs
+    ni: bin/ni.mjs
+    nlx: bin/nlx.mjs
+    nr: bin/nr.mjs
+    nu: bin/nu.mjs
+    nun: bin/nun.mjs
+  checksum: 10c0/a16e1df3943d39286617ad4844912b638e6b7e110294bd736daf2fdf36f48add06c5f39f2684abf25d626721692de2c2164336314d4773ed049ff39d0d2b436d
+  languageName: node
+  linkType: hard
+
 "@antfu/utils@npm:^0.7.10":
   version: 0.7.10
   resolution: "@antfu/utils@npm:0.7.10"
@@ -12867,6 +12882,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "create-storybook@workspace:lib/create-storybook"
   dependencies:
+    "@antfu/ni": "npm:^23.2.0"
     "@inkjs/ui": "npm:^2.0.0"
     "@types/prompts": "npm:^2.0.9"
     "@types/semver": "npm:^7.3.4"

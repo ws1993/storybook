@@ -53,6 +53,7 @@
     "prep": "jiti  ../../../scripts/prepare/bundle.ts"
   },
   "dependencies": {
+    "@antfu/ni": "^23.2.0",
     "@types/semver": "^7.3.4",
     "commander": "^12.1.0",
     "execa": "^5.0.0",

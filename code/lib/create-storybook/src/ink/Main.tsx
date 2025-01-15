@@ -1,5 +1,4 @@
-import { stat } from 'node:fs/promises';
-import { isAbsolute, join } from 'node:path';
+import { dirname, isAbsolute, join } from 'node:path';
 import { cwd } from 'node:process';
 
 import React, {
@@ -13,7 +12,6 @@ import React, {
 } from 'react';
 
 import { Box, Text, useInput } from 'ink';
-import { set } from 'zod';
 
 import { supportedFrameworksMap } from '../bin/modernInputs';
 import type { Input } from './app';
@@ -376,13 +374,13 @@ const steps = {
 function Installation({ state, onComplete }: { state: State; onComplete: () => void }) {
   const [line, setLine] = useState<string>('');
 
-  // eslint-disable-next-line @typescript-eslint/naming-convention
-  const { child_process } = useContext(AppContext);
+  const context = useContext(AppContext);
 
-  const ref = useRef<ReturnType<Exclude<typeof child_process, undefined>['spawn']>>();
-  if (child_process && !ref.current) {
-    // I'd like to use https://www.npmjs.com/package/@antfu/ni
-    const child = child_process.spawn('yarn install', {
+  const ref = useRef<ReturnType<Exclude<typeof context.child_process, undefined>['spawn']>>();
+  if (context.child_process && context.require && !ref.current) {
+    // It'd be nice if this wasn't so hardcoded/odd, but we do not need to worry about finding the correct package manager
+    const niCommand = join(dirname(context.require?.resolve('@antfu/ni')), '..', 'bin', 'ni.mjs');
+    const child = context.child_process.spawn(`${niCommand}`, {
       shell: true,
     });
     child.stdout.setEncoding('utf8');
@@ -408,7 +406,7 @@ function Installation({ state, onComplete }: { state: State; onComplete: () => v
   }
 
   useEffect(() => {
-    if (!child_process) {
+    if (!context.child_process) {
       // do work to install dependencies
       const interval = setInterval(() => {
         setLine((l) => l + '.');

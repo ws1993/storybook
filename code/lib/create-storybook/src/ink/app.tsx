@@ -1,15 +1,19 @@
+import * as child_process from 'node:child_process';
+import * as fs from 'node:fs/promises';
+import { createRequire } from 'node:module';
+import * as process from 'node:process';
+
 import React from 'react';
 
-import * as child_process from 'child_process';
 import { debounce } from 'es-toolkit';
-import * as fs from 'fs/promises';
 import { render } from 'ink';
-import * as process from 'process';
 import type { z } from 'zod';
 
 import type { modernInputs as inputs } from '../bin/modernInputs';
 import { Main } from './Main';
 import { AppContext } from './context';
+
+const require = createRequire(import.meta.url);
 
 declare global {
   // eslint-disable-next-line no-var
@@ -45,7 +49,7 @@ export async function run(options: z.infer<typeof inputs>) {
 
   // process.stdout.write('\x1Bc');
   globalThis.CLI_APP_INSTANCE = render(
-    <AppContext.Provider value={{ fs, process, child_process }}>
+    <AppContext.Provider value={{ fs, process, child_process, require }}>
       <Main {...input} />
     </AppContext.Provider>
   );
@@ -59,7 +63,7 @@ export async function run(options: z.infer<typeof inputs>) {
 
       // process.stdout.write('\x1Bc');
       rerender(
-        <AppContext.Provider value={{ fs, process, child_process }}>
+        <AppContext.Provider value={{ fs, process, child_process, require }}>
           <Main {...input} />
         </AppContext.Provider>
       );
