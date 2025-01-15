@@ -45,6 +45,7 @@
   "dependencies": {
     "@storybook/csf": "0.1.12",
     "@storybook/icons": "^1.2.12",
+    "github-slugger": "^2.0.0",
     "ts-dedent": "^2.0.0"
   },
   "devDependencies": {
