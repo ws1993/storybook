@@ -3,7 +3,7 @@ import React from 'react';
 import { AddonPanel, type SyntaxHighlighterFormatTypes } from 'storybook/internal/components';
 import { ADDON_ID, PANEL_ID, PARAM_KEY, SNIPPET_RENDERED } from 'storybook/internal/docs-tools';
 import { addons, types, useChannel, useParameter } from 'storybook/internal/manager-api';
-import { ignoreSsrWarning, styled } from 'storybook/internal/theming';
+import { ignoreSsrWarning, styled, useTheme } from 'storybook/internal/theming';
 
 import { Source, type SourceParameters } from '@storybook/blocks';
 
@@ -30,6 +30,7 @@ addons.register(ADDON_ID, (api) => {
     render: ({ active }) => {
       const parameter = useParameter(PARAM_KEY, {
         source: { code: '' } as SourceParameters,
+        theme: 'dark',
       });
 
       const [codeSnippet, setSourceCode] = React.useState<{
@@ -43,6 +44,9 @@ addons.register(ADDON_ID, (api) => {
         },
       });
 
+      const theme = useTheme();
+      const isDark = theme.base !== 'light';
+
       return (
         <AddonPanel active={!!active}>
           <SourceStyles>
@@ -50,7 +54,7 @@ addons.register(ADDON_ID, (api) => {
               {...parameter.source}
               code={parameter.source.code || codeSnippet.source}
               format={parameter.source.format || codeSnippet.format}
-              dark
+              dark={isDark}
             />
           </SourceStyles>
         </AddonPanel>

@@ -3,6 +3,9 @@ export default {
   tags: ['autodocs'],
   parameters: {
     chromatic: { disable: true },
+    docs: {
+      codePanel: true,
+    },
   },
 };
 
