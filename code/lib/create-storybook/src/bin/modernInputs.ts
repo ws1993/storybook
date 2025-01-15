@@ -64,10 +64,10 @@ export const modernInputs = z.strictObject({
     .describe('what are you using Storybook for?')
     .default(['dev', 'docs', 'test']),
   features: z //
-    .array(z.enum(['onboarding', 'examples', 'essentials']))
+    .array(z.enum(['onboarding', 'examples', 'essentials', 'typescript']))
     .optional()
     .describe('what are you using Storybook for?')
-    .default(['onboarding', 'examples', 'essentials']),
+    .default(['onboarding', 'examples', 'essentials', 'typescript']),
 
   directory: z //
     .string()

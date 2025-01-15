@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react';
 
-import { Main } from './Init';
+import { Main } from './Main';
 import { xtermDecorator } from './xtermDecorator';
 
 const meta: Meta<typeof Main> = {
