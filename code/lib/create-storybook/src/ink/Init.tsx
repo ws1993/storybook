@@ -1,8 +1,13 @@
-import React, { type FC, useEffect, useReducer, useState } from 'react';
+import type { S } from 'vitest/dist/chunks/config.Crbj2GAb.js';
+
+import React, { type Dispatch, type FC, useEffect, useReducer, useState } from 'react';
 
 import { Box, Text, useInput } from 'ink';
+import { set } from 'zod';
 
+import { supportedFrameworks, supportedFrameworksMap } from '../bin/modernInputs';
 import type { Input } from './app';
+import { MultiSelect } from './components/Select/MultiSelect';
 
 function getKeys<T extends Record<string, unknown>>(obj: T): (keyof T)[] {
   return Object.keys(obj) as (keyof T)[];
@@ -23,6 +28,14 @@ async function checkVersion(): Promise<VersionResult> {
   await new Promise((resolve) => setTimeout(resolve, 1000));
 
   return 'latest';
+}
+
+type FrameworkResult = State['framework'] | 'undetected';
+async function checkFramework(): Promise<FrameworkResult> {
+  // slow delay for demo effect
+  await new Promise((resolve) => setTimeout(resolve, 1000));
+
+  return 'ember';
 }
 
 const steps = {
@@ -93,24 +106,102 @@ const steps = {
       </Box>
     );
   },
-  FRAMEWORK: ({ state }) => {
-    return (
-      <Box>
-        <Text>...</Text>
-      </Box>
-    );
+  FRAMEWORK: ({ state, dispatch }) => {
+    const [detection, setDetection] = useState<FrameworkResult>(state.framework);
+
+    useEffect(() => {
+      if (detection === 'auto') {
+        checkFramework().then((result) => {
+          setDetection(result);
+        });
+      }
+    }, []);
+
+    useInput((input, key) => {
+      if (detection !== 'undetected' && detection !== 'auto' && (key.return || input === 'y')) {
+        dispatch({ type: ACTIONS.FRAMEWORK, payload: { id: detection } });
+      }
+      if (detection !== 'undetected' && detection !== 'auto' && input === 'n') {
+        setDetection('undetected');
+      }
+    });
+
+    switch (detection) {
+      case 'auto':
+        return (
+          <Box flexDirection="column">
+            <Text>- Checking for framework...</Text>
+          </Box>
+        );
+      case 'undetected':
+        return (
+          <Box flexDirection="column">
+            <Text>Select which framework?</Text>
+            <MultiSelect
+              // count={6} // I'd prefer to have this option back
+              options={supportedFrameworksMap}
+              setSelection={([selection]) =>
+                dispatch({ type: ACTIONS.FRAMEWORK, payload: { id: selection } })
+              }
+              isDisabled={false}
+            />
+          </Box>
+        );
+      default:
+        return (
+          <Box flexDirection="column">
+            <Text>Detected framework: {detection}</Text>
+            <Text>OK? y/n</Text>
+          </Box>
+        );
+    }
   },
-  INTENT: ({ state }) => {
+  INTENTS: ({ state, dispatch }) => {
+    const [selection, setSelection] = useState(state.intents);
+
+    useInput((input, key) => {
+      if (key.return) {
+        dispatch({ type: ACTIONS.INTENTS, payload: { list: selection } });
+      }
+    });
+
     return (
-      <Box>
+      <Box flexDirection="column">
         <Text>What are you using Storybook for?</Text>
+        <MultiSelect
+          // count={6} // I'd prefer to have this option back
+          options={{ test: 'Testing', dev: 'Development', docs: 'Documentation' } as const}
+          setSelection={(selected) => setSelection(selected)}
+          isDisabled={false}
+        />
       </Box>
     );
   },
-  ADDITIONS: ({ state }) => {
+  FEATURES: ({ state, dispatch }) => {
+    const [selection, setSelection] = useState(state.features);
+
+    useInput((input, key) => {
+      if (key.return) {
+        dispatch({ type: ACTIONS.FEATURES, payload: { list: selection } });
+      }
+    });
+
     return (
-      <Box>
-        <Text>...</Text>
+      <Box flexDirection="column">
+        <Text>What optional features?</Text>
+        <MultiSelect
+          // count={6} // I'd prefer to have this option back
+          options={
+            {
+              onboarding: 'Onboarding',
+              examples: 'Generate example stories',
+              essentials: 'Add the most commonly used addons',
+            } as const
+          }
+          selection={['essentials', 'examples', 'onboarding']}
+          setSelection={(selected) => setSelection(selected)}
+          isDisabled={false}
+        />
       </Box>
     );
   },
@@ -121,13 +212,16 @@ const steps = {
       </Box>
     );
   },
-} satisfies Record<string, FC<{ state: State; dispatch: any }>>;
+} satisfies Record<string, FC<{ state: State; dispatch: Dispatch<Action> }>>;
 
 const keys = getKeys(steps);
 
 const ACTIONS = {
   NEXT: 'NEXT',
   DIRECTORY: 'DIRECTORY',
+  FRAMEWORK: 'FRAMEWORK',
+  INTENTS: 'INTENTS',
+  FEATURES: 'FEATURES',
   OTHER: 'OTHER', // unused
 } as const;
 
@@ -135,10 +229,25 @@ const ACTIONS = {
 interface NextAction {
   type: (typeof ACTIONS)['NEXT'];
 }
-/** Set a directory */
+/** Set the directory */
 interface DirectoryAction {
   type: (typeof ACTIONS)['DIRECTORY'];
   payload: { path: string };
+}
+/** Set the framework */
+interface FrameworkAction {
+  type: (typeof ACTIONS)['FRAMEWORK'];
+  payload: { id: State['framework'] };
+}
+/** Set the intents */
+interface IntentsAction {
+  type: (typeof ACTIONS)['INTENTS'];
+  payload: { list: State['intents'] };
+}
+/** Set the features */
+interface FeaturesAction {
+  type: (typeof ACTIONS)['FEATURES'];
+  payload: { list: State['features'] };
 }
 /** Unused */
 interface OtherAction {
@@ -146,12 +255,17 @@ interface OtherAction {
   payload: { a: string };
 }
 
-type Action = NextAction | DirectoryAction | OtherAction;
+type Action =
+  | NextAction
+  | DirectoryAction
+  | FrameworkAction
+  | IntentsAction
+  | FeaturesAction
+  | OtherAction;
 type Step = keyof typeof steps;
-type State = Pick<Input, 'features' | 'intents'> & {
+type State = Pick<Input, 'features' | 'intents' | 'framework'> & {
   step: Step;
   directory: string;
-  framework: string;
 
   // unsure about this one
   install: boolean | null;
@@ -170,7 +284,17 @@ function reducer(state: State, action: Action): State {
 
       return { ...state, step: next };
     case ACTIONS.DIRECTORY:
-      return { ...state, directory: action.payload.path, step: 'FRAMEWORK' };
+      return {
+        ...state,
+        directory: action.payload.path,
+        step: state.framework === 'auto' ? 'FRAMEWORK' : 'INTENTS',
+      };
+    case ACTIONS.FRAMEWORK:
+      return { ...state, framework: action.payload.id, step: 'INTENTS' };
+    case ACTIONS.INTENTS:
+      return { ...state, intents: action.payload.list, step: 'FEATURES' };
+    case ACTIONS.FEATURES:
+      return { ...state, features: action.payload.list, step: 'INSTALL' };
     default:
       return state;
   }

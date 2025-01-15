@@ -30,6 +30,10 @@ export type Input = {
 export async function run(options: z.infer<typeof inputs>) {
   const input: Input = {
     features: options.features,
+    directory: options.directory,
+    framework: options.framework,
+    install: options.install,
+    ignoreGitNotClean: options.ignoreGitNotClean,
     intents: ['dev', ...options.intents],
     width: process.stdout.columns || 120,
     height: process.stdout.rows || 40,

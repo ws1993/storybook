@@ -6,7 +6,7 @@ import { MultiSelectOption } from './MultiSelectOption';
 
 export interface Props<T extends Record<string, string>> {
   options: T;
-  selection: (keyof T)[];
+  selection?: (keyof T)[];
   setSelection: (selected: (keyof T)[]) => void;
   isDisabled: boolean;
 }
