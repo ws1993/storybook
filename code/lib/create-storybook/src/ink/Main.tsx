@@ -376,19 +376,48 @@ const steps = {
 function Installation({ state, onComplete }: { state: State; onComplete: () => void }) {
   const [line, setLine] = useState<string>('');
 
-  const x = useContext(AppContext);
+  // eslint-disable-next-line @typescript-eslint/naming-convention
+  const { child_process } = useContext(AppContext);
 
-  console.log(x);
+  const ref = useRef<ReturnType<Exclude<typeof child_process, undefined>['spawn']>>();
+  if (child_process && !ref.current) {
+    // I'd like to use https://www.npmjs.com/package/@antfu/ni
+    const child = child_process.spawn('yarn install', {
+      shell: true,
+    });
+    child.stdout.setEncoding('utf8');
+    child.stdout.on('data', (data) => {
+      const lines = data.toString().trim().split('\n');
+      const last = lines[lines.length - 1];
+      setLine(last);
+    });
+
+    child.on('close', (code) => {
+      setTimeout(() => {
+        onComplete();
+      }, 1000);
+    });
+
+    child.on('error', (err) => {
+      setTimeout(() => {
+        onComplete();
+      }, 1000);
+    });
+
+    ref.current = child;
+  }
 
   useEffect(() => {
-    // do work to install dependencies
-    const interval = setInterval(() => {
-      setLine((l) => l + '.');
-    }, 10);
-    setTimeout(() => {
-      clearInterval(interval);
-      onComplete();
-    }, 1000);
+    if (!child_process) {
+      // do work to install dependencies
+      const interval = setInterval(() => {
+        setLine((l) => l + '.');
+      }, 10);
+      setTimeout(() => {
+        clearInterval(interval);
+        onComplete();
+      }, 1000);
+    }
   }, []);
 
   return (
