@@ -1,11 +1,15 @@
 import React from 'react';
 
+import * as child_process from 'child_process';
 import { debounce } from 'es-toolkit';
+import * as fs from 'fs/promises';
 import { render } from 'ink';
+import * as process from 'process';
 import type { z } from 'zod';
 
 import type { modernInputs as inputs } from '../bin/modernInputs';
-import { App } from './components/App';
+import { Main } from './Main';
+import { AppContext } from './context';
 
 declare global {
   // eslint-disable-next-line no-var
@@ -40,7 +44,11 @@ export async function run(options: z.infer<typeof inputs>) {
   };
 
   // process.stdout.write('\x1Bc');
-  globalThis.CLI_APP_INSTANCE = render(<App {...input} />);
+  globalThis.CLI_APP_INSTANCE = render(
+    <AppContext.Provider value={{ fs, process, child_process }}>
+      <Main {...input} />
+    </AppContext.Provider>
+  );
 
   const { rerender, waitUntilExit } = globalThis.CLI_APP_INSTANCE;
 
@@ -50,7 +58,11 @@ export async function run(options: z.infer<typeof inputs>) {
       input.height = process.stdout.rows || 40;
 
       // process.stdout.write('\x1Bc');
-      rerender(<App {...input} />);
+      rerender(
+        <AppContext.Provider value={{ fs, process, child_process }}>
+          <Main {...input} />
+        </AppContext.Provider>
+      );
     },
     8,
     { edges: ['trailing'] }

@@ -2,7 +2,15 @@ import { stat } from 'node:fs/promises';
 import { isAbsolute, join } from 'node:path';
 import { cwd } from 'node:process';
 
-import React, { type Dispatch, type FC, useEffect, useReducer, useRef, useState } from 'react';
+import React, {
+  type Dispatch,
+  type FC,
+  useContext,
+  useEffect,
+  useReducer,
+  useRef,
+  useState,
+} from 'react';
 
 import { Box, Text, useInput } from 'ink';
 import { set } from 'zod';
@@ -10,6 +18,7 @@ import { set } from 'zod';
 import { supportedFrameworksMap } from '../bin/modernInputs';
 import type { Input } from './app';
 import { MultiSelect } from './components/Select/MultiSelect';
+import { AppContext } from './context';
 
 function getKeys<T extends Record<string, unknown>>(obj: T): (keyof T)[] {
   return Object.keys(obj) as (keyof T)[];
@@ -346,6 +355,7 @@ const steps = {
 
     return (
       <Box flexDirection="column">
+        <Text>running tasks...</Text>
         {state.install ? (
           <Installation
             state={state}
@@ -358,7 +368,6 @@ const steps = {
           state={state}
           onComplete={() => setTasks((t) => ({ ...t, config: 'done' }))}
         />
-        <Text>running...</Text>
       </Box>
     );
   },
@@ -366,6 +375,10 @@ const steps = {
 
 function Installation({ state, onComplete }: { state: State; onComplete: () => void }) {
   const [line, setLine] = useState<string>('');
+
+  const x = useContext(AppContext);
+
+  console.log(x);
 
   useEffect(() => {
     // do work to install dependencies
