@@ -481,15 +481,10 @@ export type State = Omit<Input, 'width' | 'height'> & {
 
 function reducer(state: State, action: Action): State {
   const current = keys.indexOf(state.step);
-  const next = keys[current + 1];
+  const next = current === keys.length - 1 ? keys[current + 1] : keys[current];
 
   switch (action.type) {
     case ACTIONS.NEXT:
-      if (current === keys.length - 1) {
-        // last step
-        return state;
-      }
-
       return { ...state, step: next };
     case ACTIONS.IGNORE_GIT:
       return {
