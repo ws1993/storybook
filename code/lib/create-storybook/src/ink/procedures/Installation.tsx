@@ -28,6 +28,7 @@ const deriveDependencies = (state: Procedure['state']): string[] => {
 
 export function Installation({ state, onComplete }: Procedure) {
   const [line, setLine] = useState<string>('...');
+  const [error, setError] = useState<string>('');
   const context = useContext(AppContext);
 
   useEffect(() => {
@@ -42,7 +43,8 @@ export function Installation({ state, onComplete }: Procedure) {
           'bin',
           'ni.mjs'
         );
-        const child = context.child_process.spawn(`${niCommand} ${dependencies.join(' ')} -D`, {
+        const dependencyInstallCommand = `${niCommand} ${dependencies.join(' ')} -D`;
+        const child = context.child_process.spawn(dependencyInstallCommand, {
           shell: true,
         });
         child.stdout.setEncoding('utf8');
@@ -52,18 +54,37 @@ export function Installation({ state, onComplete }: Procedure) {
           setLine(last);
         });
 
+        child.stderr.setEncoding('utf8');
+        child.stderr.on('data', (data) => {
+          setError((current) => (current + '\n' + data.toString()).trim());
+          const lines = data.toString().trim().split('\n');
+          const last = lines[lines.length - 1];
+          setLine(last);
+        });
+
         child.on('close', (code) => {
           setTimeout(() => {
-            onComplete();
+            const errors = [new Error(`install process exited with code ${code}`)];
+            if (error !== '') {
+              errors.push(new Error(error));
+            }
+            onComplete(errors);
           }, 1000);
         });
 
         child.on('error', (err) => {
           setTimeout(() => {
-            onComplete();
+            const errors = [err];
+            if (error !== '') {
+              errors.push(new Error(error));
+            }
+            onComplete(errors);
           }, 1000);
         });
         return () => {
+          if (child.killed) {
+            return;
+          }
           child.kill();
           onComplete([new Error('Installation cancelled')]);
         };

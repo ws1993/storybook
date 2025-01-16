@@ -384,12 +384,13 @@ const steps = {
     const [results, setResults] = useState({
       installation: state.install ? 'loading' : 'skipped',
       config: 'loading',
-      errors: [] as Error[],
     });
+
+    const [errors, setErrors] = useState<Error[]>([]);
 
     const list = Object.entries(results);
     const done = list.every(([_, status]) => status === 'done' || status === 'skipped');
-    const anyFailed = list.some(([_, status]) => status === 'failed');
+    const anyFailed = errors.length > 0;
 
     if (done) {
       return (
@@ -400,8 +401,12 @@ const steps = {
     }
     if (anyFailed) {
       return (
-        <Box>
-          <Text>Something failed!</Text>
+        <Box flexDirection="column">
+          <Text color={'red'}>Something failed!</Text>
+          <Text>Errors:</Text>
+          {errors.map((error, index) => (
+            <Text key={index}>{error.message}</Text>
+          ))}
         </Box>
       );
     }
@@ -412,24 +417,26 @@ const steps = {
         <Installation
           state={state}
           dispatch={dispatch}
-          onComplete={(errors) =>
-            setResults((t) => ({
-              ...t,
-              installation: errors?.length ? 'fail' : 'done',
-              errors: [...t.errors, ...(errors || [])],
-            }))
+          onComplete={(e) =>
+            e?.length
+              ? setErrors((t) => [...t, ...e])
+              : setResults((t) => ({
+                  ...t,
+                  installation: errors?.length ? 'fail' : 'done',
+                }))
           }
         />
 
         <ConfigGeneration
           state={state}
           dispatch={dispatch}
-          onComplete={(errors) =>
-            setResults((t) => ({
-              ...t,
-              config: errors?.length ? 'fail' : 'done',
-              errors: [...t.errors, ...(errors || [])],
-            }))
+          onComplete={(e) =>
+            e?.length
+              ? setErrors((t) => [...t, ...e])
+              : setResults((t) => ({
+                  ...t,
+                  installation: errors?.length ? 'fail' : 'done',
+                }))
           }
         />
         {/* <MetricsReport /> */}
@@ -494,7 +501,7 @@ export type State = Omit<Input, 'width' | 'height'> & {
 
 function reducer(state: State, action: Action): State {
   const current = keys.indexOf(state.step);
-  const next = current === keys.length - 1 ? keys[current + 1] : keys[current];
+  const next = current === keys.length - 1 ? keys[current] : keys[current + 1];
 
   switch (action.type) {
     case ACTIONS.NEXT:
