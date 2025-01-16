@@ -1,3 +1,4 @@
+import { on } from 'node:events';
 import { dirname, join } from 'node:path';
 
 import React, { useContext, useEffect, useState } from 'react';
@@ -62,15 +63,25 @@ export function Installation({ state, onComplete }: Procedure) {
             onComplete();
           }, 1000);
         });
+        return () => {
+          child.kill();
+          onComplete([new Error('Installation cancelled')]);
+        };
       } else {
         // do work to install dependencies
         const interval = setInterval(() => {
           setLine((l) => l + '.');
         }, 10);
-        setTimeout(() => {
+        const timeout = setTimeout(() => {
           clearInterval(interval);
           onComplete();
         }, 1000);
+
+        return () => {
+          clearInterval(interval);
+          clearTimeout(timeout);
+          onComplete([new Error('Installation cancelled')]);
+        };
       }
     } else {
       onComplete();

@@ -386,15 +386,21 @@ const steps = {
       config: 'loading',
     });
 
-    const directory = isAbsolute(state.directory) ? state.directory : join(cwd(), state.directory);
-
     const list = Object.entries(results);
     const done = list.every(([_, status]) => status === 'done' || status === 'skipped');
+    const anyFailed = list.some(([_, status]) => status === 'failed');
 
     if (done) {
       return (
         <Box>
           <Text>All done!</Text>
+        </Box>
+      );
+    }
+    if (anyFailed) {
+      return (
+        <Box>
+          <Text>Something failed!</Text>
         </Box>
       );
     }
@@ -405,7 +411,6 @@ const steps = {
         <Installation
           state={state}
           dispatch={dispatch}
-          doCancel={() => {}} // TODO: figure out how to deal with this
           onComplete={(errors) =>
             setResults((t) => ({ ...t, installation: errors?.length ? 'fail' : 'done' }))
           }
@@ -414,7 +419,6 @@ const steps = {
         <ConfigGeneration
           state={state}
           dispatch={dispatch}
-          doCancel={() => {}} // TODO: figure out how to deal with this
           onComplete={(errors) =>
             setResults((t) => ({ ...t, config: errors?.length ? 'fail' : 'done' }))
           }

@@ -1,3 +1,5 @@
+import { clear } from 'node:console';
+
 import React, { useEffect, useState } from 'react';
 
 import { Box, Text } from 'ink';
@@ -12,10 +14,15 @@ export function ConfigGeneration({ state, onComplete }: Procedure) {
     const interval = setInterval(() => {
       setLine((l) => l + '.');
     }, 10);
-    setTimeout(() => {
+    const timeout = setTimeout(() => {
       clearInterval(interval);
       onComplete();
     }, 1000);
+
+    return () => {
+      clearInterval(interval);
+      clearTimeout(timeout);
+    };
   }, []);
 
   return (
