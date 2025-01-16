@@ -63,7 +63,7 @@ const steps = {
 
     useEffect(() => {
       checkVersion().then((result) => {
-        if (result) {
+        if (result === 'latest') {
           dispatch({ type: 'NEXT' });
         } else {
           setVersion(result);
@@ -127,6 +127,7 @@ const steps = {
             <Text>Select which framework?</Text>
             <MultiSelect
               // count={6} // I'd prefer to have this option back
+              selection={[]}
               options={supportedFrameworksMap}
               setSelection={([selection]) =>
                 dispatch({ type: ACTIONS.FRAMEWORK, payload: { id: selection } })
@@ -324,6 +325,7 @@ const steps = {
           state={state}
           onComplete={() => setResults((t) => ({ ...t, config: 'done' }))}
         />
+        {/* <MetricsReport /> */}
       </Box>
     );
   },

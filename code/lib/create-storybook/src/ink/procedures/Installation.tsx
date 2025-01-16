@@ -13,6 +13,7 @@ export function Installation({ state, onComplete }: { state: State; onComplete: 
   const context = useContext(AppContext);
 
   const ref = useRef<ReturnType<Exclude<typeof context.child_process, undefined>['spawn']>>();
+
   if (context.child_process && context.require && !ref.current) {
     // It'd be nice if this wasn't so hardcoded/odd, but we do not need to worry about finding the correct package manager
     const niCommand = join(dirname(context.require?.resolve('@antfu/ni')), '..', 'bin', 'ni.mjs');
