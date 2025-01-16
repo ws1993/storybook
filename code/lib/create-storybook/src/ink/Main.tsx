@@ -384,6 +384,7 @@ const steps = {
     const [results, setResults] = useState({
       installation: state.install ? 'loading' : 'skipped',
       config: 'loading',
+      errors: [] as Error[],
     });
 
     const list = Object.entries(results);
@@ -412,7 +413,11 @@ const steps = {
           state={state}
           dispatch={dispatch}
           onComplete={(errors) =>
-            setResults((t) => ({ ...t, installation: errors?.length ? 'fail' : 'done' }))
+            setResults((t) => ({
+              ...t,
+              installation: errors?.length ? 'fail' : 'done',
+              errors: [...t.errors, ...(errors || [])],
+            }))
           }
         />
 
@@ -420,7 +425,11 @@ const steps = {
           state={state}
           dispatch={dispatch}
           onComplete={(errors) =>
-            setResults((t) => ({ ...t, config: errors?.length ? 'fail' : 'done' }))
+            setResults((t) => ({
+              ...t,
+              config: errors?.length ? 'fail' : 'done',
+              errors: [...t.errors, ...(errors || [])],
+            }))
           }
         />
         {/* <MetricsReport /> */}
