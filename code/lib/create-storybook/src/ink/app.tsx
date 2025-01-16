@@ -11,7 +11,7 @@ import type { z } from 'zod';
 
 import type { modernInputs as inputs } from '../bin/modernInputs';
 import { Main } from './Main';
-import { AppContext } from './context';
+import { AppContext } from './utils/context';
 
 const require = createRequire(import.meta.url);
 

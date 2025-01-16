@@ -1,71 +1,30 @@
-import { dirname, isAbsolute, join } from 'node:path';
+import { isAbsolute, join } from 'node:path';
 import { cwd } from 'node:process';
 
-import React, {
-  type Dispatch,
-  type FC,
-  useContext,
-  useEffect,
-  useReducer,
-  useRef,
-  useState,
-} from 'react';
+import React, { type Dispatch, type FC, useEffect, useReducer, useState } from 'react';
 
 import { Box, Text, useInput } from 'ink';
 
 import { supportedFrameworksMap } from '../bin/modernInputs';
 import type { Input } from './app';
 import { MultiSelect } from './components/Select/MultiSelect';
-import { AppContext } from './context';
-
-function getKeys<T extends Record<string, unknown>>(obj: T): (keyof T)[] {
-  return Object.keys(obj) as (keyof T)[];
-}
-
-type GitResult = 'loading' | 'clean' | 'none' | 'unclean';
-/** Check if the user has pending changes */
-async function checkGitStatus(): Promise<GitResult> {
-  // slow delay for demo effect
-  await new Promise((resolve) => setTimeout(resolve, 1000));
-
-  return 'clean';
-}
-
-type ExistsResult = 'loading' | 'empty' | 'exists';
-/** Check if the user has pending changes */
-async function checkExists(location: string): Promise<ExistsResult> {
-  // slow delay for demo effect
-  await new Promise((resolve) => setTimeout(resolve, 1000));
-
-  return 'empty';
-}
-
-type VersionResult = 'loading' | 'latest' | 'outdated';
-async function checkVersion(): Promise<VersionResult> {
-  // slow delay for demo effect
-  await new Promise((resolve) => setTimeout(resolve, 1000));
-
-  return 'latest';
-}
-
-type FrameworkResult = State['framework'] | 'undetected';
-async function checkFramework(): Promise<FrameworkResult> {
-  // slow delay for demo effect
-  await new Promise((resolve) => setTimeout(resolve, 1000));
-
-  return 'ember';
-}
-
-type CompatibilityResult =
-  | { type: 'loading' }
-  | { type: 'compatible' }
-  | { type: 'incompatible'; reasons: any[] };
-async function checkCompatibility(): Promise<CompatibilityResult> {
-  // slow delay for demo effect
-  await new Promise((resolve) => setTimeout(resolve, 1000));
-
-  return { type: 'compatible' };
-}
+import { ConfigGeneration } from './procedures/ConfigGeneration';
+import { Installation } from './procedures/Installation';
+import type {
+  CompatibilityResult,
+  ExistsResult,
+  FrameworkResult,
+  GitResult,
+  VersionResult,
+} from './utils/checks';
+import {
+  checkCompatibility,
+  checkExists,
+  checkFramework,
+  checkGitStatus,
+  checkVersion,
+} from './utils/checks';
+import { getKeys } from './utils/getKeys';
 
 const steps = {
   GIT: ({ state, dispatch }) => {
@@ -331,16 +290,15 @@ const steps = {
       </Box>
     );
   },
-
   RUN: ({ state, dispatch }) => {
-    const [tasks, setTasks] = useState({
+    const [results, setResults] = useState({
       installation: state.install ? 'loading' : 'skipped',
       config: 'loading',
     });
 
     const directory = isAbsolute(state.directory) ? state.directory : join(cwd(), state.directory);
 
-    const list = Object.entries(tasks);
+    const list = Object.entries(results);
     const done = list.every(([_, status]) => status === 'done' || status === 'skipped');
 
     if (done) {
@@ -357,94 +315,19 @@ const steps = {
         {state.install ? (
           <Installation
             state={state}
-            onComplete={() => setTasks((t) => ({ ...t, installation: 'done' }))}
+            onComplete={() => setResults((t) => ({ ...t, installation: 'done' }))}
           />
         ) : (
           <Text>skipped installation...</Text>
         )}
         <ConfigGeneration
           state={state}
-          onComplete={() => setTasks((t) => ({ ...t, config: 'done' }))}
+          onComplete={() => setResults((t) => ({ ...t, config: 'done' }))}
         />
       </Box>
     );
   },
 } satisfies Record<string, FC<{ state: State; dispatch: Dispatch<Action> }>>;
-
-function Installation({ state, onComplete }: { state: State; onComplete: () => void }) {
-  const [line, setLine] = useState<string>('');
-
-  const context = useContext(AppContext);
-
-  const ref = useRef<ReturnType<Exclude<typeof context.child_process, undefined>['spawn']>>();
-  if (context.child_process && context.require && !ref.current) {
-    // It'd be nice if this wasn't so hardcoded/odd, but we do not need to worry about finding the correct package manager
-    const niCommand = join(dirname(context.require?.resolve('@antfu/ni')), '..', 'bin', 'ni.mjs');
-    const child = context.child_process.spawn(`${niCommand}`, {
-      shell: true,
-    });
-    child.stdout.setEncoding('utf8');
-    child.stdout.on('data', (data) => {
-      const lines = data.toString().trim().split('\n');
-      const last = lines[lines.length - 1];
-      setLine(last);
-    });
-
-    child.on('close', (code) => {
-      setTimeout(() => {
-        onComplete();
-      }, 1000);
-    });
-
-    child.on('error', (err) => {
-      setTimeout(() => {
-        onComplete();
-      }, 1000);
-    });
-
-    ref.current = child;
-  }
-
-  useEffect(() => {
-    if (!context.child_process) {
-      // do work to install dependencies
-      const interval = setInterval(() => {
-        setLine((l) => l + '.');
-      }, 10);
-      setTimeout(() => {
-        clearInterval(interval);
-        onComplete();
-      }, 1000);
-    }
-  }, []);
-
-  return (
-    <Box height={1} overflow="hidden">
-      <Text>- Installing {line === '' ? '...' : line}</Text>
-    </Box>
-  );
-}
-
-function ConfigGeneration({ state, onComplete }: { state: State; onComplete: () => void }) {
-  const [line, setLine] = useState<string>('');
-
-  useEffect(() => {
-    // do work to install dependencies
-    const interval = setInterval(() => {
-      setLine((l) => l + '.');
-    }, 10);
-    setTimeout(() => {
-      clearInterval(interval);
-      onComplete();
-    }, 1000);
-  }, []);
-
-  return (
-    <Box height={1} overflow="hidden">
-      <Text>- Generating config files {line === '' ? '...' : line}</Text>
-    </Box>
-  );
-}
 
 const keys = getKeys(steps);
 
@@ -457,66 +340,43 @@ const ACTIONS = {
   FEATURES: 'FEATURES',
   INSTALL: 'INSTALL',
   EXIT: 'EXIT',
-  OTHER: 'OTHER', // unused
 } as const;
 
-/** Proceed to next step */
-interface NextAction {
-  type: (typeof ACTIONS)['NEXT'];
-}
-/** Set the directory */
-interface IgnoreGitAction {
-  type: (typeof ACTIONS)['IGNORE_GIT'];
-}
-/** Set the directory */
-interface DirectoryAction {
-  type: (typeof ACTIONS)['DIRECTORY'];
-  payload: { path: string };
-}
-/** Set the framework */
-interface FrameworkAction {
-  type: (typeof ACTIONS)['FRAMEWORK'];
-  payload: { id: State['framework'] };
-}
-/** Set the intents */
-interface IntentsAction {
-  type: (typeof ACTIONS)['INTENTS'];
-  payload: { list: State['intents'] };
-}
-/** Set the features */
-interface FeaturesAction {
-  type: (typeof ACTIONS)['FEATURES'];
-  payload: { list: State['features'] };
-}
-/** Set the install */
-interface InstallAction {
-  type: (typeof ACTIONS)['INSTALL'];
-  payload: { value: boolean };
-}
-/** Exit the app */
-interface ExitAction {
-  type: (typeof ACTIONS)['EXIT'];
-  payload: { code: number; reasons: string[] };
-}
-/** Unused */
-interface OtherAction {
-  type: (typeof ACTIONS)['OTHER'];
-  payload: { a: string };
-}
-
 type Action =
-  | NextAction
-  | IgnoreGitAction
-  | DirectoryAction
-  | FrameworkAction
-  | IntentsAction
-  | FeaturesAction
-  | InstallAction
-  | ExitAction
-  | OtherAction;
-type Step = keyof typeof steps;
-type State = Pick<Input, 'features' | 'intents' | 'framework'> & {
-  step: Step;
+  | {
+      type: (typeof ACTIONS)['NEXT'];
+    }
+  | {
+      type: (typeof ACTIONS)['DIRECTORY'];
+      payload: { path: string };
+    }
+  | {
+      type: (typeof ACTIONS)['DIRECTORY'];
+      payload: { path: string };
+    }
+  | {
+      type: (typeof ACTIONS)['FRAMEWORK'];
+      payload: { id: State['framework'] };
+    }
+  | {
+      type: (typeof ACTIONS)['INTENTS'];
+      payload: { list: State['intents'] };
+    }
+  | {
+      type: (typeof ACTIONS)['FEATURES'];
+      payload: { list: State['features'] };
+    }
+  | {
+      type: (typeof ACTIONS)['INSTALL'];
+      payload: { value: boolean };
+    }
+  | {
+      type: (typeof ACTIONS)['EXIT'];
+      payload: { code: number; reasons: string[] };
+    };
+
+export type State = Pick<Input, 'features' | 'intents' | 'framework'> & {
+  step: keyof typeof steps;
   directory: string;
 
   // unsure about this one
