@@ -1,7 +1,7 @@
 import { on } from 'node:events';
 import { dirname, join } from 'node:path';
 
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useContext, useEffect, useRef, useState } from 'react';
 
 import { Box, Text } from 'ink';
 
@@ -27,9 +27,19 @@ const deriveDependencies = (state: Procedure['state']): string[] => {
 };
 
 export function Installation({ state, onComplete }: Procedure) {
-  const [line, setLine] = useState<string>('...');
   const [error, setError] = useState<string>('');
+  const [lastChunk, setLastChunk] = useState<string>('');
   const context = useContext(AppContext);
+
+  const ref = useRef({
+    error,
+    lastChunk,
+  });
+
+  ref.current = {
+    error,
+    lastChunk,
+  };
 
   useEffect(() => {
     if (state.install) {
@@ -47,26 +57,30 @@ export function Installation({ state, onComplete }: Procedure) {
         const child = context.child_process.spawn(dependencyInstallCommand, {
           shell: true,
         });
-        child.stdout.setEncoding('utf8');
+        // child.stdout.setEncoding('utf8');
         child.stdout.on('data', (data) => {
-          const lines = data.toString().trim().split('\n');
-          const last = lines[lines.length - 1];
-          setLine(last);
+          const chunk = data.toString().trim();
+          if (chunk !== '') {
+            setLastChunk(chunk);
+          }
         });
 
-        child.stderr.setEncoding('utf8');
+        // child.stderr.setEncoding('utf8');
         child.stderr.on('data', (data) => {
-          setError((current) => (current + '\n' + data.toString()).trim());
-          const lines = data.toString().trim().split('\n');
-          const last = lines[lines.length - 1];
-          setLine(last);
+          const chunk = data.toString().trim();
+          if (chunk !== '') {
+            setLastChunk(chunk);
+            setError((current) => (current + '\n' + chunk).trim());
+          }
         });
 
         child.on('close', (code) => {
           setTimeout(() => {
             const errors = [new Error(`install process exited with code ${code}`)];
-            if (error !== '') {
-              errors.push(new Error(error));
+            if (ref.current.error !== '') {
+              errors.push(new Error(ref.current.error));
+            } else if (ref.current.lastChunk !== '') {
+              errors.push(new Error(ref.current.lastChunk));
             }
             onComplete(errors);
           }, 1000);
@@ -75,14 +89,16 @@ export function Installation({ state, onComplete }: Procedure) {
         child.on('error', (err) => {
           setTimeout(() => {
             const errors = [err];
-            if (error !== '') {
-              errors.push(new Error(error));
+            if (ref.current.error !== '') {
+              errors.push(new Error(ref.current.error));
+            } else if (ref.current.lastChunk !== '') {
+              errors.push(new Error(ref.current.lastChunk));
             }
             onComplete(errors);
           }, 1000);
         });
         return () => {
-          if (child.killed) {
+          if (child.killed || child.exitCode !== null) {
             return;
           }
           child.kill();
@@ -91,7 +107,7 @@ export function Installation({ state, onComplete }: Procedure) {
       } else {
         // do work to install dependencies
         const interval = setInterval(() => {
-          setLine((l) => l + '.');
+          setLastChunk((l) => l + '.');
         }, 10);
         const timeout = setTimeout(() => {
           clearInterval(interval);
@@ -108,6 +124,9 @@ export function Installation({ state, onComplete }: Procedure) {
       onComplete();
     }
   }, []);
+
+  const lines = lastChunk.split('\n');
+  const line = lines[lines.length - 1];
 
   return (
     <Box height={1} overflow="hidden">

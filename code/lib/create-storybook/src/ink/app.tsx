@@ -63,7 +63,7 @@ export async function run(options: z.infer<typeof inputs>) {
   );
 
   process.stdout.on('resize', () => {
-    process.stdout.write('\x1Bc');
+    // process.stdout.write('\x1Bc');
     update();
   });
 

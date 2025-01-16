@@ -1,5 +1,3 @@
-import { clear } from 'node:console';
-
 import React, { useEffect, useState } from 'react';
 
 import { Box, Text } from 'ink';
