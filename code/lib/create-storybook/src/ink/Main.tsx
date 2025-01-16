@@ -317,7 +317,7 @@ const steps = {
       }
     }, []);
 
-    if (state.install !== null) {
+    if (state.install !== undefined) {
       return (
         <Box>
           <Text>Install dependencies: {state.install ? 'yes' : 'no'}</Text>
@@ -337,16 +337,6 @@ const steps = {
     const directory = isAbsolute(state.directory)
       ? state.directory
       : join(process.cwd(), state.directory);
-
-    // useInput((input, key) => {
-    //   if (compatibility.type === 'incompatible') {
-    //     if (key.return || input === 'y') {
-    //       dispatch({ type: ACTIONS.NEXT });
-    //     } else if (input === 'n') {
-    //       dispatch({ type: ACTIONS.EXIT, payload: { code: 1, reasons: compatibility.reasons } });
-    //     }
-    //   }
-    // });
 
     useEffect(() => {
       checkExists(directory).then((result) => {
@@ -517,14 +507,12 @@ function reducer(state: State, action: Action): State {
   }
 }
 
-export function Main({ features, intents, directory, framework, install, ...rest }: Input) {
+export function Main({ directory, framework, install, ...rest }: Input) {
   const [state, dispatch] = useReducer(reducer, {
-    features,
-    intents,
     directory: directory ?? '.',
     framework: framework ?? 'auto',
     install: install ?? undefined,
-    step: rest.ignoreGitNotClean ? 'VERSION' : 'GIT',
+    step: 'GIT',
     ...rest,
   });
 
