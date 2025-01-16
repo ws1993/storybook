@@ -1,22 +1,19 @@
 /* eslint-disable no-underscore-dangle */
-import { types as t, traverse } from '@storybook/core/babel';
+import { types as t } from 'storybook/internal/babel';
+import { isValidPreviewPath, loadCsf, printCsf } from 'storybook/internal/csf-tools';
 
-import { isValidPreviewPath, loadCsf, printCsf } from '@storybook/core/csf-tools';
+import prompts from 'prompts';
 
-import * as babel from '@babel/core';
-import type { FileInfo } from 'jscodeshift';
-import prettier from 'prettier';
+import type { FileInfo } from '../codemod';
+import { runCodemod } from '../codemod';
+import type { CommandFix } from '../types';
 
-const logger = console;
-
-export default async function transform(info: FileInfo) {
-  const csf = loadCsf(info.source, { makeTitle: (title) => title });
-  const fileNode = csf._ast;
-
+export async function csf4Transform(info: FileInfo) {
+  const csf = loadCsf(info.source, { makeTitle: () => 'FIXME' });
   try {
     csf.parse();
   } catch (err) {
-    logger.log(`Error ${err}, skipping`);
+    logger.log(`Error when parsing ${info.path}, skipping:\n${err}`);
     return info.source;
   }
 
@@ -27,8 +24,22 @@ export default async function transform(info: FileInfo) {
    *
    * `import { config } from '#.storybook/preview'`;
    */
-  const programNode = fileNode.program;
+  const programNode = csf._ast.program;
   let foundConfigImport = false;
+
+  // Check if a root-level constant named 'config' exists
+  const hasRootLevelConfig = programNode.body.some(
+    (n) =>
+      t.isVariableDeclaration(n) &&
+      n.declarations.some((declaration) => t.isIdentifier(declaration.id, { name: 'config' }))
+  );
+
+  const sbConfigImportName = hasRootLevelConfig ? 'storybookConfig' : 'config';
+
+  const sbConfigImportSpecifier = t.importSpecifier(
+    t.identifier('config'),
+    t.identifier(sbConfigImportName)
+  );
 
   programNode.body.forEach((node) => {
     if (t.isImportDeclaration(node) && isValidPreviewPath(node.source.value)) {
@@ -38,12 +49,7 @@ export default async function transform(info: FileInfo) {
       );
 
       if (!hasConfigSpecifier) {
-        node.specifiers.push(
-          babel.types.importSpecifier(
-            babel.types.identifier('config'),
-            babel.types.identifier('config')
-          )
-        );
+        node.specifiers.push(sbConfigImportSpecifier);
       }
 
       foundConfigImport = true;
@@ -54,7 +60,7 @@ export default async function transform(info: FileInfo) {
 
   Object.entries(csf._storyExports).forEach(([key, decl]) => {
     const id = decl.id;
-    const declarator = decl as babel.types.VariableDeclarator;
+    const declarator = decl as t.VariableDeclarator;
     let init = t.isVariableDeclarator(declarator) ? declarator.init : undefined;
 
     if (t.isIdentifier(id) && init) {
@@ -70,12 +76,19 @@ export default async function transform(info: FileInfo) {
         }
 
         // Wrap the object in `meta.story()`
-        declarator.init = babel.types.callExpression(
-          babel.types.memberExpression(
-            babel.types.identifier(metaVariableName),
-            babel.types.identifier('story')
-          ),
+        declarator.init = t.callExpression(
+          t.memberExpression(t.identifier(metaVariableName), t.identifier('story')),
           [init]
+        );
+      } else if (t.isArrowFunctionExpression(init)) {
+        // Transform CSF1 to meta.story({ render: <originalFn> })
+        const renderProperty = t.objectProperty(t.identifier('render'), init);
+
+        const objectExpression = t.objectExpression([renderProperty]);
+
+        declarator.init = t.callExpression(
+          t.memberExpression(t.identifier(metaVariableName), t.identifier('story')),
+          [objectExpression]
         );
       }
     }
@@ -83,16 +96,17 @@ export default async function transform(info: FileInfo) {
 
   // modify meta
   if (csf._metaPath) {
-    const declaration = csf._metaPath.node.declaration;
+    let declaration = csf._metaPath.node.declaration;
+    if (t.isTSSatisfiesExpression(declaration) || t.isTSAsExpression(declaration)) {
+      declaration = declaration.expression;
+    }
+
     if (t.isObjectExpression(declaration)) {
-      const metaVariable = babel.types.variableDeclaration('const', [
-        babel.types.variableDeclarator(
-          babel.types.identifier(metaVariableName),
-          babel.types.callExpression(
-            babel.types.memberExpression(
-              babel.types.identifier('config'),
-              babel.types.identifier('meta')
-            ),
+      const metaVariable = t.variableDeclaration('const', [
+        t.variableDeclarator(
+          t.identifier(metaVariableName),
+          t.callExpression(
+            t.memberExpression(t.identifier(sbConfigImportName), t.identifier('meta')),
             [declaration]
           )
         ),
@@ -113,18 +127,15 @@ export default async function transform(info: FileInfo) {
         const originalName = declaration.name;
 
         // Always rename the meta variable to 'meta'
-        binding.path.node.id = babel.types.identifier(metaVariableName);
+        binding.path.node.id = t.identifier(metaVariableName);
 
         let init = binding.path.node.init;
         if (t.isTSSatisfiesExpression(init) || t.isTSAsExpression(init)) {
           init = init.expression;
         }
         if (t.isObjectExpression(init)) {
-          binding.path.node.init = babel.types.callExpression(
-            babel.types.memberExpression(
-              babel.types.identifier('config'),
-              babel.types.identifier('meta')
-            ),
+          binding.path.node.init = t.callExpression(
+            t.memberExpression(t.identifier(sbConfigImportName), t.identifier('meta')),
             [init]
           );
         }
@@ -139,33 +150,11 @@ export default async function transform(info: FileInfo) {
   }
 
   if (hasMeta && !foundConfigImport) {
-    const configImport = babel.types.importDeclaration(
-      [
-        babel.types.importSpecifier(
-          babel.types.identifier('config'),
-          babel.types.identifier('config')
-        ),
-      ],
-      babel.types.stringLiteral('#.storybook/preview')
+    const configImport = t.importDeclaration(
+      [sbConfigImportSpecifier],
+      t.stringLiteral('#.storybook/preview')
     );
     programNode.body.unshift(configImport);
-  }
-
-  function isSpecifierUsed(name: string) {
-    let isUsed = false;
-
-    // Traverse the AST and check for usage of the name
-    traverse(programNode, {
-      Identifier(path) {
-        if (path.node.name === name) {
-          isUsed = true;
-          // Stop traversal early if we've found a match
-          path.stop();
-        }
-      },
-    });
-
-    return isUsed;
   }
 
   // Remove type imports – now inferred – from @storybook/* packages
@@ -210,12 +199,30 @@ export default async function transform(info: FileInfo) {
   let output = printCsf(csf).code;
 
   try {
+    // eslint-disable-next-line import/no-extraneous-dependencies
+    const prettier = await import('prettier');
     output = await prettier.format(output, {
       ...(await prettier.resolveConfig(info.path)),
       filepath: info.path,
     });
-  } catch (e) {
-    logger.log(`Failed applying prettier to ${info.path}.`);
-  }
+  } catch (e) {}
   return output;
 }
+
+const logger = console;
+
+export const csf3to4: CommandFix = {
+  id: 'csf-3-to-4',
+  promptType: 'command',
+  async run({ dryRun }) {
+    logger.log('Please enter the glob for your stories to migrate');
+    const { glob: globString } = await prompts({
+      type: 'text',
+      name: 'glob',
+      message: 'glob',
+      initial: '**/*.stories.*',
+    });
+
+    await runCodemod(globString, csf4Transform, { dryRun });
+  },
+};

@@ -1,4 +1,4 @@
-import type { Fix } from '../types';
+import type { CommandFix, Fix } from '../types';
 import { addonA11yAddonTest } from './addon-a11y-addon-test';
 import { addonPostCSS } from './addon-postcss';
 import { addonsAPI } from './addons-api';
@@ -8,6 +8,7 @@ import { autodocsTags } from './autodocs-tags';
 import { autodocsTrue } from './autodocs-true';
 import { builderVite } from './builder-vite';
 import { cra5 } from './cra5';
+import { csf3to4 } from './csf-3-to-4';
 import { eslintPlugin } from './eslint-plugin';
 import { initialGlobals } from './initial-globals';
 import { mdx1to3 } from './mdx-1-to-3';
@@ -70,3 +71,7 @@ export const allFixes: Fix[] = [
 ];
 
 export const initFixes: Fix[] = [eslintPlugin];
+
+// These are specific fixes that only occur when triggered on command, and are hidden otherwise.
+// e.g. npx automigrate csf-3-to-4
+export const commandFixes: CommandFix[] = [csf3to4];

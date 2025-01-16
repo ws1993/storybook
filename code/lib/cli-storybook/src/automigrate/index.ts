@@ -27,7 +27,7 @@ import type {
   PreCheckFailure,
   Prompt,
 } from './fixes';
-import { FixStatus, allFixes } from './fixes';
+import { FixStatus, allFixes, commandFixes } from './fixes';
 import { upgradeStorybookRelatedDependencies } from './fixes/upgrade-storybook-related-dependencies';
 import { cleanLog } from './helpers/cleanLog';
 import { getMigrationSummary } from './helpers/getMigrationSummary';
@@ -60,7 +60,7 @@ const cleanup = () => {
 };
 
 const logAvailableMigrations = () => {
-  const availableFixes = allFixes
+  const availableFixes = [...allFixes, ...commandFixes]
     .map((f) => picocolors.yellow(f.id))
     .map((x) => `- ${x}`)
     .join('\n');
@@ -82,10 +82,11 @@ export const doAutomigrate = async (options: AutofixOptionsFromCLI) => {
     getCoercedStorybookVersion(packageManager),
   ]);
 
-  const { configDir: inferredConfigDir, mainConfig: mainConfigPath } = getStorybookInfo(
-    packageJson,
-    options.configDir
-  );
+  const {
+    configDir: inferredConfigDir,
+    mainConfig: mainConfigPath,
+    previewConfig: previewConfigPath,
+  } = getStorybookInfo(packageJson, options.configDir);
   const configDir = options.configDir || inferredConfigDir || '.storybook';
 
   if (!storybookVersion) {
@@ -102,6 +103,7 @@ export const doAutomigrate = async (options: AutofixOptionsFromCLI) => {
     storybookVersion,
     beforeVersion: storybookVersion,
     mainConfigPath,
+    previewConfigPath,
     configDir,
     isUpgrade: false,
     isLatest: false,
@@ -121,6 +123,7 @@ export const automigrate = async ({
   list,
   configDir,
   mainConfigPath,
+  previewConfigPath,
   storybookVersion,
   beforeVersion,
   renderer: rendererPackage,
@@ -134,6 +137,22 @@ export const automigrate = async ({
 } | null> => {
   if (list) {
     logAvailableMigrations();
+    return null;
+  }
+
+  // if an on-command migration is triggered, run it and bail
+  const commandFix = commandFixes.find((f) => f.id === fixId);
+  if (commandFix) {
+    logger.info(`🔎 Running migration ${picocolors.magenta(fixId)}..`);
+
+    await commandFix.run({
+      mainConfigPath,
+      previewConfigPath,
+      packageManager,
+      dryRun,
+      result: null,
+    });
+
     return null;
   }
 

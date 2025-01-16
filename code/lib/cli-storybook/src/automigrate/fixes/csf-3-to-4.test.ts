@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 
 import { dedent } from 'ts-dedent';
 
-import _transform from '../csf-3-to-4';
+import { csf4Transform } from './csf-3-to-4';
 
 expect.addSnapshotSerializer({
   serialize: (val: any) => (typeof val === 'string' ? val : val.toString()),
@@ -10,7 +10,7 @@ expect.addSnapshotSerializer({
 });
 
 const transform = async (source: string) =>
-  (await _transform({ source, path: 'Component.stories.tsx' })).trim();
+  (await csf4Transform({ source, path: 'Component.stories.tsx' })).trim();
 
 describe('csf-3-to-4', () => {
   describe('javascript', () => {
@@ -96,9 +96,95 @@ describe('csf-3-to-4', () => {
         });
       `);
     });
+
+    it('if there is an existing local constant called config, rename storybook config import', async () => {
+      await expect(
+        transform(dedent`
+          const componentMeta = { title: 'Component' };
+          export default componentMeta;
+          const config = {};
+          export const A = {
+            args: { primary: true },
+            render: (args) => <Component {...args} />
+          };
+        `)
+      ).resolves.toMatchInlineSnapshot(`
+        import { storybookConfig as config } from "#.storybook/preview";
+        const meta = storybookConfig.meta({ title: 'Component' });
+        const config = {};
+        export const A = meta.story({
+          args: { primary: true },
+          render: (args) => <Component {...args} />
+        });
+      `);
+    });
+
+    it('converts CSF1 into CSF4 with render', async () => {
+      await expect(
+        transform(dedent`
+          const meta = { title: 'Component' };
+          export default meta;
+          export const CSF1Story = () => <div>Hello</div>;
+        `)
+      ).resolves.toMatchInlineSnapshot(`
+        import { config } from '#.storybook/preview';
+
+        const meta = config.meta({ title: 'Component' });
+        export const CSF1Story = meta.story({
+          render: () => <div>Hello</div>,
+        });
+      `);
+    });
   });
 
   describe('typescript', () => {
+    const inlineMetaSatisfies = dedent`
+      import { Meta, StoryObj as CSF3 } from '@storybook/react';
+      import { ComponentProps } from './Component';
+
+      export default { title: 'Component', component: Component } satisfies Meta<ComponentProps>;
+
+      export const A: CSF3<ComponentProps> = {
+        args: { primary: true }
+      };
+    `;
+    it('meta satisfies syntax', async () => {
+      await expect(transform(inlineMetaSatisfies)).resolves.toMatchInlineSnapshot(`
+        import { config } from '#.storybook/preview';
+
+        import { ComponentProps } from './Component';
+
+        const meta = config.meta({ title: 'Component', component: Component });
+
+        export const A = meta.story({
+          args: { primary: true },
+        });
+      `);
+    });
+
+    const inlineMetaAs = dedent`
+      import { Meta, StoryObj as CSF3 } from '@storybook/react';
+      import { ComponentProps } from './Component';
+
+      export default { title: 'Component', component: Component } as Meta<ComponentProps>;
+
+      export const A: CSF3<ComponentProps> = {
+        args: { primary: true }
+      };
+    `;
+    it('meta as syntax', async () => {
+      await expect(transform(inlineMetaAs)).resolves.toMatchInlineSnapshot(`
+        import { config } from '#.storybook/preview';
+
+        import { ComponentProps } from './Component';
+
+        const meta = config.meta({ title: 'Component', component: Component });
+
+        export const A = meta.story({
+          args: { primary: true },
+        });
+      `);
+    });
     const metaSatisfies = dedent`
       import { Meta, StoryObj as CSF3 } from '@storybook/react';
       import { ComponentProps } from './Component';
@@ -201,6 +287,8 @@ describe('csf-3-to-4', () => {
 
     it('should yield the same result to all syntaxes', async () => {
       const allSnippets = await Promise.all([
+        transform(inlineMetaSatisfies),
+        transform(inlineMetaAs),
         transform(metaSatisfies),
         transform(metaAs),
         transform(storySatisfies),
