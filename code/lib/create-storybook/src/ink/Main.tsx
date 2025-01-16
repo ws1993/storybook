@@ -7,6 +7,7 @@ import { Box, Text, useInput } from 'ink';
 
 import { supportedFrameworksMap } from '../bin/modernInputs';
 import type { Input } from './app';
+import { Confirm } from './components/Confirm';
 import { MultiSelect } from './components/Select/MultiSelect';
 import { ConfigGeneration } from './procedures/ConfigGeneration';
 import { Installation } from './procedures/Installation';
@@ -29,12 +30,6 @@ import { getKeys } from './utils/getKeys';
 const steps = {
   GIT: ({ state, dispatch }) => {
     const [git, setGit] = useState<GitResult>('loading');
-
-    useInput((input, key) => {
-      if (git === 'unclean' && key.return) {
-        dispatch({ type: ACTIONS.IGNORE_GIT });
-      }
-    });
 
     useEffect(() => {
       if (state.ignoreGitNotClean) {
@@ -61,18 +56,25 @@ const steps = {
     return (
       <Box>
         {git === 'loading' && <Text>- Checking git state...</Text>}
-        {git === 'unclean' && <Text>- Git is not clean, are you sure you want to continue?</Text>}
+        {git === 'unclean' && (
+          <>
+            <Text>- Git is not clean, are you sure you want to continue?</Text>
+            <Confirm
+              onChange={(answer) => {
+                if (answer) {
+                  dispatch({ type: ACTIONS.IGNORE_GIT });
+                } else {
+                  // TODO!
+                }
+              }}
+            />
+          </>
+        )}
       </Box>
     );
   },
   VERSION: ({ state, dispatch }) => {
     const [version, setVersion] = useState<VersionResult>('loading');
-
-    useInput((input, key) => {
-      if (version === 'outdated' && key.return) {
-        dispatch({ type: ACTIONS.NEXT });
-      }
-    });
 
     useEffect(() => {
       if (state.ignoreVersion) {
@@ -80,7 +82,7 @@ const steps = {
       } else {
         checkVersion().then((result) => {
           if (result === 'latest') {
-            dispatch({ type: ACTIONS.NEXT });
+            dispatch({ type: ACTIONS.IGNORE_VERSION });
           } else {
             setVersion(result);
           }
@@ -100,18 +102,32 @@ const steps = {
       <Box>
         {version === 'loading' && <Text>- Checking version state...</Text>}
         {version === 'outdated' && (
-          <Text>
-            This is not the latest version of the Storybook CLI, are you sure you want to continue?
-          </Text>
+          <>
+            <Text>
+              This is not the latest version of the Storybook CLI, are you sure you want to
+              continue?
+            </Text>
+            <Confirm
+              onChange={(answer) => {
+                if (answer) {
+                  dispatch({ type: ACTIONS.IGNORE_VERSION });
+                } else {
+                  // TODO!
+                }
+              }}
+            />
+          </>
         )}
       </Box>
     );
   },
   DIRECTORY: ({ state, dispatch }) => {
+    const directory = isAbsolute(state.directory) ? state.directory : join(cwd(), state.directory);
+
     // TODO: make the input path absolute
     useEffect(() => {
       setTimeout(() => {
-        dispatch({ type: ACTIONS.DIRECTORY, payload: { path: 'my/path' } });
+        dispatch({ type: ACTIONS.DIRECTORY, payload: { path: directory } });
       }, 1000);
     }, []);
 
@@ -133,15 +149,6 @@ const steps = {
         dispatch({ type: ACTIONS.FRAMEWORK, payload: { id: state.framework } });
       }
     }, []);
-
-    useInput((input, key) => {
-      if (detection !== 'undetected' && detection !== 'auto' && (key.return || input === 'y')) {
-        dispatch({ type: ACTIONS.FRAMEWORK, payload: { id: detection } });
-      }
-      if (detection !== 'undetected' && detection !== 'auto' && input === 'n') {
-        setDetection('undetected');
-      }
-    });
 
     if (state.framework !== 'auto') {
       return (
@@ -177,7 +184,18 @@ const steps = {
         return (
           <Box flexDirection="column">
             <Text>Detected framework: {detection}</Text>
-            <Text>OK? y/n</Text>
+            <Text>
+              OK?{' '}
+              <Confirm
+                onChange={(answer) => {
+                  if (answer) {
+                    dispatch({ type: ACTIONS.FRAMEWORK, payload: { id: detection } });
+                  } else {
+                    setDetection('undetected');
+                  }
+                }}
+              />
+            </Text>
           </Box>
         );
     }
@@ -264,20 +282,10 @@ const steps = {
   CHECK: ({ state, dispatch }) => {
     const [compatibility, setCompatibility] = useState<CompatibilityResult>({ type: 'loading' });
 
-    useInput((input, key) => {
-      if (compatibility.type === 'incompatible') {
-        if (key.return || input === 'y') {
-          dispatch({ type: ACTIONS.NEXT });
-        } else if (input === 'n') {
-          dispatch({ type: ACTIONS.EXIT, payload: { code: 1, reasons: compatibility.reasons } });
-        }
-      }
-    });
-
     useEffect(() => {
       checkCompatibility().then((result) => {
         if (result.type === 'compatible') {
-          dispatch({ type: 'NEXT' });
+          dispatch({ type: ACTIONS.NEXT });
         } else {
           setCompatibility(result);
         }
@@ -295,22 +303,27 @@ const steps = {
                 <Text key={index}>{reason}</Text>
               ))}
             </Box>
-            <Text>Are you sure you want to continue? Y/n</Text>
+            <Text>
+              Are you sure you want to continue?{' '}
+              <Confirm
+                onChange={(answer) => {
+                  if (answer) {
+                    dispatch({ type: ACTIONS.NEXT });
+                  } else {
+                    dispatch({
+                      type: ACTIONS.EXIT,
+                      payload: { code: 1, reasons: compatibility.reasons },
+                    });
+                  }
+                }}
+              />
+            </Text>
           </>
         )}
       </Box>
     );
   },
   INSTALL: ({ state, dispatch }) => {
-    useInput((input, key) => {
-      if (key.return || input === 'y') {
-        dispatch({ type: ACTIONS.INSTALL, payload: { value: true } });
-      }
-      if (input === 'n') {
-        dispatch({ type: ACTIONS.INSTALL, payload: { value: false } });
-      }
-    });
-
     useEffect(() => {
       if (state.install !== undefined) {
         dispatch({ type: ACTIONS.INSTALL, payload: { value: state.install } });
@@ -327,7 +340,14 @@ const steps = {
 
     return (
       <Box>
-        <Text>Shall we install dependencies? y/n</Text>
+        <Text>
+          Shall we install dependencies?{' '}
+          <Confirm
+            onChange={(answer) => {
+              dispatch({ type: ACTIONS.INSTALL, payload: { value: answer } });
+            }}
+          />
+        </Text>
       </Box>
     );
   },
@@ -477,7 +497,7 @@ function reducer(state: State, action: Action): State {
         ignoreGitNotClean: true,
         step: next,
       };
-    case ACTIONS.IGNORE_GIT:
+    case ACTIONS.IGNORE_VERSION:
       return {
         ...state,
         ignoreVersion: true,
