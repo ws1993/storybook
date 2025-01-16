@@ -408,7 +408,6 @@ const steps = {
 const keys = getKeys(steps);
 
 const ACTIONS = {
-  /** @deprecated */
   NEXT: 'NEXT',
   IGNORE_GIT: 'IGNORE_GIT',
   IGNORE_VERSION: 'IGNORE_VERSION',
