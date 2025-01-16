@@ -76,11 +76,15 @@ export function Installation({ state, onComplete }: Procedure) {
 
         child.on('close', (code) => {
           setTimeout(() => {
-            const errors = [new Error(`install process exited with code ${code}`)];
+            const errors = [];
             if (ref.current.error !== '') {
               errors.push(new Error(ref.current.error));
             } else if (ref.current.lastChunk !== '') {
               errors.push(new Error(ref.current.lastChunk));
+            }
+
+            if (errors.length === 0) {
+              errors.push(new Error(`install process exited with code ${code}`));
             }
             onComplete(errors);
           }, 1000);
