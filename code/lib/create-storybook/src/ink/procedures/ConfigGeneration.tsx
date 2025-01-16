@@ -2,10 +2,10 @@ import React, { useEffect, useState } from 'react';
 
 import { Box, Text } from 'ink';
 
-import type { State } from '../Main';
+import type { Procedure } from '../utils/procedure';
 
-export function ConfigGeneration({ state, onComplete }: { state: State; onComplete: () => void }) {
-  const [line, setLine] = useState<string>('');
+export function ConfigGeneration({ state, onComplete }: Procedure) {
+  const [line, setLine] = useState<string>('...');
 
   useEffect(() => {
     // do work to install dependencies
@@ -20,7 +20,7 @@ export function ConfigGeneration({ state, onComplete }: { state: State; onComple
 
   return (
     <Box height={1} overflow="hidden">
-      <Text>- Generating config files {line === '' ? '...' : line}</Text>
+      <Text>- Generating config files {line}</Text>
     </Box>
   );
 }

@@ -23,16 +23,18 @@ addToGlobalContext('cliVersion', version);
 const createStorybookProgram = program.name('Initialize Storybook into your project.');
 
 const modernProgram = Object.entries(modernInputs.shape).reduce((acc, [key, schema]) => {
+  // @ts-expect-error (Object.entries loses type information)
   const { innerType, defaultValue, description } = schema._def;
   let t = innerType;
 
+  // @ts-expect-error (Object.entries loses type information)
   while (t._def.innerType) {
     // @ts-expect-error (Object.entries loses type information)
     t = t._def.innerType;
   }
 
   const { typeName } = t._def;
-  const value = defaultValue();
+  const value = defaultValue ? defaultValue() : undefined;
 
   // to dash-case
   const flag = key
@@ -48,9 +50,7 @@ const modernProgram = Object.entries(modernInputs.shape).reduce((acc, [key, sche
     acc.option(`--${flag} <option>`, description, value);
   } else if (typeName.match('Boolean')) {
     acc.option(`--${flag}`, description, value);
-    if (value === true) {
-      acc.option(`--no-${flag}`, `inverted --${flag}`);
-    }
+    acc.option(`--no-${flag}`, `inverted --${flag}`);
   }
 
   return acc;

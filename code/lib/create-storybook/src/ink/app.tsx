@@ -24,25 +24,15 @@ if (globalThis.CLI_APP_INSTANCE) {
   globalThis.CLI_APP_INSTANCE.unmount();
 }
 
-export type Input = {
-  intents: z.infer<typeof inputs>['intents'];
-  features: z.infer<typeof inputs>['features'];
-  directory: z.infer<typeof inputs>['directory'];
-  framework: z.infer<typeof inputs>['framework'];
-  install: z.infer<typeof inputs>['install'];
-  ignoreGitNotClean?: z.infer<typeof inputs>['ignoreGitNotClean'];
+export type Input = z.infer<typeof inputs> & {
   width: number;
   height: number;
 };
 
 export async function run(options: z.infer<typeof inputs>) {
   const input: Input = {
-    features: options.features,
-    directory: options.directory,
-    framework: options.framework,
-    install: options.install,
-    ignoreGitNotClean: options.ignoreGitNotClean,
-    intents: ['dev', ...options.intents],
+    ...options,
+    intents: ['dev', ...options.intents.filter((v) => v !== 'dev')],
     width: process.stdout.columns || 120,
     height: process.stdout.rows || 40,
   };

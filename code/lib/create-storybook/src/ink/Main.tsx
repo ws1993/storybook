@@ -32,19 +32,32 @@ const steps = {
 
     useInput((input, key) => {
       if (git === 'unclean' && key.return) {
-        dispatch({ type: ACTIONS.NEXT });
+        dispatch({ type: ACTIONS.IGNORE_GIT });
       }
     });
 
     useEffect(() => {
-      checkGitStatus().then((result) => {
-        if (result) {
-          dispatch({ type: ACTIONS.NEXT });
-        } else {
-          setGit(result);
-        }
-      });
+      if (state.ignoreGitNotClean) {
+        dispatch({ type: ACTIONS.IGNORE_GIT });
+      } else {
+        checkGitStatus().then((result) => {
+          if (result) {
+            dispatch({ type: ACTIONS.IGNORE_GIT });
+          } else {
+            setGit(result);
+          }
+        });
+      }
     }, []);
+
+    if (state.ignoreGitNotClean) {
+      return (
+        <Box>
+          <Text>Ignoring git state...</Text>
+        </Box>
+      );
+    }
+
     return (
       <Box>
         {git === 'loading' && <Text>- Checking git state...</Text>}
@@ -62,14 +75,27 @@ const steps = {
     });
 
     useEffect(() => {
-      checkVersion().then((result) => {
-        if (result === 'latest') {
-          dispatch({ type: 'NEXT' });
-        } else {
-          setVersion(result);
-        }
-      });
+      if (state.ignoreVersion) {
+        dispatch({ type: ACTIONS.IGNORE_VERSION });
+      } else {
+        checkVersion().then((result) => {
+          if (result === 'latest') {
+            dispatch({ type: ACTIONS.NEXT });
+          } else {
+            setVersion(result);
+          }
+        });
+      }
     }, []);
+
+    if (state.ignoreVersion) {
+      return (
+        <Box>
+          <Text>Ignoring version state...</Text>
+        </Box>
+      );
+    }
+
     return (
       <Box>
         {version === 'loading' && <Text>- Checking version state...</Text>}
@@ -82,6 +108,7 @@ const steps = {
     );
   },
   DIRECTORY: ({ state, dispatch }) => {
+    // TODO: make the input path absolute
     useEffect(() => {
       setTimeout(() => {
         dispatch({ type: ACTIONS.DIRECTORY, payload: { path: 'my/path' } });
@@ -102,6 +129,8 @@ const steps = {
         checkFramework().then((result) => {
           setDetection(result);
         });
+      } else {
+        dispatch({ type: ACTIONS.FRAMEWORK, payload: { id: state.framework } });
       }
     }, []);
 
@@ -113,6 +142,14 @@ const steps = {
         setDetection('undetected');
       }
     });
+
+    if (state.framework !== 'auto') {
+      return (
+        <Box>
+          <Text>Framework is set to {state.framework}</Text>
+        </Box>
+      );
+    }
 
     switch (detection) {
       case 'auto':
@@ -154,6 +191,20 @@ const steps = {
       }
     });
 
+    useEffect(() => {
+      if (selection.length) {
+        dispatch({ type: ACTIONS.INTENTS, payload: { list: state.intents } });
+      }
+    }, []);
+
+    if (state.intents.length) {
+      return (
+        <Box>
+          <Text>Intents are set to {state.intents.join(', ')}</Text>
+        </Box>
+      );
+    }
+
     return (
       <Box flexDirection="column">
         <Text>What are you using Storybook for?</Text>
@@ -175,6 +226,20 @@ const steps = {
         dispatch({ type: ACTIONS.FEATURES, payload: { list: selection } });
       }
     });
+
+    useEffect(() => {
+      if (selection.length) {
+        dispatch({ type: ACTIONS.FEATURES, payload: { list: state.features } });
+      }
+    }, []);
+
+    if (state.features.length) {
+      return (
+        <Box>
+          <Text>Features are set to {state.features.join(', ')}</Text>
+        </Box>
+      );
+    }
 
     return (
       <Box flexDirection="column">
@@ -246,6 +311,20 @@ const steps = {
       }
     });
 
+    useEffect(() => {
+      if (state.install !== undefined) {
+        dispatch({ type: ACTIONS.INSTALL, payload: { value: state.install } });
+      }
+    }, []);
+
+    if (state.install !== null) {
+      return (
+        <Box>
+          <Text>Install dependencies: {state.install ? 'yes' : 'no'}</Text>
+        </Box>
+      );
+    }
+
     return (
       <Box>
         <Text>Shall we install dependencies? y/n</Text>
@@ -313,17 +392,22 @@ const steps = {
     return (
       <Box flexDirection="column">
         <Text>running tasks...</Text>
-        {state.install ? (
-          <Installation
-            state={state}
-            onComplete={() => setResults((t) => ({ ...t, installation: 'done' }))}
-          />
-        ) : (
-          <Text>skipped installation...</Text>
-        )}
+        <Installation
+          state={state}
+          dispatch={dispatch}
+          doCancel={() => {}} // TODO: figure out how to deal with this
+          onComplete={(errors) =>
+            setResults((t) => ({ ...t, installation: errors?.length ? 'fail' : 'done' }))
+          }
+        />
+
         <ConfigGeneration
           state={state}
-          onComplete={() => setResults((t) => ({ ...t, config: 'done' }))}
+          dispatch={dispatch}
+          doCancel={() => {}} // TODO: figure out how to deal with this
+          onComplete={(errors) =>
+            setResults((t) => ({ ...t, config: errors?.length ? 'fail' : 'done' }))
+          }
         />
         {/* <MetricsReport /> */}
       </Box>
@@ -334,8 +418,10 @@ const steps = {
 const keys = getKeys(steps);
 
 const ACTIONS = {
+  /** @deprecated */
   NEXT: 'NEXT',
   IGNORE_GIT: 'IGNORE_GIT',
+  IGNORE_VERSION: 'IGNORE_VERSION',
   DIRECTORY: 'DIRECTORY',
   FRAMEWORK: 'FRAMEWORK',
   INTENTS: 'INTENTS',
@@ -344,12 +430,15 @@ const ACTIONS = {
   EXIT: 'EXIT',
 } as const;
 
-type Action =
+export type Action =
   | {
       type: (typeof ACTIONS)['NEXT'];
     }
   | {
       type: (typeof ACTIONS)['IGNORE_GIT'];
+    }
+  | {
+      type: (typeof ACTIONS)['IGNORE_VERSION'];
     }
   | {
       type: (typeof ACTIONS)['DIRECTORY'];
@@ -376,20 +465,17 @@ type Action =
       payload: { code: number; reasons: string[] };
     };
 
-export type State = Pick<Input, 'features' | 'intents' | 'framework'> & {
+export type State = Omit<Input, 'width' | 'height'> & {
   step: keyof typeof steps;
   directory: string;
-
-  // unsure about this one
-  install: boolean | null;
 };
 
 function reducer(state: State, action: Action): State {
+  const current = keys.indexOf(state.step);
+  const next = keys[current + 1];
+
   switch (action.type) {
     case ACTIONS.NEXT:
-      const current = keys.indexOf(state.step);
-      const next = keys[current + 1];
-
       if (current === keys.length - 1) {
         // last step
         return state;
@@ -399,46 +485,47 @@ function reducer(state: State, action: Action): State {
     case ACTIONS.IGNORE_GIT:
       return {
         ...state,
-        step: 'DIRECTORY',
+        ignoreGitNotClean: true,
+        step: next,
+      };
+    case ACTIONS.IGNORE_GIT:
+      return {
+        ...state,
+        ignoreVersion: true,
+        step: next,
       };
     case ACTIONS.DIRECTORY:
       return {
         ...state,
         directory: action.payload.path,
-        step: state.framework === 'auto' ? 'FRAMEWORK' : 'INTENTS',
+        step: next,
       };
     case ACTIONS.FRAMEWORK:
-      return { ...state, framework: action.payload.id, step: 'INTENTS' };
+      return { ...state, framework: action.payload.id, step: next };
     case ACTIONS.INTENTS:
-      return { ...state, intents: action.payload.list, step: 'FEATURES' };
+      return { ...state, intents: action.payload.list, step: next };
     case ACTIONS.FEATURES:
       return {
         ...state,
         features: action.payload.list,
-        step: state.install !== null ? 'INSTALL' : 'CHECK',
+        step: next,
       };
     case ACTIONS.INSTALL:
-      return { ...state, install: action.payload.value, step: 'RUN' };
+      return { ...state, install: action.payload.value, step: next };
     default:
       return state;
   }
 }
 
-export function Main({
-  features,
-  intents,
-  ignoreGitNotClean,
-  directory,
-  framework,
-  install,
-}: Input) {
+export function Main({ features, intents, directory, framework, install, ...rest }: Input) {
   const [state, dispatch] = useReducer(reducer, {
     features,
     intents,
     directory: directory ?? '.',
     framework: framework ?? 'auto',
-    install: install ?? null,
-    step: ignoreGitNotClean ? 'VERSION' : 'GIT',
+    install: install ?? undefined,
+    step: rest.ignoreGitNotClean ? 'VERSION' : 'GIT',
+    ...rest,
   });
 
   const Step = steps[state.step];

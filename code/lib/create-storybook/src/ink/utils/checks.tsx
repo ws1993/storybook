@@ -15,7 +15,7 @@ export async function checkExists(location: string): Promise<ExistsResult> {
   // slow delay for demo effect
   await new Promise((resolve) => setTimeout(resolve, 1000));
 
-  return 'empty';
+  return 'exists';
 }
 
 export type VersionResult = 'loading' | 'latest' | 'outdated';

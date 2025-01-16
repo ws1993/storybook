@@ -83,12 +83,16 @@ export const modernInputs = z.strictObject({
   install: z //
     .boolean()
     .optional()
-    .describe('install dependencies using the package manager')
-    .default(true),
+    .describe('install dependencies using the package manager'),
 
   ignoreGitNotClean: z //
     .boolean()
     .optional()
     .describe('ignore git not clean')
+    .default(false),
+  ignoreVersion: z //
+    .boolean()
+    .optional()
+    .describe('ignore version warning')
     .default(false),
 });
