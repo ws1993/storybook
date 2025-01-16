@@ -347,8 +347,7 @@ type Action =
       type: (typeof ACTIONS)['NEXT'];
     }
   | {
-      type: (typeof ACTIONS)['DIRECTORY'];
-      payload: { path: string };
+      type: (typeof ACTIONS)['IGNORE_GIT'];
     }
   | {
       type: (typeof ACTIONS)['DIRECTORY'];
