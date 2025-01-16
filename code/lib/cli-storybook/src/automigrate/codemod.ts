@@ -1,9 +1,14 @@
+import os from 'node:os';
+
+import { formatFileContent } from 'storybook/internal/common';
+
 import { promises as fs } from 'fs';
-// eslint-disable-next-line depend/ban-dependencies
-import { glob } from 'glob';
 import picocolors from 'picocolors';
+import slash from 'slash';
 
 const logger = console;
+
+export const maxConcurrentTasks = Math.max(1, os.cpus().length - 1);
 
 export interface FileInfo {
   path: string;
@@ -28,39 +33,52 @@ export interface FileInfo {
 export async function runCodemod(
   globPattern: string = '**/*.stories.*',
   transform: (source: FileInfo) => Promise<string>,
-  { dryRun = false }: { dryRun?: boolean } = {}
+  { dryRun = false, skipFormatting = false }: { dryRun?: boolean; skipFormatting?: boolean } = {}
 ) {
   let modifiedCount = 0;
   let unmodifiedCount = 0;
   let errorCount = 0;
 
   try {
-    const files = await glob(globPattern, {
-      nodir: true,
-      follow: true,
+    // Dynamically import these packages because they are pure ESM modules
+    // eslint-disable-next-line depend/ban-dependencies
+    const { globby } = await import('globby');
+
+    const pLimit = (await import('p-limit')).default;
+
+    // glob only supports forward slashes
+    const files = await globby(slash(globPattern), {
+      followSymbolicLinks: true,
       ignore: ['node_modules/**', 'dist/**', 'storybook-static/**', 'build/**'],
     });
 
-    await Promise.all(
-      files.map(async (file) => {
-        try {
-          const source = await fs.readFile(file, 'utf-8');
-          const fileInfo: FileInfo = { path: file, source };
-          const transformedSource = await transform(fileInfo);
+    const limit = pLimit(maxConcurrentTasks);
 
-          if (transformedSource !== source) {
-            if (!dryRun) {
-              await fs.writeFile(file, transformedSource, 'utf-8');
+    await Promise.all(
+      files.map((file) =>
+        limit(async () => {
+          try {
+            const source = await fs.readFile(file, 'utf-8');
+            const fileInfo: FileInfo = { path: file, source };
+            const transformedSource = await transform(fileInfo);
+
+            if (transformedSource !== source) {
+              if (!dryRun) {
+                const fileContent = skipFormatting
+                  ? transformedSource
+                  : await formatFileContent(file, transformedSource);
+                await fs.writeFile(file, fileContent, 'utf-8');
+              }
+              modifiedCount++;
+            } else {
+              unmodifiedCount++;
             }
-            modifiedCount++;
-          } else {
-            unmodifiedCount++;
+          } catch (fileError) {
+            logger.error(`Error processing file ${file}:`, fileError);
+            errorCount++;
           }
-        } catch (fileError) {
-          logger.error(`Error processing file ${file}:`, fileError);
-          errorCount++;
-        }
-      })
+        })
+      )
     );
   } catch (error) {
     logger.error('Error applying transform:', error);

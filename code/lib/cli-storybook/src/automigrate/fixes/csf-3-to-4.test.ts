@@ -109,12 +109,13 @@ describe('csf-3-to-4', () => {
           };
         `)
       ).resolves.toMatchInlineSnapshot(`
-        import { storybookConfig as config } from "#.storybook/preview";
+        import { config as storybookConfig } from '#.storybook/preview';
+
         const meta = storybookConfig.meta({ title: 'Component' });
         const config = {};
         export const A = meta.story({
           args: { primary: true },
-          render: (args) => <Component {...args} />
+          render: (args) => <Component {...args} />,
         });
       `);
     });

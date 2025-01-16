@@ -1,5 +1,6 @@
 /* eslint-disable no-underscore-dangle */
 import { types as t } from 'storybook/internal/babel';
+import { formatFileContent } from 'storybook/internal/common';
 import { isValidPreviewPath, loadCsf, printCsf } from 'storybook/internal/csf-tools';
 
 import prompts from 'prompts';
@@ -37,8 +38,8 @@ export async function csf4Transform(info: FileInfo) {
   const sbConfigImportName = hasRootLevelConfig ? 'storybookConfig' : 'config';
 
   const sbConfigImportSpecifier = t.importSpecifier(
-    t.identifier('config'),
-    t.identifier(sbConfigImportName)
+    t.identifier(sbConfigImportName),
+    t.identifier('config')
   );
 
   programNode.body.forEach((node) => {
@@ -196,17 +197,7 @@ export async function csf4Transform(info: FileInfo) {
     return true;
   });
 
-  let output = printCsf(csf).code;
-
-  try {
-    // eslint-disable-next-line import/no-extraneous-dependencies
-    const prettier = await import('prettier');
-    output = await prettier.format(output, {
-      ...(await prettier.resolveConfig(info.path)),
-      filepath: info.path,
-    });
-  } catch (e) {}
-  return output;
+  return printCsf(csf).code;
 }
 
 const logger = console;
