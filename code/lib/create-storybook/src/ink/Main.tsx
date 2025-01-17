@@ -1,13 +1,16 @@
-import { isAbsolute, join } from 'node:path';
+import { dirname, isAbsolute, join } from 'node:path';
 import { cwd } from 'node:process';
 
-import React, { type Dispatch, type FC, useEffect, useReducer, useState } from 'react';
+import React, { type Dispatch, type FC, useContext, useEffect, useReducer, useState } from 'react';
 
+import { Spinner, TextInput } from '@inkjs/ui';
+import figureSet from 'figures';
 import { Box, Text, useInput } from 'ink';
 
 import { supportedFrameworksMap } from '../bin/modernInputs';
 import type { Input } from './app';
 import { Confirm } from './components/Confirm';
+import { Rainbow } from './components/Rainbow';
 import { MultiSelect } from './components/Select/MultiSelect';
 import { ConfigGeneration } from './procedures/ConfigGeneration';
 import { Installation } from './procedures/Installation';
@@ -25,6 +28,7 @@ import {
   checkGitStatus,
   checkVersion,
 } from './utils/checks';
+import { AppContext } from './utils/context';
 import { getKeys } from './utils/getKeys';
 
 const steps = {
@@ -55,19 +59,36 @@ const steps = {
 
     return (
       <Box>
-        {git === 'loading' && <Text>- Checking git state...</Text>}
+        {git === 'loading' && (
+          <Box gap={1}>
+            <Spinner />
+            <Text>Checking git state...</Text>
+          </Box>
+        )}
         {git === 'unclean' && (
           <>
-            <Text>- Git is not clean, are you sure you want to continue?</Text>
-            <Confirm
-              onChange={(answer) => {
-                if (answer) {
-                  dispatch({ type: ACTIONS.IGNORE_GIT });
-                } else {
-                  // TODO!
-                }
-              }}
-            />
+            <Box borderStyle={'round'} borderColor={'yellow'} flexDirection="column">
+              <Text>{figureSet.warning} Your git is not clean!</Text>
+              <Text>
+                This CLI will make changes to your file-system, and reverting them those will be
+                significantly easier when starting from a clean git state.
+              </Text>
+              <Text>
+                Are you sure you want to continue?
+                <Confirm
+                  onChange={(answer) => {
+                    if (answer) {
+                      dispatch({ type: ACTIONS.IGNORE_GIT });
+                    } else {
+                      dispatch({
+                        type: ACTIONS.EXIT,
+                        payload: { code: 1, reasons: ['cancelled: unclean git'] },
+                      });
+                    }
+                  }}
+                />
+              </Text>
+            </Box>
           </>
         )}
       </Box>
@@ -77,30 +98,23 @@ const steps = {
     const [version, setVersion] = useState<VersionResult>('loading');
 
     useEffect(() => {
-      if (state.ignoreVersion) {
-        dispatch({ type: ACTIONS.IGNORE_VERSION });
-      } else {
-        checkVersion().then((result) => {
-          if (result === 'latest') {
-            dispatch({ type: ACTIONS.IGNORE_VERSION });
-          } else {
-            setVersion(result);
-          }
-        });
-      }
+      checkVersion().then((result) => {
+        if (state.ignoreVersion || result === 'latest') {
+          dispatch({ type: ACTIONS.IGNORE_VERSION, payload: { value: 'latest' } });
+        } else {
+          setVersion(result);
+        }
+      });
     }, []);
-
-    if (state.ignoreVersion) {
-      return (
-        <Box>
-          <Text>Ignoring version state...</Text>
-        </Box>
-      );
-    }
 
     return (
       <Box>
-        {version === 'loading' && <Text>- Checking version state...</Text>}
+        {version === 'loading' && (
+          <Box gap={1}>
+            <Spinner />
+            <Text>Checking version state...</Text>
+          </Box>
+        )}
         {version === 'outdated' && (
           <>
             <Text>
@@ -110,9 +124,12 @@ const steps = {
             <Confirm
               onChange={(answer) => {
                 if (answer) {
-                  dispatch({ type: ACTIONS.IGNORE_VERSION });
+                  dispatch({ type: ACTIONS.IGNORE_VERSION, payload: { value: 'outdated' } });
                 } else {
-                  // TODO!
+                  dispatch({
+                    type: ACTIONS.EXIT,
+                    payload: { code: 1, reasons: ['cancelled: used outdated version'] },
+                  });
                 }
               }}
             />
@@ -122,18 +139,65 @@ const steps = {
     );
   },
   DIRECTORY: ({ state, dispatch }) => {
+    const [accepted, setAccepted] = useState<boolean | undefined>(undefined);
+    const [suggestions, setSuggestions] = useState<string[] | undefined>(undefined);
+
     const directory = isAbsolute(state.directory) ? state.directory : join(cwd(), state.directory);
 
-    // TODO: make the input path absolute
     useEffect(() => {
-      setTimeout(() => {
-        dispatch({ type: ACTIONS.DIRECTORY, payload: { path: directory } });
-      }, 1000);
+      if (state.directory !== '.') {
+        return dispatch({ type: ACTIONS.DIRECTORY, payload: { path: directory } });
+      }
     }, []);
 
+    const context = useContext(AppContext);
+
+    useEffect(() => {
+      if (accepted === false && context.glob && state.directory === '.') {
+        context.glob
+          .glob('**/package.json', {
+            cwd: directory,
+            absolute: true,
+            ignore: ['**/node_modules/**'],
+          })
+          .then((results) => {
+            setSuggestions(results.map((s) => dirname(s)));
+          });
+      }
+    }, [accepted]);
+
     return (
-      <Box>
-        <Text>...</Text>
+      <Box flexDirection="column" gap={1}>
+        {accepted === undefined && (
+          <>
+            <Text>Where should Storybook be added?</Text>
+            <Text>
+              Currently set to: <Text color={'cyan'}>{directory}</Text> is this correct?{' '}
+              <Confirm
+                onChange={(answer) => {
+                  if (answer) {
+                    dispatch({ type: ACTIONS.DIRECTORY, payload: { path: directory } });
+                  } else {
+                    setAccepted(false);
+                  }
+                }}
+              />
+            </Text>
+          </>
+        )}
+        {accepted === false && (
+          <>
+            <Text>Please enter the directory</Text>
+            {/* I'd like to replace this some day with a tree view */}
+            <TextInput
+              suggestions={suggestions}
+              defaultValue={directory}
+              onChange={(value) => {
+                dispatch({ type: ACTIONS.DIRECTORY, payload: { path: value } });
+              }}
+            />
+          </>
+        )}
       </Box>
     );
   },
@@ -152,8 +216,11 @@ const steps = {
 
     if (state.framework !== 'auto') {
       return (
-        <Box>
-          <Text>Framework is set to {state.framework}</Text>
+        <Box flexDirection="column" gap={1}>
+          <Text>Storybook can work for many types of projects.</Text>
+          <Text>
+            You have selected this framework: <Text color="cyan">{state.framework}</Text>
+          </Text>
         </Box>
       );
     }
@@ -161,31 +228,42 @@ const steps = {
     switch (detection) {
       case 'auto':
         return (
-          <Box flexDirection="column">
-            <Text>- Checking for framework...</Text>
+          <Box flexDirection="column" gap={1}>
+            <Text>Storybook can work for many types of projects.</Text>
+            <Box gap={1}>
+              <Spinner />
+              <Text>
+                We're looking at your project to determine which storybook-framework is best...
+              </Text>
+            </Box>
           </Box>
         );
       case 'undetected':
         return (
-          <Box flexDirection="column">
-            <Text>Select which framework?</Text>
-            <MultiSelect
-              // count={6} // I'd prefer to have this option back
-              selection={[]}
-              options={supportedFrameworksMap}
-              setSelection={([selection]) =>
-                dispatch({ type: ACTIONS.FRAMEWORK, payload: { id: selection } })
-              }
-              isDisabled={false}
-            />
+          <Box flexDirection="column" gap={1}>
+            <Text>Storybook can work for many types of projects.</Text>
+
+            <Box flexDirection="column">
+              <Text>Please select which storybook-framework applies to your project?</Text>
+              <MultiSelect
+                // count={6} // I'd prefer to have this option back
+                selection={[]}
+                options={supportedFrameworksMap}
+                setSelection={([selection]) =>
+                  dispatch({ type: ACTIONS.FRAMEWORK, payload: { id: selection } })
+                }
+                isDisabled={false}
+              />
+            </Box>
           </Box>
         );
       default:
         return (
-          <Box flexDirection="column">
-            <Text>Detected framework: {detection}</Text>
+          <Box flexDirection="column" gap={1}>
+            <Text>Storybook can work for many types of projects.</Text>
             <Text>
-              OK?{' '}
+              We looked at your project and we think the storybook-framework:{' '}
+              <Text color="cyan">{detection}</Text> would work best, Is that correct?
               <Confirm
                 onChange={(answer) => {
                   if (answer) {
@@ -224,7 +302,7 @@ const steps = {
     }
 
     return (
-      <Box flexDirection="column">
+      <Box flexDirection="column" gap={1}>
         <Text>What are you using Storybook for?</Text>
         <MultiSelect
           // count={6} // I'd prefer to have this option back
@@ -260,8 +338,8 @@ const steps = {
     }
 
     return (
-      <Box flexDirection="column">
-        <Text>What optional features?</Text>
+      <Box flexDirection="column" gap={1}>
+        <Text>What optional features would you like to add?</Text>
         <MultiSelect
           // count={6} // I'd prefer to have this option back
           options={
@@ -294,15 +372,23 @@ const steps = {
 
     return (
       <Box flexDirection="column">
-        {compatibility.type === 'loading' && <Text>- Checking compatibility...</Text>}
+        {compatibility.type === 'loading' && (
+          <Box gap={1}>
+            <Spinner />
+            <Text>We're checking compatibility...</Text>
+          </Box>
+        )}
         {compatibility.type === 'incompatible' && (
-          <>
-            <Box flexDirection="column">
+          <Box flexDirection="column" gap={1}>
+            <Box flexDirection="column" borderStyle={'round'} borderColor={'red'}>
               <Text>Not compatible with current setup:</Text>
               {compatibility.reasons.map((reason, index) => (
                 <Text key={index}>{reason}</Text>
               ))}
             </Box>
+            <Text>
+              It's strongly recommended, to NOT proceed, and address problems listed above.
+            </Text>
             <Text>
               Are you sure you want to continue?{' '}
               <Confirm
@@ -318,7 +404,7 @@ const steps = {
                 }}
               />
             </Text>
-          </>
+          </Box>
         )}
       </Box>
     );
@@ -330,18 +416,30 @@ const steps = {
       }
     }, []);
 
-    if (state.install !== undefined) {
+    if (state.install === true) {
       return (
-        <Box>
-          <Text>Install dependencies: {state.install ? 'yes' : 'no'}</Text>
+        <Box flexDirection="column" gap={1}>
+          <Text>Storybook will need to add dependencies to your project.</Text>
+          <Text>We will run the package manager for you.</Text>
+        </Box>
+      );
+    }
+    if (state.install === false) {
+      return (
+        <Box flexDirection="column" gap={1}>
+          <Text>
+            You've opted not to have us run the package manager install command for you, you will
+            have to add dependencies manually.
+          </Text>
         </Box>
       );
     }
 
     return (
-      <Box>
+      <Box flexDirection="column" gap={1}>
+        <Text>Storybook will need to add dependencies to your project.</Text>
         <Text>
-          Shall we install dependencies?{' '}
+          Shall we run the package manager install command for you?{' '}
           <Confirm
             onChange={(answer) => {
               dispatch({ type: ACTIONS.INSTALL, payload: { value: answer } });
@@ -368,45 +466,94 @@ const steps = {
           const language = state.features.includes('typescript') ? 'ts' : 'js';
           const framework = state.framework;
 
-          // do work to actually create sandbox
+          // TODO: actually download sandbox into directory
         }
       });
     }, []);
 
     return (
-      <Box flexDirection="column">
-        {exists === 'loading' && <Text>- Checking if directory is empty...</Text>}
-        {exists === 'empty' && <Text>- Creating project...</Text>}
+      <Box flexDirection="column" gap={1}>
+        {exists === 'loading' && (
+          <Box gap={1}>
+            <Spinner />
+            <Text>We're checking if the project needs a scaffold..</Text>
+          </Box>
+        )}
+        {exists === 'empty' && (
+          <>
+            <Text>Storybook needs to scaffold project to initialize on top off.</Text>
+            <Text>
+              Creating a new project in the directory: <Text color="cyan">{directory}</Text>
+            </Text>
+          </>
+        )}
       </Box>
     );
   },
   RUN: ({ state, dispatch }) => {
     const [results, setResults] = useState({
-      installation: state.install ? 'loading' : 'skipped',
-      config: 'loading',
+      installation: { status: state.install ? 'loading' : 'skipped', errors: [] as Error[] },
+      config: { status: 'loading', errors: [] as Error[] },
     });
 
-    const [errors, setErrors] = useState<Error[]>([]);
-
     const list = Object.entries(results);
-    const done = list.every(([_, status]) => status === 'done' || status === 'skipped');
-    const anyFailed = errors.length > 0;
+    const done = list.every(([_, { status }]) => status === 'done' || status === 'skipped');
+    const anyFailed = list.some(([_, { errors }]) => errors.length > 0);
 
     if (done) {
       return (
-        <Box>
-          <Text>All done!</Text>
+        <Box flexDirection="column" gap={1}>
+          <Text>
+            Your storybook is <Rainbow text="ready" />
+          </Text>
+          <Box flexDirection="column">
+            <Text>You can run your storybook with the following command:</Text>
+            <Text>
+              <Text color="cyan">npx sb</Text>
+            </Text>
+          </Box>
         </Box>
       );
     }
     if (anyFailed) {
       return (
-        <Box flexDirection="column">
-          <Text color={'red'}>Something failed!</Text>
-          <Text>Errors:</Text>
-          {errors.map((error, index) => (
-            <Text key={index}>{error.message}</Text>
-          ))}
+        <Box flexDirection="column" gap={1}>
+          <Text>
+            Your storybook failed to be added to your project. Please check the following errors:
+          </Text>
+          {list.map((e) => {
+            const [name, { status, errors }] = e;
+            if (errors.length === 0) {
+              return null;
+            }
+            return (
+              <Box
+                key={name}
+                flexDirection="column"
+                borderStyle={'round'}
+                borderColor={'red'}
+                paddingLeft={1}
+                paddingRight={1}
+              >
+                <Box
+                  borderLeft={false}
+                  borderRight={false}
+                  borderTop={false}
+                  borderColor={'red'}
+                  borderStyle={'double'}
+                >
+                  <Text key={name}>
+                    {name}: {status}
+                    {errors.length ? ` with ${errors.length} error${errors.length > 1 && 's'}` : ''}
+                  </Text>
+                </Box>
+
+                {errors.map((error, index) => (
+                  <Text key={index}>{error.message}</Text>
+                ))}
+              </Box>
+            );
+          })}
         </Box>
       );
     }
@@ -417,26 +564,22 @@ const steps = {
         <Installation
           state={state}
           dispatch={dispatch}
-          onComplete={(e) =>
-            e?.length
-              ? setErrors((t) => [...t, ...e])
-              : setResults((t) => ({
-                  ...t,
-                  installation: errors?.length ? 'fail' : 'done',
-                }))
+          onComplete={(errors) =>
+            setResults((t) => ({
+              ...t,
+              installation: { status: errors?.length ? 'fail' : 'done', errors: errors || [] },
+            }))
           }
         />
 
         <ConfigGeneration
           state={state}
           dispatch={dispatch}
-          onComplete={(e) =>
-            e?.length
-              ? setErrors((t) => [...t, ...e])
-              : setResults((t) => ({
-                  ...t,
-                  installation: errors?.length ? 'fail' : 'done',
-                }))
+          onComplete={(errors) =>
+            setResults((t) => ({
+              ...t,
+              config: { status: errors?.length ? 'fail' : 'done', errors: errors || [] },
+            }))
           }
         />
         {/* <MetricsReport /> */}
@@ -468,6 +611,7 @@ export type Action =
     }
   | {
       type: (typeof ACTIONS)['IGNORE_VERSION'];
+      payload: { value: 'latest' | 'outdated' };
     }
   | {
       type: (typeof ACTIONS)['DIRECTORY'];
@@ -497,6 +641,7 @@ export type Action =
 export type State = Omit<Input, 'width' | 'height'> & {
   step: keyof typeof steps;
   directory: string;
+  version: 'latest' | 'outdated' | undefined;
 };
 
 function reducer(state: State, action: Action): State {
@@ -516,6 +661,7 @@ function reducer(state: State, action: Action): State {
       return {
         ...state,
         ignoreVersion: true,
+        version: action.payload.value,
         step: next,
       };
     case ACTIONS.DIRECTORY:
@@ -547,22 +693,27 @@ export function Main({ directory, framework, install, ...rest }: Input) {
     framework: framework ?? 'auto',
     install: install ?? undefined,
     step: 'GIT',
+    version: undefined,
     ...rest,
   });
 
   const Step = steps[state.step];
 
   return (
-    <Box flexDirection="column">
+    <Box flexDirection="column" gap={1}>
       {/* Here we render the header */}
-      <Box>
-        <Text>Intro...</Text>
+      <Box flexDirection="column">
+        <Box>
+          <Rainbow text="Welcome to Storybook's CLI" />
+        </Box>
+        <Text>Let's get things set up!</Text>
       </Box>
-      <Box>
+      {/* <Box>
         <Text>{JSON.stringify(state, null, 2)}</Text>
-      </Box>
+      </Box> */}
 
       {/* Here we render the current step with state and dispatch */}
+
       <Step state={state} dispatch={dispatch} />
     </Box>
   );

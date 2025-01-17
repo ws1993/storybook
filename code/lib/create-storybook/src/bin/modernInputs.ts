@@ -61,38 +61,36 @@ export const modernInputs = z.strictObject({
   intents: z //
     .array(z.enum(['dev', 'docs', 'test']))
     .optional()
-    .describe('what are you using Storybook for?')
+    .describe('What are you using Storybook for?')
     .default(['dev', 'docs', 'test']),
   features: z //
     .array(z.enum(['onboarding', 'examples', 'essentials', 'typescript']))
     .optional()
-    .describe('what are you using Storybook for?')
+    .describe('Choose your features?')
     .default(['onboarding', 'examples', 'essentials', 'typescript']),
 
   directory: z //
     .string()
     .optional()
-    .describe('path where to initialize storybook')
+    .describe('Path where to initialize storybook')
     .default('.'),
   framework: z //
     .enum(supportedFrameworks)
     .optional()
-    .describe('which framework')
+    .describe('Which framework')
     .default('auto'),
 
   install: z //
     .boolean()
     .optional()
-    .describe('install dependencies using the package manager'),
+    .describe('Install dependencies using the package manager'),
 
   ignoreGitNotClean: z //
     .boolean()
     .optional()
-    .describe('ignore git not clean')
-    .default(false),
+    .describe('Ignore git not clean'),
   ignoreVersion: z //
     .boolean()
     .optional()
-    .describe('ignore version warning')
-    .default(false),
+    .describe('Ignore version warning'),
 });

@@ -50,7 +50,9 @@ const modernProgram = Object.entries(modernInputs.shape).reduce((acc, [key, sche
     acc.option(`--${flag} <option>`, description, value);
   } else if (typeName.match('Boolean')) {
     acc.option(`--${flag}`, description, value);
-    acc.option(`--no-${flag}`, `inverted --${flag}`);
+    if (!key.includes('ignore')) {
+      acc.option(`--no-${flag}`, `inverted --${flag}`);
+    }
   }
 
   return acc;

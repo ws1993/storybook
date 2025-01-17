@@ -6,6 +6,8 @@ import * as process from 'node:process';
 import React from 'react';
 
 import { debounce } from 'es-toolkit';
+// eslint-disable-next-line depend/ban-dependencies
+import glob from 'fast-glob';
 import { render } from 'ink';
 import type { z } from 'zod';
 
@@ -38,8 +40,9 @@ export async function run(options: z.infer<typeof inputs>) {
   };
 
   // process.stdout.write('\x1Bc');
+  process.stdout.write('\n');
   globalThis.CLI_APP_INSTANCE = render(
-    <AppContext.Provider value={{ fs, process, child_process, require }}>
+    <AppContext.Provider value={{ fs, process, child_process, require, glob }}>
       <Main {...input} />
     </AppContext.Provider>
   );
@@ -53,7 +56,7 @@ export async function run(options: z.infer<typeof inputs>) {
 
       // process.stdout.write('\x1Bc');
       rerender(
-        <AppContext.Provider value={{ fs, process, child_process, require }}>
+        <AppContext.Provider value={{ fs, process, child_process, require, glob }}>
           <Main {...input} />
         </AppContext.Provider>
       );

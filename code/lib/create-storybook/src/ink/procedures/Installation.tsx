@@ -1,26 +1,34 @@
-import { on } from 'node:events';
 import { dirname, join } from 'node:path';
 
 import React, { useContext, useEffect, useRef, useState } from 'react';
 
 import { Box, Text } from 'ink';
 
+import versions from '../../../../../core/src/common/versions';
 import { AppContext } from '../utils/context';
 import type { Procedure } from '../utils/procedure';
 
+const getExactVersioned = (name: keyof typeof versions): string => {
+  return `${name}@${versions[name]}`;
+};
+
 const deriveDependencies = (state: Procedure['state']): string[] => {
-  const dependencies = ['storybook', `@storybook/${state.framework}`];
+  const format = state.version === 'latest' ? getExactVersioned : (name: string) => name;
+  const dependencies = [
+    format(`storybook`),
+    format(`@storybook/${state.framework}` as keyof typeof versions),
+  ];
 
-  if (state.features.includes('onboarding')) {
-    dependencies.push('@storybook/addon-onboarding');
+  if (state.features.includes(`onboarding`)) {
+    dependencies.push(format(`@storybook/addon-onboarding`));
   }
 
-  if (state.features.includes('essentials')) {
-    dependencies.push('@storybook/addon-essentials');
+  if (state.features.includes(`essentials`)) {
+    dependencies.push(format(`@storybook/addon-essentials`));
   }
 
-  if (state.intents.includes('docs') && !state.features.includes('essentials')) {
-    dependencies.push('@storybook/addon-docs');
+  if (state.intents.includes(`docs`) && !state.features.includes(`essentials`)) {
+    dependencies.push(format(`@storybook/addon-docs`));
   }
 
   return dependencies;
@@ -121,7 +129,7 @@ export function Installation({ state, onComplete }: Procedure) {
         return () => {
           clearInterval(interval);
           clearTimeout(timeout);
-          onComplete([new Error('Installation cancelled')]);
+          onComplete();
         };
       }
     } else {
