@@ -1,4 +1,4 @@
-import type { JsPackageManager, PackageManagerName } from 'storybook/internal/common';
+import type { JsPackageManager, PackageJson, PackageManagerName } from 'storybook/internal/common';
 import type { StorybookConfigRaw } from 'storybook/internal/types';
 
 export interface CheckOptions {
@@ -13,10 +13,12 @@ export interface CheckOptions {
 
 export interface RunOptions<ResultType> {
   packageManager: JsPackageManager;
+  packageJson: PackageJson;
   result: ResultType;
   dryRun?: boolean;
   mainConfigPath: string;
   previewConfigPath?: string;
+  mainConfig: StorybookConfigRaw;
   skipInstall?: boolean;
 }
 
@@ -73,8 +75,10 @@ export enum PreCheckFailure {
 
 export interface AutofixOptions extends Omit<AutofixOptionsFromCLI, 'packageManager'> {
   packageManager: JsPackageManager;
+  packageJson: PackageJson;
   mainConfigPath: string;
   previewConfigPath?: string;
+  mainConfig: StorybookConfigRaw;
   /** The version of Storybook before the migration. */
   beforeVersion: string;
   storybookVersion: string;

@@ -157,6 +157,7 @@ export const getStorybookData = async ({
     storybookVersion,
     mainConfigPath,
     previewConfigPath,
+    packageJson,
   };
 };
 export type GetStorybookData = typeof getStorybookData;

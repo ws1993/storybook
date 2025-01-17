@@ -4,7 +4,7 @@ import { formatFileContent } from '@storybook/core/common';
 
 import { dedent } from 'ts-dedent';
 
-import { storyToCsfFactory } from './csf-factories';
+import { configToCsfFactory, storyToCsfFactory } from './csf-factories';
 
 expect.addSnapshotSerializer({
   serialize: (val: any) => (typeof val === 'string' ? val : val.toString()),
@@ -12,6 +12,130 @@ expect.addSnapshotSerializer({
 });
 
 describe('csf-factories', () => {
+  describe('main/preview codemod: general parsing functionality', () => {
+    const transform = async (source: string) =>
+      (
+        await configToCsfFactory(
+          { source, path: 'main.ts' },
+          { configType: 'main', frameworkPackage: '@storybook/react-vite' }
+        )
+      ).trim();
+
+    it('should wrap defineMain call from inline default export', async () => {
+      await expect(
+        transform(dedent`
+          export default {
+            stories: ['../src/**/*.stories.@(js|jsx|ts|tsx)'],
+            addons: ['@storybook/addon-essentials'],
+            framework: '@storybook/react-vite',
+          };
+        `)
+      ).resolves.toMatchInlineSnapshot(`
+        import { defineMain } from '@storybook/react-vite/node';
+
+        export default defineMain({
+          stories: ['../src/**/*.stories.@(js|jsx|ts|tsx)'],
+          addons: ['@storybook/addon-essentials'],
+          framework: '@storybook/react-vite',
+        });
+      `);
+    });
+    it('should wrap defineMain call from const declared default export', async () => {
+      await expect(
+        transform(dedent`
+          const config = {
+            stories: ['../src/**/*.stories.@(js|jsx|ts|tsx)'],
+            addons: ['@storybook/addon-essentials'],
+            framework: '@storybook/react-vite',
+          };
+
+          export default config;
+        `)
+      ).resolves.toMatchInlineSnapshot(`
+        import { defineMain } from '@storybook/react-vite/node';
+
+        export default defineMain({
+          stories: ['../src/**/*.stories.@(js|jsx|ts|tsx)'],
+          addons: ['@storybook/addon-essentials'],
+          framework: '@storybook/react-vite',
+        });
+      `);
+    });
+    it('should wrap defineMain call from const declared default export and default export mix', async () => {
+      await expect(
+        transform(dedent`
+          export const tags = [];
+          const config = {
+            framework: '@storybook/react-vite',
+          };
+
+          export default config;
+        `)
+      ).resolves.toMatchInlineSnapshot(`
+        import { defineMain } from '@storybook/react-vite/node';
+
+        const config = {
+          framework: '@storybook/react-vite',
+          tags: [],
+        };
+
+        export default config;
+      `);
+    });
+    it('should wrap defineMain call from named exports format', async () => {
+      await expect(
+        transform(dedent`
+          export const stories = ['../src/**/*.stories.@(js|jsx|ts|tsx)'];
+          export const addons = ['@storybook/addon-essentials'];
+          export const framework = '@storybook/react-vite';
+        `)
+      ).resolves.toMatchInlineSnapshot(`
+        import { defineMain } from '@storybook/react-vite/node';
+
+        export default defineMain({
+          stories: ['../src/**/*.stories.@(js|jsx|ts|tsx)'],
+          addons: ['@storybook/addon-essentials'],
+          framework: '@storybook/react-vite',
+        });
+      `);
+    });
+    it('should not add additional imports if there is already one', async () => {
+      const transformed = await transform(dedent`
+          import { defineMain } from '@storybook/react-vite/node';
+          const config = {};
+
+          export default config;
+      `);
+      expect(
+        transformed.match(/import { defineMain } from '@storybook\/react-vite\/node'/g)
+      ).toHaveLength(1);
+    });
+  });
+  describe('preview specific functionality', () => {
+    const transform = async (source: string) =>
+      (
+        await configToCsfFactory(
+          { source, path: 'preview.ts' },
+          { configType: 'preview', frameworkPackage: '@storybook/react-vite' }
+        )
+      ).trim();
+
+    it('should contain a named config export', async () => {
+      await expect(
+        transform(dedent`
+          export default {
+            tags: ['test'],
+          };
+        `)
+      ).resolves.toMatchInlineSnapshot(`
+        import { definePreview } from '@storybook/react-vite/browser';
+
+        export default definePreview({
+          tags: ['test'],
+        });
+      `);
+    });
+  });
   describe('stories codemod', () => {
     const transform = async (source: string) =>
       formatFileContent(
