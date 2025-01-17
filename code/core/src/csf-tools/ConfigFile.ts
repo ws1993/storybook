@@ -499,6 +499,8 @@ export class ConfigFile {
           value = prop.value.value;
         }
       });
+    } else if (t.isCallExpression(node)) {
+      value = this._getPnpWrappedValue(node);
     }
 
     if (!value) {

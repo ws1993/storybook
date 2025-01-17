@@ -1017,6 +1017,19 @@ describe('ConfigFile', () => {
         expect(config.getNameFromPath(['otherField'])).toEqual('foo');
       });
 
+      it(`supports pnp wrapped names`, () => {
+        const source = dedent`
+          import type { StorybookConfig } from '@storybook/react-webpack5';
+
+          const config: StorybookConfig = {
+            framework: getAbsolutePath('foo'),
+          }
+          export default config;
+        `;
+        const config = loadConfig(source).parse();
+        expect(config.getNameFromPath(['framework'])).toEqual('foo');
+      });
+
       it(`returns undefined when accessing a field that does not exist`, () => {
         const source = dedent`
           import type { StorybookConfig } from '@storybook/react-webpack5';
