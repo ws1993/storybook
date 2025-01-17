@@ -1,6 +1,5 @@
 /* eslint-disable no-underscore-dangle */
 import { types as t } from 'storybook/internal/babel';
-import { formatFileContent } from 'storybook/internal/common';
 import { isValidPreviewPath, loadCsf, printCsf } from 'storybook/internal/csf-tools';
 
 import prompts from 'prompts';
@@ -202,18 +201,37 @@ export async function csf4Transform(info: FileInfo) {
 
 const logger = console;
 
+async function runStoriesCodemod(dryRun: boolean | undefined) {
+  try {
+    let globString = '**/*.stories.*';
+    if (!process.env.IN_STORYBOOK_SANDBOX) {
+      logger.log('Please enter the glob for your stories to migrate');
+      globString = (
+        await prompts({
+          type: 'text',
+          name: 'glob',
+          message: 'glob',
+          initial: globString,
+        })
+      ).glob;
+    }
+    logger.log('Applying codemod on your stories...');
+    await runCodemod(globString, csf4Transform, { dryRun });
+  } catch (err: any) {
+    console.log('err message', err.message);
+    if (err.message === 'No files matched') {
+      console.log('going to run again');
+      await runStoriesCodemod(dryRun);
+    } else {
+      throw err;
+    }
+  }
+}
+
 export const csf3to4: CommandFix = {
   id: 'csf-3-to-4',
   promptType: 'command',
   async run({ dryRun }) {
-    logger.log('Please enter the glob for your stories to migrate');
-    const { glob: globString } = await prompts({
-      type: 'text',
-      name: 'glob',
-      message: 'glob',
-      initial: '**/*.stories.*',
-    });
-
-    await runCodemod(globString, csf4Transform, { dryRun });
+    await runStoriesCodemod(dryRun);
   },
 };

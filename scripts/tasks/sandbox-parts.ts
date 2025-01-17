@@ -882,10 +882,9 @@ export const runMigrations: Task['run'] = async ({ sandboxDir, template }, { dry
     template.expected.framework === '@storybook/react-vite' &&
     !template.skipTasks.includes('vitest-integration')
   ) {
-    await executeCLIStep(steps.migrate, {
+    await executeCLIStep(steps.automigrate, {
       cwd: sandboxDir,
       argument: 'csf-3-to-4',
-      optionValues: { glob: 'src/stories/*.stories.*' },
       dryRun,
       debug,
     });

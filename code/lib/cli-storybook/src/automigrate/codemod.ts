@@ -13,6 +13,7 @@ export const maxConcurrentTasks = Math.max(1, os.cpus().length - 1);
 export interface FileInfo {
   path: string;
   source: string;
+  [key: string]: any;
 }
 
 /**
@@ -32,25 +33,33 @@ export interface FileInfo {
  */
 export async function runCodemod(
   globPattern: string = '**/*.stories.*',
-  transform: (source: FileInfo) => Promise<string>,
+  transform: (source: FileInfo, ...rest: any) => Promise<string>,
   { dryRun = false, skipFormatting = false }: { dryRun?: boolean; skipFormatting?: boolean } = {}
 ) {
   let modifiedCount = 0;
   let unmodifiedCount = 0;
   let errorCount = 0;
 
+  // Dynamically import these packages because they are pure ESM modules
+  // eslint-disable-next-line depend/ban-dependencies
+  const { globby } = await import('globby');
+
+  // glob only supports forward slashes
+  const files = await globby(slash(globPattern), {
+    followSymbolicLinks: true,
+    ignore: ['node_modules/**', 'dist/**', 'storybook-static/**', 'build/**'],
+  });
+
+  if (!files.length) {
+    logger.error(
+      `No files found for glob pattern "${globPattern}".\nPlease try a different pattern.\n`
+    );
+    // eslint-disable-next-line local-rules/no-uncategorized-errors
+    throw new Error('No files matched');
+  }
+
   try {
-    // Dynamically import these packages because they are pure ESM modules
-    // eslint-disable-next-line depend/ban-dependencies
-    const { globby } = await import('globby');
-
     const pLimit = (await import('p-limit')).default;
-
-    // glob only supports forward slashes
-    const files = await globby(slash(globPattern), {
-      followSymbolicLinks: true,
-      ignore: ['node_modules/**', 'dist/**', 'storybook-static/**', 'build/**'],
-    });
 
     const limit = pLimit(maxConcurrentTasks);
 
