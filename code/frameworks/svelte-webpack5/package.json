@@ -30,6 +30,12 @@
       "types": "./dist/preset.d.ts",
       "require": "./dist/preset.js"
     },
+    "./node": {
+      "types": "./dist/csf-factory/defineMainConfig.d.ts",
+      "node": "./dist/csf-factory/defineMainConfig.js",
+      "import": "./dist/csf-factory/defineMainConfig.mjs",
+      "require": "./dist/csf-factory/defineMainConfig.js"
+    },
     "./package.json": "./package.json"
   },
   "main": "dist/index.js",
@@ -70,7 +76,8 @@
   "bundler": {
     "entries": [
       "./src/index.ts",
-      "./src/preset.ts"
+      "./src/preset.ts",
+      "./src/csf-factory/defineMainConfig.ts"
     ],
     "platform": "node"
   },
