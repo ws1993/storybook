@@ -16,6 +16,7 @@ export interface RunOptions<ResultType> {
   result: ResultType;
   dryRun?: boolean;
   mainConfigPath: string;
+  previewConfigPath?: string;
   skipInstall?: boolean;
 }
 
@@ -25,8 +26,9 @@ export interface RunOptions<ResultType> {
  * - Auto: the fix will be applied automatically
  * - Manual: the user will be prompted to apply the fix
  * - Notification: the user will be notified about some changes. A fix isn't required, though
+ * - Command: the fix will only be applied when specified directly by its id
  */
-export type Prompt = 'auto' | 'manual' | 'notification';
+export type Prompt = 'auto' | 'manual' | 'notification' | 'command';
 
 type BaseFix<ResultType = any> = {
   id: string;
@@ -46,17 +48,20 @@ type PromptType<ResultType = any, T = Prompt> =
   | T
   | ((result: ResultType) => Promise<Prompt> | Prompt);
 
-export type Fix<ResultType = any> = (
-  | {
+export type Fix<ResultType = any> =
+  | ({
       promptType?: PromptType<ResultType, 'auto'>;
       run: (options: RunOptions<ResultType>) => Promise<void>;
-    }
-  | {
+    } & BaseFix<ResultType>)
+  | ({
       promptType: PromptType<ResultType, 'manual' | 'notification'>;
       run?: never;
-    }
-) &
-  BaseFix<ResultType>;
+    } & BaseFix<ResultType>);
+
+export type CommandFix<ResultType = any> = {
+  promptType: PromptType<ResultType, 'command'>;
+  run: (options: RunOptions<ResultType>) => Promise<void>;
+} & Omit<BaseFix<ResultType>, 'versionRange' | 'check' | 'prompt'>;
 
 export type FixId = string;
 
@@ -69,6 +74,7 @@ export enum PreCheckFailure {
 export interface AutofixOptions extends Omit<AutofixOptionsFromCLI, 'packageManager'> {
   packageManager: JsPackageManager;
   mainConfigPath: string;
+  previewConfigPath?: string;
   /** The version of Storybook before the migration. */
   beforeVersion: string;
   storybookVersion: string;

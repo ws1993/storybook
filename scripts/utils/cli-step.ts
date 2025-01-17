@@ -82,6 +82,13 @@ export const steps = {
       glob: { type: 'string' },
     }),
   },
+  automigrate: {
+    command: 'automigrate',
+    hasArgument: true,
+    description: 'Run automigrations',
+    icon: '🤖',
+    options: createOptions({}),
+  },
 };
 
 export async function executeCLIStep<TOptions extends OptionSpecifier>(
