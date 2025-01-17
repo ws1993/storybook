@@ -4,19 +4,19 @@ import { formatFileContent } from '@storybook/core/common';
 
 import { dedent } from 'ts-dedent';
 
-import { csf4Transform } from './csf-3-to-4';
+import { storyToCsfFactory } from './csf-factories';
 
 expect.addSnapshotSerializer({
   serialize: (val: any) => (typeof val === 'string' ? val : val.toString()),
   test: () => true,
 });
 
-describe('csf-3-to-4', () => {
+describe('csf-factories', () => {
   describe('stories codemod', () => {
     const transform = async (source: string) =>
       formatFileContent(
         'Component.stories.tsx',
-        await csf4Transform({ source, path: 'Component.stories.tsx' })
+        await storyToCsfFactory({ source, path: 'Component.stories.tsx' })
       );
     describe('javascript', () => {
       it('should wrap const declared meta', async () => {

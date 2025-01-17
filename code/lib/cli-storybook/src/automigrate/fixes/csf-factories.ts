@@ -8,7 +8,7 @@ import type { FileInfo } from '../codemod';
 import { runCodemod } from '../codemod';
 import type { CommandFix } from '../types';
 
-export async function csf4Transform(info: FileInfo) {
+export async function storyToCsfFactory(info: FileInfo) {
   const csf = loadCsf(info.source, { makeTitle: () => 'FIXME' });
   try {
     csf.parse();
@@ -203,7 +203,7 @@ const logger = console;
 
 async function runStoriesCodemod(dryRun: boolean | undefined) {
   try {
-    let globString = '**/*.stories.*';
+    let globString = 'src/stories/*.stories.*';
     if (!process.env.IN_STORYBOOK_SANDBOX) {
       logger.log('Please enter the glob for your stories to migrate');
       globString = (
@@ -216,7 +216,7 @@ async function runStoriesCodemod(dryRun: boolean | undefined) {
       ).glob;
     }
     logger.log('Applying codemod on your stories...');
-    await runCodemod(globString, csf4Transform, { dryRun });
+    await runCodemod(globString, storyToCsfFactory, { dryRun });
   } catch (err: any) {
     console.log('err message', err.message);
     if (err.message === 'No files matched') {
@@ -228,8 +228,8 @@ async function runStoriesCodemod(dryRun: boolean | undefined) {
   }
 }
 
-export const csf3to4: CommandFix = {
-  id: 'csf-3-to-4',
+export const csfFactories: CommandFix = {
+  id: 'csf-factories',
   promptType: 'command',
   async run({ dryRun }) {
     await runStoriesCodemod(dryRun);

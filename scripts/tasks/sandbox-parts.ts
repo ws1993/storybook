@@ -884,7 +884,7 @@ export const runMigrations: Task['run'] = async ({ sandboxDir, template }, { dry
   ) {
     await executeCLIStep(steps.automigrate, {
       cwd: sandboxDir,
-      argument: 'csf-3-to-4',
+      argument: 'csf-factories',
       dryRun,
       debug,
     });
