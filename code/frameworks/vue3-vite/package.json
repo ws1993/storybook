@@ -35,7 +35,7 @@
       "require": "./dist/vite-plugin.js",
       "import": "./dist/vite-plugin.mjs"
     },
-    "./main": {
+    "./node": {
       "types": "./dist/csf-factory/defineMainConfig.d.ts",
       "node": "./dist/csf-factory/defineMainConfig.js",
       "import": "./dist/csf-factory/defineMainConfig.mjs",
