@@ -51,7 +51,9 @@ exports[`Renders CSF3ButtonWithRender story 1`] = `
       <button
         class="storybook-button storybook-button--medium storybook-button--secondary"
         type="button"
-      />
+      >
+        Children coming from meta args
+      </button>
     </div>
   </div>
 </body>

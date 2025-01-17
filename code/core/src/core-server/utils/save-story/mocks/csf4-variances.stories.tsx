@@ -1,3 +1,4 @@
+// @ts-expect-error this is just a mock file
 import { config } from '#.storybook/preview';
 
 const meta = config.meta({

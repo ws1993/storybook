@@ -28,8 +28,9 @@ const HooksStory = composeStory(
 const projectAnnotations = setProjectAnnotations([]);
 
 // example with composeStories, returns an object with all stories composed with args/decorators
-const { CSF3Primary, LoaderStory, MountInPlayFunction, MountInPlayFunctionThrow } =
-  composeStories(ButtonStories);
+// @ts-expect-error TODO: add a way to provide custom args/argTypes
+// eslint-disable-next-line prettier/prettier
+const { CSF3Primary, LoaderStory, MountInPlayFunction, MountInPlayFunctionThrow } = composeStories(ButtonStories);
 const { ThrowsError } = composeStories(ComponentWithErrorStories);
 
 beforeAll(async () => {
@@ -83,8 +84,8 @@ describe('renders', () => {
     expect(screen.getByTestId('loaded-data').textContent).toEqual('loaded data');
   });
 
-  it('should throw an error in play function', () => {
-    expect(() => MountInPlayFunctionThrow.run()).rejects.toThrowError('Error thrown in play');
+  it('should throw an error in play function', async () => {
+    await expect(() => MountInPlayFunctionThrow.run()).rejects.toThrowError('Error thrown in play');
   });
 
   it('should call and compose loaders data', async () => {
@@ -136,6 +137,8 @@ describe('projectAnnotations', () => {
       ButtonStories.CSF3Primary.meta.annotations,
       addonActionsPreview as ProjectAnnotations<ReactRenderer>
     );
+
+    // @ts-expect-error TODO: add a way to provide custom args/argTypes
     expect(Story.args.someActionArg).toHaveProperty('isAction', true);
   });
 });
@@ -189,7 +192,9 @@ describe('CSF3', () => {
       const input = screen.getByTestId('input') as HTMLInputElement;
       expect(input.value).toEqual('Hello world!');
     } finally {
-      document.body.removeChild(divElement);
+      if (divElement) {
+        document.body.removeChild(divElement);
+      }
     }
   });
 
@@ -237,7 +242,9 @@ describe('ComposeStories types', () => {
   });
 });
 
+// @ts-expect-error TODO: fix the types for this
 const testCases = Object.values(composeStories(ButtonStories)).map(
+  // @ts-expect-error TODO: fix the types for this
   (Story) => [Story.storyName, Story] as [string, typeof Story]
 );
 it.each(testCases)('Renders %s story', async (_storyName, Story) => {
@@ -245,6 +252,7 @@ it.each(testCases)('Renders %s story', async (_storyName, Story) => {
     return;
   }
 
+  // @ts-expect-error TODO: fix the types for this
   await Story.run();
   expect(document.body).toMatchSnapshot();
 });
