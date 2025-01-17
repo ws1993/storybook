@@ -11,5 +11,5 @@ export function Confirm({ onChange }: { onChange: (value: boolean) => void }) {
       onChange(false);
     }
   });
-  return <Text>y/n</Text>;
+  return <Text dimColor>y/n</Text>;
 }

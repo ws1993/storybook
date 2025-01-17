@@ -172,7 +172,7 @@ const steps = {
           <>
             <Text>Where should Storybook be added?</Text>
             <Text>
-              Currently set to: <Text color={'cyan'}>{directory}</Text> is this correct?{' '}
+              Currently set to: <Text color={'cyan'}>"{directory}"</Text> is this correct?{' '}
               <Confirm
                 onChange={(answer) => {
                   if (answer) {
