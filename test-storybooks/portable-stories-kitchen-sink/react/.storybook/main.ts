@@ -6,7 +6,7 @@ const config: StorybookConfig = {
   addons: [
     "@storybook/addon-controls",
     "@storybook/experimental-addon-test",
-    //"@storybook/addon-a11y",
+    "@storybook/addon-a11y",
   ],
   framework: {
     name: "@storybook/react-vite",
@@ -15,25 +15,6 @@ const config: StorybookConfig = {
   core: {
     disableWhatsNewNotifications: true,
   },
-  viteFinal: (config) => ({
-    ...config,
-    resolve: {
-      ...config.resolve,
-      alias: {
-        ...config.resolve?.alias,
-        'test-alias': join(__dirname, 'aliased.ts'),
-      },
-    },
-    optimizeDeps: {
-      ...config.optimizeDeps,
-      include: [
-        ...(config.optimizeDeps?.include || []),
-        "react-dom/test-utils",
-        "@storybook/react/**",
-        "@storybook/experimental-addon-test/preview",
-      ],
-    },
-  }),
   previewHead: (head = "") => `${head}
   <style>
     body {
@@ -41,5 +22,23 @@ const config: StorybookConfig = {
     }
   </style>`,
   staticDirs: [{ from: './test-static-dirs', to:'test-static-dirs' }],
+  viteFinal: (config) => {
+    return {
+      ...config,
+      optimizeDeps: {
+        ...config.optimizeDeps,
+        include: [
+          ...(config.optimizeDeps?.include || []),
+        ],
+      },
+      resolve: {
+        ...config.resolve,
+        alias: {
+          ...config.resolve?.alias,
+          'test-alias': join(__dirname, 'aliased.ts'),
+        },
+      }
+    };
+  },
 };
 export default config;

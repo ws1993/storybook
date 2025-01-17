@@ -380,5 +380,5 @@ export const config = defineConfig({
   parameters,
   decorators,
   loaders,
-  tags: ['test', 'vitest', '!a11ytest'],
+  tags: ['test', 'vitest'],
 });
