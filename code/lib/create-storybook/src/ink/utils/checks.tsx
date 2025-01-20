@@ -1,4 +1,4 @@
-import type { State } from '../Main';
+import type { State } from '../steps';
 
 export type GitResult = 'loading' | 'clean' | 'none' | 'unclean';
 /** Check if the user has pending changes */

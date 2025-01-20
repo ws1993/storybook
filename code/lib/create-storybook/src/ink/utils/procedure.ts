@@ -1,6 +1,6 @@
 import type { Dispatch } from 'react';
 
-import type { Action, State } from '../Main';
+import type { Action, State } from '../steps';
 
 export type Procedure = {
   state: State;
