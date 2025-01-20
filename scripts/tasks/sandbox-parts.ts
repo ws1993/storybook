@@ -426,10 +426,10 @@ export async function setupVitest(details: TemplateDetails, options: PassedOptio
       setupFilePath,
       dedent`import { beforeAll } from 'vitest'
       import { setProjectAnnotations } from '${storybookPackage}'
-      import * as projectAnnotations from './preview'
+      import projectAnnotations from './preview'
 
       // setProjectAnnotations still kept to support non-CSF4 story tests
-      const annotations = setProjectAnnotations(projectAnnotations.config.annotations)
+      const annotations = setProjectAnnotations(projectAnnotations.annotations)
       beforeAll(annotations.beforeAll)
       `
     );
