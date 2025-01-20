@@ -109,9 +109,7 @@ export const xtermDecorator: Decorator = (Story, { id, parameters }) => {
                     GIT: async () => parameters.git,
                     CHECK: async () => parameters.check,
                     FRAMEWORK: undefined,
-                    INSTALL: undefined,
                     VERSION: undefined,
-                    DONE: undefined,
                   },
                 }}
               >
@@ -145,9 +143,7 @@ export const xtermDecorator: Decorator = (Story, { id, parameters }) => {
                         GIT: async () => parameters.git,
                         CHECK: async () => parameters.check,
                         FRAMEWORK: undefined,
-                        INSTALL: undefined,
                         VERSION: undefined,
-                        DONE: undefined,
                       },
                     }}
                   >
