@@ -7,8 +7,6 @@ import { ACTIONS, type Action, type State } from '.';
 import { supportedFrameworksMap } from '../../bin/modernInputs';
 import { Confirm } from '../components/Confirm';
 import { MultiSelect } from '../components/Select/MultiSelect';
-import type { FrameworkResult } from '../utils/checks';
-import { checkFramework } from '../utils/checks';
 
 export function FRAMEWORK({ state, dispatch }: { state: State; dispatch: Dispatch<Action> }) {
   const [detection, setDetection] = useState<FrameworkResult>(state.framework);
@@ -86,4 +84,12 @@ export function FRAMEWORK({ state, dispatch }: { state: State; dispatch: Dispatc
         </Box>
       );
   }
+}
+
+type FrameworkResult = State['framework'] | 'undetected';
+export async function checkFramework(): Promise<FrameworkResult> {
+  // slow delay for demo effect
+  await new Promise((resolve) => setTimeout(resolve, 1000));
+
+  return 'ember';
 }

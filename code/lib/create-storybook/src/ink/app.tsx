@@ -14,8 +14,9 @@ import type { z } from 'zod';
 import type { modernInputs as inputs } from '../bin/modernInputs';
 import { Main } from './Main';
 import { checkCompatibility } from './steps/Check';
+import { checkFramework } from './steps/Framework';
 import { checkGitStatus } from './steps/Git';
-import { checkFramework, checkVersion } from './utils/checks';
+import { checkVersion } from './steps/Version';
 import { AppContext } from './utils/context';
 
 const require = createRequire(import.meta.url);
