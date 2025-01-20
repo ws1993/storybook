@@ -48,7 +48,7 @@ describe('getSyncedStorybookAddons', () => {
     `);
   });
   it('should add addons if the preview has no addons field', async () => {
-    const originalCode = `
+    const originalCode = dedent`
       import { definePreview } from "@storybook/react/preview";
 
       export default definePreview({
@@ -73,7 +73,7 @@ describe('getSyncedStorybookAddons', () => {
     `);
   });
   it('should not modify the code if all addons are already synced', async () => {
-    const originalCode = `
+    const originalCode = dedent`
       import * as addonA11yAnnotations from "@storybook/addon-a11y/preview";
       import * as myAddonAnnotations from "custom-addon/preview";
       import { definePreview } from "@storybook/react/preview";

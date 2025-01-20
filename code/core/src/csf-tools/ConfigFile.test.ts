@@ -268,7 +268,7 @@ describe('ConfigFile', () => {
           )
         ).toEqual('webpack5');
       });
-      it.only('tags', () => {
+      it('tags', () => {
         expect(
           getField(
             ['tags'],

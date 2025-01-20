@@ -2,7 +2,6 @@ import dirSize from 'fast-folder-size';
 // eslint-disable-next-line depend/ban-dependencies
 import { pathExists, remove } from 'fs-extra';
 import { join } from 'path';
-import prompts from 'prompts';
 import { promisify } from 'util';
 
 import { now, saveBench } from '../bench/utils';
