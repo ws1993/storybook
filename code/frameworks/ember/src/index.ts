@@ -1,6 +1,7 @@
 /// <reference types="webpack-env" />
 
 export * from './types';
+export * from './defineMainConfig';
 
 // optimization: stop HMR propagation in webpack
 

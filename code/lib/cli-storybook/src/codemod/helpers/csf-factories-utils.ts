@@ -83,6 +83,7 @@ export async function getSyncedStorybookAddons(
    */
   addons.forEach(async (addon) => {
     const annotations = await getAddonAnnotations(addon);
+    console.log();
     if (annotations) {
       previewConfig.setImport({ namespace: annotations.importName }, annotations.importPath);
       const existingAddons = previewConfig.getFieldNode(['addons']);

@@ -1,5 +1,6 @@
 export * from './client/index';
 export * from './types';
+export * from './defineMainConfig';
 
 /*
  * ATTENTION:

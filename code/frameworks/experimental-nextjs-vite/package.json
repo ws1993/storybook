@@ -58,12 +58,6 @@
       "import": "./dist/vite-plugin/index.mjs",
       "require": "./dist/vite-plugin/index.js"
     },
-    "./node": {
-      "types": "./dist/csf-factory/defineMainConfig.d.ts",
-      "node": "./dist/csf-factory/defineMainConfig.js",
-      "import": "./dist/csf-factory/defineMainConfig.mjs",
-      "require": "./dist/csf-factory/defineMainConfig.js"
-    },
     "./package.json": "./package.json"
   },
   "main": "dist/index.js",
@@ -140,7 +134,6 @@
       "./src/index.ts",
       "./src/vite-plugin/index.ts",
       "./src/preset.ts",
-      "./src/csf-factory/defineMainConfig.ts",
       "./src/preview.tsx",
       "./src/export-mocks/cache/index.ts",
       "./src/export-mocks/headers/index.ts",

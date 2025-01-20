@@ -24,12 +24,6 @@
       "require": "./dist/index.js"
     },
     "./preset": "./preset.js",
-    "./node": {
-      "types": "./dist/csf-factory/defineMainConfig.d.ts",
-      "node": "./dist/csf-factory/defineMainConfig.js",
-      "import": "./dist/csf-factory/defineMainConfig.js",
-      "require": "./dist/csf-factory/defineMainConfig.js"
-    },
     "./package.json": "./package.json"
   },
   "main": "dist/index.js",

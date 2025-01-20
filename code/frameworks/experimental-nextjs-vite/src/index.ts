@@ -1,6 +1,7 @@
 import type vitePluginStorybookNextJs from 'vite-plugin-storybook-nextjs';
 
 export * from './types';
+export * from './defineMainConfig';
 export * from './portable-stories';
 
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
