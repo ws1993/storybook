@@ -1,9 +1,8 @@
 import type { Meta, StoryObj } from '@storybook/react';
-import { fireEvent, fn, userEvent, within } from '@storybook/test';
+import { fn, userEvent, within } from '@storybook/test';
 
-import type { State } from '.';
 import { xtermDecorator } from '../xtermDecorator';
-import { DIRECTORY } from './directory';
+import { DIRECTORY } from './Directory';
 
 const meta: Meta<typeof DIRECTORY> = {
   component: DIRECTORY,

@@ -126,7 +126,6 @@ export const xtermDecorator: Decorator = (Story, { id, parameters }) => {
                       steps: {
                         GIT: undefined,
                         CHECK: async () => parameters.check,
-                        DIRECTORY: undefined,
                         FRAMEWORK: undefined,
                         INSTALL: undefined,
                         VERSION: undefined,

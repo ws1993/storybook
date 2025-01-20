@@ -2,16 +2,16 @@ import { type Dispatch, type FC } from 'react';
 
 import type { Input } from '../app';
 import { getKeys } from '../utils/getKeys';
+import { DIRECTORY } from './Directory';
+import { FEATURES } from './Features';
+import { FRAMEWORK } from './Framework';
+import { GIT } from './Git';
+import { INSTALL } from './Install';
+import { INTENTS } from './Intents';
+import { RUN } from './Run';
+import { SANDBOX } from './Sandbox';
+import { VERSION } from './Version';
 import { CHECK } from './check';
-import { DIRECTORY } from './directory';
-import { FEATURES } from './features';
-import { FRAMEWORK } from './framework';
-import { GIT } from './git';
-import { INSTALL } from './install';
-import { INTENTS } from './intents';
-import { RUN } from './run';
-import { SANDBOX } from './sandbox';
-import { VERSION } from './version';
 
 export const steps = {
   GIT,
