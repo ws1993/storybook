@@ -59,7 +59,7 @@ export async function getSyncedStorybookAddons(
     return (
       t.isImportDeclaration(node) &&
       node.source.value.includes('@storybook') &&
-      node.source.value.endsWith('/browser') &&
+      node.source.value.endsWith('/preview') &&
       node.specifiers.some((specifier) => {
         return (
           t.isImportSpecifier(specifier) &&
@@ -83,15 +83,16 @@ export async function getSyncedStorybookAddons(
    */
   addons.forEach(async (addon) => {
     const annotations = await getAddonAnnotations(addon);
-    console.log();
     if (annotations) {
       previewConfig.setImport({ namespace: annotations.importName }, annotations.importPath);
       const existingAddons = previewConfig.getFieldNode(['addons']);
+
       if (
-        t.isArrayExpression(existingAddons) &&
-        !existingAddons.elements.some(
-          (element) => t.isIdentifier(element) && element.name === annotations.importName
-        )
+        !existingAddons ||
+        (t.isArrayExpression(existingAddons) &&
+          !existingAddons.elements.some(
+            (element) => t.isIdentifier(element) && element.name === annotations.importName
+          ))
       ) {
         previewConfig.appendNodeToArray(['addons'], t.identifier(annotations.importName));
       }

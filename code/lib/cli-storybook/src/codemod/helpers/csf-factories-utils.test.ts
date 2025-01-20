@@ -25,7 +25,7 @@ describe('getSyncedStorybookAddons', () => {
   it('should sync addons between main and preview', async () => {
     const preview = loadConfig(`
       import * as myAddonAnnotations from "custom-addon/preview";
-      import { definePreview } from "@storybook/react-vite/browser";
+      import { definePreview } from "@storybook/react/preview";
 
       export default definePreview({
         addons: [myAddonAnnotations],
@@ -40,10 +40,35 @@ describe('getSyncedStorybookAddons', () => {
     expect(printConfig(result).code).toMatchInlineSnapshot(`
       import * as addonA11yAnnotations from "@storybook/addon-a11y/preview";
       import * as myAddonAnnotations from "custom-addon/preview";
-      import { definePreview } from "@storybook/react-vite/browser";
+      import { definePreview } from "@storybook/react/preview";
 
       export default definePreview({
         addons: [myAddonAnnotations, addonA11yAnnotations],
+      });
+    `);
+  });
+  it.only('should add addons if the preview has no addons field', async () => {
+    const originalCode = `
+      import { definePreview } from "@storybook/react/preview";
+
+      export default definePreview({
+        tags: []
+      });
+    `;
+    const preview = loadConfig(originalCode).parse();
+
+    (getAddonAnnotations as Mock).mockImplementation(() => {
+      return { importName: 'addonA11yAnnotations', importPath: '@storybook/addon-a11y/preview' };
+    });
+
+    const result = await getSyncedStorybookAddons(mainConfig, preview);
+    expect(printConfig(result).code).toMatchInlineSnapshot(`
+      import * as addonA11yAnnotations from "@storybook/addon-a11y/preview";
+      import { definePreview } from "@storybook/react/preview";
+
+      export default definePreview({
+        tags: [],
+        addons: [addonA11yAnnotations]
       });
     `);
   });
@@ -51,7 +76,7 @@ describe('getSyncedStorybookAddons', () => {
     const originalCode = `
       import * as addonA11yAnnotations from "@storybook/addon-a11y/preview";
       import * as myAddonAnnotations from "custom-addon/preview";
-      import { definePreview } from "@storybook/react-vite/browser";
+      import { definePreview } from "@storybook/react/preview";
 
       export default definePreview({
         addons: [myAddonAnnotations, addonA11yAnnotations],

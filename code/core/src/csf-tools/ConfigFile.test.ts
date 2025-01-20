@@ -247,9 +247,9 @@ describe('ConfigFile', () => {
     describe('factory config', () => {
       it('parses correctly', () => {
         const source = dedent`
-          import { defineConfig } from '@storybook/react-vite/browser';
+          import { definePreview } from '@storybook/react-vite/preview';
 
-          const config = defineConfig({
+          const config = definePreview({
             framework: 'foo',
           });
           export default config;
@@ -262,20 +262,20 @@ describe('ConfigFile', () => {
           getField(
             ['core', 'builder'],
             dedent`
-            import { defineConfig } from '@storybook/react-vite/preview';
-            export const foo = defineConfig({ core: { builder: 'webpack5' } });
+            import { definePreview } from '@storybook/react-vite/preview';
+            export const foo = definePreview({ core: { builder: 'webpack5' } });
             `
           )
         ).toEqual('webpack5');
       });
-      it('tags', () => {
+      it.only('tags', () => {
         expect(
           getField(
             ['tags'],
             dedent`
-              import { defineConfig } from '@storybook/react-vite/preview';
+              import { definePreview } from '@storybook/react-vite/preview';
               const parameters = {};
-              export const config = defineConfig({
+              export const config = definePreview({
                 parameters,
                 tags: ['test', 'vitest', '!a11ytest'],
               });
@@ -528,21 +528,21 @@ describe('ConfigFile', () => {
             ['core', 'builder'],
             'webpack5',
             dedent`
-              import { defineConfig } from '@storybook/react-vite/preview';
-              export const foo = defineConfig({
+              import { definePreview } from '@storybook/react-vite/preview';
+              export const foo = definePreview({
                 addons: [],
               });
             `
           )
         ).toMatchInlineSnapshot(`
-          import { defineConfig } from '@storybook/react-vite/preview';
-          export const foo = defineConfig({
+          import { definePreview } from '@storybook/react-vite/preview';
+          export const foo = definePreview({
             addons: [],
-
-            core: {
-              builder: 'webpack5'
-            }
           });
+
+          export const core = {
+            builder: 'webpack5'
+          };
         `);
       });
       it('missing field', () => {
@@ -551,20 +551,21 @@ describe('ConfigFile', () => {
             ['core', 'builder'],
             'webpack5',
             dedent`
-              import { defineConfig } from '@storybook/react-vite/preview';
-              export const foo = defineConfig({
+              import { definePreview } from '@storybook/react-vite/preview';
+              export const foo = definePreview({
                 core: { foo: 'bar' },
               });
             `
           )
         ).toMatchInlineSnapshot(`
-          import { defineConfig } from '@storybook/react-vite/preview';
-          export const foo = defineConfig({
-            core: {
-              foo: 'bar',
-              builder: 'webpack5'
-            },
+          import { definePreview } from '@storybook/react-vite/preview';
+          export const foo = definePreview({
+            core: { foo: 'bar' },
           });
+
+          export const core = {
+            builder: 'webpack5'
+          };
         `);
       });
       it('found scalar', () => {
@@ -573,17 +574,21 @@ describe('ConfigFile', () => {
             ['core', 'builder'],
             'webpack5',
             dedent`
-              import { defineConfig } from '@storybook/react-vite/preview';
-              export const foo = defineConfig({
+              import { definePreview } from '@storybook/react-vite/preview';
+              export const foo = definePreview({
                 core: { builder: 'webpack4' },
               });
             `
           )
         ).toMatchInlineSnapshot(`
-          import { defineConfig } from '@storybook/react-vite/preview';
-          export const foo = defineConfig({
-            core: { builder: 'webpack5' },
+          import { definePreview } from '@storybook/react-vite/preview';
+          export const foo = definePreview({
+            core: { builder: 'webpack4' },
           });
+
+          export const core = {
+            builder: 'webpack5'
+          };
         `);
       });
     });

@@ -1,12 +1,12 @@
 import { join } from 'node:path';
 
-import type { StorybookConfig } from '../frameworks/react-vite';
+import { defineMain } from '../frameworks/react-vite';
 
 const componentsPath = join(__dirname, '../core/src/components');
 const managerApiPath = join(__dirname, '../core/src/manager-api');
 const imageContextPath = join(__dirname, '..//frameworks/nextjs/src/image-context.ts');
 
-const config: StorybookConfig = {
+const config = defineMain({
   stories: [
     './*.stories.@(js|jsx|ts|tsx)',
     {
@@ -169,6 +169,6 @@ const config: StorybookConfig = {
     } satisfies typeof viteConfig);
   },
   // logLevel: 'debug',
-};
+});
 
 export default config;

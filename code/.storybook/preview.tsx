@@ -18,7 +18,7 @@ import {
 import { DocsContext } from '@storybook/blocks';
 import { global } from '@storybook/global';
 import type { Decorator, Loader, ReactRenderer } from '@storybook/react';
-import { defineConfig } from '@storybook/react/preview';
+import { definePreview } from '@storybook/react/preview';
 
 // TODO add empty preview
 // import * as storysource from '@storybook/addon-storysource';
@@ -375,7 +375,7 @@ const parameters = {
   },
 };
 
-export const config = defineConfig({
+export const config = definePreview({
   addons: [addonThemes, essentials, a11y, addonsPreview, templatePreview],
   parameters,
   decorators,

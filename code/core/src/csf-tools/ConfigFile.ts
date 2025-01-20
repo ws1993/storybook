@@ -318,7 +318,7 @@ export class ConfigFile {
         enter: ({ node }) => {
           if (
             t.isIdentifier(node.callee) &&
-            node.callee.name === 'defineConfig' &&
+            node.callee.name === 'definePreview' &&
             node.arguments.length === 1 &&
             t.isObjectExpression(node.arguments[0])
           ) {

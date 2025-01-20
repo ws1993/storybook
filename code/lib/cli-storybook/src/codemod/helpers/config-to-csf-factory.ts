@@ -23,6 +23,12 @@ export async function configToCsfFactory(
   }
 
   const methodName = configType === 'main' ? 'defineMain' : 'definePreview';
+  // TODO: remove this later, it's just a quick workaround for preview imports
+  // while it is part of @storybook/react and not @storybook/react-vite
+  frameworkPackage =
+    configType === 'preview' && frameworkPackage === '@storybook/react-vite'
+      ? '@storybook/react'
+      : frameworkPackage;
 
   const programNode = config._ast.program;
   const hasNamedExports = Object.keys(config._exportDecls).length > 0;
@@ -151,14 +157,34 @@ export async function configToCsfFactory(
 
   const configImport = t.importDeclaration(
     [t.importSpecifier(t.identifier(methodName), t.identifier(methodName))],
-    t.stringLiteral(frameworkPackage + `/${configType === 'main' ? 'node' : 'browser'}`)
+    t.stringLiteral(frameworkPackage + `${configType === 'preview' ? '/preview' : ''}`)
   );
-  // only add the import if it doesn't exist yet
-  if (
-    !programNode.body.some(
-      (node) => t.isImportDeclaration(node) && node.source.value === configImport.source.value
-    )
-  ) {
+
+  // Check whether @storybook/framework import already exists
+  const existingImport = programNode.body.find(
+    (node) =>
+      t.isImportDeclaration(node) &&
+      node.source.value === configImport.source.value &&
+      !node.importKind
+  );
+
+  if (existingImport && t.isImportDeclaration(existingImport)) {
+    // If it does, check whether defineMain/definePreview is already imported
+    // and only add it if it's not
+    const hasMethodName = existingImport.specifiers.some(
+      (specifier) =>
+        t.isImportSpecifier(specifier) &&
+        t.isIdentifier(specifier.imported) &&
+        specifier.imported.name === methodName
+    );
+
+    if (!hasMethodName) {
+      existingImport.specifiers.push(
+        t.importSpecifier(t.identifier(methodName), t.identifier(methodName))
+      );
+    }
+  } else {
+    // if not, add import { defineMain } from '@storybook/framework'
     programNode.body.unshift(configImport);
   }
 

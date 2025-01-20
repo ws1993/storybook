@@ -25,10 +25,10 @@ describe('stories codemod', () => {
             export default meta;
           `)
       ).resolves.toMatchInlineSnapshot(`
-          import { config } from '#.storybook/preview';
+        import config from '#.storybook/preview';
 
-          const meta = config.meta({ title: 'Component' });
-        `);
+        const meta = config.meta({ title: 'Component' });
+      `);
     });
 
     it('should transform and wrap inline default exported meta', async () => {
@@ -37,12 +37,12 @@ describe('stories codemod', () => {
             export default { title: 'Component' };
           `)
       ).resolves.toMatchInlineSnapshot(`
-          import { config } from '#.storybook/preview';
+        import config from '#.storybook/preview';
 
-          const meta = config.meta({
-            title: 'Component',
-          });
-        `);
+        const meta = config.meta({
+          title: 'Component',
+        });
+      `);
     });
 
     it('should rename meta object to meta if it has a different name', async () => {
@@ -52,10 +52,10 @@ describe('stories codemod', () => {
             export default componentMeta;
           `)
       ).resolves.toMatchInlineSnapshot(`
-          import { config } from '#.storybook/preview';
+        import config from '#.storybook/preview';
 
-          const meta = config.meta({ title: 'Component' });
-        `);
+        const meta = config.meta({ title: 'Component' });
+      `);
     });
 
     it('should wrap stories in a meta.story method', async () => {
@@ -69,14 +69,14 @@ describe('stories codemod', () => {
             };
           `)
       ).resolves.toMatchInlineSnapshot(`
-          import { config } from '#.storybook/preview';
+        import config from '#.storybook/preview';
 
-          const meta = config.meta({ title: 'Component' });
-          export const A = meta.story({
-            args: { primary: true },
-            render: (args) => <Component {...args} />,
-          });
-        `);
+        const meta = config.meta({ title: 'Component' });
+        export const A = meta.story({
+          args: { primary: true },
+          render: (args) => <Component {...args} />,
+        });
+      `);
     });
 
     it('should respect existing config imports', async () => {
@@ -91,14 +91,36 @@ describe('stories codemod', () => {
             };
           `)
       ).resolves.toMatchInlineSnapshot(`
-          import { config, decorators } from '#.storybook/preview';
+        import config, { decorators } from '#.storybook/preview';
 
-          const meta = config.meta({ title: 'Component' });
-          export const A = meta.story({
-            args: { primary: true },
-            render: (args) => <Component {...args} />,
-          });
-        `);
+        const meta = config.meta({ title: 'Component' });
+        export const A = meta.story({
+          args: { primary: true },
+          render: (args) => <Component {...args} />,
+        });
+      `);
+    });
+
+    it('should reuse existing default config import name', async () => {
+      await expect(
+        transform(dedent`
+            import previewConfig from "#.storybook/preview";
+            const componentMeta = { title: 'Component' };
+            export default componentMeta;
+            export const A = {
+              args: { primary: true },
+              render: (args) => <Component {...args} />
+            };
+          `)
+      ).resolves.toMatchInlineSnapshot(`
+        import previewConfig from '#.storybook/preview';
+
+        const meta = previewConfig.meta({ title: 'Component' });
+        export const A = meta.story({
+          args: { primary: true },
+          render: (args) => <Component {...args} />,
+        });
+      `);
     });
 
     it('if there is an existing local constant called config, rename storybook config import', async () => {
@@ -113,15 +135,15 @@ describe('stories codemod', () => {
             };
           `)
       ).resolves.toMatchInlineSnapshot(`
-          import { config as storybookConfig } from '#.storybook/preview';
+        import storybookConfig from '#.storybook/preview';
 
-          const meta = storybookConfig.meta({ title: 'Component' });
-          const config = {};
-          export const A = meta.story({
-            args: { primary: true },
-            render: (args) => <Component {...args} />,
-          });
-        `);
+        const meta = storybookConfig.meta({ title: 'Component' });
+        const config = {};
+        export const A = meta.story({
+          args: { primary: true },
+          render: (args) => <Component {...args} />,
+        });
+      `);
     });
 
     it('converts CSF1 into CSF4 with render', async () => {
@@ -132,13 +154,13 @@ describe('stories codemod', () => {
             export const CSF1Story = () => <div>Hello</div>;
           `)
       ).resolves.toMatchInlineSnapshot(`
-          import { config } from '#.storybook/preview';
+        import config from '#.storybook/preview';
 
-          const meta = config.meta({ title: 'Component' });
-          export const CSF1Story = meta.story({
-            render: () => <div>Hello</div>,
-          });
-        `);
+        const meta = config.meta({ title: 'Component' });
+        export const CSF1Story = meta.story({
+          render: () => <div>Hello</div>,
+        });
+      `);
     });
   });
 
@@ -155,16 +177,16 @@ describe('stories codemod', () => {
       `;
     it('meta satisfies syntax', async () => {
       await expect(transform(inlineMetaSatisfies)).resolves.toMatchInlineSnapshot(`
-          import { config } from '#.storybook/preview';
+        import config from '#.storybook/preview';
 
-          import { ComponentProps } from './Component';
+        import { ComponentProps } from './Component';
 
-          const meta = config.meta({ title: 'Component', component: Component });
+        const meta = config.meta({ title: 'Component', component: Component });
 
-          export const A = meta.story({
-            args: { primary: true },
-          });
-        `);
+        export const A = meta.story({
+          args: { primary: true },
+        });
+      `);
     });
 
     const inlineMetaAs = dedent`
@@ -179,16 +201,16 @@ describe('stories codemod', () => {
       `;
     it('meta as syntax', async () => {
       await expect(transform(inlineMetaAs)).resolves.toMatchInlineSnapshot(`
-          import { config } from '#.storybook/preview';
+        import config from '#.storybook/preview';
 
-          import { ComponentProps } from './Component';
+        import { ComponentProps } from './Component';
 
-          const meta = config.meta({ title: 'Component', component: Component });
+        const meta = config.meta({ title: 'Component', component: Component });
 
-          export const A = meta.story({
-            args: { primary: true },
-          });
-        `);
+        export const A = meta.story({
+          args: { primary: true },
+        });
+      `);
     });
     const metaSatisfies = dedent`
         import { Meta, StoryObj as CSF3 } from '@storybook/react';
@@ -203,16 +225,16 @@ describe('stories codemod', () => {
       `;
     it('meta satisfies syntax', async () => {
       await expect(transform(metaSatisfies)).resolves.toMatchInlineSnapshot(`
-          import { config } from '#.storybook/preview';
+        import config from '#.storybook/preview';
 
-          import { ComponentProps } from './Component';
+        import { ComponentProps } from './Component';
 
-          const meta = config.meta({ title: 'Component', component: Component });
+        const meta = config.meta({ title: 'Component', component: Component });
 
-          export const A = meta.story({
-            args: { primary: true },
-          });
-        `);
+        export const A = meta.story({
+          args: { primary: true },
+        });
+      `);
     });
 
     const metaAs = dedent`
@@ -228,16 +250,16 @@ describe('stories codemod', () => {
       `;
     it('meta as syntax', async () => {
       await expect(transform(metaAs)).resolves.toMatchInlineSnapshot(`
-          import { config } from '#.storybook/preview';
+        import config from '#.storybook/preview';
 
-          import { ComponentProps } from './Component';
+        import { ComponentProps } from './Component';
 
-          const meta = config.meta({ title: 'Component', component: Component });
+        const meta = config.meta({ title: 'Component', component: Component });
 
-          export const A = meta.story({
-            args: { primary: true },
-          });
-        `);
+        export const A = meta.story({
+          args: { primary: true },
+        });
+      `);
     });
 
     const storySatisfies = dedent`
@@ -253,16 +275,16 @@ describe('stories codemod', () => {
       `;
     it('story satisfies syntax', async () => {
       await expect(transform(storySatisfies)).resolves.toMatchInlineSnapshot(`
-          import { config } from '#.storybook/preview';
+        import config from '#.storybook/preview';
 
-          import { ComponentProps } from './Component';
+        import { ComponentProps } from './Component';
 
-          const meta = config.meta({ title: 'Component', component: Component });
+        const meta = config.meta({ title: 'Component', component: Component });
 
-          export const A = meta.story({
-            args: { primary: true },
-          });
-        `);
+        export const A = meta.story({
+          args: { primary: true },
+        });
+      `);
     });
 
     const storyAs = dedent`
@@ -278,16 +300,16 @@ describe('stories codemod', () => {
       `;
     it('story as syntax', async () => {
       await expect(transform(storyAs)).resolves.toMatchInlineSnapshot(`
-          import { config } from '#.storybook/preview';
+        import config from '#.storybook/preview';
 
-          import { ComponentProps } from './Component';
+        import { ComponentProps } from './Component';
 
-          const meta = config.meta({ title: 'Component', component: Component });
+        const meta = config.meta({ title: 'Component', component: Component });
 
-          export const A = meta.story({
-            args: { primary: true },
-          });
-        `);
+        export const A = meta.story({
+          args: { primary: true },
+        });
+      `);
     });
 
     it('should yield the same result to all syntaxes', async () => {

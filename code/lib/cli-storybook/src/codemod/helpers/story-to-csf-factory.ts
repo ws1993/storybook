@@ -32,22 +32,20 @@ export async function storyToCsfFactory(info: FileInfo) {
       n.declarations.some((declaration) => t.isIdentifier(declaration.id, { name: 'config' }))
   );
 
-  const sbConfigImportName = hasRootLevelConfig ? 'storybookConfig' : 'config';
+  let sbConfigImportName = hasRootLevelConfig ? 'storybookConfig' : 'config';
 
-  const sbConfigImportSpecifier = t.importSpecifier(
-    t.identifier(sbConfigImportName),
-    t.identifier('config')
-  );
+  const sbConfigImportSpecifier = t.importDefaultSpecifier(t.identifier(sbConfigImportName));
 
   programNode.body.forEach((node) => {
     if (t.isImportDeclaration(node) && isValidPreviewPath(node.source.value)) {
-      const hasConfigSpecifier = node.specifiers.some(
-        (specifier) =>
-          t.isImportSpecifier(specifier) && t.isIdentifier(specifier.imported, { name: 'config' })
+      const defaultImportSpecifier = node.specifiers.find((specifier) =>
+        t.isImportDefaultSpecifier(specifier)
       );
 
-      if (!hasConfigSpecifier) {
+      if (!defaultImportSpecifier) {
         node.specifiers.push(sbConfigImportSpecifier);
+      } else if (defaultImportSpecifier.local.name !== sbConfigImportName) {
+        sbConfigImportName = defaultImportSpecifier.local.name;
       }
 
       foundConfigImport = true;
@@ -149,7 +147,7 @@ export async function storyToCsfFactory(info: FileInfo) {
 
   if (hasMeta && !foundConfigImport) {
     const configImport = t.importDeclaration(
-      [sbConfigImportSpecifier],
+      [t.importDefaultSpecifier(t.identifier(sbConfigImportName))],
       t.stringLiteral('#.storybook/preview')
     );
     programNode.body.unshift(configImport);
