@@ -47,7 +47,7 @@ describe('getSyncedStorybookAddons', () => {
       });
     `);
   });
-  it.only('should add addons if the preview has no addons field', async () => {
+  it('should add addons if the preview has no addons field', async () => {
     const originalCode = `
       import { definePreview } from "@storybook/react/preview";
 

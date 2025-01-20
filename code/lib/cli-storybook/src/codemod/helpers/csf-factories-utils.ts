@@ -35,7 +35,9 @@ export function cleanupTypeImports(programNode: t.Program, disallowList: string[
 
     // Retain all other nodes
     return true;
-  });
+    // @TODO adding any for now, unsure how to fix the following error:
+    // error TS4058: Return type of exported function has or is using name 'BlockStatement' from external module "/code/core/dist/babel/index" but cannot be named
+  }) as any;
 }
 
 export async function syncStorybookAddons(
