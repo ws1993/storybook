@@ -245,6 +245,18 @@ describe('ConfigFile', () => {
     });
 
     describe('factory config', () => {
+      it('parses correctly', () => {
+        const source = dedent`
+          import { defineConfig } from '@storybook/react-vite/browser';
+
+          const config = defineConfig({
+            framework: 'foo',
+          });
+          export default config;
+        `;
+        const config = loadConfig(source).parse();
+        expect(config.getNameFromPath(['framework'])).toEqual('foo');
+      });
       it('found scalar', () => {
         expect(
           getField(

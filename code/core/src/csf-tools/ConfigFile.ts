@@ -25,18 +25,8 @@ const getCsfParsingErrorMessage = ({
   foundType: string | undefined;
   node: any | undefined;
 }) => {
-  let nodeInfo = '';
-  if (node) {
-    try {
-      nodeInfo = JSON.stringify(node);
-    } catch (e) {
-      //
-    }
-  }
-
   return dedent`
       CSF Parsing error: Expected '${expectedType}' but found '${foundType}' instead in '${node?.type}'.
-      ${nodeInfo}
     `;
 };
 
@@ -214,6 +204,11 @@ export class ConfigFile {
               : node.declaration;
 
           decl = unwrap(decl);
+
+          // csf factory
+          if (t.isCallExpression(decl) && t.isObjectExpression(decl.arguments[0])) {
+            decl = decl.arguments[0];
+          }
 
           if (t.isObjectExpression(decl)) {
             self._parseExportsObject(decl);

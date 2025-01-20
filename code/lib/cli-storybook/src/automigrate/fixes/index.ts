@@ -1,3 +1,4 @@
+import { csfFactories } from '../../codemod/csf-factories';
 import type { CommandFix, Fix } from '../types';
 import { addonA11yAddonTest } from './addon-a11y-addon-test';
 import { addonPostCSS } from './addon-postcss';
@@ -8,7 +9,6 @@ import { autodocsTags } from './autodocs-tags';
 import { autodocsTrue } from './autodocs-true';
 import { builderVite } from './builder-vite';
 import { cra5 } from './cra5';
-import { csfFactories } from './csf-factories';
 import { eslintPlugin } from './eslint-plugin';
 import { initialGlobals } from './initial-globals';
 import { mdx1to3 } from './mdx-1-to-3';
