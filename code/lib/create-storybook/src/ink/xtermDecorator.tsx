@@ -98,7 +98,25 @@ export const xtermDecorator: Decorator = (Story, { id, parameters }) => {
         const ink = render(
           <ForwardInputEvents>
             <Box width={stdout.columns} height={stdout.rows}>
-              <Story />
+              <AppContext.Provider
+                value={{
+                  fs: undefined,
+                  process: undefined,
+                  child_process: undefined,
+                  require: undefined,
+                  glob: undefined,
+                  steps: {
+                    GIT: async () => parameters.git,
+                    CHECK: async () => parameters.check,
+                    FRAMEWORK: undefined,
+                    INSTALL: undefined,
+                    VERSION: undefined,
+                    DONE: undefined,
+                  },
+                }}
+              >
+                <Story />
+              </AppContext.Provider>
             </Box>
           </ForwardInputEvents>,
           {
@@ -124,7 +142,7 @@ export const xtermDecorator: Decorator = (Story, { id, parameters }) => {
                       require: undefined,
                       glob: undefined,
                       steps: {
-                        GIT: undefined,
+                        GIT: async () => parameters.git,
                         CHECK: async () => parameters.check,
                         FRAMEWORK: undefined,
                         INSTALL: undefined,

@@ -1,14 +1,5 @@
 import type { State } from '../steps';
 
-export type GitResult = 'loading' | 'clean' | 'none' | 'unclean';
-/** Check if the user has pending changes */
-export async function checkGitStatus(): Promise<GitResult> {
-  // slow delay for demo effect
-  await new Promise((resolve) => setTimeout(resolve, 1000));
-
-  return 'clean';
-}
-
 export type ExistsResult = 'loading' | 'empty' | 'exists';
 /** Check if the user has pending changes */
 export async function checkExists(location: string): Promise<ExistsResult> {

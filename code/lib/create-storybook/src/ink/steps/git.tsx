@@ -1,4 +1,4 @@
-import React, { type Dispatch, useEffect, useState } from 'react';
+import React, { type Dispatch, useContext, useEffect, useState } from 'react';
 
 import { Spinner } from '@inkjs/ui';
 import figureSet from 'figures';
@@ -6,23 +6,29 @@ import { Box, Text } from 'ink';
 
 import { ACTIONS, type Action, type State } from '.';
 import { Confirm } from '../components/Confirm';
-import type { GitResult } from '../utils/checks';
-import { checkGitStatus } from '../utils/checks';
+import { AppContext } from '../utils/context';
 
 export function GIT({ state, dispatch }: { state: State; dispatch: Dispatch<Action> }) {
   const [git, setGit] = useState<GitResult>('loading');
+
+  const context = useContext(AppContext);
 
   useEffect(() => {
     if (state.ignoreGitNotClean) {
       dispatch({ type: ACTIONS.IGNORE_GIT });
     } else {
-      checkGitStatus().then((result) => {
-        if (result) {
-          dispatch({ type: ACTIONS.IGNORE_GIT });
-        } else {
-          setGit(result);
-        }
-      });
+      const runGit = context.steps?.GIT;
+
+      console.log({ runGit });
+      if (runGit) {
+        runGit().then((result) => {
+          if (result) {
+            dispatch({ type: ACTIONS.IGNORE_GIT });
+          } else {
+            setGit(result);
+          }
+        });
+      }
     }
   }, []);
 
@@ -70,4 +76,17 @@ export function GIT({ state, dispatch }: { state: State; dispatch: Dispatch<Acti
       )}
     </Box>
   );
+}
+
+type GitResult = 'loading' | 'clean' | 'none' | 'unclean';
+/**
+ * Check if the user has pending changes.
+ *
+ * @note Do not use this directly, but always via the AppContext
+ */
+export async function checkGitStatus(): Promise<GitResult> {
+  // slow delay for demo effect
+  await new Promise((resolve) => setTimeout(resolve, 1000));
+
+  return 'clean';
 }

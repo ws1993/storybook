@@ -13,6 +13,7 @@ export function CHECK({ state, dispatch }: { state: State; dispatch: Dispatch<Ac
   const context = useContext(AppContext);
   useEffect(() => {
     const runCheck = context.steps?.CHECK;
+    console.log({ runCheck });
     if (runCheck) {
       runCheck().then((result) => {
         if (result.type === 'compatible') {
@@ -66,6 +67,11 @@ type CompatibilityResult =
   | { type: 'loading' }
   | { type: 'compatible' }
   | { type: 'incompatible'; reasons: any[] };
+/**
+ * Check if the current setup is compatible with Storybook
+ *
+ * @note Do not use this directly, but always via the AppContext
+ */
 export async function checkCompatibility(): Promise<CompatibilityResult> {
   // slow delay for demo effect
   await new Promise((resolve) => setTimeout(resolve, 1000));

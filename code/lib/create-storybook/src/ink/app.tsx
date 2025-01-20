@@ -13,6 +13,9 @@ import type { z } from 'zod';
 
 import type { modernInputs as inputs } from '../bin/modernInputs';
 import { Main } from './Main';
+import { checkCompatibility } from './steps/Check';
+import { checkGitStatus } from './steps/Git';
+import { checkFramework, checkVersion } from './utils/checks';
 import { AppContext } from './utils/context';
 
 const require = createRequire(import.meta.url);
@@ -41,8 +44,21 @@ export async function run(options: z.infer<typeof inputs>) {
 
   // process.stdout.write('\x1Bc');
   process.stdout.write('\n');
+  const context = {
+    fs,
+    process,
+    child_process,
+    require,
+    glob,
+    steps: {
+      GIT: checkGitStatus,
+      CHECK: checkCompatibility,
+      VERSION: checkVersion,
+      FRAMEWORK: checkFramework,
+    },
+  };
   globalThis.CLI_APP_INSTANCE = render(
-    <AppContext.Provider value={{ fs, process, child_process, require, glob }}>
+    <AppContext.Provider value={context}>
       <Main {...input} />
     </AppContext.Provider>
   );
@@ -56,7 +72,7 @@ export async function run(options: z.infer<typeof inputs>) {
 
       // process.stdout.write('\x1Bc');
       rerender(
-        <AppContext.Provider value={{ fs, process, child_process, require, glob }}>
+        <AppContext.Provider value={context}>
           <Main {...input} />
         </AppContext.Provider>
       );

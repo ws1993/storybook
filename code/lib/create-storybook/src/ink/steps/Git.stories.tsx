@@ -2,20 +2,20 @@ import type { Meta, StoryObj } from '@storybook/react';
 import { fn } from '@storybook/test';
 
 import { xtermDecorator } from '../xtermDecorator';
-import { CHECK } from './Check';
+import { GIT } from './Git';
 
-const meta: Meta<typeof CHECK> = {
-  component: CHECK,
+const meta: Meta<typeof GIT> = {
+  component: GIT,
   args: {
     state: {
       directory: '.',
       features: ['onboarding', 'examples', 'essentials'],
       intents: ['dev', 'docs', 'test'],
-      ignoreGitNotClean: false,
+      ignoreGitNotClean: undefined,
       ignoreVersion: false,
       install: undefined,
       framework: 'react-vite',
-      step: 'CHECK',
+      step: 'GIT',
       version: 'latest',
     },
     dispatch: fn(),
@@ -32,16 +32,28 @@ export default meta;
 
 export const Loading: Story = {
   parameters: {
-    check: { type: 'loading' },
+    git: 'loading',
   },
 };
-export const Compatible: Story = {
+
+export const Clean: Story = {
   parameters: {
-    check: { type: 'compatible' },
+    git: 'clean',
   },
 };
-export const Incompatible: Story = {
+
+export const Unclean: Story = {
   parameters: {
-    check: { type: 'incompatible', reasons: ['reason 1', 'reason 2'] },
+    git: 'unclean',
+  },
+};
+
+export const Ignored: Story = {
+  parameters: {
+    git: 'unclean',
+  },
+  state: {
+    ...meta.args!.state,
+    ignoreGitNotClean: true,
   },
 };
