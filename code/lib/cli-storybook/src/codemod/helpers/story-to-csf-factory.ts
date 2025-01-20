@@ -2,11 +2,9 @@
 import { types as t } from 'storybook/internal/babel';
 import { isValidPreviewPath, loadCsf, printCsf } from 'storybook/internal/csf-tools';
 
-import prompts from 'prompts';
-
-import type { FileInfo } from '../codemod';
-import { runCodemod } from '../codemod';
-import type { CommandFix } from '../types';
+import type { FileInfo } from '../../automigrate/codemod';
+import { logger } from '../csf-factories';
+import { cleanupTypeImports } from './csf-factories-utils';
 
 export async function storyToCsfFactory(info: FileInfo) {
   const csf = loadCsf(info.source, { makeTitle: () => 'FIXME' });
@@ -158,7 +156,7 @@ export async function storyToCsfFactory(info: FileInfo) {
   }
 
   // Remove type imports – now inferred – from @storybook/* packages
-  const disallowlist = [
+  const disallowList = [
     'Story',
     'StoryFn',
     'StoryObj',
@@ -167,71 +165,7 @@ export async function storyToCsfFactory(info: FileInfo) {
     'ComponentStory',
     'ComponentMeta',
   ];
-
-  programNode.body = programNode.body.filter((node) => {
-    if (t.isImportDeclaration(node)) {
-      const { source, specifiers } = node;
-
-      if (source.value.startsWith('@storybook/')) {
-        const allowedSpecifiers = specifiers.filter((specifier) => {
-          if (t.isImportSpecifier(specifier) && t.isIdentifier(specifier.imported)) {
-            return !disallowlist.includes(specifier.imported.name);
-          }
-          // Retain non-specifier imports (e.g., namespace imports)
-          return true;
-        });
-
-        // Remove the entire import if no specifiers are left
-        if (allowedSpecifiers.length > 0) {
-          node.specifiers = allowedSpecifiers;
-          return true;
-        }
-
-        // Remove the import if no specifiers remain
-        return false;
-      }
-    }
-
-    // Retain all other nodes
-    return true;
-  });
+  programNode.body = cleanupTypeImports(programNode, disallowList);
 
   return printCsf(csf).code;
 }
-
-const logger = console;
-
-async function runStoriesCodemod(dryRun: boolean | undefined) {
-  try {
-    let globString = 'src/stories/*.stories.*';
-    if (!process.env.IN_STORYBOOK_SANDBOX) {
-      logger.log('Please enter the glob for your stories to migrate');
-      globString = (
-        await prompts({
-          type: 'text',
-          name: 'glob',
-          message: 'glob',
-          initial: globString,
-        })
-      ).glob;
-    }
-    logger.log('Applying codemod on your stories...');
-    await runCodemod(globString, storyToCsfFactory, { dryRun });
-  } catch (err: any) {
-    console.log('err message', err.message);
-    if (err.message === 'No files matched') {
-      console.log('going to run again');
-      await runStoriesCodemod(dryRun);
-    } else {
-      throw err;
-    }
-  }
-}
-
-export const csfFactories: CommandFix = {
-  id: 'csf-factories',
-  promptType: 'command',
-  async run({ dryRun }) {
-    await runStoriesCodemod(dryRun);
-  },
-};
