@@ -2,6 +2,7 @@ import { type Dispatch, type FC } from 'react';
 
 import type { Input } from '../app';
 import { getKeys } from '../utils/getKeys';
+import { CHECK } from './Check';
 import { DIRECTORY } from './Directory';
 import { FEATURES } from './Features';
 import { FRAMEWORK } from './Framework';
@@ -11,7 +12,6 @@ import { INTENTS } from './Intents';
 import { RUN } from './Run';
 import { SANDBOX } from './Sandbox';
 import { VERSION } from './Version';
-import { CHECK } from './check';
 
 export const steps = {
   GIT,
