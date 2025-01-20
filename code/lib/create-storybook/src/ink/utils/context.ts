@@ -16,4 +16,5 @@ export const AppContext = createContext({
     VERSION: undefined as typeof checkVersion | undefined,
     FRAMEWORK: undefined as typeof checkFramework | undefined,
   },
+  telemetry: undefined as typeof import('storybook/internal/telemetry').telemetry | undefined,
 });

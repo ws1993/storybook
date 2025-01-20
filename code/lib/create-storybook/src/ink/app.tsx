@@ -5,6 +5,8 @@ import * as process from 'node:process';
 
 import React from 'react';
 
+import { telemetry } from 'storybook/internal/telemetry';
+
 import { debounce } from 'es-toolkit';
 // eslint-disable-next-line depend/ban-dependencies
 import glob from 'fast-glob';
@@ -49,6 +51,7 @@ export async function run(options: z.infer<typeof inputs>) {
     process,
     child_process,
     require,
+    telemetry,
     glob,
     steps: {
       GIT: checkGitStatus,
@@ -85,6 +88,14 @@ export async function run(options: z.infer<typeof inputs>) {
     // process.stdout.write('\x1Bc');
     update();
   });
+
+  const exit = () =>
+    telemetry('canceled', { eventType: 'init' }, { stripMetadata: true, immediate: true })
+      .then(() => process.exit(0))
+      .catch(() => process.exit(1));
+
+  process.on('SIGINT', exit);
+  process.on('SIGTERM', exit);
 
   await waitUntilExit();
 }
