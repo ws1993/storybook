@@ -8,6 +8,8 @@ import '@xterm/xterm/css/xterm.css';
 import EventEmitter from 'events';
 import type { ReadStream, WriteStream } from 'tty';
 
+import { AppContext } from './utils/context';
+
 interface Stream extends EventEmitter {
   output: string;
   columns: number;
@@ -28,7 +30,7 @@ declare global {
   var __XTERM_INSTANCES__: any;
 }
 
-export const xtermDecorator: Decorator = (Story, { id }) => {
+export const xtermDecorator: Decorator = (Story, { id, parameters }) => {
   globalThis.__XTERM_INSTANCES__ = globalThis.__XTERM_INSTANCES__ || {};
 
   if (globalThis.__XTERM_INSTANCES__[id]) {
@@ -114,7 +116,26 @@ export const xtermDecorator: Decorator = (Story, { id }) => {
             ink.rerender(
               <ForwardInputEvents>
                 <Box width={stdout.columns} height={stdout.rows}>
-                  <Story />
+                  <AppContext.Provider
+                    value={{
+                      fs: undefined,
+                      process: undefined,
+                      child_process: undefined,
+                      require: undefined,
+                      glob: undefined,
+                      steps: {
+                        GIT: undefined,
+                        CHECK: async () => parameters.check,
+                        DIRECTORY: undefined,
+                        FRAMEWORK: undefined,
+                        INSTALL: undefined,
+                        VERSION: undefined,
+                        DONE: undefined,
+                      },
+                    }}
+                  >
+                    <Story />
+                  </AppContext.Provider>
                 </Box>
               </ForwardInputEvents>
             );

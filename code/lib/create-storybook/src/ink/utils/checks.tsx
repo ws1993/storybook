@@ -33,14 +33,3 @@ export async function checkFramework(): Promise<FrameworkResult> {
 
   return 'ember';
 }
-
-export type CompatibilityResult =
-  | { type: 'loading' }
-  | { type: 'compatible' }
-  | { type: 'incompatible'; reasons: any[] };
-export async function checkCompatibility(): Promise<CompatibilityResult> {
-  // slow delay for demo effect
-  await new Promise((resolve) => setTimeout(resolve, 1000));
-
-  return { type: 'compatible' };
-}

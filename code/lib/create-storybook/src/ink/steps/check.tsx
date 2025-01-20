@@ -1,24 +1,27 @@
-import React, { type Dispatch, useEffect, useState } from 'react';
+import React, { type Dispatch, useContext, useEffect, useState } from 'react';
 
 import { Spinner } from '@inkjs/ui';
 import { Box, Text } from 'ink';
 
 import { ACTIONS, type Action, type State } from '.';
 import { Confirm } from '../components/Confirm';
-import type { CompatibilityResult } from '../utils/checks';
-import { checkCompatibility } from '../utils/checks';
+import { AppContext } from '../utils/context';
 
 export function CHECK({ state, dispatch }: { state: State; dispatch: Dispatch<Action> }) {
   const [compatibility, setCompatibility] = useState<CompatibilityResult>({ type: 'loading' });
 
+  const context = useContext(AppContext);
   useEffect(() => {
-    checkCompatibility().then((result) => {
-      if (result.type === 'compatible') {
-        dispatch({ type: ACTIONS.NEXT });
-      } else {
-        setCompatibility(result);
-      }
-    });
+    const runCheck = context.steps?.CHECK;
+    if (runCheck) {
+      runCheck().then((result) => {
+        if (result.type === 'compatible') {
+          dispatch({ type: ACTIONS.NEXT });
+        } else {
+          setCompatibility(result);
+        }
+      });
+    }
   }, []);
 
   return (
@@ -57,4 +60,15 @@ export function CHECK({ state, dispatch }: { state: State; dispatch: Dispatch<Ac
       )}
     </Box>
   );
+}
+
+type CompatibilityResult =
+  | { type: 'loading' }
+  | { type: 'compatible' }
+  | { type: 'incompatible'; reasons: any[] };
+export async function checkCompatibility(): Promise<CompatibilityResult> {
+  // slow delay for demo effect
+  await new Promise((resolve) => setTimeout(resolve, 1000));
+
+  return { type: 'compatible' };
 }
