@@ -858,7 +858,6 @@ export async function setImportMap(cwd: string) {
       storybook: './template-stories/core/utils.mock.ts',
       default: './template-stories/core/utils.ts',
     },
-    '#*': ['./*', './*.ts', './*.tsx'],
   };
 
   await writeJson(join(cwd, 'package.json'), packageJson, { spaces: 2 });

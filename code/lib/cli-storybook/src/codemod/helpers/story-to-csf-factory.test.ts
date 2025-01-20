@@ -326,5 +326,27 @@ describe('stories codemod', () => {
         expect(result).toEqual(allSnippets[0]);
       });
     });
+
+    it('should remove unused Story types', async () => {
+      await expect(
+        transform(
+          `import { Meta, StoryObj as CSF3 } from '@storybook/react';
+        import { ComponentProps } from './Component';
+  
+        export default {};
+        type Story = StoryObj<typeof ComponentProps>;
+
+        export const A: Story = {};`
+        )
+      ).resolves.toMatchInlineSnapshot(`
+        import config from '#.storybook/preview';
+
+        import { ComponentProps } from './Component';
+
+        const meta = config.meta({});
+
+        export const A = meta.story({});
+      `);
+    });
   });
 });

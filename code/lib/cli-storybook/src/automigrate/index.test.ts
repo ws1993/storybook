@@ -89,6 +89,8 @@ const runFixWrapper = async ({
     fixes,
     dryRun,
     yes,
+    packageJson: {},
+    mainConfig: { stories: [] },
     rendererPackage,
     skipInstall,
     configDir,

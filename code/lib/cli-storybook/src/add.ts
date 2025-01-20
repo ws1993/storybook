@@ -3,8 +3,6 @@ import { isAbsolute, join } from 'node:path';
 import {
   JsPackageManagerFactory,
   type PackageManagerName,
-  getCoercedStorybookVersion,
-  getStorybookInfo,
   serverRequire,
   versions,
 } from 'storybook/internal/common';

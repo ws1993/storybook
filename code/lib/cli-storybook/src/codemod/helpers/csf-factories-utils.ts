@@ -1,6 +1,4 @@
 /* eslint-disable no-underscore-dangle */
-import path from 'node:path';
-
 import { types as t } from 'storybook/internal/babel';
 import { type ConfigFile, readConfig, writeConfig } from 'storybook/internal/csf-tools';
 

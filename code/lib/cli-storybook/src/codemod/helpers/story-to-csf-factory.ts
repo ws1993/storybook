@@ -165,5 +165,24 @@ export async function storyToCsfFactory(info: FileInfo) {
   ];
   programNode.body = cleanupTypeImports(programNode, disallowList);
 
+  // Remove unused type aliases e.g. `type Story = StoryObj<typeof meta>;`
+  programNode.body.forEach((node, index) => {
+    if (t.isTSTypeAliasDeclaration(node)) {
+      const isUsed = programNode.body.some((otherNode) => {
+        if (t.isVariableDeclaration(otherNode)) {
+          return otherNode.declarations.some(
+            (declaration) =>
+              t.isIdentifier(declaration.init) && declaration.init.name === node.id.name
+          );
+        }
+        return false;
+      });
+
+      if (!isUsed) {
+        programNode.body.splice(index, 1);
+      }
+    }
+  });
+
   return printCsf(csf).code;
 }
