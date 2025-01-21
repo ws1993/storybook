@@ -61,7 +61,6 @@ function SandboxDownload({
           </Box>
 
           <Text>Select a template to download:</Text>
-          <Text>{JSON.stringify(options, null, 2)}</Text>
           <MultiSelect
             options={options}
             selection={[]}
