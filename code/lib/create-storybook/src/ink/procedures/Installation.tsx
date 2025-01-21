@@ -82,7 +82,7 @@ export function Installation({ state, onComplete }: Procedure) {
         // child.stderr.setEncoding('utf8');
         child.stderr.on('data', (data) => {
           const chunk = data.toString().trim();
-          if (chunk === '') {
+          if (chunk === '' || chunk.match(/Corepack/i)) {
             return;
           }
 
