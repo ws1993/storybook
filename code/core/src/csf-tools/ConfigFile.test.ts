@@ -538,11 +538,11 @@ describe('ConfigFile', () => {
           import { definePreview } from '@storybook/react-vite/preview';
           export const foo = definePreview({
             addons: [],
-          });
 
-          export const core = {
-            builder: 'webpack5'
-          };
+            core: {
+              builder: 'webpack5'
+            }
+          });
         `);
       });
       it('missing field', () => {
@@ -560,12 +560,11 @@ describe('ConfigFile', () => {
         ).toMatchInlineSnapshot(`
           import { definePreview } from '@storybook/react-vite/preview';
           export const foo = definePreview({
-            core: { foo: 'bar' },
+            core: {
+              foo: 'bar',
+              builder: 'webpack5'
+            },
           });
-
-          export const core = {
-            builder: 'webpack5'
-          };
         `);
       });
       it('found scalar', () => {
@@ -583,12 +582,8 @@ describe('ConfigFile', () => {
         ).toMatchInlineSnapshot(`
           import { definePreview } from '@storybook/react-vite/preview';
           export const foo = definePreview({
-            core: { builder: 'webpack4' },
+            core: { builder: 'webpack5' },
           });
-
-          export const core = {
-            builder: 'webpack5'
-          };
         `);
       });
     });
