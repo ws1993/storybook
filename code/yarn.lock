@@ -12897,6 +12897,7 @@ __metadata:
     fd-package-json: "npm:^1.2.0"
     figures: "npm:^6.1.0"
     find-up: "npm:^5.0.0"
+    giget: "npm:^1.0.0"
     ink: "npm:^5.1.0"
     ora: "npm:^5.4.1"
     picocolors: "npm:^1.1.0"

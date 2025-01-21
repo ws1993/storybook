@@ -1,9 +1,9 @@
 import * as child_process from 'node:child_process';
 import * as fs from 'node:fs/promises';
 import { createRequire } from 'node:module';
-import * as process from 'node:process';
+import process from 'node:process';
 
-import React from 'react';
+import React, { type ComponentProps } from 'react';
 
 import { telemetry } from 'storybook/internal/telemetry';
 
@@ -18,6 +18,7 @@ import { Main } from './Main';
 import { checkCompatibility } from './steps/Check';
 import { checkFramework } from './steps/Framework';
 import { checkGitStatus } from './steps/Git';
+import { checkExists, downloadSandbox } from './steps/Sandbox';
 import { checkVersion } from './steps/Version';
 import { AppContext } from './utils/context';
 
@@ -47,19 +48,19 @@ export async function run(options: z.infer<typeof inputs>) {
 
   // process.stdout.write('\x1Bc');
   process.stdout.write('\n');
-  const context = {
+  const context: ComponentProps<typeof AppContext.Provider>['value'] = {
     fs,
     process,
     child_process,
     require,
     telemetry,
     glob,
-    steps: {
-      GIT: checkGitStatus,
-      CHECK: checkCompatibility,
-      VERSION: checkVersion,
-      FRAMEWORK: checkFramework,
-    },
+    checkGitStatus,
+    checkCompatibility,
+    checkVersion,
+    checkFramework,
+    checkExists,
+    downloadSandbox,
   };
   globalThis.CLI_APP_INSTANCE = render(
     <AppContext.Provider value={context}>

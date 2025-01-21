@@ -24,13 +24,14 @@ export function Main({ directory, framework, install, ...rest }: Input) {
       {/* Here we render the header */}
       <Box flexDirection="column">
         <Box>
-          <Rainbow text="Welcome to Storybook's CLI" />
+          <Text>Hello Yann!</Text>
+          {/* <Rainbow text="Welcome to Storybook's CLI" /> */}
         </Box>
         <Text>Let's get things set up!</Text>
       </Box>
-      {/* <Box>
+      <Box>
         <Text>{JSON.stringify(state, null, 2)}</Text>
-      </Box> */}
+      </Box>
 
       {/* Here we render the current step with state and dispatch */}
 

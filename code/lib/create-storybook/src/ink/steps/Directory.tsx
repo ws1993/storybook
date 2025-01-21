@@ -59,12 +59,12 @@ export function DIRECTORY({ state, dispatch }: { state: State; dispatch: Dispatc
       )}
       {accepted === false && (
         <>
-          <Text>Please enter the directory</Text>{' '}
+          <Text>Please enter the directory</Text>
           {/* I'd like to replace this some day with a tree view */}
           <TextInput
             suggestions={suggestions}
             defaultValue={directory}
-            onChange={(value) => {
+            onSubmit={(value) => {
               dispatch({ type: ACTIONS.DIRECTORY, payload: { path: value } });
             }}
           />

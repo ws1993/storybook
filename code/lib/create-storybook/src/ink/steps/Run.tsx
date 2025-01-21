@@ -63,8 +63,8 @@ export function RUN({ state, dispatch }: { state: State; dispatch: Dispatch<Acti
                 <Text key={name}>
                   {name}: {status}
                   {errors.length === 1
-                    ? `with thw following error`
-                    : `with ${errors.length} errors`}
+                    ? ` with the following error`
+                    : ` with ${errors.length} errors`}
                 </Text>
               </Box>
 

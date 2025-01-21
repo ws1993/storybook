@@ -106,9 +106,9 @@ export const xtermDecorator: Decorator = (Story, { id, parameters }) => {
                   require: undefined,
                   glob: undefined,
                   steps: {
-                    GIT: async () => parameters.git,
-                    CHECK: async () => parameters.check,
-                    FRAMEWORK: undefined,
+                    checkGitStatus: async () => parameters.git,
+                    checkCompatibility: async () => parameters.check,
+                    checkFramework: undefined,
                     VERSION: undefined,
                   },
                 }}
@@ -140,9 +140,9 @@ export const xtermDecorator: Decorator = (Story, { id, parameters }) => {
                       require: undefined,
                       glob: undefined,
                       steps: {
-                        GIT: async () => parameters.git,
-                        CHECK: async () => parameters.check,
-                        FRAMEWORK: undefined,
+                        checkGitStatus: async () => parameters.git,
+                        checkCompatibility: async () => parameters.check,
+                        checkFramework: undefined,
                         VERSION: undefined,
                       },
                     }}

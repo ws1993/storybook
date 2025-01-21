@@ -17,7 +17,7 @@ export function GIT({ state, dispatch }: { state: State; dispatch: Dispatch<Acti
     if (state.ignoreGitNotClean) {
       dispatch({ type: ACTIONS.IGNORE_GIT });
     } else {
-      const runGit = context.steps?.GIT;
+      const runGit = context?.checkGitStatus;
 
       if (runGit) {
         runGit().then((result) => {

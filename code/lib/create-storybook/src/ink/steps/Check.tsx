@@ -12,8 +12,7 @@ export function CHECK({ state, dispatch }: { state: State; dispatch: Dispatch<Ac
 
   const context = useContext(AppContext);
   useEffect(() => {
-    const runCheck = context.steps?.CHECK;
-    console.log({ runCheck });
+    const runCheck = context?.checkCompatibility;
     if (runCheck) {
       runCheck().then((result) => {
         if (result.type === 'compatible') {
