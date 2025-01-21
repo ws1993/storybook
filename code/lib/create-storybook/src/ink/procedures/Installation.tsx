@@ -2,6 +2,8 @@ import { dirname, join } from 'node:path';
 
 import React, { useContext, useEffect, useRef, useState } from 'react';
 
+import { Spinner } from '@inkjs/ui';
+import figureSet from 'figures';
 import { Box, Text } from 'ink';
 
 import versions from '../../../../../core/src/common/versions';
@@ -37,6 +39,7 @@ const deriveDependencies = (state: Procedure['state']): string[] => {
 export function Installation({ state, onComplete }: Procedure) {
   const [error, setError] = useState<string>('');
   const [lastChunk, setLastChunk] = useState<string>('');
+  const [done, setDone] = useState(false);
   const context = useContext(AppContext);
 
   const ref = useRef({
@@ -82,7 +85,11 @@ export function Installation({ state, onComplete }: Procedure) {
         // child.stderr.setEncoding('utf8');
         child.stderr.on('data', (data) => {
           const chunk = data.toString().trim();
-          if (chunk === '' || chunk.match(/Corepack/i)) {
+          if (
+            chunk === '' ||
+            chunk.match(/Corepack/i) ||
+            chunk.match(/nodejs.org\/api\/packages.html#packagemanager   /i)
+          ) {
             return;
           }
 
@@ -101,6 +108,7 @@ export function Installation({ state, onComplete }: Procedure) {
               errors.push(new Error(`install process exited with code ${code}`));
             }
             onComplete(errors);
+            setDone(true);
           }, 1000);
         });
 
@@ -113,6 +121,7 @@ export function Installation({ state, onComplete }: Procedure) {
               errors.push(new Error(ref.current.lastChunk));
             }
             onComplete(errors);
+            setDone(true);
           }, 1000);
         });
         return () => {
@@ -121,6 +130,7 @@ export function Installation({ state, onComplete }: Procedure) {
           }
           child.kill();
           onComplete([new Error('Installation cancelled')]);
+          setDone(true);
         };
       } else {
         // do work to install dependencies
@@ -130,12 +140,14 @@ export function Installation({ state, onComplete }: Procedure) {
         const timeout = setTimeout(() => {
           clearInterval(interval);
           onComplete();
+          setDone(true);
         }, 1000);
 
         return () => {
           clearInterval(interval);
           clearTimeout(timeout);
           onComplete();
+          setDone(true);
         };
       }
     } else {
@@ -147,8 +159,9 @@ export function Installation({ state, onComplete }: Procedure) {
   const line = lines[lines.length - 1];
 
   return (
-    <Box height={1} overflow="hidden">
-      {state.install ? <Text>- Installing {line}</Text> : <Text>- Skipped installation</Text>}
+    <Box height={1} overflow="hidden" gap={1}>
+      {done ? <Text>{figureSet.tick}</Text> : <Spinner />}
+      {state.install ? <Text>Installing {line}</Text> : <Text>- Skipped installation</Text>}
     </Box>
   );
 }

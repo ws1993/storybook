@@ -12,6 +12,7 @@ export function RUN({ state, dispatch }: { state: State; dispatch: Dispatch<Acti
   const [results, setResults] = useState({
     installation: { status: state.install ? 'loading' : 'skipped', errors: [] as Error[] },
     config: { status: 'loading', errors: [] as Error[] },
+    telemetry: { status: 'loading', errors: [] as Error[] },
   });
 
   const list = Object.entries(results);
@@ -22,7 +23,7 @@ export function RUN({ state, dispatch }: { state: State; dispatch: Dispatch<Acti
     return (
       <Box flexDirection="column" gap={1}>
         <Text>
-          Your storybook is <Rainbow text="ready" />
+          Your storybook is <Text color={'greenBright'}>ready</Text>
         </Text>
         <Box flexDirection="column">
           <Text>You can run your storybook with the following command:</Text>
@@ -103,7 +104,16 @@ export function RUN({ state, dispatch }: { state: State; dispatch: Dispatch<Acti
         }
       />
 
-      <Telemetry state={state} />
+      <Telemetry
+        state={state}
+        dispatch={dispatch}
+        onComplete={(errors) =>
+          setResults((t) => ({
+            ...t,
+            telemetry: { status: errors?.length ? 'fail' : 'done', errors: errors || [] },
+          }))
+        }
+      />
     </Box>
   );
 }
