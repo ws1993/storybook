@@ -6,6 +6,7 @@ import { type Action, type State } from '.';
 import { Rainbow } from '../components/Rainbow';
 import { ConfigGeneration } from '../procedures/ConfigGeneration';
 import { Installation } from '../procedures/Installation';
+import { Telemetry } from '../procedures/Telemetry';
 
 export function RUN({ state, dispatch }: { state: State; dispatch: Dispatch<Action> }) {
   const [results, setResults] = useState({
@@ -101,7 +102,8 @@ export function RUN({ state, dispatch }: { state: State; dispatch: Dispatch<Acti
           }))
         }
       />
-      {/* <MetricsReport /> */}
+
+      <Telemetry state={state} />
     </Box>
   );
 }
