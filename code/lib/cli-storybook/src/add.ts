@@ -4,6 +4,7 @@ import {
   JsPackageManagerFactory,
   type PackageManagerName,
   serverRequire,
+  syncStorybookAddons,
   versions,
 } from 'storybook/internal/common';
 import { readConfig, writeConfig } from 'storybook/internal/csf-tools';
@@ -19,7 +20,6 @@ import {
   wrapValueWithRequireWrapper,
 } from './automigrate/fixes/wrap-require-utils';
 import { getStorybookData } from './automigrate/helpers/mainConfigFile';
-import { syncStorybookAddons } from './codemod/helpers/csf-factories-utils';
 import { postinstallAddon } from './postinstallAddon';
 
 export interface PostinstallOptions {
