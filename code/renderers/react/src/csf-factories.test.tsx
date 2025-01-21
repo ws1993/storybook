@@ -1,10 +1,10 @@
 import { expect, test } from 'vitest';
 
 import { Button } from './__test__/Button';
-import { defineConfig } from './preview';
+import { definePreview } from './preview';
 
 test('csf factories', () => {
-  const config = defineConfig({
+  const config = definePreview({
     addons: [
       {
         decorators: [],

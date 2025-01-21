@@ -5,10 +5,10 @@ import { expect, fn, mocked, userEvent, within } from '@storybook/test';
 
 import { action } from '@storybook/addon-actions';
 
-import { defineConfig } from '../preview';
+import { definePreview } from '../preview';
 import { Button } from './Button';
 
-const config = defineConfig({ args: { children: 'TODO: THIS IS NOT WORKING YET' } });
+const config = definePreview({});
 
 const meta = config.meta({
   id: 'button-component',

@@ -144,11 +144,11 @@ export const sandbox: Task = {
 
     await extendMain(details, options);
 
-    await extendPreview(details, options);
-
     await setImportMap(details.sandboxDir);
 
     await runMigrations(details, options);
+
+    await extendPreview(details, options);
 
     logger.info(`✅ Storybook sandbox created at ${details.sandboxDir}`);
   },

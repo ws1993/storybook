@@ -245,13 +245,25 @@ describe('ConfigFile', () => {
     });
 
     describe('factory config', () => {
+      it('parses correctly', () => {
+        const source = dedent`
+          import { definePreview } from '@storybook/react-vite/preview';
+
+          const config = definePreview({
+            framework: 'foo',
+          });
+          export default config;
+        `;
+        const config = loadConfig(source).parse();
+        expect(config.getNameFromPath(['framework'])).toEqual('foo');
+      });
       it('found scalar', () => {
         expect(
           getField(
             ['core', 'builder'],
             dedent`
-            import { defineConfig } from '@storybook/react-vite/preview';
-            export const foo = defineConfig({ core: { builder: 'webpack5' } });
+            import { definePreview } from '@storybook/react-vite/preview';
+            export const foo = definePreview({ core: { builder: 'webpack5' } });
             `
           )
         ).toEqual('webpack5');
@@ -261,9 +273,9 @@ describe('ConfigFile', () => {
           getField(
             ['tags'],
             dedent`
-              import { defineConfig } from '@storybook/react-vite/preview';
+              import { definePreview } from '@storybook/react-vite/preview';
               const parameters = {};
-              export const config = defineConfig({
+              export const config = definePreview({
                 parameters,
                 tags: ['test', 'vitest', '!a11ytest'],
               });
@@ -516,15 +528,15 @@ describe('ConfigFile', () => {
             ['core', 'builder'],
             'webpack5',
             dedent`
-              import { defineConfig } from '@storybook/react-vite/preview';
-              export const foo = defineConfig({
+              import { definePreview } from '@storybook/react-vite/preview';
+              export const foo = definePreview({
                 addons: [],
               });
             `
           )
         ).toMatchInlineSnapshot(`
-          import { defineConfig } from '@storybook/react-vite/preview';
-          export const foo = defineConfig({
+          import { definePreview } from '@storybook/react-vite/preview';
+          export const foo = definePreview({
             addons: [],
 
             core: {
@@ -539,15 +551,15 @@ describe('ConfigFile', () => {
             ['core', 'builder'],
             'webpack5',
             dedent`
-              import { defineConfig } from '@storybook/react-vite/preview';
-              export const foo = defineConfig({
+              import { definePreview } from '@storybook/react-vite/preview';
+              export const foo = definePreview({
                 core: { foo: 'bar' },
               });
             `
           )
         ).toMatchInlineSnapshot(`
-          import { defineConfig } from '@storybook/react-vite/preview';
-          export const foo = defineConfig({
+          import { definePreview } from '@storybook/react-vite/preview';
+          export const foo = definePreview({
             core: {
               foo: 'bar',
               builder: 'webpack5'
@@ -561,15 +573,15 @@ describe('ConfigFile', () => {
             ['core', 'builder'],
             'webpack5',
             dedent`
-              import { defineConfig } from '@storybook/react-vite/preview';
-              export const foo = defineConfig({
+              import { definePreview } from '@storybook/react-vite/preview';
+              export const foo = definePreview({
                 core: { builder: 'webpack4' },
               });
             `
           )
         ).toMatchInlineSnapshot(`
-          import { defineConfig } from '@storybook/react-vite/preview';
-          export const foo = defineConfig({
+          import { definePreview } from '@storybook/react-vite/preview';
+          export const foo = definePreview({
             core: { builder: 'webpack5' },
           });
         `);
@@ -1015,6 +1027,19 @@ describe('ConfigFile', () => {
         const config = loadConfig(source).parse();
         expect(config.getNameFromPath(['framework'])).toEqual('foo');
         expect(config.getNameFromPath(['otherField'])).toEqual('foo');
+      });
+
+      it(`supports pnp wrapped names`, () => {
+        const source = dedent`
+          import type { StorybookConfig } from '@storybook/react-webpack5';
+
+          const config: StorybookConfig = {
+            framework: getAbsolutePath('foo'),
+          }
+          export default config;
+        `;
+        const config = loadConfig(source).parse();
+        expect(config.getNameFromPath(['framework'])).toEqual('foo');
       });
 
       it(`returns undefined when accessing a field that does not exist`, () => {

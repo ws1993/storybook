@@ -25,18 +25,8 @@ const getCsfParsingErrorMessage = ({
   foundType: string | undefined;
   node: any | undefined;
 }) => {
-  let nodeInfo = '';
-  if (node) {
-    try {
-      nodeInfo = JSON.stringify(node);
-    } catch (e) {
-      //
-    }
-  }
-
   return dedent`
       CSF Parsing error: Expected '${expectedType}' but found '${foundType}' instead in '${node?.type}'.
-      ${nodeInfo}
     `;
 };
 
@@ -215,6 +205,11 @@ export class ConfigFile {
 
           decl = unwrap(decl);
 
+          // csf factory
+          if (t.isCallExpression(decl) && t.isObjectExpression(decl.arguments[0])) {
+            decl = decl.arguments[0];
+          }
+
           if (t.isObjectExpression(decl)) {
             self._parseExportsObject(decl);
           } else {
@@ -323,7 +318,7 @@ export class ConfigFile {
         enter: ({ node }) => {
           if (
             t.isIdentifier(node.callee) &&
-            node.callee.name === 'defineConfig' &&
+            node.callee.name === 'definePreview' &&
             node.arguments.length === 1 &&
             t.isObjectExpression(node.arguments[0])
           ) {
@@ -499,6 +494,8 @@ export class ConfigFile {
           value = prop.value.value;
         }
       });
+    } else if (t.isCallExpression(node)) {
+      value = this._getPnpWrappedValue(node);
     }
 
     if (!value) {

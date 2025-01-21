@@ -17,7 +17,7 @@ import * as reactAnnotations from './entry-preview';
 import * as reactDocsAnnotations from './entry-preview-docs';
 import type { ReactRenderer } from './types';
 
-export function defineConfig(config: PreviewConfigData<ReactRenderer>) {
+export function definePreview(config: PreviewConfigData<ReactRenderer>) {
   return new PreviewConfig({
     ...config,
     addons: [reactAnnotations, reactDocsAnnotations, ...(config.addons ?? [])],
