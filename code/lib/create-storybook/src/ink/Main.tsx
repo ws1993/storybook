@@ -1,9 +1,10 @@
+import { userInfo } from 'node:os';
+
 import React, { useReducer } from 'react';
 
 import { Box, Text } from 'ink';
 
 import type { Input } from './app';
-import { Rainbow } from './components/Rainbow';
 import { steps } from './steps';
 import { reducer } from './steps';
 
@@ -24,10 +25,11 @@ export function Main({ directory, framework, install, ...rest }: Input) {
       {/* Here we render the header */}
       <Box flexDirection="column">
         <Box>
-          <Text>Hello Yann!</Text>
-          {/* <Rainbow text="Welcome to Storybook's CLI" /> */}
+          <Text>
+            Hello {userInfo().username}, welcome to <Text color="#FF4785">Storybook's CLI</Text>!
+          </Text>
         </Box>
-        <Text>Let's get things set up!</Text>
+        <Text>Let's add storybook to your project!</Text>
       </Box>
       {/* <Box>
         <Text>{JSON.stringify(state, null, 2)}</Text>
