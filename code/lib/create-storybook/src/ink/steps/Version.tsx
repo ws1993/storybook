@@ -5,8 +5,6 @@ import { Box, Text } from 'ink';
 
 import { ACTIONS, type Action, type State } from '.';
 import { Confirm } from '../components/Confirm';
-import type { VersionResult } from '../utils/checks';
-import { checkVersion } from '../utils/checks';
 
 export function VERSION({ state, dispatch }: { state: State; dispatch: Dispatch<Action> }) {
   const [version, setVersion] = useState<VersionResult>('loading');
@@ -50,4 +48,12 @@ export function VERSION({ state, dispatch }: { state: State; dispatch: Dispatch<
       )}
     </Box>
   );
+}
+
+export type VersionResult = 'loading' | 'latest' | 'outdated';
+export async function checkVersion(): Promise<VersionResult> {
+  // slow delay for demo effect
+  await new Promise((resolve) => setTimeout(resolve, 1000));
+
+  return 'latest';
 }

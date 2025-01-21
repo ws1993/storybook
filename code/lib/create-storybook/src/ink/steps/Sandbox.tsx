@@ -6,8 +6,6 @@ import { Spinner } from '@inkjs/ui';
 import { Box, Text } from 'ink';
 
 import { type Action, type State } from '.';
-import type { ExistsResult } from '../utils/checks';
-import { checkExists } from '../utils/checks';
 
 export function SANDBOX({ state, dispatch }: { state: State; dispatch: Dispatch<Action> }) {
   const [exists, setExists] = useState<ExistsResult>('loading');
@@ -49,4 +47,13 @@ export function SANDBOX({ state, dispatch }: { state: State; dispatch: Dispatch<
       )}
     </Box>
   );
+}
+
+export type ExistsResult = 'loading' | 'empty' | 'exists';
+/** Check if the user has pending changes */
+export async function checkExists(location: string): Promise<ExistsResult> {
+  // slow delay for demo effect
+  await new Promise((resolve) => setTimeout(resolve, 1000));
+
+  return 'exists';
 }

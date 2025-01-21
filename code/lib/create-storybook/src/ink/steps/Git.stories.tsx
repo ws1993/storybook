@@ -52,8 +52,10 @@ export const Ignored: Story = {
   parameters: {
     git: 'unclean',
   },
-  state: {
-    ...meta.args!.state,
-    ignoreGitNotClean: true,
+  args: {
+    state: {
+      ...meta.args!.state,
+      ignoreGitNotClean: true,
+    },
   },
 };

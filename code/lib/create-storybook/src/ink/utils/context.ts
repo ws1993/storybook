@@ -1,8 +1,9 @@
 import { createContext } from 'react';
 
 import type { checkCompatibility } from '../steps/Check';
+import type { checkFramework } from '../steps/Framework';
 import type { checkGitStatus } from '../steps/Git';
-import type { checkFramework, checkVersion } from './checks';
+import type { checkVersion } from '../steps/Version';
 
 export const AppContext = createContext({
   fs: undefined as typeof import('fs/promises') | undefined,

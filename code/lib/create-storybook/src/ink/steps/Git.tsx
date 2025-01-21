@@ -19,10 +19,9 @@ export function GIT({ state, dispatch }: { state: State; dispatch: Dispatch<Acti
     } else {
       const runGit = context.steps?.GIT;
 
-      console.log({ runGit });
       if (runGit) {
         runGit().then((result) => {
-          if (result) {
+          if (result === 'clean') {
             dispatch({ type: ACTIONS.IGNORE_GIT });
           } else {
             setGit(result);
