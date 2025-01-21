@@ -9,8 +9,8 @@ export function Telemetry({ state }: { state: State }) {
   const { telemetry } = useContext(AppContext);
 
   useEffect(() => {
-    const { intents, framework, features, version, install, directory } = state;
-    telemetry?.('init', { intents, framework, features, version, install, directory });
+    const { intents, framework, features, version, install } = state;
+    telemetry?.('init', { intents, framework, features, version, install });
   }, []);
 
   return (
