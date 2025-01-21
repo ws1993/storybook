@@ -29,9 +29,9 @@ export function Main({ directory, framework, install, ...rest }: Input) {
         </Box>
         <Text>Let's get things set up!</Text>
       </Box>
-      <Box>
+      {/* <Box>
         <Text>{JSON.stringify(state, null, 2)}</Text>
-      </Box>
+      </Box> */}
 
       {/* Here we render the current step with state and dispatch */}
 
