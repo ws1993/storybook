@@ -69,18 +69,25 @@ export function Installation({ state, onComplete }: Procedure) {
         // child.stdout.setEncoding('utf8');
         child.stdout.on('data', (data) => {
           const chunk = data.toString().trim();
-          if (chunk !== '') {
-            setLastChunk(chunk);
+          if (chunk === '') {
+            return;
+          }
+
+          setLastChunk(chunk);
+          if (chunk.match(/error/i)) {
+            setError((current) => (current + '\n' + chunk).trim());
           }
         });
 
         // child.stderr.setEncoding('utf8');
         child.stderr.on('data', (data) => {
           const chunk = data.toString().trim();
-          if (chunk !== '' && chunk.match(/error/i)) {
-            setLastChunk(chunk);
-            setError((current) => (current + '\n' + chunk).trim());
+          if (chunk === '') {
+            return;
           }
+
+          setLastChunk(chunk);
+          setError((current) => (current + '\n' + chunk).trim());
         });
 
         child.on('close', (code) => {
