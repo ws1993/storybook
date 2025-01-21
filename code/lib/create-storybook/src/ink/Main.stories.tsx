@@ -17,6 +17,8 @@ const meta: Meta<typeof Main> = {
   },
   parameters: {
     layout: 'fullscreen',
+    check: 'compatible',
+    git: 'clean',
   },
   decorators: [xtermDecorator],
 };
