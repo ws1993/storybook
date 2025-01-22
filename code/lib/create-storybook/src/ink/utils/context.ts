@@ -1,9 +1,9 @@
 import { createContext } from 'react';
 
 import type { checkCompatibility } from '../steps/Check';
+import type { checkExists, downloadSandbox } from '../steps/ExistsResult';
 import type { checkFramework } from '../steps/Framework';
 import type { checkGitStatus } from '../steps/Git';
-import type { checkExists, downloadSandbox } from '../steps/Sandbox';
 import type { checkVersion } from '../steps/Version';
 
 export const AppContext = createContext({

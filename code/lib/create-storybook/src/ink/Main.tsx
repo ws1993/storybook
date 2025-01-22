@@ -1,5 +1,3 @@
-import { userInfo } from 'node:os';
-
 import React, { useReducer } from 'react';
 
 import { Box, Text } from 'ink';
@@ -35,8 +33,7 @@ export function Main({ directory, framework, install, ...rest }: Input) {
             gap={1}
           >
             <Text>
-              Hello {userInfo().username}, welcome to the{' '}
-              <Text color="#FF4785">Storybook's CLI</Text>!
+              Hello, welcome to the <Text color="#FF4785">Storybook's CLI</Text>!
             </Text>
             <Text>Let's add Storybook to your project!</Text>
           </Box>

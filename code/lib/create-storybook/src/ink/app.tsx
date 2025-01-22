@@ -16,9 +16,9 @@ import type { z } from 'zod';
 import type { modernInputs as inputs } from '../bin/modernInputs';
 import { Main } from './Main';
 import { checkCompatibility } from './steps/Check';
+import { checkExists, downloadSandbox } from './steps/ExistsResult';
 import { checkFramework } from './steps/Framework';
 import { checkGitStatus } from './steps/Git';
-import { checkExists, downloadSandbox } from './steps/Sandbox';
 import { checkVersion } from './steps/Version';
 import { AppContext } from './utils/context';
 
