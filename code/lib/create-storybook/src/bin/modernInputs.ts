@@ -57,12 +57,13 @@ export const supportedFrameworksMap = {
   sveltekit: 'SvelteKit',
 } satisfies Record<(typeof supportedFrameworks)[number], string>;
 
+export const defaultIntents = ['dev' as const, 'docs' as const, 'test' as const];
 export const modernInputs = z.strictObject({
   intents: z //
     .array(z.enum(['dev', 'docs', 'test']))
     .optional()
     .describe('What are you using Storybook for?')
-    .default(['dev', 'docs', 'test']),
+    .default(defaultIntents),
   features: z //
     .array(z.enum(['onboarding', 'examples', 'essentials', 'typescript', 'vrt']))
     .optional()
