@@ -4,6 +4,8 @@ import type { StorybookConfig } from '@storybook/types';
 
 import { type ConfigFile, readConfig, writeConfig } from '@storybook/core/csf-tools';
 
+import picocolors from 'picocolors';
+
 import { getAddonAnnotations } from './get-addon-annotations';
 import { getAddonNames } from './get-addon-names';
 
@@ -78,7 +80,7 @@ export async function getSyncedStorybookAddons(
 
   if (syncedAddons.length > 0) {
     logger.info(
-      `Synchronizing addons from main config in ${previewConfig.fileName}:\n${syncedAddons.join(', ')}`
+      `Synchronizing addons from main config in ${picocolors.cyan(previewConfig.fileName)}:\n${syncedAddons.map(picocolors.magenta).join(', ')}`
     );
   }
 
