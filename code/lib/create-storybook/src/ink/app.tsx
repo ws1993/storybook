@@ -92,7 +92,11 @@ export async function run(options: z.infer<typeof inputs>) {
   });
 
   const exit = () =>
-    telemetry('canceled', { eventType: 'init' }, { stripMetadata: true, immediate: true })
+    telemetry(
+      'canceled',
+      { eventType: 'init' },
+      { stripMetadata: true, immediate: true, notify: false }
+    )
       .then(() => process.exit(0))
       .catch(() => process.exit(1));
 
