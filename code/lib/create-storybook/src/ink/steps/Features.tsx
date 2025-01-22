@@ -39,6 +39,7 @@ export function FEATURES({ state, dispatch }: { state: State; dispatch: Dispatch
             onboarding: 'Onboarding',
             examples: 'Generate example stories (required for onboarding)',
             essentials: 'Add the most commonly used addons',
+            vrt: 'Visual Regression Testing via chromatic',
           } as const
         }
         selection={selection}

@@ -29,8 +29,17 @@ const deriveDependencies = (state: Procedure['state']): string[] => {
     dependencies.push(format(`@storybook/addon-essentials`));
   }
 
+  if (state.features.includes(`vta`)) {
+    dependencies.push('@chromatic-com/storybook@^3');
+  }
+
   if (state.intents.includes(`docs`) && !state.features.includes(`essentials`)) {
     dependencies.push(format(`@storybook/addon-docs`));
+  }
+
+  if (state.intents.includes(`test`)) {
+    dependencies.push(format(`@storybook/test`));
+    dependencies.push(format(`@storybook/experimental-addon-test`));
   }
 
   return dependencies;
@@ -98,31 +107,26 @@ export function Installation({ state, onComplete }: Procedure) {
         });
 
         child.on('close', (code) => {
-          setTimeout(() => {
-            const errors = [];
+          const errors = [];
+          if (code !== 0) {
             if (ref.current.error !== '') {
               errors.push(new Error(ref.current.error));
             }
-
-            if (code !== 0 && errors.length === 0) {
-              errors.push(new Error(`install process exited with code ${code}`));
-            }
+            errors.push(new Error(`install process exited with code ${code}`));
             onComplete(errors);
-            setDone(true);
-          }, 1000);
+          } else {
+            onComplete();
+          }
+          setDone(true);
         });
 
         child.on('error', (err) => {
-          setTimeout(() => {
-            const errors = [err];
-            if (ref.current.error !== '') {
-              errors.push(new Error(ref.current.error));
-            } else if (ref.current.lastChunk !== '') {
-              errors.push(new Error(ref.current.lastChunk));
-            }
-            onComplete(errors);
-            setDone(true);
-          }, 1000);
+          const errors = [err];
+
+          errors.push(new Error('error event'));
+
+          onComplete(errors);
+          setDone(true);
         });
         return () => {
           if (child.killed || child.exitCode !== null) {
@@ -161,7 +165,7 @@ export function Installation({ state, onComplete }: Procedure) {
   return (
     <Box height={1} overflow="hidden" gap={1}>
       {done ? <Text>{figureSet.tick}</Text> : <Spinner />}
-      {state.install ? <Text>Installing {line}</Text> : <Text>- Skipped installation</Text>}
+      {state.install ? <Text>Installing {line}</Text> : <Text>Skipping install</Text>}
     </Box>
   );
 }

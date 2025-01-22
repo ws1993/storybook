@@ -3,7 +3,6 @@ import React, { type Dispatch, useState } from 'react';
 import { Box, Text } from 'ink';
 
 import { type Action, type State } from '.';
-import { Rainbow } from '../components/Rainbow';
 import { ConfigGeneration } from '../procedures/ConfigGeneration';
 import { Installation } from '../procedures/Installation';
 import { Telemetry } from '../procedures/Telemetry';
@@ -40,6 +39,7 @@ export function RUN({ state, dispatch }: { state: State; dispatch: Dispatch<Acti
         <Text>
           Your storybook failed to be added to your project. Please check the following errors:
         </Text>
+
         {list.map((e) => {
           const [name, { status, errors }] = e;
           if (errors.length === 0) {

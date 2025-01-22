@@ -38,7 +38,7 @@ export function Main({ directory, framework, install, ...rest }: Input) {
               Hello {userInfo().username}, welcome to the{' '}
               <Text color="#FF4785">Storybook's CLI</Text>!
             </Text>
-            <Text>Let's add storybook to your project!</Text>
+            <Text>Let's add Storybook to your project!</Text>
           </Box>
         </Box>
       </Box>
