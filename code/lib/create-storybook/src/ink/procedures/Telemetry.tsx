@@ -13,7 +13,7 @@ export function Telemetry({ state, onComplete }: Procedure) {
 
   useEffect(() => {
     const { intents, framework, features, version, install } = state;
-    telemetry?.('init', { intents, framework, features, version, install })
+    telemetry?.('init', { intents, framework, features, version, install }, { notify: false })
       .then(() => {
         onComplete();
         setDone(true);

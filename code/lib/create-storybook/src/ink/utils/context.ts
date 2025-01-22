@@ -1,6 +1,5 @@
 import { createContext } from 'react';
 
-import type { checkCompatibility } from '../steps/Check';
 import type { checkExists, downloadSandbox } from '../steps/ExistsResult';
 import type { checkFramework } from '../steps/Framework';
 import type { checkGitStatus } from '../steps/Git';
@@ -13,7 +12,6 @@ export const AppContext = createContext({
   require: undefined as NodeRequire | undefined,
   glob: undefined as typeof import('fast-glob') | undefined,
   checkGitStatus: undefined as typeof checkGitStatus | undefined,
-  checkCompatibility: undefined as typeof checkCompatibility | undefined,
   checkVersion: undefined as typeof checkVersion | undefined,
   checkFramework: undefined as typeof checkFramework | undefined,
   checkExists: undefined as typeof checkExists | undefined,

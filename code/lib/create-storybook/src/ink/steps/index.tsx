@@ -118,6 +118,8 @@ export function reducer(state: State, action: Action): State {
       };
     case ACTIONS.INSTALL:
       return { ...state, install: action.payload.value, step: next };
+    case ACTIONS.EXIT:
+      process.exit(0);
     default:
       return state;
   }
