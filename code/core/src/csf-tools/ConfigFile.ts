@@ -161,7 +161,7 @@ export class ConfigFile {
   // FIXME: this is a hack. this is only used in the case where the user is
   // modifying a named export that's a scalar. The _exports map is not suitable
   // for that. But rather than refactor the whole thing, we just use this as a stopgap.
-  _exportDecls: Record<string, t.VariableDeclarator> = {};
+  _exportDecls: Record<string, t.VariableDeclarator | t.FunctionDeclaration> = {};
 
   _exportsObject: t.ObjectExpression | undefined;
 
@@ -238,6 +238,13 @@ export class ConfigFile {
                 self._exportDecls[exportName] = decl;
               }
             });
+          } else if (t.isFunctionDeclaration(node.declaration)) {
+            // export function X() {...};
+            const decl = node.declaration;
+            if (t.isIdentifier(decl.id)) {
+              const { name: exportName } = decl.id;
+              self._exportDecls[exportName] = decl;
+            }
           } else if (node.specifiers) {
             // export { X };
             node.specifiers.forEach((spec) => {
@@ -380,7 +387,9 @@ export class ConfigFile {
       _updateExportNode(rest, expr, exportNode);
     } else if (exportNode && rest.length === 0 && this._exportDecls[path[0]]) {
       const decl = this._exportDecls[path[0]];
-      decl.init = _makeObjectExpression([], expr);
+      if (t.isVariableDeclarator(decl)) {
+        decl.init = _makeObjectExpression([], expr);
+      }
     } else if (this.hasDefaultExport) {
       // This means the main.js of the user has a default export that is not an object expression, therefore we can'types change the AST.
       throw new Error(

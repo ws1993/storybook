@@ -58,10 +58,12 @@ describe('main/preview codemod: general parsing functionality', () => {
       });
     `);
   });
+
   it('should wrap defineMain call from const declared default export and default export mix', async () => {
     await expect(
       transform(dedent`
         export const tags = [];
+        export async function viteFinal(config) { return config };
         const config = {
           framework: '@storybook/react-vite',
         };
@@ -74,6 +76,9 @@ describe('main/preview codemod: general parsing functionality', () => {
       const config = {
         framework: '@storybook/react-vite',
         tags: [],
+        viteFinal: () => {
+          return config;
+        },
       };
 
       export default config;
@@ -82,16 +87,22 @@ describe('main/preview codemod: general parsing functionality', () => {
   it('should wrap defineMain call from named exports format', async () => {
     await expect(
       transform(dedent`
-        export const stories = ['../src/**/*.stories.@(js|jsx|ts|tsx)'];
+        export function stories() { return ['../src/**/*.stories.@(js|jsx|ts|tsx)'] };
         export const addons = ['@storybook/addon-essentials'];
+        export async function viteFinal(config) { return config };
         export const framework = '@storybook/react-vite';
       `)
     ).resolves.toMatchInlineSnapshot(`
       import { defineMain } from '@storybook/react-vite';
 
       export default defineMain({
-        stories: ['../src/**/*.stories.@(js|jsx|ts|tsx)'],
+        stories: () => {
+          return ['../src/**/*.stories.@(js|jsx|ts|tsx)'];
+        },
         addons: ['@storybook/addon-essentials'],
+        viteFinal: () => {
+          return config;
+        },
         framework: '@storybook/react-vite',
       });
     `);
