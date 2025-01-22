@@ -75,6 +75,8 @@ describe('getSyncedStorybookAddons', () => {
     `);
   });
 
+  // necessary for windows and unix output to match in the assertions
+  const normalizeLineBreaks = (str: string) => str.replace(/\r/g, '').trim();
   it('should not add an addon if its annotations path has already been imported', async () => {
     const originalCode = dedent`
       import * as addonA11yAnnotations from "@storybook/addon-a11y/preview";
@@ -92,7 +94,9 @@ describe('getSyncedStorybookAddons', () => {
     });
 
     const result = await getSyncedStorybookAddons(mainConfig, preview);
-    expect(printConfig(result).code).toEqual(originalCode);
+    const transformedCode = normalizeLineBreaks(printConfig(result).code);
+
+    expect(transformedCode).toMatch(originalCode);
   });
 
   it('should not modify the code if all addons are already synced', async () => {
@@ -112,6 +116,8 @@ describe('getSyncedStorybookAddons', () => {
     });
 
     const result = await getSyncedStorybookAddons(mainConfig, preview);
-    expect(printConfig(result).code).toEqual(originalCode);
+    const transformedCode = normalizeLineBreaks(printConfig(result).code);
+
+    expect(transformedCode).toMatch(originalCode);
   });
 });
