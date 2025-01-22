@@ -29,7 +29,7 @@ const deriveDependencies = (state: Procedure['state']): string[] => {
     dependencies.push(format(`@storybook/addon-essentials`));
   }
 
-  if (state.features.includes(`vta`)) {
+  if (state.features.includes(`vrt`)) {
     dependencies.push('@chromatic-com/storybook@^3');
   }
 
