@@ -15,7 +15,6 @@ import type { z } from 'zod';
 
 import type { modernInputs as inputs } from '../bin/modernInputs';
 import { Main } from './Main';
-import { checkCompatibility } from './steps/Check';
 import { checkExists, downloadSandbox } from './steps/ExistsResult';
 import { checkFramework } from './steps/Framework';
 import { checkGitStatus } from './steps/Git';
@@ -56,7 +55,6 @@ export async function run(options: z.infer<typeof inputs>) {
     telemetry,
     glob,
     checkGitStatus,
-    checkCompatibility,
     checkVersion,
     checkFramework,
     checkExists,

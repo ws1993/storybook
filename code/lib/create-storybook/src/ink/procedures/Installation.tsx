@@ -29,7 +29,7 @@ const deriveDependencies = (state: Procedure['state']): string[] => {
     dependencies.push(format(`@storybook/addon-essentials`));
   }
 
-  if (state.features.includes(`vta`)) {
+  if (state.features.includes(`vrt`)) {
     dependencies.push('@chromatic-com/storybook@^3');
   }
 
@@ -39,7 +39,10 @@ const deriveDependencies = (state: Procedure['state']): string[] => {
 
   if (state.intents.includes(`test`)) {
     dependencies.push(format(`@storybook/test`));
+    dependencies.push(format('@storybook/addon-a11y'));
     dependencies.push(format(`@storybook/experimental-addon-test`));
+    // check if user has instanbul or v8 coverage reporter, if not add v8
+    // ensure that the version specifier of vitest packages we're installing is the same the vitest version the user already has
   }
 
   return dependencies;

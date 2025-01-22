@@ -10,6 +10,14 @@ export function ConfigGeneration({ state, onComplete }: Procedure) {
   const [line, setLine] = useState<string>('...');
   const [done, setDone] = useState(false);
 
+  /* Generate files:
+   * - .storybook/main.ts
+   * - .storybook/preview.ts
+   * - .storybook/vitest.setup.ts
+   * - vitest.workspace.ts
+   * - vitest.config.ts
+   */
+
   useEffect(() => {
     // do work to install dependencies
     const interval = setInterval(() => {
