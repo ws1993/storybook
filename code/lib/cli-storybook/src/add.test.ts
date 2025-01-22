@@ -56,6 +56,7 @@ vi.mock('storybook/internal/common', () => {
     JsPackageManagerFactory: {
       getPackageManager: vi.fn(() => MockedPackageManager),
     },
+    syncStorybookAddons: vi.fn(),
     getCoercedStorybookVersion: vi.fn(() => '8.0.0'),
     versions: {
       '@storybook/addon-docs': '^8.0.0',
