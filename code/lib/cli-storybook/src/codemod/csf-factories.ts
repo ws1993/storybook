@@ -1,10 +1,11 @@
+import { syncStorybookAddons } from 'storybook/internal/common';
+
 import prompts from 'prompts';
 
 import { runCodemod } from '../automigrate/codemod';
 import { getFrameworkPackageName } from '../automigrate/helpers/mainConfigFile';
 import type { CommandFix } from '../automigrate/types';
 import { configToCsfFactory } from './helpers/config-to-csf-factory';
-import { syncStorybookAddons } from './helpers/csf-factories-utils';
 import { storyToCsfFactory } from './helpers/story-to-csf-factory';
 
 export const logger = console;
@@ -69,7 +70,6 @@ export const csfFactories: CommandFix = {
       configToCsfFactory(fileInfo, { configType: 'preview', frameworkPackage }, { dryRun })
     );
 
-    logger.log('Synchronizing addons between main and preview config...');
     await syncStorybookAddons(mainConfig, previewConfigPath!);
   },
 };
