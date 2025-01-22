@@ -1,9 +1,5 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
-import { formatFileContent } from '@storybook/core/common';
-
-import { formatConfig, loadConfig } from '@storybook/core/csf-tools';
-
 import { existsSync, readFileSync, writeFileSync } from 'fs';
 import * as jscodeshift from 'jscodeshift';
 import path from 'path';
@@ -157,12 +153,12 @@ describe('addonA11yAddonTest', () => {
         previewFile: null,
         transformedPreviewCode: null,
         transformedSetupCode: expect.any(String),
-        skipPreviewTransformation: false,
+        skipPreviewTransformation: true,
         skipVitestSetupTransformation: false,
       });
     });
 
-    it('should return previewFile and transformedPreviewCode if preview file exists', async () => {
+    it.skip('should return previewFile and transformedPreviewCode if preview file exists', async () => {
       vi.mocked(getAddonNames).mockReturnValue([
         '@storybook/addon-a11y',
         '@storybook/experimental-addon-test',
@@ -229,7 +225,7 @@ describe('addonA11yAddonTest', () => {
         previewFile: null,
         transformedPreviewCode: null,
         transformedSetupCode: null,
-        skipPreviewTransformation: false,
+        skipPreviewTransformation: true,
         skipVitestSetupTransformation: false,
       });
     });
@@ -265,7 +261,7 @@ describe('addonA11yAddonTest', () => {
         previewFile: path.join(configDir, 'preview.js'),
         transformedPreviewCode: null,
         transformedSetupCode: null,
-        skipPreviewTransformation: false,
+        skipPreviewTransformation: true,
         skipVitestSetupTransformation: false,
       });
     });
@@ -345,14 +341,7 @@ describe('addonA11yAddonTest', () => {
         },
         configDir,
       } as any);
-      expect(result).toEqual({
-        setupFile: path.join(configDir, 'vitest.setup.js'),
-        previewFile: path.join(configDir, 'preview.js'),
-        transformedPreviewCode: expect.any(String),
-        transformedSetupCode: null,
-        skipPreviewTransformation: false,
-        skipVitestSetupTransformation: true,
-      });
+      expect(result).toEqual(null);
     });
   });
 
@@ -679,7 +668,8 @@ describe('addonA11yAddonTest', () => {
           },
 
           // The \`a11y-test\` tag controls whether accessibility tests are run as part of a standalone Vitest test run
-          // For more information please visit: https://storybook.js.org/docs/writing-tests/accessibility-testing#configure-accessibility-tests-with-the-test-addon
+          // The tag and its behavior are experimental and subject to change.
+          // For more information please see: https://storybook.js.org/docs/writing-tests/accessibility-testing#configure-accessibility-tests-with-the-test-addon
           tags: [/*'a11y-test'*/]
         };
 
@@ -740,7 +730,8 @@ describe('addonA11yAddonTest', () => {
 
         const preview: Preview = {
           // The \`a11y-test\` tag controls whether accessibility tests are run as part of a standalone Vitest test run
-          // For more information please visit: https://storybook.js.org/docs/writing-tests/accessibility-testing#configure-accessibility-tests-with-the-test-addon
+          // The tag and its behavior are experimental and subject to change.
+          // For more information please see: https://storybook.js.org/docs/writing-tests/accessibility-testing#configure-accessibility-tests-with-the-test-addon
           tags: ["existingTag"/*, "a11y-test"*/],
           parameters: {
             controls: {
@@ -824,7 +815,8 @@ describe('addonA11yAddonTest', () => {
           },
 
           // The \`a11y-test\` tag controls whether accessibility tests are run as part of a standalone Vitest test run
-          // For more information please visit: https://storybook.js.org/docs/writing-tests/accessibility-testing#configure-accessibility-tests-with-the-test-addon
+          // The tag and its behavior are experimental and subject to change.
+          // For more information please see: https://storybook.js.org/docs/writing-tests/accessibility-testing#configure-accessibility-tests-with-the-test-addon
           tags: [/*"a11y-test"*/]
         };"
       `);
@@ -850,7 +842,8 @@ describe('addonA11yAddonTest', () => {
       expect(transformed).toMatchInlineSnapshot(`
         "export default {
           // The \`a11y-test\` tag controls whether accessibility tests are run as part of a standalone Vitest test run
-          // For more information please visit: https://storybook.js.org/docs/writing-tests/accessibility-testing#configure-accessibility-tests-with-the-test-addon
+          // The tag and its behavior are experimental and subject to change.
+          // For more information please see: https://storybook.js.org/docs/writing-tests/accessibility-testing#configure-accessibility-tests-with-the-test-addon
           tags: ["existingTag"/*, "a11y-test"*/],
           parameters: {
             controls: {

@@ -6,6 +6,7 @@ import { traverse } from 'storybook/internal/babel';
 import {
   JsPackageManagerFactory,
   extractProperFrameworkName,
+  formatFileContent,
   loadAllPresets,
   loadMainConfig,
   serverResolve,
@@ -414,7 +415,17 @@ export default async function postInstall(options: PostinstallOptions) {
   }
 
   const vitestConfigFile = await findFile('vitest.config');
+  const vitestShimFile = await findFile('vitest.shims.d');
   const rootConfig = vitestConfigFile || viteConfigFile;
+
+  const isVitest3OrLater = !!(coercedVitestVersion && satisfies(coercedVitestVersion, '>=3.0.0'));
+
+  if (isVitest3OrLater && fileExtension === 'ts' && !vitestShimFile) {
+    await writeFile(
+      'vitest.shims.d.ts',
+      '/// <reference types="@vitest/browser/providers/playwright" />'
+    );
+  }
 
   if (rootConfig) {
     // If there's an existing config, we create a workspace file so we can run Storybook tests alongside.
@@ -429,7 +440,9 @@ export default async function postInstall(options: PostinstallOptions) {
 
     await writeFile(
       browserWorkspaceFile,
-      dedent`
+      await formatFileContent(
+        browserWorkspaceFile,
+        dedent`
         import { defineWorkspace } from 'vitest/config';
         import { storybookTest } from '@storybook/experimental-addon-test/vitest-plugin';
         import path from 'node:path';
@@ -462,6 +475,7 @@ export default async function postInstall(options: PostinstallOptions) {
           },
         ]);
       `.replace(/\s+extends: '',/, '')
+      )
     );
   } else {
     // If there's no existing Vitest/Vite config, we create a new Vitest config file.
