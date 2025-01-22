@@ -13,6 +13,12 @@ sidebar:
   {/* End non-supported renderers */}
 </If>
 
+<If renderer={['react']}>
+  <Callout variant="warning">
+    If you are using the CSF Factory format, you don't need to use the portable stories API. Instead, you can use the [CSF Factory API](../../api/csf.mdx).
+  </Callout>
+</If>
+
 <If renderer={['react', 'vue']}>
   Portable stories are Storybook [stories](../../writing-stories/index.mdx) which can be used in external environments, such as [Jest](https://jestjs.io).
 
