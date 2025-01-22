@@ -144,7 +144,6 @@ export async function checkExists(location: string): Promise<ExistsResult> {
 export async function downloadSandbox(location: string, templateId: string) {
   const { downloadTemplate } = await import('giget');
 
-  // const templateId =
   const gitPath = `github:storybookjs/sandboxes/${templateId}/before-storybook#main`;
 
   await downloadTemplate(gitPath, {

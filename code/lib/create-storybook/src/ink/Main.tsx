@@ -21,22 +21,32 @@ export function Main({ directory, framework, install, ...rest }: Input) {
   const Step = steps[state.step];
 
   return (
-    <Box flexDirection="column" gap={1}>
+    <Box flexDirection="column" gap={1} marginBottom={1}>
       {/* Here we render the header */}
       <Box flexDirection="column">
-        <Box>
-          <Text>
-            Hello {userInfo().username}, welcome to <Text color="#FF4785">Storybook's CLI</Text>!
-          </Text>
+        <Box gap={2}>
+          <Box
+            borderStyle={'round'}
+            borderColor={'#FF4785'}
+            padding={1}
+            paddingLeft={2}
+            paddingRight={2}
+            flexDirection="column"
+            gap={1}
+          >
+            <Text>
+              Hello {userInfo().username}, welcome to the{' '}
+              <Text color="#FF4785">Storybook's CLI</Text>!
+            </Text>
+            <Text>Let's add storybook to your project!</Text>
+          </Box>
         </Box>
-        <Text>Let's add storybook to your project!</Text>
       </Box>
       {/* <Box>
         <Text>{JSON.stringify(state, null, 2)}</Text>
       </Box> */}
 
       {/* Here we render the current step with state and dispatch */}
-
       <Step state={state} dispatch={dispatch} />
     </Box>
   );
