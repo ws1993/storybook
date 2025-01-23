@@ -1466,5 +1466,16 @@ describe('ConfigFile', () => {
       expect(config._exportDecls['path']).toBe(undefined);
       expect(config._exports['path']).toBe(undefined);
     });
+
+    it('detects const and function export declarations', () => {
+      const source = dedent`
+        export function normalFunction() { };
+        export const value = ['@storybook/addon-essentials'];
+        export async function asyncFunction() { };
+        `;
+      const config = loadConfig(source).parse();
+
+      expect(Object.keys(config._exportDecls)).toHaveLength(3);
+    });
   });
 });

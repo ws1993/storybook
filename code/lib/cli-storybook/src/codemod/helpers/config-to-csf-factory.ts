@@ -7,7 +7,11 @@ import picocolors from 'picocolors';
 
 import type { FileInfo } from '../../automigrate/codemod';
 import { logger } from '../csf-factories';
-import { cleanupTypeImports } from './csf-factories-utils';
+import {
+  cleanupTypeImports,
+  getConfigProperties,
+  removeExportDeclarations,
+} from './csf-factories-utils';
 
 export async function configToCsfFactory(
   info: FileInfo,
@@ -48,23 +52,10 @@ export async function configToCsfFactory(
   if (config._exportsObject && hasNamedExports) {
     const exportDecls = config._exportDecls;
 
-    for (const [name, decl] of Object.entries(exportDecls)) {
-      if (decl.init) {
-        config._exportsObject.properties.push(t.objectProperty(t.identifier(name), decl.init));
-      }
-    }
+    const defineConfigProps = getConfigProperties(exportDecls);
+    config._exportsObject.properties.push(...defineConfigProps);
 
-    programNode.body = programNode.body.filter((node) => {
-      if (t.isExportNamedDeclaration(node) && node.declaration) {
-        if (t.isVariableDeclaration(node.declaration)) {
-          node.declaration.declarations = node.declaration.declarations.filter(
-            (decl) => t.isIdentifier(decl.id) && !exportDecls[decl.id.name]
-          );
-          return node.declaration.declarations.length > 0;
-        }
-      }
-      return true;
-    });
+    programNode.body = removeExportDeclarations(programNode, exportDecls);
   } else if (config._exportsObject) {
     /**
      * Scenario 2: Default exports
@@ -124,14 +115,7 @@ export async function configToCsfFactory(
      * Transform into: export default defineMain({ foo: {}, bar: '' });
      */
     const exportDecls = config._exportDecls;
-    const defineConfigProps = [];
-
-    // Collect properties from named exports
-    for (const [name, decl] of Object.entries(exportDecls)) {
-      if (decl.init) {
-        defineConfigProps.push(t.objectProperty(t.identifier(name), decl.init));
-      }
-    }
+    const defineConfigProps = getConfigProperties(exportDecls);
 
     // Construct the `define` call
     const defineConfigCall = t.callExpression(t.identifier(methodName), [
@@ -139,17 +123,7 @@ export async function configToCsfFactory(
     ]);
 
     // Remove all related named exports
-    programNode.body = programNode.body.filter((node) => {
-      if (t.isExportNamedDeclaration(node) && node.declaration) {
-        if (t.isVariableDeclaration(node.declaration)) {
-          node.declaration.declarations = node.declaration.declarations.filter(
-            (decl) => t.isIdentifier(decl.id) && !exportDecls[decl.id.name]
-          );
-          return node.declaration.declarations.length > 0;
-        }
-      }
-      return true;
-    });
+    programNode.body = removeExportDeclarations(programNode, exportDecls);
 
     // Add the new export default declaration
     programNode.body.push(t.exportDefaultDeclaration(defineConfigCall));
