@@ -123,26 +123,110 @@ describe('stories codemod', () => {
       `);
     });
 
-    it('if there is an existing local constant called config, rename storybook config import', async () => {
+    it('if there is an existing local constant called preview, rename storybook preview import', async () => {
       await expect(
         transform(dedent`
             const componentMeta = { title: 'Component' };
             export default componentMeta;
-            const config = {};
+            const preview = {};
             export const A = {
               args: { primary: true },
               render: (args) => <Component {...args} />
             };
           `)
       ).resolves.toMatchInlineSnapshot(`
-        import preview from '#.storybook/preview';
+        import storybookPreview from '#.storybook/preview';
 
-        const meta = preview.meta({ title: 'Component' });
-        const config = {};
+        const meta = storybookPreview.meta({ title: 'Component' });
+        const preview = {};
         export const A = meta.story({
           args: { primary: true },
           render: (args) => <Component {...args} />,
         });
+      `);
+    });
+
+    it('migrate reused properties of other stories from `Story.xyz` to `Story.input.xyz`', async () => {
+      await expect(
+        transform(dedent`
+            export default { title: 'Component' };
+            const someData = {};
+
+            export const A = {};
+            
+            export const B = {
+              ...A,
+              args: {
+                ...A.args,
+                ...someData,
+              },
+            };
+            export const C = {
+              render: async () => {
+                return JSON.stringify({
+                  ...A.argTypes,
+                  ...B,
+                })
+              }
+            };
+          `)
+      ).resolves.toMatchInlineSnapshot(`
+        import preview from '#.storybook/preview';
+
+        const meta = preview.meta({
+          title: 'Component',
+        });
+
+        const someData = {};
+
+        export const A = meta.story({});
+
+        export const B = meta.story({
+          ...A.input,
+          args: {
+            ...A.input.args,
+            ...someData,
+          },
+        });
+        export const C = meta.story({
+          render: async () => {
+            return JSON.stringify({
+              ...A.input.argTypes,
+              ...B.input,
+            });
+          },
+        });
+      `);
+    });
+
+    it('does not migrate reused properties from disallowed list', async () => {
+      await expect(
+        transform(dedent`
+            export default { title: 'Component' };
+            export const A = {};
+            export const B = {
+              play: async () => {
+                await A.play();
+              }
+            };
+            export const C = A.run;
+            export const D = A.extends({});
+          `)
+      ).resolves.toMatchInlineSnapshot(`
+        import preview from '#.storybook/preview';
+
+        const meta = preview.meta({
+          title: 'Component',
+        });
+
+        export const A = meta.story({});
+        export const B = meta.story({
+          play: async () => {
+            await A.play();
+          },
+        });
+        export const C = A.run;
+        export const D = A.extends({});
       `);
     });
 
