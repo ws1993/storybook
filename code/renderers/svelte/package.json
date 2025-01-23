@@ -65,7 +65,7 @@
     "type-fest": "~2.19"
   },
   "devDependencies": {
-    "@sveltejs/vite-plugin-svelte": "^4.0.0",
+    "@sveltejs/vite-plugin-svelte": "^5.0.3",
     "@testing-library/svelte": "^5.2.4",
     "expect-type": "^1.1.0",
     "svelte": "^5.19.2",
