@@ -50,21 +50,21 @@ export function processCSFFile<TRenderer extends Renderer>(
   // CSF4
   if (!defaultExport && 'isCSFFactory' in firstStory) {
     const meta: NormalizedComponentAnnotations<TRenderer> =
-      normalizeComponentAnnotations<TRenderer>(firstStory.meta.annotations, title, importPath);
+      normalizeComponentAnnotations<TRenderer>(firstStory.meta.input, title, importPath);
     checkDisallowedParameters(meta.parameters);
 
     const csfFile: CSFFile<TRenderer> = { meta, stories: {}, moduleExports };
 
     Object.keys(namedExports).forEach((key) => {
       if (isExportStory(key, meta)) {
-        const storyMeta = normalizeStory(key, namedExports[key].annotations, meta);
+        const storyMeta = normalizeStory(key, namedExports[key].input, meta);
         checkDisallowedParameters(storyMeta.parameters);
 
         csfFile.stories[storyMeta.id] = storyMeta;
       }
     });
 
-    csfFile.projectAnnotations = firstStory.config.annotations;
+    csfFile.projectAnnotations = firstStory.config.input;
 
     return csfFile;
   }

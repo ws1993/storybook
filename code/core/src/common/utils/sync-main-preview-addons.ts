@@ -27,7 +27,6 @@ export async function getSyncedStorybookAddons(
     return (
       t.isImportDeclaration(node) &&
       node.source.value.includes('@storybook') &&
-      node.source.value.endsWith('/preview') &&
       node.specifiers.some((specifier) => {
         return (
           t.isImportSpecifier(specifier) &&
