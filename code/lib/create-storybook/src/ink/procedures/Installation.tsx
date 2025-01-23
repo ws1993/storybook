@@ -21,23 +21,23 @@ const deriveDependencies = (state: Procedure['state']): string[] => {
     format(`@storybook/${state.framework}` as keyof typeof versions),
   ];
 
-  if (state.features.includes(`onboarding`)) {
+  if (state.features?.includes(`onboarding`)) {
     dependencies.push(format(`@storybook/addon-onboarding`));
   }
 
-  if (state.features.includes(`essentials`)) {
+  if (state.features?.includes(`essentials`)) {
     dependencies.push(format(`@storybook/addon-essentials`));
   }
 
-  if (state.features.includes(`vrt`)) {
+  if (state.features?.includes(`vrt`)) {
     dependencies.push('@chromatic-com/storybook@^3');
   }
 
-  if (state.intents.includes(`docs`) && !state.features.includes(`essentials`)) {
+  if (state.intents?.includes(`docs`) && !state.features?.includes(`essentials`)) {
     dependencies.push(format(`@storybook/addon-docs`));
   }
 
-  if (state.intents.includes(`test`)) {
+  if (state.intents?.includes(`test`)) {
     dependencies.push(format(`@storybook/test`));
     dependencies.push(format('@storybook/addon-a11y'));
     dependencies.push(format(`@storybook/experimental-addon-test`));

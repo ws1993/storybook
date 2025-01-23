@@ -1,5 +1,7 @@
 import { z } from 'zod';
 
+export type Framework = (typeof supportedFrameworks)[number];
+
 // TODO: sync this/pull this from core
 export const supportedFrameworks = [
   'angular',
@@ -55,7 +57,7 @@ export const supportedFrameworksMap = {
   qwik: 'Qwik',
   solid: 'Solid',
   sveltekit: 'SvelteKit',
-} satisfies Record<(typeof supportedFrameworks)[number], string>;
+} satisfies Record<Framework, string>;
 
 export const modernInputs = z.strictObject({
   intents: z //

@@ -1,6 +1,7 @@
 import * as child_process from 'node:child_process';
 import * as fs from 'node:fs/promises';
 import { createRequire } from 'node:module';
+import path from 'node:path';
 import process from 'node:process';
 
 import React, { type ComponentProps } from 'react';
@@ -40,7 +41,6 @@ export type Input = z.infer<typeof inputs> & {
 export async function run(options: z.infer<typeof inputs>) {
   const input: Input = {
     ...options,
-    intents: ['dev', ...options.intents.filter((v) => v !== 'dev')],
     width: process.stdout.columns || 120,
     height: process.stdout.rows || 40,
   };
@@ -49,6 +49,7 @@ export async function run(options: z.infer<typeof inputs>) {
   process.stdout.write('\n');
   const context: ComponentProps<typeof AppContext.Provider>['value'] = {
     fs,
+    path,
     process,
     child_process,
     require,
