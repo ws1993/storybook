@@ -160,6 +160,8 @@ export function getOptions<TOptions extends OptionSpecifier>(
     }, command)
     .parse(argv);
 
+  console.log({ argv });
+
   const intermediate = command.opts();
   if (intermediate.task === undefined && argv[2] && !argv[2].startsWith('-')) {
     intermediate.task = argv[2];
