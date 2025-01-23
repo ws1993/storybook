@@ -27,10 +27,10 @@ export function INTENTS({ state, dispatch }: { state: State; dispatch: Dispatch<
     }
   }, []);
 
-  if (state.features) {
+  if (state.intents) {
     return (
       <Box>
-        <Text>Features are set to {state.features.join(', ')}</Text>
+        <Text>Intents are set to {state.intents.join(', ')}</Text>
       </Box>
     );
   }

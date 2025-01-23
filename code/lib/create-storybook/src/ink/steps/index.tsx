@@ -33,7 +33,9 @@ export const ACTIONS = {
   IGNORE_VERSION: 'IGNORE_VERSION',
   DIRECTORY: 'DIRECTORY',
   FRAMEWORK: 'FRAMEWORK',
+  SET_FRAMEWORK: 'SET_FRAMEWORK',
   INTENTS: 'INTENTS',
+  IGNORE_TEST_INTENT: 'IGNORE_TEST_INTENT',
   FEATURES: 'FEATURES',
   INSTALL: 'INSTALL',
   EXIT: 'EXIT',
@@ -59,8 +61,15 @@ export type Action =
       payload: { id: State['framework'] };
     }
   | {
+      type: (typeof ACTIONS)['SET_FRAMEWORK'];
+      payload: { id: State['framework'] };
+    }
+  | {
       type: (typeof ACTIONS)['INTENTS'];
       payload: { list: State['intents'] };
+    }
+  | {
+      type: (typeof ACTIONS)['IGNORE_TEST_INTENT'];
     }
   | {
       type: (typeof ACTIONS)['FEATURES'];
@@ -106,10 +115,14 @@ export function reducer(state: State, action: Action): State {
         directory: action.payload.path,
         step: next,
       };
+    case ACTIONS.SET_FRAMEWORK:
+      return { ...state, framework: action.payload.id };
     case ACTIONS.FRAMEWORK:
       return { ...state, framework: action.payload.id, step: next };
     case ACTIONS.INTENTS:
       return { ...state, intents: action.payload.list, step: next };
+    case ACTIONS.IGNORE_TEST_INTENT:
+      return { ...state, intents: (state.intents || []).filter((i) => i !== 'test') };
     case ACTIONS.FEATURES:
       return {
         ...state,
