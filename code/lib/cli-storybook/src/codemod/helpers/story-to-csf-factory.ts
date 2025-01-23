@@ -25,14 +25,14 @@ export async function storyToCsfFactory(info: FileInfo) {
   const programNode = csf._ast.program;
   let foundConfigImport = false;
 
-  // Check if a root-level constant named 'config' exists
+  // Check if a root-level constant named 'preview' exists
   const hasRootLevelConfig = programNode.body.some(
     (n) =>
       t.isVariableDeclaration(n) &&
-      n.declarations.some((declaration) => t.isIdentifier(declaration.id, { name: 'config' }))
+      n.declarations.some((declaration) => t.isIdentifier(declaration.id, { name: 'preview' }))
   );
 
-  let sbConfigImportName = hasRootLevelConfig ? 'storybookConfig' : 'config';
+  let sbConfigImportName = hasRootLevelConfig ? 'storybookPreview' : 'preview';
 
   const sbConfigImportSpecifier = t.importDefaultSpecifier(t.identifier(sbConfigImportName));
 

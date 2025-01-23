@@ -25,9 +25,9 @@ describe('stories codemod', () => {
             export default meta;
           `)
       ).resolves.toMatchInlineSnapshot(`
-        import config from '#.storybook/preview';
+        import preview from '#.storybook/preview';
 
-        const meta = config.meta({ title: 'Component' });
+        const meta = preview.meta({ title: 'Component' });
       `);
     });
 
@@ -37,9 +37,9 @@ describe('stories codemod', () => {
             export default { title: 'Component' };
           `)
       ).resolves.toMatchInlineSnapshot(`
-        import config from '#.storybook/preview';
+        import preview from '#.storybook/preview';
 
-        const meta = config.meta({
+        const meta = preview.meta({
           title: 'Component',
         });
       `);
@@ -52,9 +52,9 @@ describe('stories codemod', () => {
             export default componentMeta;
           `)
       ).resolves.toMatchInlineSnapshot(`
-        import config from '#.storybook/preview';
+        import preview from '#.storybook/preview';
 
-        const meta = config.meta({ title: 'Component' });
+        const meta = preview.meta({ title: 'Component' });
       `);
     });
 
@@ -69,9 +69,9 @@ describe('stories codemod', () => {
             };
           `)
       ).resolves.toMatchInlineSnapshot(`
-        import config from '#.storybook/preview';
+        import preview from '#.storybook/preview';
 
-        const meta = config.meta({ title: 'Component' });
+        const meta = preview.meta({ title: 'Component' });
         export const A = meta.story({
           args: { primary: true },
           render: (args) => <Component {...args} />,
@@ -91,9 +91,9 @@ describe('stories codemod', () => {
             };
           `)
       ).resolves.toMatchInlineSnapshot(`
-        import config, { decorators } from '#.storybook/preview';
+        import preview, { decorators } from '#.storybook/preview';
 
-        const meta = config.meta({ title: 'Component' });
+        const meta = preview.meta({ title: 'Component' });
         export const A = meta.story({
           args: { primary: true },
           render: (args) => <Component {...args} />,
@@ -135,9 +135,9 @@ describe('stories codemod', () => {
             };
           `)
       ).resolves.toMatchInlineSnapshot(`
-        import storybookConfig from '#.storybook/preview';
+        import preview from '#.storybook/preview';
 
-        const meta = storybookConfig.meta({ title: 'Component' });
+        const meta = preview.meta({ title: 'Component' });
         const config = {};
         export const A = meta.story({
           args: { primary: true },
@@ -154,9 +154,9 @@ describe('stories codemod', () => {
             export const CSF1Story = () => <div>Hello</div>;
           `)
       ).resolves.toMatchInlineSnapshot(`
-        import config from '#.storybook/preview';
+        import preview from '#.storybook/preview';
 
-        const meta = config.meta({ title: 'Component' });
+        const meta = preview.meta({ title: 'Component' });
         export const CSF1Story = meta.story({
           render: () => <div>Hello</div>,
         });
@@ -177,11 +177,11 @@ describe('stories codemod', () => {
       `;
     it('meta satisfies syntax', async () => {
       await expect(transform(inlineMetaSatisfies)).resolves.toMatchInlineSnapshot(`
-        import config from '#.storybook/preview';
+        import preview from '#.storybook/preview';
 
         import { ComponentProps } from './Component';
 
-        const meta = config.meta({ title: 'Component', component: Component });
+        const meta = preview.meta({ title: 'Component', component: Component });
 
         export const A = meta.story({
           args: { primary: true },
@@ -201,11 +201,11 @@ describe('stories codemod', () => {
       `;
     it('meta as syntax', async () => {
       await expect(transform(inlineMetaAs)).resolves.toMatchInlineSnapshot(`
-        import config from '#.storybook/preview';
+        import preview from '#.storybook/preview';
 
         import { ComponentProps } from './Component';
 
-        const meta = config.meta({ title: 'Component', component: Component });
+        const meta = preview.meta({ title: 'Component', component: Component });
 
         export const A = meta.story({
           args: { primary: true },
@@ -225,11 +225,11 @@ describe('stories codemod', () => {
       `;
     it('meta satisfies syntax', async () => {
       await expect(transform(metaSatisfies)).resolves.toMatchInlineSnapshot(`
-        import config from '#.storybook/preview';
+        import preview from '#.storybook/preview';
 
         import { ComponentProps } from './Component';
 
-        const meta = config.meta({ title: 'Component', component: Component });
+        const meta = preview.meta({ title: 'Component', component: Component });
 
         export const A = meta.story({
           args: { primary: true },
@@ -250,11 +250,11 @@ describe('stories codemod', () => {
       `;
     it('meta as syntax', async () => {
       await expect(transform(metaAs)).resolves.toMatchInlineSnapshot(`
-        import config from '#.storybook/preview';
+        import preview from '#.storybook/preview';
 
         import { ComponentProps } from './Component';
 
-        const meta = config.meta({ title: 'Component', component: Component });
+        const meta = preview.meta({ title: 'Component', component: Component });
 
         export const A = meta.story({
           args: { primary: true },
@@ -275,11 +275,11 @@ describe('stories codemod', () => {
       `;
     it('story satisfies syntax', async () => {
       await expect(transform(storySatisfies)).resolves.toMatchInlineSnapshot(`
-        import config from '#.storybook/preview';
+        import preview from '#.storybook/preview';
 
         import { ComponentProps } from './Component';
 
-        const meta = config.meta({ title: 'Component', component: Component });
+        const meta = preview.meta({ title: 'Component', component: Component });
 
         export const A = meta.story({
           args: { primary: true },
@@ -300,11 +300,11 @@ describe('stories codemod', () => {
       `;
     it('story as syntax', async () => {
       await expect(transform(storyAs)).resolves.toMatchInlineSnapshot(`
-        import config from '#.storybook/preview';
+        import preview from '#.storybook/preview';
 
         import { ComponentProps } from './Component';
 
-        const meta = config.meta({ title: 'Component', component: Component });
+        const meta = preview.meta({ title: 'Component', component: Component });
 
         export const A = meta.story({
           args: { primary: true },
@@ -339,11 +339,11 @@ describe('stories codemod', () => {
         export const A: Story = {};`
         )
       ).resolves.toMatchInlineSnapshot(`
-        import config from '#.storybook/preview';
+        import preview from '#.storybook/preview';
 
         import { ComponentProps } from './Component';
 
-        const meta = config.meta({});
+        const meta = preview.meta({});
 
         export const A = meta.story({});
       `);
