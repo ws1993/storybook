@@ -48,8 +48,12 @@ export default mergeConfig(
       testNamePattern: /^(?!.*(UseState)).*$/,
       browser: {
         enabled: true,
-        name: 'chromium',
         provider: 'playwright',
+        instances: [
+          {
+            browser: 'chromium',
+          },
+        ],
         headless: true,
         screenshotFailures: false,
       },
