@@ -156,7 +156,7 @@ describe('preview specific functionality', () => {
         };
       `)
     ).resolves.toMatchInlineSnapshot(`
-      import { definePreview } from '@storybook/react/preview';
+      import { definePreview } from '@storybook/react';
 
       export default definePreview({
         tags: ['test'],
@@ -175,7 +175,7 @@ describe('preview specific functionality', () => {
         export default preview;
       `)
     ).resolves.toMatchInlineSnapshot(`
-      import { definePreview } from '@storybook/react/preview';
+      import { definePreview } from '@storybook/react';
 
       export default definePreview({
         tags: [],
