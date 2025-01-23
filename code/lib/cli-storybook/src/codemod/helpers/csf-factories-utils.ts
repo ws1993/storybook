@@ -35,7 +35,7 @@ export function cleanupTypeImports(programNode: t.Program, disallowList: string[
 export function removeExportDeclarations(
   programNode: t.Program,
   exportDecls: Record<string, t.VariableDeclarator | t.FunctionDeclaration>
-): t.Statement[] {
+) {
   return programNode.body.filter((node) => {
     if (t.isExportNamedDeclaration(node) && node.declaration) {
       if (t.isVariableDeclaration(node.declaration)) {
@@ -51,7 +51,9 @@ export function removeExportDeclarations(
       }
     }
     return true;
-  });
+    // @TODO adding any for now, unsure how to fix the following error:
+    // error TS4058: Return type of exported function has or is using name 'ObjectProperty' from external module "/tmp/storybook/code/core/dist/babel/index" but cannot be named.
+  }) as any;
 }
 
 export function getConfigProperties(
@@ -70,5 +72,7 @@ export function getConfigProperties(
     }
   }
 
-  return properties;
+  // @TODO adding any for now, unsure how to fix the following error:
+  // error TS4058: Return type of exported function has or is using name 'ObjectProperty' from external module "/tmp/storybook/code/core/dist/babel/index" but cannot be named.
+  return properties as any;
 }
