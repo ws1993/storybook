@@ -1,6 +1,6 @@
 import { join } from 'node:path';
 
-import { defineMain } from '../frameworks/react-vite';
+import { defineMain } from '../frameworks/react-vite/src/node';
 
 const componentsPath = join(__dirname, '../core/src/components');
 const managerApiPath = join(__dirname, '../core/src/manager-api');

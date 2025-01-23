@@ -28,7 +28,7 @@ describe('main/preview codemod: general parsing functionality', () => {
         };
       `)
     ).resolves.toMatchInlineSnapshot(`
-      import { defineMain } from '@storybook/react-vite';
+      import { defineMain } from '@storybook/react-vite/node';
 
       export default defineMain({
         stories: ['../src/**/*.stories.@(js|jsx|ts|tsx)'],
@@ -49,7 +49,7 @@ describe('main/preview codemod: general parsing functionality', () => {
         export default config;
       `)
     ).resolves.toMatchInlineSnapshot(`
-      import { defineMain } from '@storybook/react-vite';
+      import { defineMain } from '@storybook/react-vite/node';
 
       export default defineMain({
         stories: ['../src/**/*.stories.@(js|jsx|ts|tsx)'],
@@ -71,7 +71,7 @@ describe('main/preview codemod: general parsing functionality', () => {
         export default config;
       `)
     ).resolves.toMatchInlineSnapshot(`
-      import { defineMain } from '@storybook/react-vite';
+      import { defineMain } from '@storybook/react-vite/node';
 
       const config = {
         framework: '@storybook/react-vite',
@@ -93,7 +93,7 @@ describe('main/preview codemod: general parsing functionality', () => {
         export const framework = '@storybook/react-vite';
       `)
     ).resolves.toMatchInlineSnapshot(`
-      import { defineMain } from '@storybook/react-vite';
+      import { defineMain } from '@storybook/react-vite/node';
 
       export default defineMain({
         stories: () => {
@@ -130,7 +130,7 @@ describe('main/preview codemod: general parsing functionality', () => {
         export default config;
       `)
     ).resolves.toMatchInlineSnapshot(`
-      import { defineMain } from '@storybook/react-vite';
+      import { defineMain } from '@storybook/react-vite/node';
 
       export default defineMain({
         stories: [],

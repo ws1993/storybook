@@ -131,7 +131,7 @@ export async function configToCsfFactory(
 
   const configImport = t.importDeclaration(
     [t.importSpecifier(t.identifier(methodName), t.identifier(methodName))],
-    t.stringLiteral(frameworkPackage + `${configType === 'preview' ? '/preview' : ''}`)
+    t.stringLiteral(frameworkPackage + `${configType === 'main' ? '/node' : '/preview'}`)
   );
 
   // Check whether @storybook/framework import already exists
