@@ -70,7 +70,7 @@
     "expect-type": "^0.15.0",
     "svelte": "^5.0.5",
     "svelte-check": "^4.0.5",
-    "typescript": "^5.3.2"
+    "typescript": "^5.7.3"
   },
   "peerDependencies": {
     "storybook": "workspace:^",

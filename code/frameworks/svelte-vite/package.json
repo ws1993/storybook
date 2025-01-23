@@ -54,13 +54,13 @@
     "svelte2tsx": "^0.7.13",
     "sveltedoc-parser": "^4.2.1",
     "ts-dedent": "^2.2.0",
-    "typescript": "^4.9.4 || ^5.0.0"
+    "typescript": "^5.7.3"
   },
   "devDependencies": {
     "@sveltejs/vite-plugin-svelte": "^4.0.0",
     "@types/node": "^22.0.0",
     "svelte": "^5.0.5",
-    "typescript": "^5.3.2",
+    "typescript": "^5.7.3",
     "vite": "^4.0.0"
   },
   "peerDependencies": {
