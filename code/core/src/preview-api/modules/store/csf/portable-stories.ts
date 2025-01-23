@@ -98,9 +98,9 @@ export function getAnnotations<TRenderer extends Renderer = Renderer, TArgs exte
     (typeof story === 'function' || typeof story === 'object') && 'isCSFFactory' in story;
 
   return {
-    storyAnnotations: isCsfFactory ? (story as any)?.annotations : story,
-    componentAnnotations: isCsfFactory ? (story as any)?.meta?.annotations : meta,
-    projectAnnotations: isCsfFactory ? (story as any)?.config?.annotations : projectAnnotations,
+    storyAnnotations: isCsfFactory ? (story as any)?.input : story,
+    componentAnnotations: isCsfFactory ? (story as any)?.meta?.input : meta,
+    projectAnnotations: isCsfFactory ? (story as any)?.config?.input : projectAnnotations,
   };
 }
 

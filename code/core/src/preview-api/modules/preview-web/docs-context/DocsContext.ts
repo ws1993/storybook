@@ -163,7 +163,7 @@ export class DocsContext<TRenderer extends Renderer> implements DocsContextProps
     }
 
     const story = this.exportToStory.get(
-      'isCSFFactory' in moduleExportOrType ? moduleExportOrType.annotations : moduleExportOrType
+      'isCSFFactory' in moduleExportOrType ? moduleExportOrType.input : moduleExportOrType
     );
 
     if (story) {

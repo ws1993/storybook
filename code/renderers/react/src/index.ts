@@ -5,6 +5,8 @@ export * from './public-types';
 
 export * from './portable-stories';
 
+export { definePreview } from './preview';
+
 // optimization: stop HMR propagation in webpack
 
 // optimization: stop HMR propagation in webpack

@@ -20,5 +20,5 @@ test('csf factories', () => {
     },
   });
 
-  expect(MyStory.annotations.args?.children).toBe('Hello world');
+  expect(MyStory.input.args?.children).toBe('Hello world');
 });

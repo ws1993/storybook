@@ -29,11 +29,11 @@ interface PreviewConfigData<TRenderer extends Renderer> extends ProjectAnnotatio
 }
 
 class PreviewConfig<TRenderer extends Renderer> {
-  readonly annotations: NormalizedProjectAnnotations<TRenderer>;
+  readonly input: NormalizedProjectAnnotations<TRenderer>;
 
   constructor(data: PreviewConfigData<TRenderer>) {
     const { addons, ...rest } = data;
-    this.annotations = normalizeProjectAnnotations(composeConfigs([...(addons ?? []), rest]));
+    this.input = normalizeProjectAnnotations(composeConfigs([...(addons ?? []), rest]));
   }
 
   readonly meta = <
@@ -49,12 +49,12 @@ class PreviewConfig<TRenderer extends Renderer> {
 }
 
 class Meta<TRenderer extends Renderer, TArgs extends Args, TRequiredArgs extends Args> {
-  readonly annotations: ComponentAnnotations<TRenderer, TArgs>;
+  readonly input: ComponentAnnotations<TRenderer, TArgs>;
 
   readonly config: PreviewConfig<TRenderer>;
 
   constructor(annotations: ComponentAnnotations<TRenderer, any>, config: PreviewConfig<TRenderer>) {
-    this.annotations = annotations;
+    this.input = annotations;
     this.config = config;
   }
 
@@ -65,7 +65,7 @@ class Meta<TRenderer extends Renderer, TArgs extends Args, TRequiredArgs extends
 
 class Story<TRenderer extends Renderer, TArgs extends Args, TRequiredArgs extends Args> {
   constructor(
-    public annotations: StoryAnnotations<TRenderer, TArgs>,
+    public input: StoryAnnotations<TRenderer, TArgs>,
     public meta: Meta<TRenderer, TArgs, TRequiredArgs>,
     public config: PreviewConfig<TRenderer>
   ) {}

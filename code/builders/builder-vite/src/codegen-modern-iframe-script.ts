@@ -29,7 +29,7 @@ export async function generateModernIframeScriptCode(options: Options, projectRo
     });
     
     if (csfFactoryPreview) {
-      return csfFactoryPreview.annotations;
+      return csfFactoryPreview.input;
     }
    
     const configs = await Promise.all([${previewAnnotationURLs
