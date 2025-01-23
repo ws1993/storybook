@@ -54,7 +54,7 @@
     "svelte2tsx": "^0.7.13",
     "sveltedoc-parser": "^4.2.1",
     "ts-dedent": "^2.2.0",
-    "typescript": "^5.7.3"
+    "typescript": "^4.9.4 || ^5.0.0"
   },
   "devDependencies": {
     "@sveltejs/vite-plugin-svelte": "^4.0.0",
