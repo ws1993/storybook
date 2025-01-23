@@ -1,10 +1,24 @@
 /* eslint-disable no-underscore-dangle */
-import { types as t } from 'storybook/internal/babel';
+import { types as t, traverse } from 'storybook/internal/babel';
 import { isValidPreviewPath, loadCsf, printCsf } from 'storybook/internal/csf-tools';
 
 import type { FileInfo } from '../../automigrate/codemod';
 import { logger } from '../csf-factories';
 import { cleanupTypeImports } from './csf-factories-utils';
+
+// Name of properties that should not be renamed to `Story.input.xyz`
+const reuseDisallowList = ['play', 'run', 'extends'];
+
+// Name of types that should be removed from the import list
+const typesDisallowList = [
+  'Story',
+  'StoryFn',
+  'StoryObj',
+  'Meta',
+  'MetaObj',
+  'ComponentStory',
+  'ComponentMeta',
+];
 
 export async function storyToCsfFactory(info: FileInfo) {
   const csf = loadCsf(info.source, { makeTitle: () => 'FIXME' });
@@ -90,6 +104,45 @@ export async function storyToCsfFactory(info: FileInfo) {
     }
   });
 
+  const storyExportDecls = new Map(
+    Object.entries(csf._storyExports).filter(([, decl]) => t.isVariableDeclarator(decl))
+  );
+
+  // For each story, replace any reference of story reuse e.g.
+  // Story.args -> Story.input.args
+  traverse(csf._ast, {
+    Identifier(path) {
+      const binding = path.scope.getBinding(path.node.name);
+
+      // Check if the identifier corresponds to a story export
+      if (binding && storyExportDecls.has(binding.identifier.name)) {
+        const parent = path.parent;
+
+        // Skip if this is the definition of the story export itself
+        if (t.isVariableDeclarator(parent) && parent.id === path.node) {
+          return;
+        }
+
+        // Skip if it's already `Story.input`
+        if (t.isMemberExpression(parent) && t.isIdentifier(parent.property, { name: 'input' })) {
+          return;
+        }
+
+        // Check if the property name is in the disallow list
+        if (
+          t.isMemberExpression(parent) &&
+          t.isIdentifier(parent.property) &&
+          reuseDisallowList.includes(parent.property.name)
+        ) {
+          return;
+        }
+
+        // Replace the identifier with `Story.input`
+        path.replaceWith(t.memberExpression(t.identifier(path.node.name), t.identifier('input')));
+      }
+    },
+  });
+
   // modify meta
   if (csf._metaPath) {
     let declaration = csf._metaPath.node.declaration;
@@ -154,16 +207,7 @@ export async function storyToCsfFactory(info: FileInfo) {
   }
 
   // Remove type imports – now inferred – from @storybook/* packages
-  const disallowList = [
-    'Story',
-    'StoryFn',
-    'StoryObj',
-    'Meta',
-    'MetaObj',
-    'ComponentStory',
-    'ComponentMeta',
-  ];
-  programNode.body = cleanupTypeImports(programNode, disallowList);
+  programNode.body = cleanupTypeImports(programNode, typesDisallowList);
 
   // Remove unused type aliases e.g. `type Story = StoryObj<typeof meta>;`
   programNode.body.forEach((node, index) => {
