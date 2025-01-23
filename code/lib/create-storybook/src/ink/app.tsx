@@ -40,7 +40,6 @@ export type Input = z.infer<typeof inputs> & {
 export async function run(options: z.infer<typeof inputs>) {
   const input: Input = {
     ...options,
-    intents: ['dev', ...options.intents.filter((v) => v !== 'dev')],
     width: process.stdout.columns || 120,
     height: process.stdout.rows || 40,
   };
