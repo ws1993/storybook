@@ -3,11 +3,12 @@ import React, { type Dispatch, useEffect, useState } from 'react';
 import { Box, Text, useInput } from 'ink';
 
 import { ACTIONS, type Action, type State } from '.';
-import { defaultIntents } from '../../bin/modernInputs';
 import { MultiSelect } from '../components/Select/MultiSelect';
 
 export function INTENTS({ state, dispatch }: { state: State; dispatch: Dispatch<Action> }) {
-  const [selection, setSelection] = useState(state.intents);
+  const [selection, setSelection] = useState(
+    state.intents || ['dev' as const, 'docs' as const, 'test' as const]
+  );
   const [showDevRequired, setShowDevRequired] = useState(false);
 
   useInput((input, key) => {
@@ -16,15 +17,23 @@ export function INTENTS({ state, dispatch }: { state: State; dispatch: Dispatch<
     }
   });
 
-  const isDefault =
-    state.intents.length === defaultIntents.length &&
-    state.intents.every((intent) => defaultIntents.includes(intent));
-
   useEffect(() => {
-    if (!isDefault) {
-      dispatch({ type: ACTIONS.INTENTS, payload: { list: state.intents } });
+    if (state.intents) {
+      const list = [...state.intents];
+      if (!state.intents.includes('dev')) {
+        list.push('dev');
+      }
+      dispatch({ type: ACTIONS.INTENTS, payload: { list } });
     }
   }, []);
+
+  if (state.features) {
+    return (
+      <Box>
+        <Text>Features are set to {state.features.join(', ')}</Text>
+      </Box>
+    );
+  }
 
   return (
     <Box flexDirection="column" gap={1}>

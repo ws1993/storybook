@@ -6,7 +6,15 @@ import { ACTIONS, type Action, type State } from '.';
 import { MultiSelect } from '../components/Select/MultiSelect';
 
 export function FEATURES({ state, dispatch }: { state: State; dispatch: Dispatch<Action> }) {
-  const [selection, setSelection] = useState(state.features);
+  const [selection, setSelection] = useState(
+    state.features || [
+      'typescript' as const,
+      'onboarding' as const,
+      'examples' as const,
+      'essentials' as const,
+      // 'vrt' as const,
+    ]
+  );
 
   useInput((input, key) => {
     if (key.return) {
@@ -20,7 +28,7 @@ export function FEATURES({ state, dispatch }: { state: State; dispatch: Dispatch
     }
   }, []);
 
-  if (state.features.length) {
+  if (state.features) {
     return (
       <Box>
         <Text>Features are set to {state.features.join(', ')}</Text>
