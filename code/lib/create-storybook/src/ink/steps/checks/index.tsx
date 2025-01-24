@@ -35,17 +35,6 @@ export interface Check {
   }>;
 }
 
-/*
- * Checks:
- *
- * - Check if existing Vitest workspace file can be safaley modified, if not prompt:
- *   - Yes -> ignore test intent
- *   - No -> exit
- * - Check if existing Vite config file can be safaley modified, if not prompt:
- *   - Yes -> ignore test intent
- *   - No -> exit
- * -
- */
 export const checks = {
   configDir,
   frameworkPackage,

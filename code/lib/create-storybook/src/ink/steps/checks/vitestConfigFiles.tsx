@@ -10,7 +10,7 @@ import { Confirm } from '../../components/Confirm';
 import { type Check, CompatibilityType } from './index';
 
 /**
- * Check if existing Vitest workspace file can be safaley modified, if not prompt:
+ * Check if existing Vite/Vitest workspace/config file can be safaley modified, if not prompt:
  *
  * - Yes -> ignore test intent
  * - No -> exit
