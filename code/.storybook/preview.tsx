@@ -1,4 +1,3 @@
-/* eslint-disable import/namespace */
 import * as React from 'react';
 import { Fragment, useEffect } from 'react';
 
@@ -23,12 +22,11 @@ import { definePreview } from '@storybook/react';
 // TODO add empty preview
 // import * as storysource from '@storybook/addon-storysource';
 // import * as designs from '@storybook/addon-designs/preview';
-// import * as test from '@storybook/experimental-addon-test/preview';
-import * as a11y from '@storybook/addon-a11y/preview';
-// @ts-expect-error Must be typed
-import * as essentials from '@storybook/addon-essentials/entry-preview';
-// @ts-expect-error Must be typed
-import * as addonThemes from '@storybook/addon-themes/preview';
+import addonTest from '@storybook/experimental-addon-test';
+
+import addonA11y from '@storybook/addon-a11y';
+import addonEssentials from '@storybook/addon-essentials/entry-preview';
+import addonThemes from '@storybook/addon-themes';
 
 import * as addonsPreview from '../addons/toolbars/template/stories/preview';
 import * as templatePreview from '../core/template/stories/preview';
@@ -376,7 +374,14 @@ const parameters = {
 };
 
 export const config = definePreview({
-  addons: [addonThemes, essentials, a11y, addonsPreview, templatePreview],
+  addons: [
+    addonThemes(),
+    addonEssentials(),
+    addonA11y(),
+    addonTest(),
+    addonsPreview,
+    templatePreview,
+  ],
   parameters,
   decorators,
   loaders,

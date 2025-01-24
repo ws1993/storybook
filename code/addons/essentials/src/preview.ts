@@ -1,4 +1,4 @@
-import { composeConfigs } from 'storybook/internal/preview-api';
+import { composeConfigs, definePreview } from 'storybook/internal/preview-api';
 
 import actionsAddon from '@storybook/addon-actions';
 import backgroundsAddon from '@storybook/addon-backgrounds';
@@ -8,12 +8,15 @@ import measureAddon from '@storybook/addon-measure';
 import outlineAddon from '@storybook/addon-outline';
 import viewportAddon from '@storybook/addon-viewport';
 
-export default composeConfigs([
-  actionsAddon(),
-  docsAddon(),
-  backgroundsAddon(),
-  viewportAddon(),
-  measureAddon(),
-  outlineAddon(),
-  highlightAddon(),
-]);
+export default () =>
+  definePreview(
+    composeConfigs([
+      actionsAddon(),
+      docsAddon(),
+      backgroundsAddon(),
+      viewportAddon(),
+      measureAddon(),
+      outlineAddon(),
+      highlightAddon(),
+    ])
+  );
