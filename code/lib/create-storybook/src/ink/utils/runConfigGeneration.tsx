@@ -1,6 +1,5 @@
 import { loadConfig, printConfig } from 'storybook/internal/csf-tools';
 
-import { formatly } from 'formatly';
 import { mkdir, rm, stat, writeFile } from 'fs/promises';
 import { join } from 'path/posix';
 
@@ -27,7 +26,7 @@ export const runConfigGeneration = async (state: State, print: (txt: string) => 
         return rm(configDir);
       }
     })
-    .catch()
+    .catch(() => {})
     .then(() => {
       print('Creating .storybook folder');
       return mkdir(configDir);
@@ -36,15 +35,10 @@ export const runConfigGeneration = async (state: State, print: (txt: string) => 
   print(`Generating ${mainFile}`);
   const configFilePath = join(configDir, mainFile);
   await writeFile(configFilePath, createMainFile(state, mainFile));
-  await formatly([configFilePath], { cwd: state.directory }).catch();
   print(`Generated ${mainFile}`);
 
   print(`Generating ${previewFile}`);
-  await writeFile(join(configDir, mainFile), `export const parameters = {};\n`);
-  print(`Generated ${previewFile}`);
-
-  print(`Generating ${previewFile}`);
-  await writeFile(join(configDir, mainFile), `export const parameters = {};\n`);
+  await writeFile(join(configDir, previewFile), `export const parameters = {};\n`);
   print(`Generated ${previewFile}`);
 
   if (hasTestIntent) {
@@ -60,6 +54,8 @@ export const runConfigGeneration = async (state: State, print: (txt: string) => 
     await writeFile(join(configDir, vitestSetupFile), `export const parameters = {};\n`);
     print(`Generated ${vitestSetupFile}`);
   }
+
+  print('Config files generated');
 };
 
 export const createMainFile = (state: State, fileName: string) => {

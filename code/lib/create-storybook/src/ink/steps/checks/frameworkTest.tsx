@@ -13,6 +13,12 @@ import { type Check, CompatibilityType } from './index';
 const FOUND_NEXTJS = `Found Next.js with test intent`;
 
 export const SUPPORTED_FRAMEWORKS: Framework[] = [
+  'react-vite',
+  'vue3-vite',
+  'html-vite',
+  'preact-vite',
+  'svelte-vite',
+  'web-components-vite',
   'nextjs',
   'experimental-nextjs-vite',
   'sveltekit',

@@ -23,12 +23,12 @@ export function FEATURES({ state, dispatch }: { state: State; dispatch: Dispatch
   });
 
   useEffect(() => {
-    if (selection.length) {
+    if (state.features?.length) {
       dispatch({ type: ACTIONS.FEATURES, payload: { list: state.features } });
     }
   }, []);
 
-  if (state.features) {
+  if (state.features?.length) {
     return (
       <Box>
         <Text>Features are set to {state.features.join(', ')}</Text>

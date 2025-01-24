@@ -77,8 +77,7 @@ export const modernInputs = z.strictObject({
   framework: z //
     .enum(supportedFrameworks)
     .optional()
-    .describe('Which framework')
-    .default('auto'),
+    .describe('Which framework'),
 
   install: z //
     .boolean()
