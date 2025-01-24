@@ -17,5 +17,8 @@ export const AppContext = createContext({
   checkFramework: undefined as typeof checkFramework | undefined,
   checkExists: undefined as typeof checkExists | undefined,
   downloadSandbox: undefined as typeof downloadSandbox | undefined,
+  runConfigGeneration: undefined as
+    | typeof import('../utils/runConfigGeneration').runConfigGeneration
+    | undefined,
   telemetry: undefined as typeof import('storybook/internal/telemetry').telemetry | undefined,
 });

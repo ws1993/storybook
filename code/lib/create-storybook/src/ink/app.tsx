@@ -21,6 +21,7 @@ import { checkFramework } from './steps/Framework';
 import { checkGitStatus } from './steps/Git';
 import { checkVersion } from './steps/Version';
 import { AppContext } from './utils/context';
+import { runConfigGeneration } from './utils/runConfigGeneration';
 
 const require = createRequire(import.meta.url);
 
@@ -60,6 +61,7 @@ export async function run(options: z.infer<typeof inputs>) {
     checkFramework,
     checkExists,
     downloadSandbox,
+    runConfigGeneration,
   };
   globalThis.CLI_APP_INSTANCE = render(
     <AppContext.Provider value={context}>

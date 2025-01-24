@@ -1,44 +1,31 @@
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 
 import { Spinner } from '@inkjs/ui';
 import figureSet from 'figures';
 import { Box, Text } from 'ink';
 
+import { AppContext } from '../utils/context';
 import type { Procedure } from '../utils/procedure';
 
 export function ConfigGeneration({ state, onComplete }: Procedure) {
-  const [line, setLine] = useState<string>('...');
+  const [line, setLine] = useState<string>('Generating config files');
   const [done, setDone] = useState(false);
 
-  /* Generate files:
-   * - .storybook/main.ts
-   * - .storybook/preview.ts
-   * - .storybook/vitest.setup.ts
-   * - vitest.workspace.ts
-   * - vitest.config.ts
-   */
+  const context = useContext(AppContext);
 
   useEffect(() => {
-    // do work to install dependencies
-    const interval = setInterval(() => {
-      setLine((l) => l + '.');
-    }, 10);
-    const timeout = setTimeout(() => {
-      clearInterval(interval);
-      onComplete();
-      setDone(true);
-    }, 1000);
-
-    return () => {
-      clearInterval(interval);
-      clearTimeout(timeout);
-    };
+    if (context.runConfigGeneration) {
+      context.runConfigGeneration(state, setLine).then(() => {
+        onComplete();
+        setDone(true);
+      });
+    }
   }, []);
 
   return (
     <Box height={1} overflow="hidden" gap={1}>
       {done ? <Text>{figureSet.tick}</Text> : <Spinner />}
-      {done ? <Text>Generating config files{line}</Text> : <Text>Generated config files.</Text>}
+      <Text>{line}</Text>
     </Box>
   );
 }
