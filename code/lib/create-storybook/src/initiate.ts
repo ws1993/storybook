@@ -17,7 +17,7 @@ import { NxProjectDetectedError } from 'storybook/internal/server-errors';
 import { telemetry } from 'storybook/internal/telemetry';
 
 import boxen from 'boxen';
-import findUp from 'find-up';
+import { findUp } from 'find-up';
 import picocolors from 'picocolors';
 import prompts from 'prompts';
 import { lt, prerelease } from 'semver';
@@ -268,7 +268,7 @@ export async function doInitiate(options: CommandOptions): Promise<
       This version is behind the latest release, which is: ${picocolors.bold(latestVersion)}!
       You likely ran the init command through npx, which can use a locally cached version, to get the latest please run:
       ${picocolors.bold('npx storybook@latest init')}
-      
+
       You may want to CTRL+C to stop, and run with the latest version instead.
     `),
     prelease: picocolors.yellow('This is a pre-release version.'),
@@ -366,17 +366,17 @@ export async function doInitiate(options: CommandOptions): Promise<
       To run Storybook, you will need to:
 
       1. Replace the contents of your app entry with the following
-      
+
       ${picocolors.inverse(' ' + "export {default} from './.storybook';" + ' ')}
-      
-      2. Wrap your metro config with the withStorybook enhancer function like this: 
-      
+
+      2. Wrap your metro config with the withStorybook enhancer function like this:
+
       ${picocolors.inverse(' ' + "const withStorybook = require('@storybook/react-native/metro/withStorybook');" + ' ')}
       ${picocolors.inverse(' ' + 'module.exports = withStorybook(defaultConfig);' + ' ')}
 
       For more details go to:
       ${picocolors.cyan('https://github.com/storybookjs/react-native#getting-started')}
-      
+
       Then to run your Storybook, type:
 
       ${picocolors.inverse(' ' + packageManager.getRunCommand('start') + ' ')}
@@ -407,7 +407,7 @@ export async function doInitiate(options: CommandOptions): Promise<
           To run Storybook manually, run ${picocolors.yellow(
             picocolors.bold(storybookCommand)
           )}. CTRL+C to stop.
-          
+
           Wanna know more about Storybook? Check out ${picocolors.cyan('https://storybook.js.org/')}
           Having trouble or want to chat? Join us at ${picocolors.cyan(
             'https://discord.gg/storybook/'

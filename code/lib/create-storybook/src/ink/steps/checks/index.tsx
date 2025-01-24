@@ -4,7 +4,10 @@ import { type Dispatch } from 'react';
 import { type Action, type State } from '..';
 import type { AppContext } from '../../utils/context';
 import { configDir } from './configDir';
+import { frameworkPackage } from './frameworkPackage';
 import { frameworkTest } from './frameworkTest';
+import { packageVersions } from './packageVersions';
+import { vitestConfigFiles } from './vitestConfigFiles';
 
 export const CompatibilityType = {
   LOADING: 'loading' as const,
@@ -35,18 +38,6 @@ export interface Check {
 /*
  * Checks:
  *
- * - When configDir already exists, prompt:
- *   - Yes -> overwrite (delete)
- *   - No -> exit
- * - When selecting framework that doesn't support test addon, suggest using experimental-nextjs-vite or prompt for ignoring test intent
- *   - Yes -> ignore test intent
- *   - No -> exit
- * - Detect existing Vitest/MSW version, if mismatch prompt for ignoring test intent
- *   - Yes -> ignore test intent
- *   - No -> exit
- * - Check for presence of nextjs when using @storybook/nextjs, if mismatch prompt
- *   - Yes -> continue
- *   - No -> exit
  * - Check if existing Vitest workspace file can be safaley modified, if not prompt:
  *   - Yes -> ignore test intent
  *   - No -> exit
@@ -57,5 +48,8 @@ export interface Check {
  */
 export const checks = {
   configDir,
+  frameworkPackage,
   frameworkTest,
+  packageVersions,
+  vitestConfigFiles,
 } satisfies Record<string, Check>;

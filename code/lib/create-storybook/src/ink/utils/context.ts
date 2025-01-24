@@ -11,6 +11,7 @@ export const AppContext = createContext({
   process: undefined as typeof import('process') | undefined,
   child_process: undefined as typeof import('child_process') | undefined,
   require: undefined as NodeRequire | undefined,
+  findUp: undefined as typeof import('find-up').findUp | undefined,
   glob: undefined as typeof import('fast-glob') | undefined,
   checkGitStatus: undefined as typeof checkGitStatus | undefined,
   checkVersion: undefined as typeof checkVersion | undefined,
@@ -21,4 +22,7 @@ export const AppContext = createContext({
     | typeof import('../utils/runConfigGeneration').runConfigGeneration
     | undefined,
   telemetry: undefined as typeof import('storybook/internal/telemetry').telemetry | undefined,
+  JsPackageManagerFactory: undefined as
+    | typeof import('storybook/internal/common').JsPackageManagerFactory
+    | undefined,
 });

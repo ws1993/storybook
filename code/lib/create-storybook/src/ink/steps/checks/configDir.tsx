@@ -16,7 +16,7 @@ const configPath = '.storybook';
  * - Yes -> overwrite (delete)
  * - No -> exit
  */
-const name = 'configDir';
+const name = '.storybook directory';
 export const configDir: Check = {
   condition: async (context, state) => {
     if (context.fs && context.path) {
@@ -64,7 +64,7 @@ export const configDir: Check = {
             <Confirm
               onChange={(answer) => {
                 if (answer) {
-                  setter({ type: 'ignored' });
+                  setter({ type: CompatibilityType.IGNORED });
                 } else {
                   dispatch({
                     type: ACTIONS.EXIT,
