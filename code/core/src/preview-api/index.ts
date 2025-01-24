@@ -27,6 +27,9 @@ export { makeDecorator } from './addons';
  */
 export { addons, mockChannel } from './addons';
 
+/** ADDON ANNOTATIONS TYPE HELPER */
+export { definePreview } from './addons';
+
 /** DOCS API */
 export { DocsContext } from './preview-web';
 

@@ -1,15 +1,19 @@
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-nocheck
-
-/* eslint-disable import/namespace */
 import { composeConfigs } from 'storybook/internal/preview-api';
 
-import * as actions from '@storybook/addon-actions/preview';
-import * as backgrounds from '@storybook/addon-backgrounds/preview';
-import * as docs from '@storybook/addon-docs/preview';
-import * as highlight from '@storybook/addon-highlight/preview';
-import * as measure from '@storybook/addon-measure/preview';
-import * as outline from '@storybook/addon-outline/preview';
-import * as viewport from '@storybook/addon-viewport/preview';
+import actionsAddon from '@storybook/addon-actions';
+import backgroundsAddon from '@storybook/addon-backgrounds';
+import docsAddon from '@storybook/addon-docs';
+import highlightAddon from '@storybook/addon-highlight';
+import measureAddon from '@storybook/addon-measure';
+import outlineAddon from '@storybook/addon-outline';
+import viewportAddon from '@storybook/addon-viewport';
 
-export default composeConfigs([actions, docs, backgrounds, viewport, measure, outline, highlight]);
+export default composeConfigs([
+  actionsAddon(),
+  docsAddon(),
+  backgroundsAddon(),
+  viewportAddon(),
+  measureAddon(),
+  outlineAddon(),
+  highlightAddon(),
+]);

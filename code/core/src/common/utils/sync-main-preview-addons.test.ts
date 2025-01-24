@@ -49,6 +49,36 @@ describe('getSyncedStorybookAddons', () => {
     `);
   });
 
+  it('should sync addons as functions when they are core packages', async () => {
+    const preview = loadConfig(`
+      import * as myAddonAnnotations from "custom-addon/preview";
+      import { definePreview } from "@storybook/react/preview";
+
+      export default definePreview({
+        addons: [myAddonAnnotations],
+      });
+    `).parse();
+
+    (getAddonAnnotations as Mock).mockImplementation(() => {
+      return {
+        importName: 'addonA11yAnnotations',
+        importPath: '@storybook/addon-a11y',
+        isCoreAddon: true,
+      };
+    });
+
+    const result = await getSyncedStorybookAddons(mainConfig, preview);
+    expect(printConfig(result).code).toMatchInlineSnapshot(`
+      import addonA11yAnnotations from "@storybook/addon-a11y";
+      import * as myAddonAnnotations from "custom-addon/preview";
+      import { definePreview } from "@storybook/react/preview";
+
+      export default definePreview({
+        addons: [myAddonAnnotations, addonA11yAnnotations()],
+      });
+    `);
+  });
+
   it('should add addons if the preview has no addons field', async () => {
     const originalCode = dedent`
       import { definePreview } from "@storybook/react/preview";
