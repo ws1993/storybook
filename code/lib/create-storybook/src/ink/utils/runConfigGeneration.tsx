@@ -3,6 +3,7 @@ import { loadConfig, printConfig } from 'storybook/internal/csf-tools';
 import { mkdir, rm, stat, writeFile } from 'fs/promises';
 import { join } from 'path/posix';
 
+import { supportedFrameworksPackages } from '../../bin/modernInputs';
 import type { State } from '../steps';
 
 export const runConfigGeneration = async (state: State, print: (txt: string) => void) => {
@@ -85,7 +86,12 @@ export const createMainFile = (state: State, fileName: string) => {
   const stories: string[] = ['../src/**/*.stories.@(js|jsx|mjs|ts|tsx)'];
   ConfigFile.setFieldValue(['stories'], stories);
 
-  ConfigFile.setFieldValue(['framework'], { name: state.framework, options: {} });
+  if (state.framework) {
+    ConfigFile.setFieldValue(['framework'], {
+      name: supportedFrameworksPackages[state.framework],
+      options: {},
+    });
+  }
 
   const addons: any[] = [];
   if (state.features?.includes('essentials')) {

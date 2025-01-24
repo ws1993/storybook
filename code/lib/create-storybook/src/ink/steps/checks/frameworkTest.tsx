@@ -6,7 +6,7 @@ import { Box, Text } from 'ink';
 
 import { ACTIONS } from '..';
 import type { Framework } from '../../../bin/modernInputs';
-import { supportedFrameworksMap } from '../../../bin/modernInputs';
+import { supportedFrameworksNames } from '../../../bin/modernInputs';
 import { Confirm } from '../../components/Confirm';
 import { type Check, CompatibilityType } from './index';
 
@@ -43,7 +43,7 @@ export const frameworkTest: Check = {
       reasons:
         state.framework === 'nextjs'
           ? [FOUND_NEXTJS]
-          : [`Found ${supportedFrameworksMap[state.framework]} with test intent`],
+          : [`Found ${supportedFrameworksNames[state.framework]} with test intent`],
     };
   },
   render: ({ s, state, setter, dispatch }) => {
@@ -74,8 +74,8 @@ export const frameworkTest: Check = {
                 <Text>
                   {figureSet.cross} We detected or you selected Next.js and intend to use Storybook
                   for testing. For compatbility with Storybook's testing features, we require{' '}
-                  {supportedFrameworksMap['experimental-nextjs-vite']} ('experimental-nextjs-vite').
-                  Would you like to use this instead?{' '}
+                  {supportedFrameworksNames['experimental-nextjs-vite']}{' '}
+                  ('experimental-nextjs-vite'). Would you like to use this instead?{' '}
                   <Confirm
                     onChange={(answer) => {
                       if (answer) {
@@ -94,7 +94,7 @@ export const frameworkTest: Check = {
               ) : (
                 <Text>
                   {figureSet.cross} We detected or you selected the{' '}
-                  {supportedFrameworksMap[state.framework]} framework and intend to use Storybook
+                  {supportedFrameworksNames[state.framework]} framework and intend to use Storybook
                   for testing. This framework is not currently compatible with Storybook's testing
                   features. Would you like to continue without testing features?
                   <Confirm

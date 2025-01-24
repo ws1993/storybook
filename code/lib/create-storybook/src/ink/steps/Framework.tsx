@@ -4,7 +4,7 @@ import { Spinner } from '@inkjs/ui';
 import { Box, Text } from 'ink';
 
 import { ACTIONS, type Action, type State } from '.';
-import { supportedFrameworksMap } from '../../bin/modernInputs';
+import { supportedFrameworksNames } from '../../bin/modernInputs';
 import { Confirm } from '../components/Confirm';
 import { MultiSelect } from '../components/Select/MultiSelect';
 
@@ -12,7 +12,7 @@ export function FRAMEWORK({ state, dispatch }: { state: State; dispatch: Dispatc
   const [detection, setDetection] = useState<FrameworkResult>(state.framework);
 
   useEffect(() => {
-    if (detection === 'auto') {
+    if (detection === undefined) {
       checkFramework().then((result) => {
         setDetection(result);
       });
@@ -21,7 +21,7 @@ export function FRAMEWORK({ state, dispatch }: { state: State; dispatch: Dispatc
     }
   }, []);
 
-  if (state.framework !== 'auto') {
+  if (state.framework) {
     return (
       <Box flexDirection="column" gap={1}>
         <Text>Storybook can work for many types of projects.</Text>
@@ -33,7 +33,7 @@ export function FRAMEWORK({ state, dispatch }: { state: State; dispatch: Dispatc
   }
 
   switch (detection) {
-    case 'auto':
+    case undefined:
       return (
         <Box flexDirection="column" gap={1}>
           <Text>Storybook can work for many types of projects.</Text>
@@ -55,7 +55,7 @@ export function FRAMEWORK({ state, dispatch }: { state: State; dispatch: Dispatc
             <MultiSelect
               // count={6} // I'd prefer to have this option back
               selection={[]}
-              options={supportedFrameworksMap}
+              options={supportedFrameworksNames}
               setSelection={([selection]) =>
                 dispatch({ type: ACTIONS.FRAMEWORK, payload: { id: selection } })
               }

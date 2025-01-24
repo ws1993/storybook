@@ -7,6 +7,7 @@ import figureSet from 'figures';
 import { Box, Text } from 'ink';
 
 import versions from '../../../../../core/src/common/versions';
+import { supportedFrameworksPackages } from '../../bin/modernInputs';
 import { AppContext } from '../utils/context';
 import type { Procedure } from '../utils/procedure';
 
@@ -16,10 +17,17 @@ const getExactVersioned = (name: keyof typeof versions): string => {
 
 const deriveDependencies = (state: Procedure['state']): string[] => {
   const format = state.version === 'latest' ? getExactVersioned : (name: string) => name;
-  const dependencies = [
-    format(`storybook`),
-    format(`@storybook/${state.framework}` as keyof typeof versions),
-  ];
+  const dependencies = [format(`storybook`)];
+
+  if (state.framework) {
+    if (supportedFrameworksPackages[state.framework].includes('@storybook')) {
+      dependencies.push(
+        format(`${supportedFrameworksPackages[state.framework]}` as keyof typeof versions)
+      );
+    } else {
+      dependencies.push(`${supportedFrameworksPackages[state.framework]}` as keyof typeof versions);
+    }
+  }
 
   if (state.features?.includes(`onboarding`)) {
     dependencies.push(format(`@storybook/addon-onboarding`));
