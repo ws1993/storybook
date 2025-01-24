@@ -8,6 +8,8 @@ import { ACTIONS } from '..';
 import { Confirm } from '../../components/Confirm';
 import { type Check, CompatibilityType } from './index';
 
+const configPath = '.storybook';
+
 /**
  * When configDir already exists, prompt:
  *
@@ -19,16 +21,16 @@ export const configDir: Check = {
   condition: async (context, state) => {
     if (context.fs && context.path) {
       return context.fs
-        .stat(context.path.join(state.directory, '.storybook'))
+        .stat(context.path.join(state.directory, configPath))
         .then(() => ({
           type: CompatibilityType.INCOMPATIBLE,
-          reasons: ['.storybook directory already exists'],
+          reasons: ['exists'],
         }))
         .catch(() => ({ type: CompatibilityType.COMPATIBLE }));
     }
     return {
       type: CompatibilityType.INCOMPATIBLE,
-      reasons: ['Missing fs or path on context'],
+      reasons: ['bad context'],
     };
   },
   render: ({ s, setter, dispatch }) => {
@@ -55,7 +57,10 @@ export const configDir: Check = {
         return (
           <Box gap={1}>
             <Text>{figureSet.cross}</Text>
-            <Text>configDir already exists. Do you want to continue?</Text>
+            <Text>
+              The folder <Text color="yellow">{configPath}</Text> already exists. We will delete it.
+              Do you want to continue?
+            </Text>
             <Confirm
               onChange={(answer) => {
                 if (answer) {
@@ -75,7 +80,9 @@ export const configDir: Check = {
         return (
           <Box gap={1}>
             <Spinner />
-            <Text>{name}: Checking if directory exists...</Text>
+            <Text>
+              {name}: Checking if <Text color={'yellow'}>{configPath}</Text> exists...
+            </Text>
           </Box>
         );
       }
