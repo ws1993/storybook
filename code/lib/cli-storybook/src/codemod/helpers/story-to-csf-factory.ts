@@ -68,6 +68,9 @@ export async function storyToCsfFactory(info: FileInfo) {
 
   const hasMeta = !!csf._meta;
 
+  // @TODO: Support unconventional formats:
+  // `export function Story() { };` and `export { Story };
+  // These are not part of csf._storyExports but rather csf._storyStatements and are tricky to support.
   Object.entries(csf._storyExports).forEach(([key, decl]) => {
     const id = decl.id;
     const declarator = decl as t.VariableDeclarator;
@@ -105,7 +108,12 @@ export async function storyToCsfFactory(info: FileInfo) {
   });
 
   const storyExportDecls = new Map(
-    Object.entries(csf._storyExports).filter(([, decl]) => t.isVariableDeclarator(decl))
+    Object.entries(csf._storyExports).filter(
+      (
+        entry
+      ): entry is [string, Exclude<(typeof csf._storyExports)[string], t.FunctionDeclaration>] =>
+        !t.isFunctionDeclaration(entry[1])
+    )
   );
 
   // For each story, replace any reference of story reuse e.g.
@@ -118,8 +126,18 @@ export async function storyToCsfFactory(info: FileInfo) {
       if (binding && storyExportDecls.has(binding.identifier.name)) {
         const parent = path.parent;
 
-        // Skip if this is the definition of the story export itself
+        // Skip declarations (e.g., `const Story = {};`)
         if (t.isVariableDeclarator(parent) && parent.id === path.node) {
+          return;
+        }
+
+        // Skip import statements e.g.`import { X as Story }`
+        if (t.isImportSpecifier(parent)) {
+          return;
+        }
+
+        // Skip export statements e.g.`export const Story` or `export { Story }`
+        if (t.isExportSpecifier(parent)) {
           return;
         }
 
@@ -127,7 +145,6 @@ export async function storyToCsfFactory(info: FileInfo) {
         if (t.isMemberExpression(parent) && t.isIdentifier(parent.property, { name: 'input' })) {
           return;
         }
-
         // Check if the property name is in the disallow list
         if (
           t.isMemberExpression(parent) &&
@@ -137,8 +154,18 @@ export async function storyToCsfFactory(info: FileInfo) {
           return;
         }
 
-        // Replace the identifier with `Story.input`
-        path.replaceWith(t.memberExpression(t.identifier(path.node.name), t.identifier('input')));
+        try {
+          // Replace the identifier with `Story.input`
+          path.replaceWith(t.memberExpression(t.identifier(path.node.name), t.identifier('input')));
+        } catch (err: any) {
+          // This is a tough one to support, we just skip for now.
+          // Relates to `Stories.Story.args` where Stories is coming from another file. We can't know whether it should be transformed or not.
+          if (err.message.includes(`instead got "MemberExpression"`)) {
+            console.log({ path });
+          } else {
+            throw err;
+          }
+        }
       }
     },
   });

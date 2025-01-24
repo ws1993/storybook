@@ -230,6 +230,31 @@ describe('stories codemod', () => {
       `);
     });
 
+    it('should support non-conventional formats (INCOMPLETE)', async () => {
+      const transformed = await transform(dedent`
+        import { A as Component } from './Button';
+        import * as Stories from './Other.stories';
+        import someData from './fixtures'
+        export default { 
+          component: Component, 
+          // not supported yet (story coming from another file)
+          args: Stories.A.args
+        };
+        const data = {};
+        export const A = () => {};
+        // not supported yet (story as function)
+        export function B() { };
+        // not supported yet (story redeclared)
+        const C = { ...A, args: data, };
+        export { C };
+        `);
+
+      expect(transformed).toContain('A = meta.story');
+      // @TODO: when we support these, uncomment these lines
+      // expect(transformed).toContain('B = meta.story');
+      // expect(transformed).toContain('C = meta.story');
+    });
+
     it('converts CSF1 into CSF4 with render', async () => {
       await expect(
         transform(dedent`
