@@ -6,11 +6,13 @@ import process from 'node:process';
 
 import React, { type ComponentProps } from 'react';
 
+import { JsPackageManagerFactory } from 'storybook/internal/common';
 import { telemetry } from 'storybook/internal/telemetry';
 
 import { debounce } from 'es-toolkit';
 // eslint-disable-next-line depend/ban-dependencies
 import glob from 'fast-glob';
+import { findUp } from 'find-up';
 import { render } from 'ink';
 import type { z } from 'zod';
 
@@ -55,6 +57,7 @@ export async function run(options: z.infer<typeof inputs>) {
     child_process,
     require,
     telemetry,
+    findUp,
     glob,
     checkGitStatus,
     checkVersion,
@@ -62,6 +65,7 @@ export async function run(options: z.infer<typeof inputs>) {
     checkExists,
     downloadSandbox,
     runConfigGeneration,
+    JsPackageManagerFactory,
   };
   globalThis.CLI_APP_INSTANCE = render(
     <AppContext.Provider value={context}>
