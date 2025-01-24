@@ -38,7 +38,7 @@ export const runConfigGeneration = async (state: State, print: (txt: string) => 
   print(`Generated ${mainFile}`);
 
   print(`Generating ${previewFile}`);
-  await writeFile(join(configDir, previewFile), `export const parameters = {};\n`);
+  await writeFile(join(configDir, previewFile), createPreviewFile(state, previewFile));
   print(`Generated ${previewFile}`);
 
   if (hasTestIntent) {
@@ -113,6 +113,17 @@ export const createMainFile = (state: State, fileName: string) => {
     addons.push('@storybook/addon-docs');
   }
   ConfigFile.setFieldValue(['addons'], addons);
+
+  return printConfig(ConfigFile).code;
+};
+
+export const createPreviewFile = (state: State, fileName: string) => {
+  const ConfigFile = loadConfig(
+    `
+      export const parameters = {};
+    `,
+    fileName
+  ).parse();
 
   return printConfig(ConfigFile).code;
 };
