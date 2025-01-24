@@ -2,6 +2,7 @@ import type { Options } from 'storybook/internal/types';
 
 import { hasVitePlugins } from '@storybook/builder-vite';
 
+import { VERSION as SVELTE_VERSION } from 'svelte/compiler';
 import { dedent } from 'ts-dedent';
 import type { PluginOption } from 'vite';
 
@@ -37,3 +38,5 @@ export async function handleSvelteKit(plugins: PluginOption[], options: Options)
     `);
   }
 }
+
+export const IS_SVELTE_V4 = Number(SVELTE_VERSION[0]) <= 4;

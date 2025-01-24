@@ -15,6 +15,7 @@ import type {
 import svelteDoc from 'sveltedoc-parser';
 import type { PluginOption } from 'vite';
 
+import { IS_SVELTE_V4 } from '../utils';
 import { type Docgen, type Type, createDocgenCache, generateDocgen } from './generateDocgen';
 
 /*
@@ -33,40 +34,49 @@ svelteDocParserOptions.getAstDefaultOptions = () => ({
   ecmaFeatures: {},
 });
 
-// Most of the code here should probably be exported by @storybook/svelte and reused here.
-// See: https://github.com/storybookjs/storybook/blob/next/app/svelte/src/server/svelte-docgen-loader.ts
+/**
+ * It access the AST output of _compiled_ Svelte component file. To read the name of the default
+ * export - which is source of truth.
+ *
+ * In Svelte prior to `v4` component is a class. From `v5` is a function.
+ */
+function getComponentName(ast: ReturnType<import('rollup').PluginContext['parse']>): string {
+  // NOTE: Assertion, because rollup returns a type `AcornNode` for some reason, which doesn't overlap with `Program` from estree
+  const exportDefaultDeclaration = (ast as unknown as import('estree').Program).body.find(
+    (n) => n.type === 'ExportDefaultDeclaration'
+  );
 
-// From https://github.com/sveltejs/svelte/blob/8db3e8d0297e052556f0b6dde310ef6e197b8d18/src/compiler/compile/utils/get_name_from_filename.ts
-// Copied because it is not exported from the compiler
-function getNameFromFilename(filename: string) {
-  if (!filename) {
-    return null;
+  if (!exportDefaultDeclaration) {
+    throw new Error('Unreachable');
   }
 
-  const parts = filename.split(/[/\\]/).map(encodeURI);
-
-  if (parts.length > 1) {
-    const indexMatch = parts[parts.length - 1].match(/^index(\.\w+)/);
-    if (indexMatch) {
-      parts.pop();
-      parts[parts.length - 1] += indexMatch[1];
+  if (IS_SVELTE_V4) {
+    // Example output:
+    //
+    // class <ComponentName> extends SvelteComponent {
+    //   // ...
+    // }
+    //
+    // export default <ComponentName>;
+    if (exportDefaultDeclaration.declaration.type !== 'Identifier') {
+      throw new Error('Unreachable');
     }
+    return exportDefaultDeclaration.declaration.name;
+  } else {
+    // Example output:
+    //
+    // export default function <ComponentName> {
+    //   // ...
+    // }
+    if (
+      exportDefaultDeclaration.declaration.type !== 'FunctionDeclaration' ||
+      !exportDefaultDeclaration.declaration.id
+    ) {
+      throw new Error('Unreachable');
+    }
+    return exportDefaultDeclaration.declaration.id.name;
+    //
   }
-
-  const base = parts
-    .pop()
-    ?.replace(/%/g, 'u')
-    .replace(/\.[^.]+$/, '')
-    .replace(/[^a-zA-Z_$0-9]+/g, '_')
-    .replace(/^_/, '')
-    .replace(/_$/, '')
-    .replace(/^(\d)/, '_$1');
-
-  if (!base) {
-    throw new Error(`Could not derive component name from file ${filename}`);
-  }
-
-  return base[0].toUpperCase() + base.slice(1);
 }
 
 function transformToSvelteDocParserType(type: Type): JSDocType {
@@ -156,6 +166,7 @@ export async function svelteDocgen(svelteOptions: Record<string, any> = {}): Pro
       const data = transformToSvelteDocParserDataItems(docgen);
 
       let componentDoc: SvelteComponentDoc & { keywords?: string[] } = {};
+      const rawSource = readFileSync(resource).toString();
 
       if (!docgen.propsRuneUsed) {
         // Retain sveltedoc-parser for backward compatibility, as it can extract slot information from HTML comments.
@@ -188,7 +199,6 @@ export async function svelteDocgen(svelteOptions: Record<string, any> = {}): Pro
 
         let docOptions;
         if (docPreprocessOptions) {
-          const rawSource = readFileSync(resource).toString();
           const { code: fileContent } = await preprocess(rawSource, docPreprocessOptions, {
             filename: resource,
           });
@@ -225,7 +235,8 @@ export async function svelteDocgen(svelteOptions: Record<string, any> = {}): Pro
       componentDoc.name = basename(file);
 
       const s = new MagicString(src);
-      const componentName = getNameFromFilename(resource);
+      const outputAst = this.parse(rawSource);
+      const componentName = getComponentName(outputAst);
       s.append(`;${componentName}.__docgen = ${JSON.stringify(componentDoc)}`);
 
       return {
