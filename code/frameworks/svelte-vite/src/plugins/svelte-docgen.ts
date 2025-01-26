@@ -3,6 +3,7 @@ import { basename, relative } from 'node:path';
 
 import { logger } from 'storybook/internal/node-logger';
 
+import type AST from 'estree';
 import MagicString from 'magic-string';
 import { replace, typescript } from 'svelte-preprocess';
 import { preprocess } from 'svelte/compiler';
@@ -41,9 +42,9 @@ svelteDocParserOptions.getAstDefaultOptions = () => ({
  */
 function getComponentName(ast: ReturnType<import('rollup').PluginContext['parse']>): string {
   // NOTE: Assertion, because rollup returns a type `AcornNode` for some reason, which doesn't overlap with `Program` from estree
-  const exportDefaultDeclaration = (ast as unknown as import('estree').Program).body.find(
+  const exportDefaultDeclaration = (ast as unknown as AST.Program).body.find(
     (n) => n.type === 'ExportDefaultDeclaration'
-  );
+  ) as AST.ExportDefaultDeclaration | undefined;
 
   if (!exportDefaultDeclaration) {
     throw new Error('Unreachable - no default export found');
