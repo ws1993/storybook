@@ -169,6 +169,47 @@ Storybook for React Native Web is a [framework](../../contribute/framework.mdx) 
 
   export default config;
   ```
+  #### Example configuration for reanimated
+
+  ```ts title=".storybook/main.ts"
+  const main: StorybookConfig = {
+    // ... rest of config
+
+    framework: {
+      name: "@storybook/react-native-web-vite",
+      options: {
+        pluginReactOptions: {
+          babel: {
+            plugins: [
+              "@babel/plugin-proposal-export-namespace-from",
+              "react-native-reanimated/plugin",
+            ],
+          },
+        },
+      },
+    };
+
+    // ... rest of config
+  }
+  ```
+
+  #### Example configuration for nativewind
+
+  ```ts title=".storybook/main.ts"
+
+  const main: StorybookConfig = {
+    // ... rest of config
+
+    framework: {
+      name: "@storybook/react-native-web-vite",
+      options: {
+        pluginReactOptions: {
+          jsxImportSource: "nativewind",
+        },
+      },
+    },
+  }
+  ```
 
   #### `builder`
 
