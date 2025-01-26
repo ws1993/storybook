@@ -15,7 +15,6 @@ import type {
 import svelteDoc from 'sveltedoc-parser';
 import type { PluginOption } from 'vite';
 
-import { IS_SVELTE_V4 } from '../utils';
 import { type Docgen, type Type, createDocgenCache, generateDocgen } from './generateDocgen';
 
 /*
@@ -47,36 +46,27 @@ function getComponentName(ast: ReturnType<import('rollup').PluginContext['parse'
   );
 
   if (!exportDefaultDeclaration) {
-    throw new Error('Unreachable');
+    throw new Error('Unreachable - no default export found');
   }
 
-  if (IS_SVELTE_V4) {
-    // Example output:
-    //
-    // class <ComponentName> extends SvelteComponent {
-    //   // ...
-    // }
-    //
-    // export default <ComponentName>;
-    if (exportDefaultDeclaration.declaration.type !== 'Identifier') {
-      throw new Error('Unreachable');
-    }
+  // NOTE: Output differs based on svelte version and dev/prod mode
+
+  if (exportDefaultDeclaration.declaration.type === 'Identifier') {
     return exportDefaultDeclaration.declaration.name;
-  } else {
-    // Example output:
-    //
-    // export default function <ComponentName> {
-    //   // ...
-    // }
-    if (
-      exportDefaultDeclaration.declaration.type !== 'FunctionDeclaration' ||
-      !exportDefaultDeclaration.declaration.id
-    ) {
-      throw new Error('Unreachable');
-    }
-    return exportDefaultDeclaration.declaration.id.name;
-    //
   }
+
+  if (
+    exportDefaultDeclaration.declaration.type !== 'ClassDeclaration' &&
+    exportDefaultDeclaration.declaration.type !== 'FunctionDeclaration'
+  ) {
+    throw new Error('Unreachable - not a class or a function');
+  }
+
+  if (!exportDefaultDeclaration.declaration.id) {
+    throw new Error('Unreachable - unnamed class/function');
+  }
+
+  return exportDefaultDeclaration.declaration.id.name;
 }
 
 function transformToSvelteDocParserType(type: Type): JSDocType {
@@ -166,7 +156,6 @@ export async function svelteDocgen(svelteOptions: Record<string, any> = {}): Pro
       const data = transformToSvelteDocParserDataItems(docgen);
 
       let componentDoc: SvelteComponentDoc & { keywords?: string[] } = {};
-      const rawSource = readFileSync(resource).toString();
 
       if (!docgen.propsRuneUsed) {
         // Retain sveltedoc-parser for backward compatibility, as it can extract slot information from HTML comments.
@@ -199,6 +188,7 @@ export async function svelteDocgen(svelteOptions: Record<string, any> = {}): Pro
 
         let docOptions;
         if (docPreprocessOptions) {
+          const rawSource = readFileSync(resource).toString();
           const { code: fileContent } = await preprocess(rawSource, docPreprocessOptions, {
             filename: resource,
           });
@@ -235,9 +225,9 @@ export async function svelteDocgen(svelteOptions: Record<string, any> = {}): Pro
       componentDoc.name = basename(file);
 
       const s = new MagicString(src);
-      const outputAst = this.parse(rawSource);
+      const outputAst = this.parse(src);
       const componentName = getComponentName(outputAst);
-      s.append(`;${componentName}.__docgen = ${JSON.stringify(componentDoc)}`);
+      s.append(`\n;${componentName}.__docgen = ${JSON.stringify(componentDoc)}`);
 
       return {
         code: s.toString(),
