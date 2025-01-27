@@ -90,14 +90,15 @@ export const addonA11yAddonTest: Fix<AddonA11yAddonTestOptions> = {
         .find((filePath) => existsSync(filePath)) ?? null;
 
     let skipVitestSetupTransformation = false;
-    let skipPreviewTransformation = false;
+    // TODO: Set it to false after we have decided how to deal with a11y:test tag.
+    const skipPreviewTransformation = true;
 
     if (vitestSetupFile && previewFile) {
       const vitestSetupSource = readFileSync(vitestSetupFile, 'utf8');
-      const previewSetupSource = readFileSync(previewFile, 'utf8');
+      // const previewSetupSource = readFileSync(previewFile, 'utf8');
 
       skipVitestSetupTransformation = vitestSetupSource.includes('@storybook/addon-a11y');
-      skipPreviewTransformation = previewSetupSource.includes('a11y-test');
+      // skipPreviewTransformation = previewSetupSource.includes('a11y-test');
 
       if (skipVitestSetupTransformation && skipPreviewTransformation) {
         return null;
@@ -318,7 +319,7 @@ export async function transformPreviewFile(source: string, filePath: string) {
   const indentation = lines[tagsLineIndex]?.match(/^\s*/)?.[0];
 
   // Add the comment with the same indentation level
-  const comment = `${indentation}// The \`a11y-test\` tag controls whether accessibility tests are run as part of a standalone Vitest test run\n${indentation}// For more information please visit: https://storybook.js.org/docs/writing-tests/accessibility-testing#configure-accessibility-tests-with-the-test-addon`;
+  const comment = `${indentation}// The \`a11y-test\` tag controls whether accessibility tests are run as part of a standalone Vitest test run\n${indentation}// The tag and its behavior are experimental and subject to change.\n${indentation}// For more information please see: https://storybook.js.org/docs/writing-tests/accessibility-testing#configure-accessibility-tests-with-the-test-addon`;
   lines.splice(tagsLineIndex, 0, comment);
 
   return formatFileContent(filePath, lines.join('\n'));
