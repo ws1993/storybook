@@ -415,7 +415,8 @@ export async function doInitiate(options: CommandOptions): Promise<
 
   if (intents.includes('test')) {
     execSync(
-      `npx sb add @storybook/experimental-addon-test@${versions['@storybook/experimental-addon-test']}`
+      `npx sb add @storybook/experimental-addon-test@${versions['@storybook/experimental-addon-test']}`,
+      { cwd: process.cwd() }
     );
   }
 
