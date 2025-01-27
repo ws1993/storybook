@@ -44,7 +44,6 @@
     "lint:md": "../scripts/node_modules/.bin/remark -q .",
     "lint:prettier": "prettier --write",
     "lint:other": "yarn lint:prettier '**/*.{css,html,json,md,yml}'",
-    "lint:package": "",
     "local-registry": "yarn --cwd ../scripts local-registry",
     "publish-sandboxes": "yarn --cwd ../scripts publish",
     "storybook:ui": "NODE_OPTIONS=\"--preserve-symlinks --preserve-symlinks-main\" ./lib/cli/bin/index.cjs dev --port 6006 --config-dir ./.storybook",
@@ -64,9 +63,6 @@
   "lint-staged": {
     "*.{html,js,json,jsx,mjs,ts,tsx}": [
       "yarn lint:js:cmd --fix"
-    ],
-    "package.json": [
-      "yarn lint:package"
     ],
     "*.ejs": [
       "../scripts/node_modules/.bin/ejslint"
