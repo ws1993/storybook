@@ -16,7 +16,7 @@
     "lint": "yarn lint:js && yarn lint:md",
     "lint:js": "yarn lint:js:cmd .  --quiet",
     "lint:js:cmd": "cross-env NODE_ENV=production eslint --cache --cache-location=../.cache/eslint --ext .js,.jsx,.json,.html,.ts,.tsx,.mjs --report-unused-disable-directives",
-    "lint:package": "",
+    "lint:package": "yarn bin sort-package-json",
     "local-registry": "jiti ./run-registry.ts",
     "publish": "jiti ./sandbox/publish.ts",
     "release:cancel-preparation-runs": "jiti ./release/cancel-preparation-runs.ts",
@@ -194,7 +194,7 @@
     "verdaccio": "^5.31.1",
     "verdaccio-auth-memory": "^10.2.2"
   },
-  "packageManager": "yarn@4.6.0",
+  "packageManager": "yarn@4.4.0+sha512.91d93b445d9284e7ed52931369bc89a663414e5582d00eea45c67ddc459a2582919eece27c412d6ffd1bd0793ff35399381cb229326b961798ce4f4cc60ddfdb",
   "engines": {
     "node": ">=22.0.0"
   }
