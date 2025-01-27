@@ -1,5 +1,5 @@
-import type { ProjectAnnotations, Renderer } from '@storybook/types';
+import type { AnyRenderer, ProjectAnnotations, Renderer } from '@storybook/core/types';
 
-export function definePreview<R extends Renderer = Renderer>(config: ProjectAnnotations<R>) {
+export function definePreview<R extends Renderer = AnyRenderer>(config: ProjectAnnotations<R>) {
   return config;
 }

@@ -28,6 +28,12 @@ import type {
   StrictGlobalTypes,
 } from './csf';
 
+export interface AnyRenderer extends Renderer {
+  component: any;
+  storyResult: any;
+  canvasElement: any;
+}
+
 // Store Types
 export interface WebRenderer extends Renderer {
   canvasElement: HTMLElement;
