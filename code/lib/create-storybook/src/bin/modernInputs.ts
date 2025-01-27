@@ -25,6 +25,7 @@ export const supportedFrameworks = [
   'sveltekit',
   'vue3-rsbuild',
   'vue3-vite',
+  'react-native',
   'vue3-webpack5',
   'web-components-vite',
   'web-components-webpack5',
@@ -57,7 +58,8 @@ export const supportedFrameworksPackages = {
   qwik: 'storybook-framework-qwik',
   solid: 'storybook-solidjs-vite',
   sveltekit: '@storybook/sveltekit',
-} satisfies Record<string, string>;
+  'react-native': '@storybook/react-native',
+} satisfies Record<Framework, string>;
 
 export const supportedFrameworksNames = {
   'html-vite': 'HTML with Vite',
@@ -84,6 +86,7 @@ export const supportedFrameworksNames = {
   qwik: 'Qwik',
   solid: 'Solid',
   sveltekit: 'SvelteKit',
+  'react-native': 'React Native',
 } satisfies Record<Framework, string>;
 
 export const modernInputs = z.strictObject({

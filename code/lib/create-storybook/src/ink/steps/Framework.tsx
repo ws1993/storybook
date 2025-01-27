@@ -1,6 +1,10 @@
 import React, { type Dispatch, useEffect, useState } from 'react';
 
+import { ProjectType, detectFrameworkPreset } from 'storybook/internal/cli';
+
 import { Spinner } from '@inkjs/ui';
+import findUp from 'find-up';
+import { readFile } from 'fs/promises';
 import { Box, Text } from 'ink';
 
 import { ACTIONS, type Action, type State } from '.';
@@ -87,9 +91,72 @@ export function FRAMEWORK({ state, dispatch }: { state: State; dispatch: Dispatc
 }
 
 type FrameworkResult = State['framework'] | 'undetected';
-export async function checkFramework(): Promise<FrameworkResult> {
+export async function checkFramework(state: State): Promise<FrameworkResult> {
+  const pkgLocation = await findUp('package.json', { cwd: state.directory });
+  if (!pkgLocation) {
+    return 'undetected';
+  }
+
+  const pkg = JSON.parse(await readFile(pkgLocation, 'utf-8'));
   // slow delay for demo effect
-  await new Promise((resolve) => setTimeout(resolve, 1000));
+
+  const out = detectFrameworkPreset(pkg);
+
+  if (!out) {
+    return 'undetected';
+  } else {
+    if (out === ProjectType.WEBPACK_REACT) {
+      return 'react-webpack5';
+    }
+    if (out === ProjectType.REACT) {
+      return 'react-vite';
+    }
+    if (out === ProjectType.REACT_SCRIPTS) {
+      return 'react-webpack5';
+    }
+    if (out === ProjectType.REACT_NATIVE) {
+      return 'react-native';
+    }
+    if (out === ProjectType.ANGULAR) {
+      return 'angular';
+    }
+    if (out === ProjectType.NEXTJS) {
+      return 'nextjs';
+    }
+    if (out === ProjectType.EMBER) {
+      return 'ember';
+    }
+    if (out === ProjectType.NUXT) {
+      return 'nuxt';
+    }
+    if (out === ProjectType.REACT_NATIVE_WEB) {
+      return 'react-native-web-vite';
+    }
+    if (out === ProjectType.QWIK) {
+      return 'qwik';
+    }
+    if (out === ProjectType.SOLID) {
+      return 'solid';
+    }
+    if (out === ProjectType.SVELTE) {
+      return 'svelte-vite';
+    }
+    if (out === ProjectType.SVELTEKIT) {
+      return 'sveltekit';
+    }
+    if (out === ProjectType.PREACT) {
+      return 'preact-vite';
+    }
+    if (out === ProjectType.VUE3) {
+      return 'vue3-vite';
+    }
+    if (out === ProjectType.WEB_COMPONENTS) {
+      return 'web-components-vite';
+    }
+    if (out === ProjectType.HTML) {
+      return 'html-vite';
+    }
+  }
 
   return 'undetected';
 }
