@@ -27,6 +27,11 @@
       "import": "./dist/index.mjs",
       "require": "./dist/index.js"
     },
+    "./preview": {
+      "types": "./dist/preview.d.ts",
+      "import": "./dist/preview.mjs",
+      "require": "./dist/preview.js"
+    },
     "./actions/preview": {
       "types": "./dist/actions/preview.d.ts",
       "import": "./dist/actions/preview.mjs",
@@ -82,6 +87,9 @@
     "*": {
       "*": [
         "dist/index.d.ts"
+      ],
+      "preview": [
+        "dist/preview.d.ts"
       ]
     }
   },
@@ -140,6 +148,7 @@
       "./src/viewport/manager.ts"
     ],
     "previewEntries": [
+      "./src/preview.ts",
       "./src/actions/preview.ts",
       "./src/backgrounds/preview.ts",
       "./src/docs/preview.ts",
