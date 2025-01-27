@@ -406,7 +406,7 @@ jobs:
           at: .
       - run:
           name: Enable Corepack
-          command: sudo corepack enable yarn
+          command: corepack enable --install-directory="/home/circleci/bin"
       - run:
           name: Starting Event Collector
           command: yarn jiti ./event-log-collector.ts
