@@ -3,7 +3,11 @@
 /* eslint-disable no-underscore-dangle */
 import { type RunnerTask, type TaskMeta, type TestContext } from 'vitest';
 
-import { type Report, composeStory } from 'storybook/internal/preview-api';
+import {
+  type Report,
+  composeStory,
+  getCsfFactoryAnnotations,
+} from 'storybook/internal/preview-api';
 import type { ComponentAnnotations, ComposedStoryFn } from 'storybook/internal/types';
 
 import { server } from '@vitest/browser/context';
@@ -26,11 +30,12 @@ export const testStory = (
   skipTags: string[]
 ) => {
   return async (context: TestContext & { story: ComposedStoryFn }) => {
+    const annotations = getCsfFactoryAnnotations(story, meta);
     const composedStory = composeStory(
-      'isCSFFactory' in story ? (story as any).input : story,
-      'isCSFFactory' in story ? (meta as any).input : meta,
+      annotations.story,
+      annotations.meta,
       { initialGlobals: (await getInitialGlobals?.()) ?? {}, tags: await getTags?.() },
-      'isCSFFactory' in story ? (story as any).config?.input : undefined,
+      annotations.preview,
       exportName
     );
 
