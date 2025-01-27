@@ -6,6 +6,7 @@ import process from 'node:process';
 
 import React, { type ComponentProps } from 'react';
 
+import * as babel from 'storybook/internal/babel';
 import { JsPackageManagerFactory } from 'storybook/internal/common';
 import { telemetry } from 'storybook/internal/telemetry';
 
@@ -46,21 +47,22 @@ export async function run(options: z.infer<typeof inputs>) {
   // process.stdout.write('\x1Bc');
   process.stdout.write('\n');
   const context: ComponentProps<typeof AppContext.Provider>['value'] = {
-    fs,
-    path,
-    process,
-    child_process,
-    require,
-    telemetry,
-    findUp,
-    glob,
+    babel,
+    checkExists,
+    checkFramework,
     checkGitStatus,
     checkVersion,
-    checkFramework,
-    checkExists,
+    child_process,
     downloadSandbox,
-    runConfigGeneration,
+    findUp,
+    fs,
+    glob,
     JsPackageManagerFactory,
+    path,
+    process,
+    require,
+    runConfigGeneration,
+    telemetry,
   };
   globalThis.CLI_APP_INSTANCE = render(
     <AppContext.Provider value={context}>
