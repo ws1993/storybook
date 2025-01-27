@@ -411,7 +411,7 @@ jobs:
           background: true
       - run:
           name: Enable Corepack
-          command: corepack enable
+          command: sudo corepack enable yarn
       - run:
           name: Create Sandboxes
           command: |
