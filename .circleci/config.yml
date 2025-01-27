@@ -408,13 +408,18 @@ jobs:
           name: Enable Corepack
           command: sudo corepack enable yarn
       - run:
+          name: Create Sandboxes
+          command: yarn task --task sandbox --template $(yarn get-template --cadence << pipeline.parameters.workflow >> --task sandbox) --no-link --start-from=never --junit
+          environment:
+            STORYBOOK_TELEMETRY_URL: "http://localhost:6007/event-log"
+      - run:
           name: Starting Event Collector
           command: yarn jiti ./event-log-collector.ts
           working_directory: scripts
           background: true
       - run:
-          name: Creating Sandboxes
-          command: yarn task --task sandbox --template $(yarn get-template --cadence << pipeline.parameters.workflow >> --task sandbox) --no-link --start-from=build --junit
+          name: Build Sandboxes
+          command: yarn task --task build --template $(yarn get-template --cadence << pipeline.parameters.workflow >> --task build) --no-link --start-from=never --junit
           environment:
             STORYBOOK_TELEMETRY_URL: "http://localhost:6007/event-log"
       - run:
