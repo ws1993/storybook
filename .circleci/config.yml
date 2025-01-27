@@ -410,6 +410,9 @@ jobs:
           working_directory: scripts
           background: true
       - run:
+          name: Enable Corepack
+          command: corepack enable
+      - run:
           name: Create Sandboxes
           command: |
             TEMPLATE=$(yarn get-template --cadence << pipeline.parameters.workflow >> --task sandbox)
