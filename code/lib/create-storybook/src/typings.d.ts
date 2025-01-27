@@ -1,0 +1,2 @@
+declare var CLI_APP_INSTANCE: ReturnType<typeof render> | undefined;
+declare var intents: string[];

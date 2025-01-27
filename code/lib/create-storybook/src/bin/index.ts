@@ -92,26 +92,26 @@ const legacyProgram = modernProgram
 
 legacyProgram
   .action(async (options) => {
-    const d = modernInputs.safeParse(options);
+    // const d = modernInputs.safeParse(options);
 
-    if (d.success) {
-      // modern CLI app
-      const { run } = await import('../ink/app');
-      await run(d.data);
-    } else if (d.error) {
-      if (d.error.errors.some((e) => e.code === 'unrecognized_keys')) {
-        // legacy CLI app
-        options.debug = options.debug ?? false;
-        options.dev = options.dev ?? (IS_NON_CI && IS_NON_STORYBOOK_SANDBOX);
+    // if (d.success) {
+    //   // modern CLI app
+    //   const { run } = await import('../ink/app');
+    //   await run(d.data);
+    // } else if (d.error) {
+    //   if (d.error.errors.some((e) => e.code === 'unrecognized_keys')) {
+    //     // legacy CLI app
+    options.debug = options.debug ?? false;
+    options.dev = options.dev ?? (IS_NON_CI && IS_NON_STORYBOOK_SANDBOX);
 
-        await initiate(options as CommandOptions).catch(() => process.exit(1));
-      } else {
-        for (const e of d.error.errors) {
-          console.error('invalid input for: --' + e.path.join('.'));
-          console.log(e.message);
-        }
-      }
-    }
+    await initiate(options as CommandOptions).catch(() => process.exit(1));
+    // } else {
+    //   for (const e of d.error.errors) {
+    //     console.error('invalid input for: --' + e.path.join('.'));
+    //     console.log(e.message);
+    //   }
+    // }
+    // }
   })
   .version(String(version))
   .parse(process.argv);

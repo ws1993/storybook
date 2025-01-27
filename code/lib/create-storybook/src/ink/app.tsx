@@ -12,7 +12,7 @@ import { telemetry } from 'storybook/internal/telemetry';
 import { debounce } from 'es-toolkit';
 // eslint-disable-next-line depend/ban-dependencies
 import glob from 'fast-glob';
-import { findUp } from 'find-up';
+import findUp from 'find-up';
 import { render } from 'ink';
 import type { z } from 'zod';
 
@@ -26,11 +26,6 @@ import { AppContext } from './utils/context';
 import { runConfigGeneration } from './utils/runConfigGeneration';
 
 const require = createRequire(import.meta.url);
-
-declare global {
-  // eslint-disable-next-line no-var
-  var CLI_APP_INSTANCE: ReturnType<typeof render> | undefined;
-}
 
 if (globalThis.CLI_APP_INSTANCE) {
   globalThis.CLI_APP_INSTANCE.unmount();

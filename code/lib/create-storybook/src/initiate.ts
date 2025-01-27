@@ -1,3 +1,4 @@
+import { exec, execSync } from 'node:child_process';
 import { appendFile, readFile } from 'node:fs/promises';
 
 import type { Builder, NpmOptions } from 'storybook/internal/cli';
@@ -284,6 +285,18 @@ export async function doInitiate(options: CommandOptions): Promise<
     )
   );
 
+  const { intents } = await prompts({
+    type: 'multiselect',
+    name: 'intents',
+    message: `What are you using Storybook for?`,
+    choices: [
+      { title: 'Development', value: 'dev', selected: true },
+      { title: 'Documentation', value: 'docs', selected: true },
+      { title: 'Testing', value: 'test', selected: true },
+    ],
+  });
+  globalThis.intents = intents;
+
   // Check if the current directory is empty.
   if (options.force !== true && currentDirectoryIsEmpty(packageManager.type)) {
     // Initializing Storybook in an empty directory with yarn1
@@ -399,6 +412,12 @@ export async function doInitiate(options: CommandOptions): Promise<
     projectType === ProjectType.ANGULAR
       ? `ng run ${installResult.projectName}:storybook`
       : packageManager.getRunStorybookCommand();
+
+  if (intents.includes('test')) {
+    execSync(
+      `npx sb add @storybook/experimental-addon-test@${versions['@storybook/experimental-addon-test']}`
+    );
+  }
 
   logger.log(
     boxen(
