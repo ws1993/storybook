@@ -416,10 +416,9 @@ jobs:
           name: Create Sandboxes
           command: |
             TEMPLATE=$(yarn get-template --cadence << pipeline.parameters.workflow >> --task sandbox)
-            yarn task --task sandbox --template "${TEMPLATE}" --no-link --start-from=never --junit
-            yarn task --task build --template "${TEMPLATE}" --no-link --start-from=never --junit
-            if [[ $TEMPLATE != bench/* ]]
-            then
+            yarn task --task sandbox --template $TEMPLATE --no-link --start-from=never --junit
+            yarn task --task build --template $TEMPLATE --no-link --start-from=never --junit
+            if [[ $TEMPLATE != bench/* ]]; then
               yarn jiti ./event-log-checker.ts build $TEMPLATE --cwd scripts
             fi
           environment:
