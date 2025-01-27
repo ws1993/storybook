@@ -25,7 +25,7 @@ import { definePreview } from '@storybook/react';
 import addonTest from '@storybook/experimental-addon-test';
 
 import addonA11y from '@storybook/addon-a11y';
-import addonEssentials from '@storybook/addon-essentials/entry-preview';
+import addonEssentials from '@storybook/addon-essentials';
 import addonThemes from '@storybook/addon-themes';
 
 import * as addonsPreview from '../addons/toolbars/template/stories/preview';

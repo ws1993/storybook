@@ -37,12 +37,7 @@ export async function getAddonAnnotations(addon: string) {
       data.importPath = `@storybook/${addon}/preview`;
     }
 
-    // TODO: current workaround needed only for essentials, fix this once we change the preview entry-point for that package
-    if (addon === '@storybook/addon-essentials') {
-      data.importPath = '@storybook/addon-essentials/entry-preview';
-    } else {
-      require.resolve(path.join(addon, 'preview'));
-    }
+    require.resolve(path.join(addon, 'preview'));
 
     return data;
   } catch (err) {}
