@@ -23,6 +23,9 @@ export const AppContext = createContext({
     | undefined,
   babel: undefined as typeof import('storybook/internal/babel') | undefined,
   telemetry: undefined as typeof import('storybook/internal/telemetry').telemetry | undefined,
+  packageManager: undefined as
+    | typeof import('storybook/internal/common').JsPackageManager
+    | undefined,
   JsPackageManagerFactory: undefined as
     | typeof import('storybook/internal/common').JsPackageManagerFactory
     | undefined,

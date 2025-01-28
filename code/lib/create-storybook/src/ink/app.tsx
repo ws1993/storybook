@@ -13,7 +13,7 @@ import { telemetry } from 'storybook/internal/telemetry';
 import { debounce } from 'es-toolkit';
 // eslint-disable-next-line depend/ban-dependencies
 import glob from 'fast-glob';
-import findUp from 'find-up';
+import { findUp } from 'find-up';
 import { render } from 'ink';
 import type { z } from 'zod';
 

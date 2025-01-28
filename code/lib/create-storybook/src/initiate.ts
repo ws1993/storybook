@@ -1,6 +1,7 @@
-import { exec, execSync } from 'node:child_process';
-import { appendFile, readFile } from 'node:fs/promises';
+import { execSync } from 'node:child_process';
+import fs from 'node:fs/promises';
 
+import * as babel from 'storybook/internal/babel';
 import type { Builder, NpmOptions } from 'storybook/internal/cli';
 import { ProjectType, installableProjectTypes } from 'storybook/internal/cli';
 import { detect, detectLanguage, detectPnp, isStorybookInstantiated } from 'storybook/internal/cli';
@@ -43,6 +44,7 @@ import vue3Generator from './generators/VUE3';
 import webComponentsGenerator from './generators/WEB-COMPONENTS';
 import webpackReactGenerator from './generators/WEBPACK_REACT';
 import type { CommandOptions, GeneratorOptions } from './generators/types';
+import { checks } from './ink/steps/checks';
 import { currentDirectoryIsEmpty, scaffoldNewProject } from './scaffold-new-project';
 
 const logger = console;
@@ -402,9 +404,9 @@ export async function doInitiate(options: CommandOptions): Promise<
   const foundGitIgnoreFile = await findUp('.gitignore');
   const rootDirectory = getProjectRoot();
   if (foundGitIgnoreFile && foundGitIgnoreFile.includes(rootDirectory)) {
-    const contents = await readFile(foundGitIgnoreFile, 'utf-8');
+    const contents = await fs.readFile(foundGitIgnoreFile, 'utf-8');
     if (!contents.includes('*storybook.log')) {
-      await appendFile(foundGitIgnoreFile, '\n*storybook.log\n');
+      await fs.appendFile(foundGitIgnoreFile, '\n*storybook.log\n');
     }
   }
 
@@ -412,6 +414,50 @@ export async function doInitiate(options: CommandOptions): Promise<
     projectType === ProjectType.ANGULAR
       ? `ng run ${installResult.projectName}:storybook`
       : packageManager.getRunStorybookCommand();
+
+  if (intents.includes('test')) {
+    const packageVersions = await checks.packageVersions.condition(
+      { packageManager } as any,
+      {} as any
+    );
+    if (packageVersions.type === 'incompatible') {
+      const { ignorePackageVersions } = await prompts([
+        {
+          type: 'confirm',
+          name: 'ignorePackageVersions',
+          message: dedent`
+            Found incompatible packages in your project. Do you want to continue without Storybook's testing features?
+            ${packageVersions.reasons.map((r) => `  - ${r}`).join('\n')}
+          `,
+        },
+      ]);
+      if (ignorePackageVersions) {
+        intents.splice(intents.indexOf('test'), 1);
+      }
+    }
+  }
+
+  if (intents.includes('test')) {
+    const vitestConfigFiles = await checks.vitestConfigFiles.condition(
+      { babel, findUp, fs } as any,
+      {} as any
+    );
+    if (vitestConfigFiles.type === 'incompatible') {
+      const { ignoreVitestConfigFiles } = await prompts([
+        {
+          type: 'confirm',
+          name: 'ignoreVitestConfigFiles',
+          message: dedent`
+            Cannot auto-configure Vitest. Do you want to continue without Storybook's testing features?
+            ${vitestConfigFiles.reasons.map((r) => `  - ${r}`).join('\n')}
+          `,
+        },
+      ]);
+      if (ignoreVitestConfigFiles) {
+        intents.splice(intents.indexOf('test'), 1);
+      }
+    }
+  }
 
   if (intents.includes('test')) {
     execSync(
