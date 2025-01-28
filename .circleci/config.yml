@@ -133,7 +133,7 @@ jobs:
             yarn docs:prettier:check
   build:
     executor:
-      class: xlarge
+      class: large
       name: sb_node_22_classic
     steps:
       - git-shallow-clone/checkout_advanced:
@@ -179,7 +179,7 @@ jobs:
             - .verdaccio-cache
   lint:
     executor:
-      class: large
+      class: medium+
       name: sb_node_22_classic
     steps:
       - git-shallow-clone/checkout_advanced:
@@ -195,7 +195,7 @@ jobs:
       - cancel-workflow-on-failure
   knip:
     executor:
-      class: large
+      class: medium
       name: sb_node_22_classic
     steps:
       - git-shallow-clone/checkout_advanced:
@@ -374,7 +374,7 @@ jobs:
       - report-workflow-on-failure
   chromatic-internal-storybook:
     executor:
-      class: medium+
+      class: medium
       name: sb_node_22_browsers
     environment:
       NODE_OPTIONS: --max_old_space_size=6144
@@ -535,7 +535,7 @@ jobs:
       parallelism:
         type: integer
     executor:
-      class: medium+
+      class: medium
       name: sb_playwright
     parallelism: << parameters.parallelism >>
     steps:
@@ -581,7 +581,7 @@ jobs:
       parallelism:
         type: integer
     executor:
-      class: medium
+      class: small
       name: sb_playwright
     parallelism: << parameters.parallelism >>
     steps:
