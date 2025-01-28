@@ -535,7 +535,7 @@ jobs:
       parallelism:
         type: integer
     executor:
-      class: medium
+      class: medium+
       name: sb_playwright
     parallelism: << parameters.parallelism >>
     steps:
@@ -558,7 +558,7 @@ jobs:
       parallelism:
         type: integer
     executor:
-      class: medium
+      class: medium+
       name: sb_playwright
     parallelism: << parameters.parallelism >>
     steps:
