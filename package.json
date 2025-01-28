@@ -4,6 +4,7 @@
     "ci-tests": "cd code; yarn ci-tests",
     "get-report-message": "cd scripts; yarn get-report-message",
     "get-template": "cd scripts; yarn get-template",
+    "get-sandbox-dir": "cd scripts; yarn get-sandbox-dir",
     "i": "yarn --cwd scripts && yarn --cwd code",
     "knip": "cd code; yarn knip",
     "lint": "cd code; yarn lint",
