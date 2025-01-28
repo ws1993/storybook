@@ -71,8 +71,18 @@ export async function getSyncedStorybookAddons(
           ))
       ) {
         syncedAddons.push(addon);
-        previewConfig.setImport({ namespace: annotations.importName }, annotations.importPath);
-        previewConfig.appendNodeToArray(['addons'], t.identifier(annotations.importName));
+        if (annotations.isCoreAddon) {
+          // import addonName from 'addon'; + addonName()
+          previewConfig.setImport(annotations.importName, annotations.importPath);
+          previewConfig.appendNodeToArray(
+            ['addons'],
+            t.callExpression(t.identifier(annotations.importName), [])
+          );
+        } else {
+          // import * as addonName from 'addon/preview'; + addonName
+          previewConfig.setImport({ namespace: annotations.importName }, annotations.importPath);
+          previewConfig.appendNodeToArray(['addons'], t.identifier(annotations.importName));
+        }
       }
     }
   });

@@ -274,7 +274,7 @@
     "prep": "jiti ./scripts/prep.ts"
   },
   "dependencies": {
-    "@storybook/csf": "0.1.12",
+    "@storybook/csf": "0.1.14--canary.f3da709.0",
     "@storybook/theming": "workspace:*",
     "better-opn": "^3.0.2",
     "browser-assert": "^1.2.1",

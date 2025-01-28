@@ -1,5 +1,7 @@
 import path from 'node:path';
 
+import { isCorePackage } from './cli';
+
 /**
  * Get the name of the annotations object for a given addon.
  *
@@ -18,21 +20,24 @@ export function getAnnotationsName(addonName: string): string {
     .join('')
     .replace(/^./, (char) => char.toLowerCase());
 
-  return `${cleanedUpName}Annotations`;
+  return cleanedUpName;
 }
 
 export async function getAddonAnnotations(addon: string) {
   try {
     const data = {
-      importPath: `${addon}/preview`,
+      // core addons will have a function as default export in index entrypoint
+      importPath: addon,
       importName: getAnnotationsName(addon),
+      isCoreAddon: isCorePackage(addon),
     };
-    // TODO: current workaround needed only for essentials, fix this once we change the preview entry-point for that package
-    if (addon === '@storybook/addon-essentials') {
-      data.importPath = '@storybook/addon-essentials/entry-preview';
-    } else {
-      require.resolve(path.join(addon, 'preview'));
+
+    // for backwards compatibility, if it's not a core addon we use /preview entrypoint
+    if (!data.isCoreAddon) {
+      data.importPath = `@storybook/${addon}/preview`;
     }
+
+    require.resolve(path.join(addon, 'preview'));
 
     return data;
   } catch (err) {}
