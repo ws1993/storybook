@@ -3,6 +3,10 @@ title: 'Component Story Format (CSF)'
 sidebar:
   order: 2
   title: Component Story Format (CSF)
+isTab: true
+tab:
+  order: 1
+  title: CSF 3
 ---
 
 <YouTubeCallout id="uH9_dfc-6Kc" title="Test components the EASY way | Component Story Format 3" />
@@ -272,126 +276,3 @@ Finally, CSF 3 can automatically generate titles.
 {/* prettier-ignore-end */}
 
 You can still specify a title like in CSF 2, but if you don't specify one, it can be inferred from the story's path on disk. For more information, see the section on [configuring story loading](../configure/index.mdx#configure-story-loading).
-
-<If renderer={['react']}>
-  ## CSF Factories (Experimental)
-
-  ### What are CSF Factories?
-
-  Storybook's CSF Factories adopt a new, consistent pattern, making it easier to configure addons correctly and unlocking the full potential of Storybook's features while maintaining type safety throughout your codebase. Refer to the next steps for more information on how to use it.
-
-  ### 1. Getting started
-
-  #### Codemod
-
-  <Callout variant="info" icon="💡">
-    If your story files are not using CSF3 already, please run `npx storybook migrate csf-2-to-3`.
-  </Callout>
-
-  Storybook provides codemods to help you migrate your codebase to the CSF Factory format effortlessly. Run the following command: 
-
-  ```bash
-  npx storybook automigrate csf-factories
-  ```
-
-  <Callout variant="info" icon="💡">
-    If you use a monorepo or your `.storybook` directory is not at the root, make sure to pass the `--config-dir` flag to the command, specifying its path.
-  </Callout>
-
-  This command performs the following actions:
-
-  - Adds [a subpath import](#subpath-imports-in-packagejson) in your `package.json`.
-  - Migrates `.storybook/main.js` to [the new format](#2-new-syntax-for-mainjs).
-  - Migrates `.storybook/preview.js` to [the new format](#3-new-syntax-for-previewjs).
-  - Converts all story files to [the CSF Factory format](#4-new-syntax-for-story-files).
-
-  This should get you started immediately. If you prefer a manual migration, the next sections guide you through the process.
-
-  #### Subpath imports in package.json
-
-  The new format leverages subpath imports to simplify importing constructs from the preview file. While you can still use relative path imports, subpath imports offer a more convenient and maintainable approach:
-
-  ```ts
-  // ✅ Subpath imports won't break if you move story files around
-  import preview from '#.storybook/preview';
-
-  // ❌ Relative imports will break if you move story files around
-  import preview from '../../../.storybook/preview';
-  ```
-
-  For more details, refer to the [subpath imports documentation](../writing-stories/mocking-modules#subpath-imports).
-
-  ### 2. New syntax for main.js
-
-  The `.storybook/main.js` file introduces a new utility, `defineMain`, from the framework package:
-
-  {/* prettier-ignore-start */}
-  <CodeSnippets path="csf-factories-main-example.md" />
-  {/* prettier-ignore-end */}
-
-  This utility is type-safe, automatically inferring types, eliminating the need to specify them manually like before with the `StorybookConfig` type. The changes from the previous version are minimal, as `defineMain` primarily serves as a type helper.
-
-  ### 3. New syntax for preview.js
-
-  The `.storybook/preview.js` file now uses a utility called `definePreview`, from the framework package. Like `defineMain`, it is type-safe and removes the need for manual type annotations. The biggest change is that addons must now be imported in this file. This approach ensures addon functionality while enabling type safety, such as autocompleted parameters, tags, and other annotations.
-
-  {/* prettier-ignore-start */}
-  <CodeSnippets path="csf-factories-preview-example.md" />
-  {/* prettier-ignore-end */}
-
-  This syntax allows your stories to be fully type-safe, once you use this new construct in the files. The migration is incremental, you can start using the new syntax in new files or migrate existing files to use the new format.
-
-  ### 4. New syntax for story files
-
-  Story files have been updated for improved usability. With the new format:
-
-  - Import the preview construct from the Storybook preview file;
-  - The meta object is now created via `preview.meta({})` and does not have to be exported as a default export;
-  - Stories are now created from the meta object, via `meta.story({})`.
-
-  {/* prettier-ignore-start */}
-  <CodeSnippets path="csf-factories-story-example.md" />
-  {/* prettier-ignore-end */}
-
-  #### 4.1 Reusing properties (`Story.input.xyz`)
-
-  Previously, story properties such as `Story.args` or `Story.parameters` were accessed directly. While accessing them like this is still supported, it is now deprecated. All of the story properties are now part of a new property called `composed` and should be accessed from that property instead, for instance `Story.composed.args` or `Story.composed.parameters`.
-
-  {/* prettier-ignore-start */}
-  <CodeSnippets path="csf-factories-story-input-example.md" />
-  {/* prettier-ignore-end */}
-
-  #### 5. Reusing stories in test files
-
-  [Storybook's Test addon](../writing-tests/test-addon.mdx) allows you to test your components directly inside Storybook. All of the stories are automatically turned into Vitest tests, so the integration is seamless in your testing suite.
-
-  If you, however, are not using Vitest or if your Storybook is not Vite-based, you can still reuse the stories in your test files. 
-  
-  The `Story` object encapsulates everything you need to render a story in your test files. It provides a `run` method that will mount the story component as well as run all of the Storybook hooks and decorators, including the [play function](../writing-stories/play-function).
-  
-  Here's an example of how you can reuse a story in a test file using the run method:
-
-  {/* prettier-ignore-start */}
-  <CodeSnippets path="portable-stories-csf-factory-run.md" />
-  {/* prettier-ignore-end */}
-
-  The `Story` object also provides a `Component` property in case you want to render it using another method of your choosing, for instance, with [Testing Library](https://testing-library.com/). You also have access to its composed properties (args, parameters, etc.) via the `composed` property.
-
-  Here's an example of how you can reuse a story in a test file by rendering its component:
-
-  {/* prettier-ignore-start */}
-  <CodeSnippets path="portable-stories-csf-factory-render.md" />
-  {/* prettier-ignore-end */}
-
-  ### Frequently asked questions (FAQ)
-
-  #### Will I have to migrate all of my stories to this new format?
-
-  Storybook supports all the previous formats (CSF1, 2, and 3) and will continue supporting them for the foreseeable future. While using the CSF Factory format, you can still use the older formats, as long as they are not mixed in the same file.
-
-  If you want to migrate your existing files to the new format, refer to [the codemod section](#codemod) above.
-
-  #### How can I know more about this format and provide feedback?
-
-  For more information on the original proposal of this experimental format, refer to its [RFC on GitHub](https://github.com/storybookjs/storybook/discussions/30112).
-</If>
