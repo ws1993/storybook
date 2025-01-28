@@ -260,7 +260,7 @@ jobs:
       - cancel-workflow-on-failure
   check:
     executor:
-      class: medium
+      class: large
       name: sb_node_22_classic
     steps:
       - git-shallow-clone/checkout_advanced:
@@ -599,7 +599,7 @@ jobs:
           template: $(yarn get-template --cadence << pipeline.parameters.workflow >> --task bench)
   test-empty-init:
     executor:
-      class: medium
+      class: small
       name: sb_node_22_browsers
     parameters:
       packageManager:
