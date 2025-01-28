@@ -1,5 +1,6 @@
 import type { ChannelHandler } from '@storybook/core/channels';
 import { Channel, HEARTBEAT_INTERVAL } from '@storybook/core/channels';
+import { __setUniversalStoreChannel } from '@storybook/core/common';
 
 import { isJSON, parse, stringify } from 'telejson';
 import WebSocket, { WebSocketServer } from 'ws';
@@ -91,7 +92,10 @@ export class ServerChannelTransport {
 export function getServerChannel(server: Server) {
   const transports = [new ServerChannelTransport(server)];
 
-  return new Channel({ transports, async: true });
+  const channel = new Channel({ transports, async: true });
+  __setUniversalStoreChannel(channel);
+
+  return channel;
 }
 
 // for backwards compatibility

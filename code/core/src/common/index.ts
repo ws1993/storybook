@@ -46,3 +46,8 @@ export * from './js-package-manager';
 export { versions };
 
 export { createFileSystemCache } from './utils/file-cache';
+
+export {
+  UniversalStore,
+  __setChannel as __setUniversalStoreChannel,
+} from './utils/universal-store';
