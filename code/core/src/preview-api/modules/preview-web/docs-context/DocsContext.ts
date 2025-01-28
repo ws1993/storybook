@@ -13,7 +13,7 @@ import type {
 
 import { dedent } from 'ts-dedent';
 
-import type { StoryStore } from '../../store';
+import { type StoryStore, isCsfFactory } from '../../store';
 import type { DocsContextProps } from './DocsContextProps';
 
 export class DocsContext<TRenderer extends Renderer> implements DocsContextProps<TRenderer> {
@@ -163,7 +163,8 @@ export class DocsContext<TRenderer extends Renderer> implements DocsContextProps
     }
 
     const story = this.exportToStory.get(
-      'isCSFFactory' in moduleExportOrType ? moduleExportOrType.input : moduleExportOrType
+      // TODO: @kasperpeulen will fix this once csf factory types are defined
+      isCsfFactory(moduleExportOrType) ? (moduleExportOrType as any).input : moduleExportOrType
     );
 
     if (story) {
