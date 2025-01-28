@@ -107,7 +107,7 @@ commands:
 jobs:
   pretty-docs:
     executor:
-      class: medium
+      class: small
       name: sb_node_22_classic
     steps:
       - git-shallow-clone/checkout_advanced:
@@ -260,7 +260,7 @@ jobs:
       - cancel-workflow-on-failure
   check:
     executor:
-      class: xlarge
+      class: medium
       name: sb_node_22_classic
     steps:
       - git-shallow-clone/checkout_advanced:
