@@ -314,7 +314,7 @@ jobs:
       - cancel-workflow-on-failure
   unit-tests:
     executor:
-      class: xlarge
+      class: medium+
       name: sb_playwright
     parallelism: 4
     steps:
