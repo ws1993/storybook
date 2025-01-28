@@ -268,7 +268,7 @@ jobs:
       - nx/set-shas:
           main-branch-name: "next"
           workflow-name: << pipeline.parameters.workflow >>
-     - restore_cache:
+      - restore_cache:
           name: Restore Yarn cache
           keys:
             - build-yarn-2-cache-v4--{{ checksum "code/yarn.lock" }}--{{ checksum "scripts/yarn.lock" }}
@@ -415,6 +415,7 @@ jobs:
             if [[ $TEMPLATE != bench/* ]]; then
               yarn --cwd scripts jiti ./event-log-checker.ts build $TEMPLATE
             fi
+            cd sandbox/$TEMPLATE && rm -rf node_modules
           environment:
             STORYBOOK_TELEMETRY_URL: "http://localhost:6007/event-log"
       - report-workflow-on-failure:
@@ -422,8 +423,7 @@ jobs:
       - persist_to_workspace:
           root: .
           paths:
-            - sandbox
-            - !sandbox/**/node_modules
+            - sandbox/**
       - store_test_results:
           path: test-results
   smoke-test-sandboxes:
@@ -451,7 +451,7 @@ jobs:
       parallelism:
         type: integer
     executor:
-      class: large
+      class: medium+
       name: sb_playwright
     parallelism: << parameters.parallelism >>
     steps:
@@ -475,7 +475,7 @@ jobs:
       parallelism:
         type: integer
     executor:
-      class: xlarge
+      class: medium+
       name: sb_playwright
     parallelism: << parameters.parallelism >>
     steps:
