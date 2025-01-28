@@ -360,6 +360,54 @@ export async function doInitiate(options: CommandOptions): Promise<
     }
   }
 
+  if (intents.includes('test')) {
+    const packageVersions = await checks.packageVersions.condition(
+      { packageManager } as any,
+      {} as any
+    );
+    if (packageVersions.type === 'incompatible') {
+      const { ignorePackageVersions } = await prompts([
+        {
+          type: 'confirm',
+          name: 'ignorePackageVersions',
+          message: dedent`
+            ${packageVersions.reasons.join('\n')}
+            Do you want to continue without Storybook's testing features?
+          `,
+        },
+      ]);
+      if (ignorePackageVersions) {
+        intents.splice(intents.indexOf('test'), 1);
+      } else {
+        process.exit(0);
+      }
+    }
+  }
+
+  if (intents.includes('test')) {
+    const vitestConfigFiles = await checks.vitestConfigFiles.condition(
+      { babel, findUp, fs } as any,
+      { directory: process.cwd() } as any
+    );
+    if (vitestConfigFiles.type === 'incompatible') {
+      const { ignoreVitestConfigFiles } = await prompts([
+        {
+          type: 'confirm',
+          name: 'ignoreVitestConfigFiles',
+          message: dedent`
+            ${vitestConfigFiles.reasons.join('\n')}
+            Do you want to continue without Storybook's testing features?
+          `,
+        },
+      ]);
+      if (ignoreVitestConfigFiles) {
+        intents.splice(intents.indexOf('test'), 1);
+      } else {
+        process.exit(0);
+      }
+    }
+  }
+
   if (!options.skipInstall) {
     await packageManager.installDependencies();
   }
@@ -416,53 +464,12 @@ export async function doInitiate(options: CommandOptions): Promise<
       : packageManager.getRunStorybookCommand();
 
   if (intents.includes('test')) {
-    const packageVersions = await checks.packageVersions.condition(
-      { packageManager } as any,
-      {} as any
+    logger.log(
+      `> npx sb add @storybook/experimental-addon-test@${versions['@storybook/experimental-addon-test']}`
     );
-    if (packageVersions.type === 'incompatible') {
-      const { ignorePackageVersions } = await prompts([
-        {
-          type: 'confirm',
-          name: 'ignorePackageVersions',
-          message: dedent`
-            Found incompatible packages in your project. Do you want to continue without Storybook's testing features?
-            ${packageVersions.reasons.map((r) => `  - ${r}`).join('\n')}
-          `,
-        },
-      ]);
-      if (ignorePackageVersions) {
-        intents.splice(intents.indexOf('test'), 1);
-      }
-    }
-  }
-
-  if (intents.includes('test')) {
-    const vitestConfigFiles = await checks.vitestConfigFiles.condition(
-      { babel, findUp, fs } as any,
-      {} as any
-    );
-    if (vitestConfigFiles.type === 'incompatible') {
-      const { ignoreVitestConfigFiles } = await prompts([
-        {
-          type: 'confirm',
-          name: 'ignoreVitestConfigFiles',
-          message: dedent`
-            Cannot auto-configure Vitest. Do you want to continue without Storybook's testing features?
-            ${vitestConfigFiles.reasons.map((r) => `  - ${r}`).join('\n')}
-          `,
-        },
-      ]);
-      if (ignoreVitestConfigFiles) {
-        intents.splice(intents.indexOf('test'), 1);
-      }
-    }
-  }
-
-  if (intents.includes('test')) {
     execSync(
       `npx sb add @storybook/experimental-addon-test@${versions['@storybook/experimental-addon-test']}`,
-      { cwd: process.cwd() }
+      { cwd: process.cwd(), stdio: 'inherit' }
     );
   }
 
