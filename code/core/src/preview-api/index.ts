@@ -59,7 +59,13 @@ export {
   normalizeProjectAnnotations,
 } from './store';
 
-export { createPlaywrightTest } from './modules/store/csf/portable-stories';
+/** CSF API */
+export {
+  createPlaywrightTest,
+  getCsfFactoryPreview,
+  getCsfFactoryAnnotations,
+  isCsfFactory,
+} from './modules/store/csf';
 
 export type { PropDescriptor } from './store';
 
