@@ -77,17 +77,17 @@ export async function storyToCsfFactory(info: FileInfo) {
     let init = t.isVariableDeclarator(declarator) ? declarator.init : undefined;
 
     if (t.isIdentifier(id) && init) {
+      // Remove type annotations e.g. A<B> in `const Story: A<B> = {};`
+      if (id.typeAnnotation) {
+        id.typeAnnotation = null;
+      }
+
+      // Remove type annotations e.g. A<B> in `const Story = {} satisfies A<B>;`
       if (t.isTSSatisfiesExpression(init) || t.isTSAsExpression(init)) {
         init = init.expression;
       }
 
       if (t.isObjectExpression(init)) {
-        const typeAnnotation = id.typeAnnotation;
-        // Remove type annotation as it's now inferred
-        if (typeAnnotation) {
-          id.typeAnnotation = null;
-        }
-
         // Wrap the object in `meta.story()`
         declarator.init = t.callExpression(
           t.memberExpression(t.identifier(metaVariableName), t.identifier('story')),
@@ -161,7 +161,7 @@ export async function storyToCsfFactory(info: FileInfo) {
           // This is a tough one to support, we just skip for now.
           // Relates to `Stories.Story.args` where Stories is coming from another file. We can't know whether it should be transformed or not.
           if (err.message.includes(`instead got "MemberExpression"`)) {
-            console.log({ path });
+            return;
           } else {
             throw err;
           }
