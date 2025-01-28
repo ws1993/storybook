@@ -419,7 +419,7 @@ jobs:
             yarn task --task sandbox --template $TEMPLATE --no-link --start-from=never --junit
             yarn task --task build --template $TEMPLATE --no-link --start-from=never --junit
             if [[ $TEMPLATE != bench/* ]]; then
-              yarn jiti ./event-log-checker.ts build $TEMPLATE --cwd scripts
+              yarn --cwd scripts jiti ./event-log-checker.ts build $TEMPLATE
             fi
           environment:
             STORYBOOK_TELEMETRY_URL: "http://localhost:6007/event-log"
