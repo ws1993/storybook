@@ -463,7 +463,7 @@ jobs:
           name: Install sandbox dependencies
           command: |
             TEMPLATE=$(yarn get-template --cadence << pipeline.parameters.workflow >> --task test-runner)
-            cd sandbox/$TEMPLATE && yarn
+            cd sandbox/$(yarn get-sandbox-dir --template $TEMPLATE) && yarn
       - run:
           name: Running Test Runner
           command: yarn task --task test-runner --template $(yarn get-template --cadence << pipeline.parameters.workflow >> --task test-runner) --no-link --start-from=never --junit
@@ -488,7 +488,7 @@ jobs:
           name: Install sandbox dependencies
           command: |
             TEMPLATE=$(yarn get-template --cadence << pipeline.parameters.workflow >> --task vitest-integration)
-            cd sandbox/$TEMPLATE && yarn
+            cd sandbox/$(yarn get-sandbox-dir --template $TEMPLATE) && yarn
       - run:
           name: Running story tests in Vitest
           command: yarn task --task vitest-integration --template $(yarn get-template --cadence << pipeline.parameters.workflow >> --task vitest-integration) --no-link --start-from=never --junit
@@ -532,7 +532,7 @@ jobs:
           name: Install sandbox dependencies
           command: |
             TEMPLATE=$(yarn get-template --cadence << pipeline.parameters.workflow >> --task chromatic)
-            cd sandbox/$TEMPLATE && yarn
+            cd sandbox/$(yarn get-sandbox-dir --template $TEMPLATE) && yarn
       - run:
           name: Running Chromatic
           command: yarn task --task chromatic --template $(yarn get-template --cadence << pipeline.parameters.workflow >> --task chromatic) --no-link --start-from=never --junit
@@ -557,7 +557,7 @@ jobs:
           name: Install sandbox dependencies
           command: |
             TEMPLATE=$(yarn get-template --cadence << pipeline.parameters.workflow >> --task e2e-tests)
-            cd sandbox/$TEMPLATE && yarn
+            cd sandbox/$(yarn get-sandbox-dir --template $TEMPLATE) && yarn
       - run:
           name: Running E2E Tests
           command: yarn task --task e2e-tests --template $(yarn get-template --cadence << pipeline.parameters.workflow >> --task e2e-tests) --no-link --start-from=never --junit
@@ -585,7 +585,7 @@ jobs:
           name: Install sandbox dependencies
           command: |
             TEMPLATE=$(yarn get-template --cadence << pipeline.parameters.workflow >> --task e2e-tests-dev)
-            cd sandbox/$TEMPLATE && yarn
+            cd sandbox/$(yarn get-sandbox-dir --template $TEMPLATE) && yarn
       - run:
           name: Running E2E Tests
           command: yarn task --task e2e-tests-dev --template $(yarn get-template --cadence << pipeline.parameters.workflow >> --task e2e-tests-dev) --no-link --start-from=never --junit
@@ -613,7 +613,7 @@ jobs:
           name: Install sandbox dependencies
           command: |
             TEMPLATE=$(yarn get-template --cadence << pipeline.parameters.workflow >> --task bench)
-            cd sandbox/$TEMPLATE && yarn
+            cd sandbox/$(yarn get-sandbox-dir --template $TEMPLATE) && yarn
       - run:
           name: Running Bench
           command: yarn task --task bench --template $(yarn get-template --cadence << pipeline.parameters.workflow >> --task bench) --no-link --start-from=never --junit
