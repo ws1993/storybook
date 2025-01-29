@@ -43,8 +43,5 @@ export type StoreOptions<TState> = {
   leader?: boolean;
   // TODO: Make leader required when initialState is set
   initialState?: TState;
-  validateStateChange?: (event: {
-    payload: TState;
-    previousState: TState;
-  }) => { message: string } | void | undefined;
+  debug?: boolean;
 };

@@ -1,4 +1,3 @@
-import invariant from 'tiny-invariant';
 import dedent from 'ts-dedent';
 
 import { instances } from './instances';
@@ -7,6 +6,7 @@ import type {
   ChannelLike,
   Event,
   EventInfo,
+  ExistingStateResponseEvent,
   Listener,
   SetStateEvent,
   StateUpdater,
@@ -86,7 +86,7 @@ export class UniversalStore<State, CustomEvent extends { type: string; payload?:
    * @readonly
    */
   static readonly Environment = {
-    SERVER: 'SERVE',
+    SERVER: 'SERVER',
     MANAGER: 'MANAGER',
     PREVIEW: 'PREVIEW',
   } as const;
@@ -104,77 +104,90 @@ export class UniversalStore<State, CustomEvent extends { type: string; payload?:
 
   /** The current environment the UniversalStore is in */
   static get currentEnvironment() {
-    invariant(
-      this.#environment,
-      `Cannot read currentEnvironment from UniversalStore before Storybook has prepared the environment for it.`
-    );
-    return this.#environment;
+    if (!this.environment) {
+      throw new TypeError(
+        'Cannot read currentEnvironment from UniversalStore before Storybook has prepared the environment for it.'
+      );
+    }
+    return this.environment;
   }
 
   // Private field to check if constructor was called from the static factory create()
-  static #isInternalConstructing = false;
+  static isInternalConstructing = false;
 
   // Private field to store the channel instance for the current environment
-  static #channel: ChannelLike;
+  static channel: ChannelLike;
 
   // Private field to store the current environment
-  static #environment: (typeof UniversalStore.Environment)[keyof typeof UniversalStore.Environment];
+  static environment: (typeof UniversalStore.Environment)[keyof typeof UniversalStore.Environment];
+
+  /** Enable debug logs for this store */
+  public debugging = false;
 
   /** The actor object representing the store instance with a unique ID and a type */
   readonly actor: Actor;
 
-  #channelEventName: string;
+  private channelEventName: string;
 
-  #state: State;
+  private state: State;
 
   // TODO: narrow type of listeners based on event type
-  #listeners: Map<string, Set<Listener<Event<State, CustomEvent>>>> = new Map([['*', new Set()]]);
+  private listeners: Map<string, Set<Listener<Event<State, CustomEvent>>>> = new Map([
+    ['*', new Set()],
+  ]);
 
-  #id: string;
+  private id: string;
 
   private constructor(options: StoreOptions<State>) {
+    this.debugging = options.debug ?? false;
     // This constructor is a simulated private constructor as described in
     // it can only be called from within the static factory method create()
-    // See: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Classes/Private_properties#simulating_private_constructors
-    invariant(
-      UniversalStore.#isInternalConstructing,
-      'UniversalStore is not constructable - use UniversalStore.create() instead'
-    );
-    UniversalStore.#isInternalConstructing = false;
+    // See: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Classes/Private_propertiessimulating_private_constructors
+    if (!UniversalStore.isInternalConstructing) {
+      throw new TypeError(
+        'UniversalStore is not constructable - use UniversalStore.create() instead'
+      );
+    }
+    UniversalStore.isInternalConstructing = false;
 
-    invariant(
-      typeof options?.initialState === 'undefined' || options?.leader === true,
-      `setting initialState requires that leader is also true, when creating a UniversalStore. id: '${options.id}'`
-    );
+    if (!options.leader && typeof options.initialState !== 'undefined') {
+      throw new TypeError(
+        `setting initialState requires that leader is also true, when creating a UniversalStore. id: '${options.id}'`
+      );
+    }
 
-    invariant(
-      UniversalStore.#channel,
-      `UniversalStore with id ${options.id} was created before Storybook had prepared the environment for it, which is not allowed.`
-    );
+    if (!UniversalStore.channel) {
+      throw new TypeError(
+        `UniversalStore with id ${options.id} was created before Storybook had prepared the environment for it, which is not allowed.`
+      );
+    }
 
-    this.#id = options.id;
+    this.id = options.id;
     this.actor = {
       id: crypto.randomUUID(),
       type: options.leader ? UniversalStore.ActorType.LEADER : UniversalStore.ActorType.FOLLOWER,
     };
-    this.#state = options.initialState as State;
-    this.#channelEventName = `${CHANNEL_EVENT_PREFIX}${this.#id}`;
-    UniversalStore.#channel.on(this.#channelEventName, this.#handleChannelEvents);
+    this.state = options.initialState as State;
+    this.channelEventName = `${CHANNEL_EVENT_PREFIX}${this.id}`;
+
+    this.debug('constructor', { options, channelEventName: this.channelEventName });
+
+    debugger;
+    UniversalStore.channel.on(this.channelEventName, this.handleChannelEvents);
     if (this.actor.type === UniversalStore.ActorType.FOLLOWER) {
       // 1. Emit a request for the existing state
-      this.#emitToChannel({
+      this.emitToChannel({
         type: UniversalStore.InternalEventTypes.EXISTING_STATE_REQUEST,
       });
       // 2. Wait 1 sec for a response, then throw if no state was found
       setTimeout(() => {
-        invariant(
-          this.#state !== undefined,
-          `No existing state found for follower with id: '${options.id}'. Make sure a leader with the same id exists before creating a follower.`
-        );
+        if (this.state === undefined) {
+          throw new TypeError(
+            `No existing state found for follower with id: '${options.id}'. Make sure a leader with the same id exists before creating a follower.`
+          );
+        }
       }, 1000);
     }
-
-    // this.#validateStateChange = options.validateStateChange;
   }
 
   /**
@@ -190,10 +203,16 @@ export class UniversalStore<State, CustomEvent extends { type: string; payload?:
     State = any,
     CustomEvent extends { type: string; payload?: any } = { type: string; payload?: any },
   >(options: StoreOptions<State>): UniversalStore<State, CustomEvent> {
-    invariant(
-      typeof options?.id === 'string',
-      'id is required and must be a string, when creating a UniversalStore'
-    );
+    if (options.debug) {
+      console.log(
+        dedent`[UniversalStore:${UniversalStore.currentEnvironment}]
+        create`,
+        { options }
+      );
+    }
+    if (typeof options?.id !== 'string') {
+      throw new TypeError('id is required and must be a string, when creating a UniversalStore');
+    }
 
     const existing = instances.get(options.id);
     if (existing) {
@@ -202,7 +221,7 @@ export class UniversalStore<State, CustomEvent extends { type: string; payload?:
       return existing;
     }
 
-    UniversalStore.#isInternalConstructing = true;
+    UniversalStore.isInternalConstructing = true;
     const store = new UniversalStore<State, CustomEvent>(options);
     instances.set(options.id, store);
     return store;
@@ -218,8 +237,9 @@ export class UniversalStore<State, CustomEvent extends { type: string; payload?:
     channel: ChannelLike,
     environment: (typeof UniversalStore.Environment)[keyof typeof UniversalStore.Environment]
   ) {
-    UniversalStore.#channel = channel;
-    UniversalStore.#environment = environment;
+    console.log('LOG: __prepare', { channel, environment });
+    UniversalStore.channel = channel;
+    UniversalStore.environment = environment;
   }
 
   /**
@@ -228,7 +248,8 @@ export class UniversalStore<State, CustomEvent extends { type: string; payload?:
    * @returns {State} The current state
    */
   public getState(): State {
-    return this.#state;
+    this.debug('getState', { state: this.state });
+    return this.state;
   }
 
   /**
@@ -237,11 +258,13 @@ export class UniversalStore<State, CustomEvent extends { type: string; payload?:
    * @param {State | StateUpdater<State>} updater New state or state updater function
    */
   public setState(updater: State | StateUpdater<State>) {
-    const previousState = this.#state;
+    const previousState = this.state;
     const newState =
       typeof updater === 'function' ? (updater as StateUpdater<State>)(previousState) : updater;
 
-    this.#state = newState;
+    this.debug('setState', { newState, previousState, updater });
+
+    this.state = newState;
     const event = {
       type: UniversalStore.InternalEventTypes.SET_STATE,
       payload: {
@@ -249,8 +272,8 @@ export class UniversalStore<State, CustomEvent extends { type: string; payload?:
         previousState,
       },
     };
-    this.#emitToChannel(event);
-    this.#emitToListeners(event);
+    this.emitToChannel(event);
+    this.emitToListeners(event);
   }
 
   /**
@@ -278,20 +301,28 @@ export class UniversalStore<State, CustomEvent extends { type: string; payload?:
 
     const eventType = subscribesToAllEvents ? '*' : eventTypeOrListener;
     const listener = subscribesToAllEvents ? eventTypeOrListener : maybeListener;
-    invariant(listener, 'Missing first subscribe argument, or second if first is the event type');
 
-    if (!this.#listeners.has(eventType)) {
-      this.#listeners.set(eventType, new Set());
+    this.debug('subscribe', { eventType, listener });
+
+    if (!listener) {
+      throw new TypeError(
+        `Missing first subscribe argument, or second if first is the event type, when subscribing to a UniversalStore with id '${this.id}'`
+      );
     }
-    this.#listeners.get(eventType)!.add(listener);
+
+    if (!this.listeners.has(eventType)) {
+      this.listeners.set(eventType, new Set());
+    }
+    this.listeners.get(eventType)!.add(listener);
 
     return () => {
-      if (!this.#listeners.has(eventType)) {
+      this.debug('unsubscribe', { eventType, listener });
+      if (!this.listeners.has(eventType)) {
         return;
       }
-      this.#listeners.get(eventType)!.delete(listener);
-      if (this.#listeners.get(eventType)?.size === 0) {
-        this.#listeners.delete(eventType);
+      this.listeners.get(eventType)!.delete(listener);
+      if (this.listeners.get(eventType)?.size === 0) {
+        this.listeners.delete(eventType);
       }
     };
   }
@@ -305,6 +336,7 @@ export class UniversalStore<State, CustomEvent extends { type: string; payload?:
   public onStateChange(
     listener: (state: State, previousState: State, eventInfo: EventInfo) => void
   ) {
+    this.debug('onStateChange', { listener });
     return this.subscribe<SetStateEvent<State>>(
       UniversalStore.InternalEventTypes.SET_STATE,
       ({ payload }, eventInfo) => {
@@ -319,28 +351,39 @@ export class UniversalStore<State, CustomEvent extends { type: string; payload?:
    * @param {CustomEvent} event The event to send
    */
   public send(event: CustomEvent) {
-    this.#emitToListeners(event);
-    this.#emitToChannel(event);
+    this.debug('send', { event });
+    this.emitToListeners(event);
+    this.emitToChannel(event);
   }
 
-  #emitToListeners = (event: any, extraEventInfo?: any) => {
-    const emit = (listener: Listener<CustomEvent>) =>
-      listener(event, { ...extraEventInfo, actor: this.actor });
+  private emitToListeners = (event: any) => {
+    const emit = (listener: Listener<CustomEvent>) => listener(event, { actor: this.actor });
 
-    this.#listeners.get(event.type)?.forEach(emit);
-    this.#listeners.get('*')?.forEach(emit);
+    const eventTypeListeners = this.listeners.get(event.type);
+    const everythingListeners = this.listeners.get('*');
+    this.debug('emitToListeners', {
+      event,
+      eventTypeListeners,
+      everythingListeners,
+    });
+
+    eventTypeListeners?.forEach(emit);
+    everythingListeners?.forEach(emit);
   };
 
-  #emitToChannel = (event: any) => {
-    UniversalStore.#channel.emit(this.#channelEventName, {
+  private emitToChannel = (event: any) => {
+    this.debug('emitToChannel', { event });
+    UniversalStore.channel.emit(this.channelEventName, {
       ...event,
       actor: this.actor,
     });
   };
 
-  #handleChannelEvents = (event: any) => {
+  private handleChannelEvents = (event: any) => {
+    this.debug('handleChannelEvents', { event });
     if ([event.actor.id, event.originalActor?.id].includes(this.actor.id)) {
       // Ignore events from self
+      this.debug('handleChannelEvents: ignoring self', { selfActorId: this.actor.id, event });
       return;
     }
 
@@ -351,15 +394,20 @@ export class UniversalStore<State, CustomEvent extends { type: string; payload?:
           // No need to forward request events
           shouldForwardEvent = false;
           // Respond by emitting an event with the existing state
-          this.#emitToChannel({
+          const responseEvent: ExistingStateResponseEvent<State> = {
             type: UniversalStore.InternalEventTypes.EXISTING_STATE_RESPONSE,
-            payload: this.#state,
+            payload: this.state,
+          };
+          this.debug('handleChannelEvents: responding to existing state request', {
+            responseEvent,
           });
+          this.emitToChannel(responseEvent);
           break;
       }
       if (shouldForwardEvent) {
         // Forward the event to followers in other environments
-        this.#emitToChannel({ ...event, originalActor: event.actor });
+        this.debug('handleChannelEvents: forwarding event', { event });
+        this.emitToChannel({ ...event, originalActor: event.actor });
       }
     }
     if (this.actor.type === UniversalStore.ActorType.FOLLOWER) {
@@ -367,8 +415,11 @@ export class UniversalStore<State, CustomEvent extends { type: string; payload?:
         case UniversalStore.InternalEventTypes.EXISTING_STATE_RESPONSE:
           // TODO: always handle this event, or only the first time?
           // should we _always_ change the state, or only when undefined?
-          if (this.#state === undefined) {
-            this.#state = event.payload;
+          if (this.state === undefined) {
+            this.debug('handleChannelEvents: setting state from existing state response', {
+              event,
+            });
+            this.state = event.payload;
           }
           break;
       }
@@ -377,8 +428,23 @@ export class UniversalStore<State, CustomEvent extends { type: string; payload?:
     switch (event.type) {
       // TOOD: Do we need to care about the actor type here?
       case UniversalStore.InternalEventTypes.SET_STATE:
-        this.#state = event.payload.state;
+        this.debug('handleChannelEvents: setting state', { event });
+        this.state = event.payload.state;
         break;
+    }
+  };
+
+  private debug = (message: string, data?: any) => {
+    if (this.debugging) {
+      console.debug(
+        dedent`[UniversalStore::${this.id}::${UniversalStore.currentEnvironment}]
+        ${message}`,
+        data,
+        {
+          actor: this.actor,
+          state: this.state,
+        }
+      );
     }
   };
 }
