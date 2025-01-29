@@ -289,7 +289,7 @@ export async function doInitiate(options: CommandOptions): Promise<
 
   let intents: string[] = [];
   // if TTY or CI is not set, we can't prompt the user
-  if (!process.stdout.isTTY || process.env.CI) {
+  if (!process.stdout.isTTY && !process.env.CI) {
     const out = await prompts({
       type: 'multiselect',
       name: 'intents',
