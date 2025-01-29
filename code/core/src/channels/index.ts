@@ -47,7 +47,7 @@ export function createBrowserChannel({ page, extraTransports = [] }: Options): C
     page === 'manager' ? UniversalStore.Environment.MANAGER : UniversalStore.Environment.PREVIEW
   );
 
-  return new Channel({ transports });
+  return channel;
 }
 
 export type { Listener, ChannelEvent, ChannelTransport, ChannelHandler } from './types';
