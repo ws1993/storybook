@@ -470,14 +470,16 @@ export async function doInitiate(options: CommandOptions): Promise<
       ? `ng run ${installResult.projectName}:storybook`
       : packageManager.getRunStorybookCommand();
 
-  if (intents.includes('test')) {
-    logger.log(
-      `> npx sb add @storybook/experimental-addon-test@${versions['@storybook/experimental-addon-test']}`
-    );
-    execSync(
-      `npx sb add @storybook/experimental-addon-test@${versions['@storybook/experimental-addon-test']}`,
-      { cwd: process.cwd(), stdio: 'inherit' }
-    );
+  if (!process.stdout.isTTY && !process.env.CI) {
+    if (intents.includes('test')) {
+      logger.log(
+        `> npx sb add @storybook/experimental-addon-test@${versions['@storybook/experimental-addon-test']}`
+      );
+      execSync(
+        `npx sb add @storybook/experimental-addon-test@${versions['@storybook/experimental-addon-test']}`,
+        { cwd: process.cwd(), stdio: 'inherit' }
+      );
+    }
   }
 
   logger.log(
