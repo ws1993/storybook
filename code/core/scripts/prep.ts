@@ -126,16 +126,7 @@ async function run() {
       platform: 'neutral',
       mainFields: ['main', 'module', 'node'],
       conditions: ['node', 'module', 'import', 'require'],
-      plugins: [
-        replacePlugin({
-          include: sep === '/' ? /node_modules\/ink/ : /node_modules\\ink/,
-          pattern: [
-            //
-            [`process.env['DEV']`, `'false'`],
-            [`await import('./devtools.js')`, ''],
-          ],
-        }) as any as EsbuildPlugin,
-      ],
+      plugins: [],
       define: {
         'process.env.NODE_ENV': '"production"',
         'process.env.DEV': '"false"',

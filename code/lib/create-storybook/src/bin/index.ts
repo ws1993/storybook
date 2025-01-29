@@ -1,4 +1,3 @@
-/* eslint-disable no-underscore-dangle */
 import { addToGlobalContext } from 'storybook/internal/telemetry';
 
 import { program } from 'commander';
@@ -6,7 +5,6 @@ import { program } from 'commander';
 import { version } from '../../package.json';
 import type { CommandOptions } from '../generators/types';
 import { initiate } from '../initiate';
-import { modernInputs } from './modernInputs';
 
 const IS_NON_CI = process.env.CI !== 'true';
 const IS_NON_STORYBOOK_SANDBOX = process.env.IN_STORYBOOK_SANDBOX !== 'true';
@@ -20,45 +18,8 @@ addToGlobalContext('cliVersion', version);
  * the legacy version of the app.
  */
 
-const createStorybookProgram = program.name('Initialize Storybook into your project.');
-
-const modernProgram = Object.entries(modernInputs.shape).reduce((acc, [key, schema]) => {
-  // @ts-expect-error (Object.entries loses type information)
-  const { innerType, defaultValue, description } = schema._def;
-  let t = innerType;
-
-  // @ts-expect-error (Object.entries loses type information)
-  while (t._def.innerType) {
-    // @ts-expect-error (Object.entries loses type information)
-    t = t._def.innerType;
-  }
-
-  const { typeName } = t._def;
-  const value = defaultValue ? defaultValue() : undefined;
-
-  // to dash-case
-  const flag = key
-    .split(/(?=[A-Z])/)
-    .join('-')
-    .toLowerCase();
-
-  if (typeName.match('Array')) {
-    acc.option(`--${flag} <options...>`, description, value);
-  } else if (typeName.match('String')) {
-    acc.option(`--${flag} <option>`, description, value);
-  } else if (typeName.match('Enum')) {
-    acc.option(`--${flag} <option>`, description, value);
-  } else if (typeName.match('Boolean')) {
-    acc.option(`--${flag}`, description, value);
-    if (!key.includes('ignore')) {
-      acc.option(`--no-${flag}`, `inverted --${flag}`);
-    }
-  }
-
-  return acc;
-}, createStorybookProgram);
-
-const legacyProgram = modernProgram
+const createStorybookProgram = program
+  .name('Initialize Storybook into your project.')
   .option(
     '--disable-telemetry',
     'Disable sending telemetry data',
@@ -90,28 +51,14 @@ const legacyProgram = modernProgram
     'Complete the initialization of Storybook without launching the Storybook development server'
   );
 
-legacyProgram
+createStorybookProgram
   .action(async (options) => {
     // const d = modernInputs.safeParse(options);
 
-    // if (d.success) {
-    //   // modern CLI app
-    //   const { run } = await import('../ink/app');
-    //   await run(d.data);
-    // } else if (d.error) {
-    //   if (d.error.errors.some((e) => e.code === 'unrecognized_keys')) {
-    //     // legacy CLI app
     options.debug = options.debug ?? false;
     options.dev = options.dev ?? (IS_NON_CI && IS_NON_STORYBOOK_SANDBOX);
 
     await initiate(options as CommandOptions).catch(() => process.exit(1));
-    // } else {
-    //   for (const e of d.error.errors) {
-    //     console.error('invalid input for: --' + e.path.join('.'));
-    //     console.log(e.message);
-    //   }
-    // }
-    // }
   })
   .version(String(version))
   .parse(process.argv);

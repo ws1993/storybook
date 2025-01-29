@@ -47,7 +47,6 @@ export type CommandOptions = {
   type?: ProjectType;
   force?: any;
   html?: boolean;
-  ink?: boolean;
   skipInstall?: boolean;
   parser?: string;
   // Automatically answer yes to prompts

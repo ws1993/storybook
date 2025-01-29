@@ -1,12 +1,10 @@
-import React from 'react';
-
-import { Spinner } from '@inkjs/ui';
-import figureSet from 'figures';
-import { Box, Text } from 'ink';
-import { coerce, satisfies } from 'semver';
-
-import { ACTIONS } from '..';
-import { Confirm } from '../../components/Confirm';
+// import React from 'react';
+// import { Spinner } from '@inkjs/ui';
+// import figureSet from 'figures';
+// import { Box, Text } from 'ink';
+// import { coerce, satisfies } from 'semver';
+// import { ACTIONS } from '..';
+// import { Confirm } from '../../components/Confirm';
 import { type Check, CompatibilityType } from './index';
 
 /**
@@ -34,62 +32,62 @@ export const frameworkPackage: Check = {
       reasons: ['Missing JsPackageManagerFactory on context'],
     };
   },
-  render: ({ s, setter, dispatch }) => {
-    switch (s.type) {
-      case CompatibilityType.IGNORED: {
-        return (
-          <Box>
-            <Text>
-              {figureSet.smiley} {name}: ignored
-            </Text>
-          </Box>
-        );
-      }
-      case CompatibilityType.COMPATIBLE: {
-        return (
-          <Box>
-            <Text>
-              {figureSet.tick} {name}: OK
-            </Text>
-          </Box>
-        );
-      }
-      case CompatibilityType.INCOMPATIBLE: {
-        return (
-          <Box flexDirection="column">
-            <Box gap={1}>
-              <Text>{figureSet.cross}</Text>
-              <Text>
-                You have selected the Next.js framework but don't appear to have 'next' installed.
-                Continue anyway?
-              </Text>
-              <Confirm
-                onChange={(answer) => {
-                  if (answer) {
-                    setter({ type: CompatibilityType.IGNORED });
-                  } else {
-                    dispatch({
-                      type: ACTIONS.EXIT,
-                      payload: { code: 1, reasons: s.reasons },
-                    });
-                  }
-                }}
-              />
-            </Box>
-            {s.reasons.map((r) => (
-              <Text key={r}>• {r}</Text>
-            ))}
-          </Box>
-        );
-      }
-      default: {
-        return (
-          <Box gap={1}>
-            <Spinner />
-            <Text>{name}: Checking for compatibility...</Text>
-          </Box>
-        );
-      }
-    }
-  },
+  // render: ({ s, setter, dispatch }) => {
+  //   switch (s.type) {
+  //     case CompatibilityType.IGNORED: {
+  //       return (
+  //         <Box>
+  //           <Text>
+  //             {figureSet.smiley} {name}: ignored
+  //           </Text>
+  //         </Box>
+  //       );
+  //     }
+  //     case CompatibilityType.COMPATIBLE: {
+  //       return (
+  //         <Box>
+  //           <Text>
+  //             {figureSet.tick} {name}: OK
+  //           </Text>
+  //         </Box>
+  //       );
+  //     }
+  //     case CompatibilityType.INCOMPATIBLE: {
+  //       return (
+  //         <Box flexDirection="column">
+  //           <Box gap={1}>
+  //             <Text>{figureSet.cross}</Text>
+  //             <Text>
+  //               You have selected the Next.js framework but don't appear to have 'next' installed.
+  //               Continue anyway?
+  //             </Text>
+  //             <Confirm
+  //               onChange={(answer) => {
+  //                 if (answer) {
+  //                   setter({ type: CompatibilityType.IGNORED });
+  //                 } else {
+  //                   dispatch({
+  //                     type: ACTIONS.EXIT,
+  //                     payload: { code: 1, reasons: s.reasons },
+  //                   });
+  //                 }
+  //               }}
+  //             />
+  //           </Box>
+  //           {s.reasons.map((r) => (
+  //             <Text key={r}>• {r}</Text>
+  //           ))}
+  //         </Box>
+  //       );
+  //     }
+  //     default: {
+  //       return (
+  //         <Box gap={1}>
+  //           <Spinner />
+  //           <Text>{name}: Checking for compatibility...</Text>
+  //         </Box>
+  //       );
+  //     }
+  //   }
+  // },
 };

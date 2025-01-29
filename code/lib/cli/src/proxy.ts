@@ -4,7 +4,7 @@ import { spawn } from 'child_process';
 
 const args = process.argv.slice(2);
 
-if (['dev', 'build', 'ink'].includes(args[0])) {
+if (['dev', 'build'].includes(args[0])) {
   import('@storybook/core/cli/bin').catch((e) => {
     console.error('Failed to load @storybook/core/cli/bin', e);
     process.exit(1);

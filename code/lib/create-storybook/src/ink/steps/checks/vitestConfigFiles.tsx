@@ -1,11 +1,9 @@
-import React from 'react';
-
-import { Spinner } from '@inkjs/ui';
-import figureSet from 'figures';
-import { Box, Text } from 'ink';
-
-import { ACTIONS } from '..';
-import { Confirm } from '../../components/Confirm';
+// import React from 'react';
+// import { Spinner } from '@inkjs/ui';
+// import figureSet from 'figures';
+// import { Box, Text } from 'ink';
+// import { ACTIONS } from '..';
+// import { Confirm } from '../../components/Confirm';
 import { type Check, CompatibilityType } from './index';
 
 interface Declaration {
@@ -138,63 +136,63 @@ export const vitestConfigFiles: Check = {
         .map((p) => `Missing ${p} on context`),
     };
   },
-  render: ({ s, setter, dispatch }) => {
-    switch (s.type) {
-      case CompatibilityType.IGNORED: {
-        return (
-          <Box>
-            <Text>
-              {figureSet.smiley} {name}: ignored
-            </Text>
-          </Box>
-        );
-      }
-      case CompatibilityType.COMPATIBLE: {
-        return (
-          <Box>
-            <Text>
-              {figureSet.tick} {name}: OK
-            </Text>
-          </Box>
-        );
-      }
-      case CompatibilityType.INCOMPATIBLE: {
-        return (
-          <Box flexDirection="column">
-            <Box gap={1}>
-              <Text>{figureSet.cross}</Text>
-              <Text>
-                Cannot auto-configure Vitest. Do you want to continue without Storybook's testing
-                features?
-              </Text>
-              <Confirm
-                onChange={(answer) => {
-                  if (answer) {
-                    dispatch({ type: ACTIONS.IGNORE_TEST_INTENT });
-                    setter({ type: CompatibilityType.IGNORED });
-                  } else {
-                    dispatch({
-                      type: ACTIONS.EXIT,
-                      payload: { code: 1, reasons: s.reasons },
-                    });
-                  }
-                }}
-              />
-            </Box>
-            {s.reasons.map((r, i) => (
-              <Text key={i}>• {r}</Text>
-            ))}
-          </Box>
-        );
-      }
-      default: {
-        return (
-          <Box gap={1}>
-            <Spinner />
-            <Text>{name}: Checking for compatibility...</Text>
-          </Box>
-        );
-      }
-    }
-  },
+  // render: ({ s, setter, dispatch }) => {
+  //   switch (s.type) {
+  //     case CompatibilityType.IGNORED: {
+  //       return (
+  //         <Box>
+  //           <Text>
+  //             {figureSet.smiley} {name}: ignored
+  //           </Text>
+  //         </Box>
+  //       );
+  //     }
+  //     case CompatibilityType.COMPATIBLE: {
+  //       return (
+  //         <Box>
+  //           <Text>
+  //             {figureSet.tick} {name}: OK
+  //           </Text>
+  //         </Box>
+  //       );
+  //     }
+  //     case CompatibilityType.INCOMPATIBLE: {
+  //       return (
+  //         <Box flexDirection="column">
+  //           <Box gap={1}>
+  //             <Text>{figureSet.cross}</Text>
+  //             <Text>
+  //               Cannot auto-configure Vitest. Do you want to continue without Storybook's testing
+  //               features?
+  //             </Text>
+  //             <Confirm
+  //               onChange={(answer) => {
+  //                 if (answer) {
+  //                   dispatch({ type: ACTIONS.IGNORE_TEST_INTENT });
+  //                   setter({ type: CompatibilityType.IGNORED });
+  //                 } else {
+  //                   dispatch({
+  //                     type: ACTIONS.EXIT,
+  //                     payload: { code: 1, reasons: s.reasons },
+  //                   });
+  //                 }
+  //               }}
+  //             />
+  //           </Box>
+  //           {s.reasons.map((r, i) => (
+  //             <Text key={i}>• {r}</Text>
+  //           ))}
+  //         </Box>
+  //       );
+  //     }
+  //     default: {
+  //       return (
+  //         <Box gap={1}>
+  //           <Spinner />
+  //           <Text>{name}: Checking for compatibility...</Text>
+  //         </Box>
+  //       );
+  //     }
+  //   }
+  // },
 };

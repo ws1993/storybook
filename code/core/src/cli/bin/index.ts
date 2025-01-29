@@ -89,13 +89,6 @@ command('dev')
     await dev({ ...options, packageJson: pkg }).catch(() => process.exit(1));
   });
 
-command('ink')
-  .option('-n, --name <name>', 'The name (this is a dummy parameter)')
-  .action(async (options) => {
-    const { run } = await import('../ink/app');
-    await run(options);
-  });
-
 command('build')
   .option('-o, --output-dir <dir-name>', 'Directory where to store built files')
   .option('-c, --config-dir <dir-name>', 'Directory where to load Storybook configurations from')
