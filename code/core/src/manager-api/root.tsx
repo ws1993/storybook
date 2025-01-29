@@ -514,6 +514,8 @@ export function useArgTypes(): ArgTypes {
   return (current?.type === 'story' && current.argTypes) || {};
 }
 
+export { UniversalStore } from '../shared/universal-store';
+
 export { addons } from './lib/addons';
 
 // We need to rename this so it's not compiled to a straight re-export

@@ -27,6 +27,8 @@ export { makeDecorator } from './addons';
  */
 export { addons, mockChannel } from './addons';
 
+export { UniversalStore } from '../shared/universal-store';
+
 /** DOCS API */
 export { DocsContext } from './preview-web';
 
