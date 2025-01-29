@@ -1,11 +1,9 @@
 /* eslint-disable local-rules/no-uncategorized-errors */
 import { existsSync, watch } from 'node:fs';
 import { mkdir, rm, writeFile } from 'node:fs/promises';
-import { dirname, join, sep } from 'node:path';
+import { dirname, join } from 'node:path';
 
-import type { Plugin as EsbuildPlugin, Metafile } from 'esbuild';
-// eslint-disable-next-line import/no-extraneous-dependencies
-import replacePlugin from 'esbuild-plugin-text-replace';
+import type { Metafile } from 'esbuild';
 
 import {
   dedent,

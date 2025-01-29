@@ -1,9 +1,8 @@
 import { writeFile } from 'node:fs/promises';
 import { dirname, join, parse, posix, relative, resolve, sep } from 'node:path';
 
-import type { Plugin as EsbuildPlugin, Metafile } from 'esbuild';
+import type { Metafile } from 'esbuild';
 import aliasPlugin from 'esbuild-plugin-alias';
-import replacePlugin from 'esbuild-plugin-text-replace';
 // eslint-disable-next-line depend/ban-dependencies
 import * as fs from 'fs-extra';
 // eslint-disable-next-line depend/ban-dependencies

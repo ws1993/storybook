@@ -7916,7 +7916,6 @@ __metadata:
     es-toolkit: "npm:^1.22.0"
     esbuild: "npm:^0.18.0 || ^0.19.0 || ^0.20.0 || ^0.21.0 || ^0.22.0 || ^0.23.0"
     esbuild-plugin-alias: "npm:^0.2.1"
-    esbuild-plugin-text-replace: "npm:^1.3.0"
     esbuild-register: "npm:^3.5.0"
     execa: "npm:^8.0.1"
     fd-package-json: "npm:^1.2.0"
@@ -14772,13 +14771,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"core-js@npm:^3.4.1":
-  version: 3.39.0
-  resolution: "core-js@npm:3.39.0"
-  checksum: 10c0/f7602069b6afb2e3298eec612a5c1e0c3e6a458930fbfc7a4c5f9ac03426507f49ce395eecdd2d9bae9024f820e44582b67ffe16f2272395af26964f174eeb6b
-  languageName: node
-  linkType: hard
-
 "core-js@npm:^3.8.2":
   version: 3.33.0
   resolution: "core-js@npm:3.33.0"
@@ -16603,15 +16595,6 @@ __metadata:
   version: 0.2.1
   resolution: "esbuild-plugin-alias@npm:0.2.1"
   checksum: 10c0/a67bc6bc2744fc8637f7321f00c1f00e4fae86c182662421738ebfabf3ad344967b9c667185c6c34d9edd5b289807d34bfdceef94620e94e0a45683534af69e0
-  languageName: node
-  linkType: hard
-
-"esbuild-plugin-text-replace@npm:^1.3.0":
-  version: 1.3.0
-  resolution: "esbuild-plugin-text-replace@npm:1.3.0"
-  dependencies:
-    ts-replace-all: "npm:^1.0.0"
-  checksum: 10c0/46f5e64c3c27effe0a6433d503e838ad0cd6160a3e96129abc20e9633117aa79e5abdae1b8dffe848b7f37aa253957eb25ec0ce52d499c87a8273f9928981d22
   languageName: node
   linkType: hard
 
@@ -30824,15 +30807,6 @@ __metadata:
     typescript:
       optional: true
   checksum: 10c0/ff32b4f810f9d99f676d70fe2c0e327cb6c812214bd4fc7135870b039f9e85a85b2c20f8fe030d9bd36e9598a12faa391f10aecb95df624b92f1af6bd47dc397
-  languageName: node
-  linkType: hard
-
-"ts-replace-all@npm:^1.0.0":
-  version: 1.0.0
-  resolution: "ts-replace-all@npm:1.0.0"
-  dependencies:
-    core-js: "npm:^3.4.1"
-  checksum: 10c0/e3804bcb5fcdbe3ea7c15475d1a9ce54116365e24de8c65712fe0d59dc5392d674fce6e677def0a0fcb9d60026115e94f6843e0985ed584bb93380c662df6242
   languageName: node
   linkType: hard
 
