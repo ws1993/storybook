@@ -40,9 +40,5 @@ export const vitestCommonConfig = defineConfig({
     globals: true,
     testTimeout: 10000,
     environment: 'node',
-    typecheck: {
-      enabled: true,
-      ignoreSourceErrors: true,
-    },
   },
 });
