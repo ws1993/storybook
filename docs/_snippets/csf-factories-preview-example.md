@@ -1,12 +1,14 @@
-```ts filename=".storybook/preview.ts|tsx" renderer="react" language="ts"
+```ts filename=".storybook/preview.ts" renderer="react" language="ts"
 // Replace your-framework with the framework you are using (e.g., react-vite, nextjs, experimental-nextjs-vite)
-import { definePreview } from '@storybook/your-framework/preview';
-import * as addonTestAnnotations from '@storybook/experimental-addon-test/preview';
+import { definePreview } from '@storybook/your-framework';
+import addonTest from '@storybook/experimental-addon-test';
 
-const preview = definePreview({
+export default definePreview({
   // 👇 Add your addons here
-  addons: [addonTestAnnotations],
+  addons: [addonTest()],
+  parameters: {
+    // type-safe!
+    layout: 'fullscreen',
+  },
 });
-
-export default preview;
 ```

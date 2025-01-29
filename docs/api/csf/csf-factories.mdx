@@ -6,125 +6,300 @@ tab:
   title: CSF Factories (Experimental)
 ---
 
-<If renderer={['react']}>
-  ## CSF Factories (Experimental)
+<If notRenderer="react">
 
-  ### What are CSF Factories?
+<Callout variant="info">
+  CSF Factories are currently only supported in [React](?renderer=react) projects.
+</Callout>
 
-  Storybook's CSF Factories adopt a new, consistent pattern, making it easier to configure addons correctly and unlocking the full potential of Storybook's features while maintaining type safety throughout your codebase. Refer to the next steps for more information on how to use it.
+</If>
 
-  ### 1. Getting started
+<If renderer="react">
 
-  #### Codemod
+<Callout variant="warning" icon="🧪">
+  This is an experimental feature and (though unlikely) the API may change in future releases. We welcome feedback and contributions to help improve this feature.
+</Callout>
 
-  <Callout variant="info" icon="💡">
-    If your story files are not using CSF3 already, please run `npx storybook migrate csf-2-to-3`.
-  </Callout>
+CSF Factories are the next evolution of Storybook's Component Story Format (CSF). This new API uses a pattern called factory functions to provide full type safety to your Storybook stories, making it easier to configure addons correctly and unlocking the full potential of Storybook's features.
 
-  Storybook provides codemods to help you migrate your codebase to the CSF Factory format effortlessly. Run the following command: 
+This reference will provide an overview of the API and a migration guide to upgrade from CSF 3.
 
-  ```bash
-  npx storybook automigrate csf-factories
-  ```
+## Overview
 
-  <Callout variant="info" icon="💡">
-    If you use a monorepo or your `.storybook` directory is not at the root, make sure to pass the `--config-dir` flag to the command, specifying its path.
-  </Callout>
+The CSF Factories API is composed of four main functions to help you write stories. Note how the functions operate as a factory, each producing the next function in the chain (`definePreview` → `preview.meta` → `meta.story`), providing full type safety at each step.
 
-  This command performs the following actions:
+### `defineMain`
 
-  - Adds [a subpath import](#subpath-imports-in-packagejson) in your `package.json`.
-  - Migrates `.storybook/main.js` to [the new format](#2-new-syntax-for-mainjs).
-  - Migrates `.storybook/preview.js` to [the new format](#3-new-syntax-for-previewjs).
-  - Converts all story files to [the CSF Factory format](#4-new-syntax-for-story-files).
+With CSF Factories, your [main Storybook config](../main-config/main-config.mdx) is specified by the `defineMain` function. This function is type-safe and will automatically infer types for your project.
 
-  This should get you started immediately. If you prefer a manual migration, the next sections guide you through the process.
+{/* prettier-ignore-start */}
+<CodeSnippets path="csf-factories-main-example.md" />
+{/* prettier-ignore-end */}
 
-  #### Subpath imports in package.json
+### `definePreview`
 
-  The new format leverages subpath imports to simplify importing constructs from the preview file. While you can still use relative path imports, subpath imports offer a more convenient and maintainable approach:
+Similarly, your project's stories configuration is specified by the `definePreview` function. This is also type-safe and will infer types throughout your project.
 
-  ```ts
-  // ✅ Subpath imports won't break if you move story files around
-  import preview from '#.storybook/preview';
+Importantly, by specifying addons here, their types will be available throughout your project, enabling autocompletion and type checking.
 
-  // ❌ Relative imports will break if you move story files around
-  import preview from '../../../.storybook/preview';
-  ```
+{/* prettier-ignore-start */}
+<CodeSnippets path="csf-factories-preview-example.md" />
+{/* prettier-ignore-end */}
 
-  For more details, refer to the [subpath imports documentation](../writing-stories/mocking-modules#subpath-imports).
+<Callout variant="info">
+  The preview configuration will be automatically updated to reference the necessary addons when installing an addon via `npx storybook add <addon-name>` or running `storybook dev`.
+</Callout>
 
-  ### 2. New syntax for main.js
+### `preview.meta`
 
-  The `.storybook/main.js` file introduces a new utility, `defineMain`, from the framework package:
+The `meta` function on the `preview` object is used to define the metadata for your stories. It accepts an object containing the `component`, `title`, `parameters`, and other story properties. 
 
-  {/* prettier-ignore-start */}
-  <CodeSnippets path="csf-factories-main-example.md" />
-  {/* prettier-ignore-end */}
+{/* TODO: Snippetize */}
+```ts title="Button.stories.ts"
+// Learn about the # subpath import: https://storybook.js.org/docs/api/csf/csf-factories#subpath-imports
+import preview from '#.storybook/preview';
 
-  This utility is type-safe, automatically inferring types, eliminating the need to specify them manually like before with the `StorybookConfig` type. The changes from the previous version are minimal, as `defineMain` primarily serves as a type helper.
+const meta = preview.meta({
+  component: Button,
+  parameters: {
+    // type-safe!
+    layout: 'centered',
+  }
+});
+export default meta;
+```
 
-  ### 3. New syntax for preview.js
+### `meta.story`
 
-  The `.storybook/preview.js` file now uses a utility called `definePreview`, from the framework package. Like `defineMain`, it is type-safe and removes the need for manual type annotations. The biggest change is that addons must now be imported in this file. This approach ensures addon functionality while enabling type safety, such as autocompleted parameters, tags, and other annotations.
+Finally, the `story` function on the `meta` object is used to define the stories themselves. This function accepts an object containing the `name`, `args`, `parameters`, and other story properties.
 
-  {/* prettier-ignore-start */}
-  <CodeSnippets path="csf-factories-preview-example.md" />
-  {/* prettier-ignore-end */}
+{/* TODO: Snippetize */}
+```ts title="Button.stories.ts"
+// Learn about the # subpath import: https://storybook.js.org/docs/api/csf/csf-factories#subpath-imports
+import preview from '#.storybook/preview';
 
-  This syntax allows your stories to be fully type-safe, once you use this new construct in the files. The migration is incremental, you can start using the new syntax in new files or migrate existing files to use the new format.
+const meta = preview.meta({
+  component: Button,
+  // ...
+});
 
-  ### 4. New syntax for story files
+export const Primary = meta.story({
+  args: {
+    // type-safe!
+    primary: true,
+  },
+});
+```
 
-  Story files have been updated for improved usability. With the new format:
+### Subpath imports
 
-  - Import the preview construct from the Storybook preview file;
-  - The meta object is now created via `preview.meta({})` and does not have to be exported as a default export;
-  - Stories are now created from the meta object, via `meta.story({})`.
+CSF Factories leverages subpath imports to simplify importing constructs from the preview file. While you can still use relative path imports, subpath imports offer a more convenient and maintainable approach:
 
-  {/* prettier-ignore-start */}
-  <CodeSnippets path="csf-factories-story-example.md" />
-  {/* prettier-ignore-end */}
+```ts
+// ✅ Subpath imports won't break if you move story files around
+import preview from '#.storybook/preview';
 
-  #### 4.1 Reusing properties (`Story.input.xyz`)
+// ❌ Relative imports will break if you move story files around
+import preview from '../../../.storybook/preview';
+```
 
-  Previously, story properties such as `Story.args` or `Story.parameters` were accessed directly. While accessing them like this is still supported, it is now deprecated. All of the story properties are now part of a new property called `composed` and should be accessed from that property instead, for instance `Story.composed.args` or `Story.composed.parameters`.
+The [CSF Factories codemod](#codemod) will automatically add the necessary subpath import for the preview file, or you can [add it manually](#1-add-subpath-import-in-packagejson).
 
-  {/* prettier-ignore-start */}
-  <CodeSnippets path="csf-factories-story-input-example.md" />
-  {/* prettier-ignore-end */}
+For more details, refer to the [subpath imports documentation](../../writing-stories/mocking-data-and-modules/mocking-modules.mdx#subpath-imports).
 
-  #### 5. Reusing stories in test files
+## Upgrading from CSF 3
 
-  [Storybook's Test addon](../writing-tests/test-addon.mdx) allows you to test your components directly inside Storybook. All of the stories are automatically turned into Vitest tests, so the integration is seamless in your testing suite.
+You can upgrade your project's story files to CSF Factories incrementally or all at once. However, you must upgrade your `.storybook/main.ts` and `.storybook/preview.ts` files first before you can use CSF Factories in a story file.
 
-  If you, however, are not using Vitest or if your Storybook is not Vite-based, you can still reuse the stories in your test files. 
-  
-  The `Story` object encapsulates everything you need to render a story in your test files. It provides a `run` method that will mount the story component as well as run all of the Storybook hooks and decorators, including the [play function](../writing-stories/play-function).
-  
-  Here's an example of how you can reuse a story in a test file using the run method:
+<Callout variant="info">
+  If your story files are not using CSF 3 already, please run `npx storybook migrate csf-2-to-3` to automatically upgrade your project from CSF 2 to CSF 3.
 
-  {/* prettier-ignore-start */}
-  <CodeSnippets path="portable-stories-csf-factory-run.md" />
-  {/* prettier-ignore-end */}
+  You can also [migrate manually](./index.mdx#upgrading-from-csf-2-to-csf-3).
+</Callout>
 
-  The `Story` object also provides a `Component` property in case you want to render it using another method of your choosing, for instance, with [Testing Library](https://testing-library.com/). You also have access to its composed properties (args, parameters, etc.) via the `composed` property.
+### Codemod
 
-  Here's an example of how you can reuse a story in a test file by rendering its component:
+Storybook provides codemods to help you migrate your codebase to the CSF Factories format effortlessly. Run the following command in the root of your project: 
 
-  {/* prettier-ignore-start */}
-  <CodeSnippets path="portable-stories-csf-factory-render.md" />
-  {/* prettier-ignore-end */}
+```sh
+npx storybook automigrate csf-factories
+```
 
-  ### Frequently asked questions (FAQ)
+<Callout variant="info" icon="💡">
+  If you use a monorepo or your `.storybook` directory is not at the root, make sure to pass the `--config-dir` flag to the command, specifying its path.
+</Callout>
 
-  #### Will I have to migrate all of my stories to this new format?
+This command performs the following actions:
 
-  Storybook supports all the previous formats (CSF1, 2, and 3) and will continue supporting them for the foreseeable future. While using the CSF Factory format, you can still use the older formats, as long as they are not mixed in the same file.
+- Adds [a subpath import](#1-add-subpath-import-in-packagejson) for the preview file in your `package.json`
+- [Migrates `.storybook/main.js`](#2-update-your-main-storybook-config-file)
+- [Migrates `.storybook/preview.js`](#3-update-your-preview-config-file)
+- Converts all story files to [use CSF Factories](#4-update-your-story-files)
 
-  If you want to migrate your existing files to the new format, refer to [the codemod section](#codemod) above.
+This should get you started with CSF Factories immediately. If you prefer a manual migration, the next sections detail the neccessary updates.
 
-  #### How can I know more about this format and provide feedback?
+### 1. Add subpath import in `package.json`
 
-  For more information on the original proposal of this experimental format, refer to its [RFC on GitHub](https://github.com/storybookjs/storybook/discussions/30112).
+To be able to consistently import the preview file from any location in your project, you need to add a subpath import in your `package.json`. For more information, refer to the [subpath imports documentation](../../writing-stories/mocking-data-and-modules/mocking-modules.mdx#subpath-imports).
+
+{/* TODO: Snippetize */}
+```json title="package.json"
+{
+  "imports": {
+    "#.storybook/preview": {
+      "default": "./.storybook/preview.ts",
+    },
+    "#*": ["./*", "./*.ts", "./*.tsx"],
+  },
+}
+```
+
+### 2. Update your main Storybook config file
+
+Update your `.storybook/main.ts` file to use the new [`defineMain`](#definemain) function.
+
+```diff title=".storybook/main.ts"
+// Replace your-framework with the framework you are using (e.g., react-vite, nextjs, experimental-nextjs-vite)
++ import { defineMain } from '@storybook/your-framework/node';
+- import { StorybookConfig } from '@storybook/your-framework';
+
++ export default defineMain({
+- export const config: StorybookConfig = {
+    // ...current config
++ });
+- };
+- export default config;
+```
+
+### 3. Update your preview config file
+
+Update your `.storybook/preview.ts` file to use the new [`definePreview`](#definepreview) function.
+
+```diff title=".storybook/preview.ts"
+// Replace your-framework with the framework you are using (e.g., react-vite, nextjs, experimental-nextjs-vite)
++ import { definePreview } from '@storybook/your-framework/node';
+- import { Preview } from '@storybook/your-renderer';
+// 👇 Import the addons you are using
++ import addonTest from '@storybook/experimental-addon-test';
+
++ export default definePreview({
+- export const preview: Preview = {
+    // ...current config
+    // 👇 Add your addons here
++   addons: [addonTest()],
++ });
+- };
+- export default preview;
+```
+
+### 4. Update your story files
+
+Story files have been updated for improved usability. With the new format:
+
+- Import the preview construct from the Storybook preview file
+- The meta object is now created via the [`preview.meta`](#previewmeta) function and does not have to be exported as a default export
+- Stories are now created from the meta object, via the [`meta.story`](#metastory) function
+
+```diff title="Button.stories.ts"
+// Learn about the # subpath import: https://storybook.js.org/docs/api/csf/csf-factories#subpath-imports
++ import preview from '#.storybook/preview';
+- import { Meta, StoryObj } from '@storybook/your-renderer';
+
+import { Button } from './Button';
+
++ const meta = preview.meta({
+- const meta = {
+    // ...current meta
++ });
+- } satisfies Meta<typeof Button>;
+- export default meta;
+
+- type Story = StoryObj<typeof meta>;
+
++ export const Primary = meta.story({
+- export const Primary: Story = {
+    // ...current story
++ });
+- };
+```
+
+Note how it is no longer necessary to import any types or manually apply types to the meta or stories. The types are now inferred automatically, thanks to the factory function pattern.
+
+#### 4.1 Reusing story properties
+
+Previously, story properties such as `Story.args` or `Story.parameters` were accessed directly when reusing them in another story. While accessing them like this is still supported, it is deprecated in CSF Factories.
+
+All of the story properties are now contained within a new property called `composed` and should be accessed from that property instead. For instance, `Story.composed.args` or `Story.composed.parameters`.
+
+```diff title="Button.stories.ts"
+// ...rest of file
+
++ export const Primary = meta.story({
+- export const Primary: Story = {
+    args: { primary: true },
++ });
+- };
+
++ export const PrimaryDisabled = meta.story({
+- export const PrimaryDisabled: Story = {
+    args: {
++     ...Primary.composed.args,
+-     ...Primary.args,
+      disabled: true,
+    }
++ });
+- };
+```
+
+<Callout variant="info">
+  The property name "composed" was chosen because the values within are composed from the story, its component meta, and the preview configuration.
+
+  If you wish instead to access only the direct input to the story, you can use `Story.input` instead of `Story.composed`.
+</Callout>
+
+### 5. Reusing stories in test files
+
+[Storybook's Test addon](../../writing-tests/test-addon.mdx) allows you to test your components directly inside Storybook. All of the stories are automatically turned into Vitest tests, so the integration is seamless in your testing suite.
+
+If you cannot use Storybook Test, you can still reuse the stories in your test files using [portable stories](../portable-stories/portable-stories-vitest.mdx). In prior story formats, you had to compose the stories before rendering them in your test files. With CSF Factories, you can now reuse the stories directly.
+
+```diff title="Button.test.ts"
+import { test, expect } from 'vitest';
+import { screen } from '@testing-library/react';
+- import { composeStories } from '@storybook/react';
+ 
+// Import all stories from the stories file
+import * as stories from './Button.stories';
+ 
++ const { Primary } = stories;
+- const { Primary } = composeStories(stories);
+ 
+test('renders primary button with default args', async () => {
+  // The run function will mount the component and run all of Storybook's lifecycle hooks
+  await Primary.run();
+  const buttonElement = screen.getByText('Text coming from args in stories file!');
+  expect(buttonElement).not.toBeNull();
+});
+```
+
+The `Story` object also provides a `Component` property in case you want to render it using another method of your choosing, for instance, with [Testing Library](https://testing-library.com/). You also have access to its composed properties (args, parameters, etc.) via the `composed` property.
+
+Here's an example of how you can reuse a story in a test file by rendering its component:
+
+{/* prettier-ignore-start */}
+<CodeSnippets path="portable-stories-csf-factory-render.md" />
+{/* prettier-ignore-end */}
+
+## Frequently asked questions (FAQ)
+
+### Will I have to migrate all of my stories to this new format?
+
+Storybook will continue to support CSF 1, [CSF 2](../../../release-6-5/docs/api/stories/csf.mdx), and [CSF 3](./index.mdx) for the foreseeable future. None of these prior formats are deprecated.
+
+While using CSF Factories, you can still use the older formats, as long as they are not mixed in the same file. If you want to migrate your existing files to the new format, refer to [the upgrade section](#upgrading-from-csf-3), above.
+
+### How can I know more about this format and provide feedback?
+
+For more information on the original proposal of this experimental format, refer to its [RFC on GitHub](https://github.com/storybookjs/storybook/discussions/30112). We welcome your comments!
+
 </If>
