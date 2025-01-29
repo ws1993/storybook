@@ -287,17 +287,24 @@ export async function doInitiate(options: CommandOptions): Promise<
     )
   );
 
-  const { intents } = await prompts({
-    type: 'multiselect',
-    name: 'intents',
-    message: `What are you using Storybook for?`,
-    choices: [
-      { title: 'Development', value: 'dev', selected: true },
-      { title: 'Documentation', value: 'docs', selected: true },
-      { title: 'Testing', value: 'test', selected: true },
-    ],
-  });
-  globalThis.intents = intents;
+  let intents: string[] = [];
+  // if TTY or CI is not set, we can't prompt the user
+  if (!process.stdout.isTTY || process.env.CI) {
+    const out = await prompts({
+      type: 'multiselect',
+      name: 'intents',
+      message: `What are you using Storybook for?`,
+      choices: [
+        { title: 'Development', value: 'dev', selected: true },
+        { title: 'Documentation', value: 'docs', selected: true },
+        { title: 'Testing', value: 'test', selected: true },
+      ],
+    });
+    globalThis.intents = out.intents;
+    intents = out.intents;
+  } else {
+    intents = ['dev', 'docs', 'test'];
+  }
 
   // Check if the current directory is empty.
   if (options.force !== true && currentDirectoryIsEmpty(packageManager.type)) {
