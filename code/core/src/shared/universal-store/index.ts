@@ -380,12 +380,12 @@ export class UniversalStore<State, CustomEvent extends { type: string; payload?:
   };
 
   private handleChannelEvents = (event: any) => {
-    this.debug('handleChannelEvents', { event });
     if ([event.actor.id, event.originalActor?.id].includes(this.actor.id)) {
       // Ignore events from self
-      this.debug('handleChannelEvents: ignoring self', { selfActorId: this.actor.id, event });
+      this.debug('handleChannelEvents: IGNORING SELF', { event });
       return;
     }
+    this.debug('handleChannelEvents', { event });
 
     if (this.actor.type === UniversalStore.ActorType.LEADER) {
       let shouldForwardEvent = true;
