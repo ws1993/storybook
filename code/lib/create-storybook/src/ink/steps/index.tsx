@@ -1,7 +1,8 @@
-import { type Dispatch, type FC } from 'react';
+// import { type Dispatch, type FC } from 'react';
+import type { Framework } from '../../bin/modernInputs';
 
 // import type { Input } from '../app';
-import { getKeys } from '../utils/getKeys';
+// import { getKeys } from '../utils/getKeys';
 
 // import { CHECK } from './Check';
 // import { DIRECTORY } from './Directory';
@@ -14,79 +15,85 @@ import { getKeys } from '../utils/getKeys';
 // import { SANDBOX } from './Sandbox';
 // import { VERSION } from './Version';
 
-export const steps = {
-  // GIT,
-  // VERSION,
-  // DIRECTORY,
-  // FRAMEWORK,
-  // INTENTS,
-  // FEATURES,
-  // CHECK,
-  // INSTALL,
-  // SANDBOX,
-  // RUN,
-} satisfies Record<string, FC<{ state: State; dispatch: Dispatch<Action> }>>;
-const keys = getKeys(steps);
+// export const steps = {
+//   // GIT,
+//   // VERSION,
+//   // DIRECTORY,
+//   // FRAMEWORK,
+//   // INTENTS,
+//   // FEATURES,
+//   // CHECK,
+//   // INSTALL,
+//   // SANDBOX,
+//   // RUN,
+// } satisfies Record<string, FC<{ state: State; dispatch: Dispatch<Action> }>>;
+// const keys = getKeys(steps);
 
-export const ACTIONS = {
-  NEXT: 'NEXT',
-  IGNORE_GIT: 'IGNORE_GIT',
-  IGNORE_VERSION: 'IGNORE_VERSION',
-  DIRECTORY: 'DIRECTORY',
-  FRAMEWORK: 'FRAMEWORK',
-  SET_FRAMEWORK: 'SET_FRAMEWORK',
-  INTENTS: 'INTENTS',
-  IGNORE_TEST_INTENT: 'IGNORE_TEST_INTENT',
-  FEATURES: 'FEATURES',
-  INSTALL: 'INSTALL',
-  EXIT: 'EXIT',
-} as const;
+// export const ACTIONS = {
+//   NEXT: 'NEXT',
+//   IGNORE_GIT: 'IGNORE_GIT',
+//   IGNORE_VERSION: 'IGNORE_VERSION',
+//   DIRECTORY: 'DIRECTORY',
+//   FRAMEWORK: 'FRAMEWORK',
+//   SET_FRAMEWORK: 'SET_FRAMEWORK',
+//   INTENTS: 'INTENTS',
+//   IGNORE_TEST_INTENT: 'IGNORE_TEST_INTENT',
+//   FEATURES: 'FEATURES',
+//   INSTALL: 'INSTALL',
+//   EXIT: 'EXIT',
+// } as const;
 
-export type Action =
-  | {
-      type: (typeof ACTIONS)['NEXT'];
-    }
-  | {
-      type: (typeof ACTIONS)['IGNORE_GIT'];
-    }
-  | {
-      type: (typeof ACTIONS)['IGNORE_VERSION'];
-      payload: { value: 'latest' | 'outdated' };
-    }
-  | {
-      type: (typeof ACTIONS)['DIRECTORY'];
-      payload: { path: string };
-    }
-  | {
-      type: (typeof ACTIONS)['FRAMEWORK'];
-      payload: { id: State['framework'] };
-    }
-  | {
-      type: (typeof ACTIONS)['SET_FRAMEWORK'];
-      payload: { id: State['framework'] };
-    }
-  | {
-      type: (typeof ACTIONS)['INTENTS'];
-      payload: { list: State['intents'] };
-    }
-  | {
-      type: (typeof ACTIONS)['IGNORE_TEST_INTENT'];
-    }
-  | {
-      type: (typeof ACTIONS)['FEATURES'];
-      payload: { list: State['features'] };
-    }
-  | {
-      type: (typeof ACTIONS)['INSTALL'];
-      payload: { value: boolean };
-    }
-  | {
-      type: (typeof ACTIONS)['EXIT'];
-      payload: { code: number; reasons: string[] };
-    };
+// export type Action =
+//   | {
+//       type: (typeof ACTIONS)['NEXT'];
+//     }
+//   | {
+//       type: (typeof ACTIONS)['IGNORE_GIT'];
+//     }
+//   | {
+//       type: (typeof ACTIONS)['IGNORE_VERSION'];
+//       payload: { value: 'latest' | 'outdated' };
+//     }
+//   | {
+//       type: (typeof ACTIONS)['DIRECTORY'];
+//       payload: { path: string };
+//     }
+//   | {
+//       type: (typeof ACTIONS)['FRAMEWORK'];
+//       payload: { id: State['framework'] };
+//     }
+//   | {
+//       type: (typeof ACTIONS)['SET_FRAMEWORK'];
+//       payload: { id: State['framework'] };
+//     }
+//   | {
+//       type: (typeof ACTIONS)['INTENTS'];
+//       payload: { list: State['intents'] };
+//     }
+//   | {
+//       type: (typeof ACTIONS)['IGNORE_TEST_INTENT'];
+//     }
+//   | {
+//       type: (typeof ACTIONS)['FEATURES'];
+//       payload: { list: State['features'] };
+//     }
+//   | {
+//       type: (typeof ACTIONS)['INSTALL'];
+//       payload: { value: boolean };
+//     }
+//   | {
+//       type: (typeof ACTIONS)['EXIT'];
+//       payload: { code: number; reasons: string[] };
+//     };
 
-export type State = Omit<{}, 'width' | 'height'> & {
-  step: keyof typeof steps;
+export type State = Omit<
+  {
+    intents: string[];
+    framework: Framework;
+  },
+  'width' | 'height'
+> & {
+  // step: keyof typeof steps;
   directory: string;
   version: 'latest' | 'outdated' | undefined;
 };

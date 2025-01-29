@@ -1,7 +1,6 @@
-import type { ContextType, FC } from 'react';
-import { type Dispatch } from 'react';
+import type { ContextType } from 'react';
 
-import { type Action, type State } from '..';
+import { type State } from '..';
 import type { AppContext } from '../../utils/context';
 import { configDir } from './configDir';
 import { frameworkPackage } from './frameworkPackage';
