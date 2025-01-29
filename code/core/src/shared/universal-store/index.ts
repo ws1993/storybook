@@ -212,7 +212,6 @@ export class UniversalStore<State, CustomEvent extends { type: string; payload?:
    * Used by Storybook to set the channel for all instances of UniversalStore in the given
    * environment.
    *
-   * @deprecated This method is for internal use only and should not be used by users or addons.
    * @internal
    */
   static __prepare(
