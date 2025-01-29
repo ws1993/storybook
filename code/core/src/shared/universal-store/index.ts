@@ -1,4 +1,3 @@
-// import type { Channel } from '@storybook/core/channels';
 import invariant from 'tiny-invariant';
 import dedent from 'ts-dedent';
 
@@ -15,20 +14,6 @@ import type {
 } from './types';
 
 const CHANNEL_EVENT_PREFIX = 'UNIVERSAL_STORE:' as const;
-
-let channel: ChannelLike;
-
-/**
- * Used by Storybook to set the channel for all instances of UniversalStore in the given
- * environment.
- *
- * @deprecated This method is for internal use only and should not be used by users or addons.
- * @internal
- */
-// eslint-disable-next-line no-underscore-dangle, @typescript-eslint/naming-convention
-export const __setChannel = (c: ChannelLike) => {
-  channel = c;
-};
 
 /**
  * A universal store implementation that synchronizes state across different environments using a
@@ -96,6 +81,17 @@ export class UniversalStore<State, CustomEvent extends { type: string; payload?:
   } as const;
 
   /**
+   * Defines the possible environments the store can run in
+   *
+   * @readonly
+   */
+  static readonly Environment = {
+    SERVER: 'SERVE',
+    MANAGER: 'MANAGER',
+    PREVIEW: 'PREVIEW',
+  } as const;
+
+  /**
    * Internal event types used for store synchronization
    *
    * @readonly
@@ -106,8 +102,23 @@ export class UniversalStore<State, CustomEvent extends { type: string; payload?:
     SET_STATE: '__SET_STATE',
   } as const;
 
+  /** The current environment the UniversalStore is in */
+  static get currentEnvironment() {
+    invariant(
+      this.#environment,
+      `Cannot read currentEnvironment from UniversalStore before Storybook has prepared the environment for it.`
+    );
+    return this.#environment;
+  }
+
   // Private field to check if constructor was called from the static factory create()
   static #isInternalConstructing = false;
+
+  // Private field to store the channel instance for the current environment
+  static #channel: ChannelLike;
+
+  // Private field to store the current environment
+  static #environment: (typeof UniversalStore.Environment)[keyof typeof UniversalStore.Environment];
 
   /** The actor object representing the store instance with a unique ID and a type */
   readonly actor: Actor;
@@ -137,8 +148,8 @@ export class UniversalStore<State, CustomEvent extends { type: string; payload?:
     );
 
     invariant(
-      channel,
-      `UniversalStore with id ${options.id} was created before Storybook's channel has been set up, which is not allowed.`
+      UniversalStore.#channel,
+      `UniversalStore with id ${options.id} was created before Storybook had prepared the environment for it, which is not allowed.`
     );
 
     this.#id = options.id;
@@ -148,7 +159,7 @@ export class UniversalStore<State, CustomEvent extends { type: string; payload?:
     };
     this.#state = options.initialState as State;
     this.#channelEventName = `${CHANNEL_EVENT_PREFIX}${this.#id}`;
-    channel.on(this.#channelEventName, this.#handleChannelEvents);
+    UniversalStore.#channel.on(this.#channelEventName, this.#handleChannelEvents);
     if (this.actor.type === UniversalStore.ActorType.FOLLOWER) {
       // 1. Emit a request for the existing state
       this.#emitToChannel({
@@ -195,6 +206,21 @@ export class UniversalStore<State, CustomEvent extends { type: string; payload?:
     const store = new UniversalStore<State, CustomEvent>(options);
     instances.set(options.id, store);
     return store;
+  }
+
+  /**
+   * Used by Storybook to set the channel for all instances of UniversalStore in the given
+   * environment.
+   *
+   * @deprecated This method is for internal use only and should not be used by users or addons.
+   * @internal
+   */
+  static __prepare(
+    channel: ChannelLike,
+    environment: (typeof UniversalStore.Environment)[keyof typeof UniversalStore.Environment]
+  ) {
+    UniversalStore.#channel = channel;
+    UniversalStore.#environment = environment;
   }
 
   /**
@@ -307,7 +333,7 @@ export class UniversalStore<State, CustomEvent extends { type: string; payload?:
   };
 
   #emitToChannel = (event: any) => {
-    channel.emit(this.#channelEventName, {
+    UniversalStore.#channel.emit(this.#channelEventName, {
       ...event,
       actor: this.actor,
     });

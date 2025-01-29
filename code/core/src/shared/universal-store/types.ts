@@ -2,6 +2,9 @@ import type { Channel } from '@storybook/core/channels';
 
 import type { UniversalStore } from '.';
 
+export type EnvironmentType =
+  (typeof UniversalStore.Environment)[keyof typeof UniversalStore.Environment];
+
 export type StateUpdater<TState> = (prevState: TState) => TState;
 export type Actor = {
   id: string;
@@ -33,11 +36,7 @@ export type InternalEvent<TState> =
   | ExistingStateResponseEvent<TState>;
 export type Event<TState, TEvent> = TEvent | InternalEvent<TState>;
 
-export type ChannelLike = {
-  on: Channel['on'];
-  off: Channel['off'];
-  emit: Channel['emit'];
-};
+export type ChannelLike = Pick<Channel, 'on' | 'off' | 'emit'>;
 
 export type StoreOptions<TState> = {
   id: string;

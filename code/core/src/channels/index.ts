@@ -1,6 +1,7 @@
 /// <reference path="../typings.d.ts" />
 import { global } from '@storybook/global';
 
+import { UniversalStore } from '../shared/universal-store';
 import { Channel } from './main';
 import { PostMessageTransport } from './postmessage';
 import type { ChannelTransport, Config } from './types';
@@ -38,6 +39,13 @@ export function createBrowserChannel({ page, extraTransports = [] }: Options): C
 
     transports.push(new WebsocketTransport({ url: channelUrl, onError: () => {}, page }));
   }
+
+  const channel = new Channel({ transports });
+  // eslint-disable-next-line no-underscore-dangle
+  UniversalStore.__prepare(
+    channel,
+    page === 'manager' ? UniversalStore.Environment.MANAGER : UniversalStore.Environment.PREVIEW
+  );
 
   return new Channel({ transports });
 }

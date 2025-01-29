@@ -2,7 +2,6 @@ import React from 'react';
 
 import type { Channel } from '@storybook/core/channels';
 import { createBrowserChannel } from '@storybook/core/channels';
-import { __setUniversalStoreChannel } from '@storybook/core/common';
 import type { Addon_Config, Addon_Types } from '@storybook/core/types';
 import { global } from '@storybook/global';
 import { FailedIcon } from '@storybook/icons';
@@ -29,7 +28,6 @@ class ReactProvider extends Provider {
 
     const channel = createBrowserChannel({ page: 'manager' });
 
-    __setUniversalStoreChannel(channel);
     addons.setChannel(channel);
 
     channel.emit(CHANNEL_CREATED);

@@ -1,6 +1,7 @@
+/* eslint-disable no-underscore-dangle */
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
-import { UniversalStore, __setChannel } from '.';
+import { UniversalStore } from '.';
 import { instances as mockedInstances } from './__mocks__/instances';
 
 vi.mock('./instances');
@@ -42,7 +43,7 @@ describe('UniversalStore', () => {
   beforeEach(() => {
     mockedInstances.clearAllEnvironments();
     mockChannelListeners.clear();
-    __setChannel(mockChannel);
+    UniversalStore.__prepare(mockChannel, UniversalStore.Environment.MANAGER);
     vi.useRealTimers();
   });
 
@@ -88,9 +89,9 @@ describe('UniversalStore', () => {
         );
       });
 
-      it('should throw when creating a store before the channel is set', () => {
-        // Arrange - unset the channel
-        __setChannel(undefined as any);
+      it('should throw when creating a store before it has been prepared', () => {
+        // Arrange - unset the channel and environment
+        UniversalStore.__prepare(undefined as any, undefined as any);
 
         // Act, Assert - creating a store without a channel and expect it to throw
         expect(() =>
@@ -99,7 +100,7 @@ describe('UniversalStore', () => {
             leader: true,
           })
         ).toThrowErrorMatchingInlineSnapshot(
-          `[Error: Invariant failed: UniversalStore with id env1:test was created before Storybook's channel has been set up, which is not allowed.]`
+          `[Error: Invariant failed: UniversalStore with id env1:test was created before Storybook had prepared the environment for it, which is not allowed.]`
         );
       });
 

@@ -1,9 +1,10 @@
 import type { ChannelHandler } from '@storybook/core/channels';
 import { Channel, HEARTBEAT_INTERVAL } from '@storybook/core/channels';
-import { __setUniversalStoreChannel } from '@storybook/core/common';
 
 import { isJSON, parse, stringify } from 'telejson';
 import WebSocket, { WebSocketServer } from 'ws';
+
+import { UniversalStore } from '../../shared/universal-store';
 
 type Server = NonNullable<NonNullable<ConstructorParameters<typeof WebSocketServer>[0]>['server']>;
 
@@ -93,7 +94,8 @@ export function getServerChannel(server: Server) {
   const transports = [new ServerChannelTransport(server)];
 
   const channel = new Channel({ transports, async: true });
-  __setUniversalStoreChannel(channel);
+  // eslint-disable-next-line no-underscore-dangle
+  UniversalStore.__prepare(channel, UniversalStore.Environment.SERVER);
 
   return channel;
 }
