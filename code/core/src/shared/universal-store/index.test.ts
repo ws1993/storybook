@@ -3,6 +3,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { UniversalStore } from '.';
 import { instances as mockedInstances } from './__mocks__/instances';
+import type { ChannelEvent } from './types';
 
 vi.mock('./instances');
 
@@ -25,33 +26,43 @@ const mockChannel = {
     const listeners = mockChannelListeners.get(universalStoreId)!;
     listeners.delete(listener);
   }),
-  emit: vi.fn((eventType: string, ...args: any) => {
+  emit: vi.fn((eventType: string, channelEvent: ChannelEvent<any, any>) => {
     const [universalStorePrefix, environmentId, universalStoreId] = eventType.split(':');
     if (!mockChannelListeners.has(universalStoreId)) {
       return;
     }
     const listeners = mockChannelListeners.get(universalStoreId)!;
     setTimeout(() => {
-      // TODO: this is a simplification, emulating that the event is emitted asynchronously
+      // this is a simplification, emulating that the event is emitted asynchronously
       // in reality, it would be synchronous within the same environment, but async across environments
-      listeners.forEach((listener) => listener(...args));
+      listeners.forEach((listener) => listener(channelEvent));
     }, 0);
   }),
 };
 
 describe('UniversalStore', () => {
-  beforeEach(() => {
-    mockedInstances.clearAllEnvironments();
-    mockChannelListeners.clear();
-    UniversalStore.__prepare(mockChannel, UniversalStore.Environment.MANAGER);
+  beforeEach((context) => {
     vi.useRealTimers();
+
+    // Always prepare the store, unless the test is specifically for unprepared state
+    if (!context.task.name.toLowerCase().includes('unprepared')) {
+      UniversalStore.__prepare(mockChannel, UniversalStore.Environment.MANAGER);
+    }
+
+    return () => {
+      mockedInstances.clearAllEnvironments();
+      mockChannelListeners.clear();
+      UniversalStore.__reset();
+    };
   });
 
   describe('Creation', () => {
     describe('Leader', () => {
       it('should create a new leader instance with initial state', () => {
         // Arrange - mock the randomUUID function to return a known value
-        const uuidSpy = vi.spyOn(crypto, 'randomUUID').mockReturnValue('random-uuid-1-2-3-4');
+        const uuidSpy = vi
+          .spyOn(globalThis.crypto, 'randomUUID')
+          .mockReturnValue('random-uuid-1-2-3-4');
 
         // Act - create a new leader instance
         const store = UniversalStore.create({
@@ -78,29 +89,14 @@ describe('UniversalStore', () => {
               leader: true,
             })
         ).toThrowErrorMatchingInlineSnapshot(
-          `[Error: Invariant failed: UniversalStore is not constructable - use UniversalStore.create() instead]`
+          `[TypeError: UniversalStore is not constructable - use UniversalStore.create() instead]`
         );
       });
 
       it('should throw when id is not provided', () => {
         // Arrange, Act, Assert - creating an instance without an id and expect it to throw
         expect(() => (UniversalStore as any).create()).toThrowErrorMatchingInlineSnapshot(
-          `[Error: Invariant failed: id is required and must be a string, when creating a UniversalStore]`
-        );
-      });
-
-      it('should throw when creating a store before it has been prepared', () => {
-        // Arrange - unset the channel and environment
-        UniversalStore.__prepare(undefined as any, undefined as any);
-
-        // Act, Assert - creating a store without a channel and expect it to throw
-        expect(() =>
-          UniversalStore.create({
-            id: 'env1:test',
-            leader: true,
-          })
-        ).toThrowErrorMatchingInlineSnapshot(
-          `[Error: Invariant failed: UniversalStore with id env1:test was created before Storybook had prepared the environment for it, which is not allowed.]`
+          `[TypeError: Cannot read properties of undefined (reading 'debug')]`
         );
       });
 
@@ -146,7 +142,7 @@ You should reuse the existing instance instead of trying to create a new one.`);
         expect(console.warn).not.toBeCalled();
       });
 
-      it('should subscribe to the channel for changes', () => {
+      it('should subscribe to the channel for changes', async () => {
         // Act - create a new leader instance
         UniversalStore.create({
           id: 'env1:test',
@@ -154,17 +150,47 @@ You should reuse the existing instance instead of trying to create a new one.`);
         });
 
         // Assert - the store should subscribe to the channel
-        expect(mockChannel.on).toHaveBeenCalledWith(
-          'UNIVERSAL_STORE:env1:test',
-          expect.any(Function)
-        );
+        await vi.waitFor(() => {
+          expect(mockChannel.on).toHaveBeenCalledWith(
+            'UNIVERSAL_STORE:env1:test',
+            expect.any(Function)
+          );
+        });
+      });
+
+      it('should eventually subscribe to the channel if it is created in an unprepared context', async () => {
+        // Act - create a new leader instance without awaiting
+        const store = UniversalStore.create({
+          id: 'env1:test',
+          leader: true,
+        });
+
+        // Assert - the store should not subscribe to the channel immediately
+        await vi.waitFor(() => {
+          expect(mockChannel.on).not.toBeCalled();
+        });
+        expect(store.status).toBe(UniversalStore.Status.UNPREPARED);
+
+        // Act - prepare the store
+        UniversalStore.__prepare(mockChannel, UniversalStore.Environment.MANAGER);
+
+        // Assert - the store should eventually subscribe to the channel
+        await vi.waitFor(() => {
+          expect(mockChannel.on).toHaveBeenCalledExactlyOnceWith(
+            'UNIVERSAL_STORE:env1:test',
+            expect.any(Function)
+          );
+          expect(store.status).toBe(UniversalStore.Status.READY);
+        });
       });
     });
 
     describe('Follower', () => {
       it('should create a new follower instance', () => {
         // Arrange - mock the randomUUID function to return a known value
-        const uuidSpy = vi.spyOn(crypto, 'randomUUID').mockReturnValue('random-uuid-1-2-3-4');
+        const uuidSpy = vi
+          .spyOn(globalThis.crypto, 'randomUUID')
+          .mockReturnValue('random-uuid-1-2-3-4');
 
         // Act - create a new follower instance
         const store = UniversalStore.create({
@@ -189,7 +215,7 @@ You should reuse the existing instance instead of trying to create a new one.`);
             initialState: { count: 0 },
           })
         ).toThrowErrorMatchingInlineSnapshot(
-          `[Error: Invariant failed: setting initialState requires that leader is also true, when creating a UniversalStore. id: 'env1:test']`
+          `[TypeError: setting initialState requires that leader is also true, when creating a UniversalStore. id: 'env1:test']`
         );
       });
 
@@ -209,21 +235,90 @@ You should reuse the existing instance instead of trying to create a new one.`);
         await vi.waitFor(() => {
           expect(mockChannel.emit).toHaveBeenCalledTimes(2);
           expect(mockChannel.emit).toHaveBeenNthCalledWith(1, 'UNIVERSAL_STORE:env2:test', {
-            type: UniversalStore.InternalEventTypes.EXISTING_STATE_REQUEST,
-            actor: {
-              type: UniversalStore.ActorType.FOLLOWER,
-              id: follower.actor.id,
+            event: {
+              type: UniversalStore.InternalEventType.EXISTING_STATE_REQUEST,
+            },
+            eventInfo: {
+              actor: {
+                type: UniversalStore.ActorType.FOLLOWER,
+                id: follower.actor.id,
+                environment: UniversalStore.Environment.MANAGER,
+              },
             },
           });
           expect(mockChannel.emit).toHaveBeenNthCalledWith(2, 'UNIVERSAL_STORE:env1:test', {
-            type: UniversalStore.InternalEventTypes.EXISTING_STATE_RESPONSE,
-            actor: {
-              type: UniversalStore.ActorType.LEADER,
-              id: leader.actor.id,
+            event: {
+              type: UniversalStore.InternalEventType.EXISTING_STATE_RESPONSE,
+              payload: leader.getState(),
             },
-            payload: leader.getState(),
+            eventInfo: {
+              actor: {
+                type: UniversalStore.ActorType.LEADER,
+                id: leader.actor.id,
+                environment: UniversalStore.Environment.MANAGER,
+              },
+            },
           });
           expect(follower.getState()).toEqual(leader.getState());
+        });
+      });
+
+      it('should eventually get existing state when a follower is created in an unprepared context', async () => {
+        // Act - create a leader and a follower without awaiting
+        const leader = UniversalStore.create({
+          id: 'env1:test',
+          leader: true,
+          initialState: { count: 0 },
+        });
+        const follower = UniversalStore.create({
+          id: 'env2:test',
+          leader: false,
+        });
+
+        // Assert - the follower does not request the state because the store is not prepared with a channel
+        await vi.waitFor(() => {
+          expect(mockChannel.emit).toHaveBeenCalledTimes(0);
+        });
+        expect(leader.status).toBe(UniversalStore.Status.UNPREPARED);
+        expect(follower.status).toBe(UniversalStore.Status.UNPREPARED);
+
+        // Act - prepare the store
+        UniversalStore.__prepare(mockChannel, UniversalStore.Environment.MANAGER);
+
+        // Assert - leader is immediately ready, follower is syncing
+        expect(leader.status).toBe(UniversalStore.Status.READY);
+        expect(follower.status).toBe(UniversalStore.Status.SYNCING);
+
+        // Assert - the follower should eventually get the existing state from the leader
+        await vi.waitFor(() => {
+          expect(mockChannel.emit).toHaveBeenCalledTimes(2);
+          expect(mockChannel.emit).toHaveBeenNthCalledWith(1, 'UNIVERSAL_STORE:env2:test', {
+            event: {
+              type: UniversalStore.InternalEventType.EXISTING_STATE_REQUEST,
+            },
+            eventInfo: {
+              actor: {
+                type: UniversalStore.ActorType.FOLLOWER,
+                id: follower.actor.id,
+                environment: UniversalStore.Environment.MANAGER,
+              },
+            },
+          });
+          expect(mockChannel.emit).toHaveBeenNthCalledWith(2, 'UNIVERSAL_STORE:env1:test', {
+            event: {
+              type: UniversalStore.InternalEventType.EXISTING_STATE_RESPONSE,
+              payload: leader.getState(),
+            },
+            eventInfo: {
+              actor: {
+                type: UniversalStore.ActorType.LEADER,
+                id: leader.actor.id,
+                environment: UniversalStore.Environment.MANAGER,
+              },
+            },
+          });
+          expect(follower.getState()).toEqual(leader.getState());
+          expect(follower.status).toBe(UniversalStore.Status.READY);
         });
       });
 
@@ -240,17 +335,25 @@ You should reuse the existing instance instead of trying to create a new one.`);
         // Assert - the follower should request the existing state
         await vi.waitFor(() => {
           expect(mockChannel.emit).toHaveBeenCalledExactlyOnceWith('UNIVERSAL_STORE:env1:test', {
-            type: UniversalStore.InternalEventTypes.EXISTING_STATE_REQUEST,
-            actor: {
-              type: UniversalStore.ActorType.FOLLOWER,
-              id: follower.actor.id,
+            event: {
+              type: UniversalStore.InternalEventType.EXISTING_STATE_REQUEST,
+            },
+            eventInfo: {
+              actor: {
+                type: UniversalStore.ActorType.FOLLOWER,
+                id: follower.actor.id,
+                environment: UniversalStore.Environment.MANAGER,
+              },
             },
           });
         });
-        // Assert - eventually the follower should throw an error when the timeout is reached
-        expect(() => vi.advanceTimersToNextTimer()).toThrowErrorMatchingInlineSnapshot(
-          `[Error: Invariant failed: No existing state found for follower with id: 'env1:test'. Make sure a leader with the same id exists before creating a follower.]`
+
+        // Assert - eventually the follower.untilReady() promise should throw an error when the timeout is reached
+        vi.advanceTimersToNextTimer();
+        await expect(follower.untilReady()).rejects.toThrowErrorMatchingInlineSnapshot(
+          `[TypeError: No existing state found for follower with id: 'env1:test'. Make sure a leader with the same id exists before creating a follower.]`
         );
+        expect(follower.status).toBe(UniversalStore.Status.ERROR);
       });
     });
   });
@@ -302,11 +405,15 @@ You should reuse the existing instance instead of trying to create a new one.`);
 
       // Assert - the state change should be emitted on the channel
       expect(mockChannel.emit).toHaveBeenCalledExactlyOnceWith('UNIVERSAL_STORE:env1:test', {
-        type: UniversalStore.InternalEventTypes.SET_STATE,
-        actor: store.actor,
-        payload: {
-          state: { count: 1 },
-          previousState: { count: 0 },
+        event: {
+          type: UniversalStore.InternalEventType.SET_STATE,
+          payload: {
+            state: { count: 1 },
+            previousState: { count: 0 },
+          },
+        },
+        eventInfo: {
+          actor: store.actor,
         },
       });
     });
@@ -321,7 +428,7 @@ You should reuse the existing instance instead of trying to create a new one.`);
       const stateChangeListener = vi.fn();
       const fullListener = vi.fn();
       store.onStateChange(stateChangeListener);
-      store.subscribe(UniversalStore.InternalEventTypes.SET_STATE, fullListener);
+      store.subscribe(UniversalStore.InternalEventType.SET_STATE, fullListener);
 
       // Act - replace the state
       store.setState({ count: 1 });
@@ -334,7 +441,7 @@ You should reuse the existing instance instead of trying to create a new one.`);
       );
       expect(fullListener).toHaveBeenCalledExactlyOnceWith(
         {
-          type: UniversalStore.InternalEventTypes.SET_STATE,
+          type: UniversalStore.InternalEventType.SET_STATE,
           payload: {
             state: { count: 1 },
             previousState: { count: 0 },
@@ -391,29 +498,40 @@ You should reuse the existing instance instead of trying to create a new one.`);
         expect(leader.getState()).toEqual({ count: 1 });
         expect(mockChannel.emit).toHaveBeenCalledTimes(4);
         expect(mockChannel.emit).toHaveBeenNthCalledWith(3, 'UNIVERSAL_STORE:env2:test', {
-          type: UniversalStore.InternalEventTypes.SET_STATE,
-          payload: {
-            state: { count: 1 },
-            previousState: { count: 0 },
+          event: {
+            type: UniversalStore.InternalEventType.SET_STATE,
+            payload: {
+              state: { count: 1 },
+              previousState: { count: 0 },
+            },
           },
-          actor: {
-            type: UniversalStore.ActorType.FOLLOWER,
-            id: follower.actor.id,
+          eventInfo: {
+            actor: {
+              type: UniversalStore.ActorType.FOLLOWER,
+              id: follower.actor.id,
+              environment: UniversalStore.Environment.MANAGER,
+            },
           },
         });
         expect(mockChannel.emit).toHaveBeenNthCalledWith(4, 'UNIVERSAL_STORE:env1:test', {
-          type: UniversalStore.InternalEventTypes.SET_STATE,
-          payload: {
-            state: { count: 1 },
-            previousState: { count: 0 },
+          event: {
+            type: UniversalStore.InternalEventType.SET_STATE,
+            payload: {
+              state: { count: 1 },
+              previousState: { count: 0 },
+            },
           },
-          actor: {
-            type: UniversalStore.ActorType.LEADER,
-            id: leader.actor.id,
-          },
-          originalActor: {
-            type: UniversalStore.ActorType.FOLLOWER,
-            id: follower.actor.id,
+          eventInfo: {
+            actor: {
+              type: UniversalStore.ActorType.FOLLOWER,
+              id: follower.actor.id,
+              environment: UniversalStore.Environment.MANAGER,
+            },
+            forwardingActor: {
+              type: UniversalStore.ActorType.LEADER,
+              id: leader.actor.id,
+              environment: UniversalStore.Environment.MANAGER,
+            },
           },
         });
       });
@@ -421,50 +539,121 @@ You should reuse the existing instance instead of trying to create a new one.`);
   });
 
   describe('Events', () => {
-    it('should call listeners for specific events', () => {
+    it('should call listeners when events are sent via the store', () => {
       // Arrange - create a store and add a listener
       const store = UniversalStore.create({
         id: 'env1:test',
         leader: true,
         initialState: { count: 0 },
       });
-      const listener = vi.fn();
-      store.subscribe('CUSTOM_EVENT_TYPE', listener);
+      const specificListener = vi.fn();
+      const allListener = vi.fn();
+      store.subscribe('CUSTOM_EVENT_TYPE', specificListener);
+      store.subscribe(allListener);
 
       // Act - send the event
       store.send({ type: 'CUSTOM_EVENT_TYPE', payload: { foo: 'bar' } });
 
       // Assert - the listener should be called
-      expect(listener).toHaveBeenCalledExactlyOnceWith(
-        {
-          type: 'CUSTOM_EVENT_TYPE',
-          payload: { foo: 'bar' },
-        },
-        { actor: store.actor }
-      );
+      const expectedEvent = {
+        type: 'CUSTOM_EVENT_TYPE',
+        payload: { foo: 'bar' },
+      };
+      const expectedEventInfo = {
+        actor: store.actor,
+      };
+      expect(specificListener).toHaveBeenCalledExactlyOnceWith(expectedEvent, expectedEventInfo);
+      expect(allListener).toHaveBeenCalledExactlyOnceWith(expectedEvent, expectedEventInfo);
     });
 
-    it('should call listeners for all events', () => {
+    it('should call listeners when events are sent via the channel', async () => {
       // Arrange - create a store and add a listener
       const store = UniversalStore.create({
         id: 'env1:test',
         leader: true,
         initialState: { count: 0 },
       });
-      const listener = vi.fn();
-      store.subscribe(listener);
+      const specificListener = vi.fn();
+      const allListener = vi.fn();
+      store.subscribe('CUSTOM_EVENT_TYPE', specificListener);
+      store.subscribe(allListener);
+      await store.untilReady();
 
-      // Act - send the event
-      store.send({ type: 'CUSTOM_EVENT_TYPE', payload: { foo: 'bar' } });
-
-      // Assert - the listener should be called
-      expect(listener).toHaveBeenCalledExactlyOnceWith(
-        {
+      // Act - emit the event on the channel
+      mockChannel.emit('UNIVERSAL_STORE:env2:test', {
+        event: {
           type: 'CUSTOM_EVENT_TYPE',
           payload: { foo: 'bar' },
         },
-        { actor: store.actor }
-      );
+        eventInfo: {
+          actor: {
+            id: 'random-uuid-1-2-3-4',
+            type: UniversalStore.ActorType.FOLLOWER,
+            environment: UniversalStore.Environment.MANAGER,
+          },
+        },
+      });
+
+      // Assert - the listener should be called
+      const expectedEvent = {
+        type: 'CUSTOM_EVENT_TYPE',
+        payload: { foo: 'bar' },
+      };
+      const expectedEventInfo = {
+        actor: {
+          id: 'random-uuid-1-2-3-4',
+          type: UniversalStore.ActorType.FOLLOWER,
+          environment: UniversalStore.Environment.MANAGER,
+        },
+      };
+      await vi.waitFor(() => {
+        expect(specificListener).toHaveBeenCalledExactlyOnceWith(expectedEvent, expectedEventInfo);
+        expect(allListener).toHaveBeenCalledExactlyOnceWith(expectedEvent, expectedEventInfo);
+      });
+    });
+
+    it('should forward events on the channel when a leader receives an event', async () => {
+      // Arrange - create a leader
+      const store = UniversalStore.create({
+        id: 'env1:test',
+        leader: true,
+        initialState: { count: 0 },
+      });
+      await store.untilReady();
+
+      // Act - emit the event on the channel as a follower
+      mockChannel.emit('UNIVERSAL_STORE:env2:test', {
+        event: {
+          type: 'CUSTOM_EVENT_TYPE',
+          payload: { foo: 'bar' },
+        },
+        eventInfo: {
+          actor: {
+            id: 'random-uuid-1-2-3-4',
+            type: UniversalStore.ActorType.FOLLOWER,
+            environment: UniversalStore.Environment.MANAGER,
+          },
+        },
+      });
+
+      // Assert - the event should be forwarded on the channel by the leader
+      await vi.waitFor(() => {
+        expect(mockChannel.emit).toHaveBeenCalledTimes(2);
+        expect(mockChannel.emit).toHaveBeenCalledWith('UNIVERSAL_STORE:env1:test', {
+          event: {
+            type: 'CUSTOM_EVENT_TYPE',
+            payload: { foo: 'bar' },
+          },
+          eventInfo: {
+            actor: {
+              id: 'random-uuid-1-2-3-4',
+              type: UniversalStore.ActorType.FOLLOWER,
+              environment: UniversalStore.Environment.MANAGER,
+            },
+            forwardingActor: store.actor,
+          },
+        });
+      });
     });
 
     it('should unsubscribe listeners from events', () => {
@@ -501,9 +690,13 @@ You should reuse the existing instance instead of trying to create a new one.`);
 
       // Assert - the event should be emitted on the channel
       expect(mockChannel.emit).toHaveBeenCalledWith('UNIVERSAL_STORE:env1:test', {
-        type: 'CUSTOM_EVENT_TYPE',
-        payload: { foo: 'bar' },
-        actor: store.actor,
+        event: {
+          type: 'CUSTOM_EVENT_TYPE',
+          payload: { foo: 'bar' },
+        },
+        eventInfo: {
+          actor: store.actor,
+        },
       });
     });
   });

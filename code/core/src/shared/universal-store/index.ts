@@ -3,7 +3,9 @@ import dedent from 'ts-dedent';
 import { instances } from './instances';
 import type {
   Actor,
+  ChannelEvent,
   ChannelLike,
+  EnvironmentType,
   Event,
   EventInfo,
   ExistingStateResponseEvent,
@@ -14,6 +16,12 @@ import type {
 } from './types';
 
 const CHANNEL_EVENT_PREFIX = 'UNIVERSAL_STORE:' as const;
+
+const ProgressState = {
+  PENDING: 'PENDING',
+  RESOLVED: 'RESOLVED',
+  REJECTED: 'REJECTED',
+} as const;
 
 /**
  * A universal store implementation that synchronizes state across different environments using a
@@ -75,7 +83,7 @@ export class UniversalStore<State, CustomEvent extends { type: string; payload?:
    *
    * @readonly
    */
-  static readonly ActorType = {
+  public static readonly ActorType = {
     LEADER: 'LEADER',
     FOLLOWER: 'FOLLOWER',
   } as const;
@@ -85,7 +93,7 @@ export class UniversalStore<State, CustomEvent extends { type: string; payload?:
    *
    * @readonly
    */
-  static readonly Environment = {
+  public static readonly Environment = {
     SERVER: 'SERVER',
     MANAGER: 'MANAGER',
     PREVIEW: 'PREVIEW',
@@ -96,30 +104,94 @@ export class UniversalStore<State, CustomEvent extends { type: string; payload?:
    *
    * @readonly
    */
-  static readonly InternalEventTypes = {
+  public static readonly InternalEventType = {
     EXISTING_STATE_REQUEST: '__EXISTING_STATE_REQUEST',
     EXISTING_STATE_RESPONSE: '__EXISTING_STATE_RESPONSE',
     SET_STATE: '__SET_STATE',
   } as const;
 
-  /** The current environment the UniversalStore is in */
-  static get currentEnvironment() {
-    if (!this.environment) {
-      throw new TypeError(
-        'Cannot read currentEnvironment from UniversalStore before Storybook has prepared the environment for it.'
-      );
-    }
-    return this.environment;
+  public static readonly Status = {
+    UNPREPARED: 'UNPREPARED',
+    SYNCING: 'SYNCING',
+    READY: 'READY',
+    ERROR: 'ERROR',
+  } as const;
+
+  // To check if constructor was called from the static factory create()
+  private static isInternalConstructing = false;
+
+  private static preparation: {
+    state: (typeof ProgressState)[keyof typeof ProgressState];
+    resolve: (args: Awaited<typeof UniversalStore.preparation.promise>) => void;
+    reject: (error: Error) => void;
+    promise: Promise<{ channel: ChannelLike; environment: EnvironmentType }>;
+  };
+
+  static {
+    UniversalStore.setupPreparationPromise();
   }
 
-  // Private field to check if constructor was called from the static factory create()
-  static isInternalConstructing = false;
+  private static setupPreparationPromise() {
+    let resolveRef: typeof UniversalStore.preparation.resolve;
+    let rejectRef: typeof UniversalStore.preparation.reject;
 
-  // Private field to store the channel instance for the current environment
-  static channel: ChannelLike;
+    const promise = new Promise<Awaited<typeof UniversalStore.preparation.promise>>(
+      (resolve, reject) => {
+        resolveRef = (args) => {
+          UniversalStore.preparation.state = ProgressState.RESOLVED;
+          resolve(args);
+        };
+        rejectRef = (...args) => {
+          UniversalStore.preparation.state = ProgressState.REJECTED;
+          reject(args);
+        };
+      }
+    );
 
-  // Private field to store the current environment
-  static environment: (typeof UniversalStore.Environment)[keyof typeof UniversalStore.Environment];
+    UniversalStore.preparation = {
+      state: ProgressState.PENDING,
+      resolve: resolveRef!,
+      reject: rejectRef!,
+      promise,
+    };
+  }
+
+  public get status() {
+    switch (UniversalStore.preparation.state) {
+      case ProgressState.PENDING:
+        return UniversalStore.Status.UNPREPARED;
+      case ProgressState.REJECTED:
+        return UniversalStore.Status.ERROR;
+      case ProgressState.RESOLVED:
+      default:
+    }
+    switch (this.syncing.state) {
+      case ProgressState.PENDING:
+        return UniversalStore.Status.SYNCING;
+      case ProgressState.REJECTED:
+        return UniversalStore.Status.ERROR;
+      case ProgressState.RESOLVED:
+      default:
+        return UniversalStore.Status.READY;
+    }
+  }
+
+  public untilReady() {
+    return Promise.all([UniversalStore.preparation.promise, this.syncing?.promise]);
+  }
+
+  private syncing: {
+    state: (typeof ProgressState)[keyof typeof ProgressState];
+    promise?: Promise<void>;
+    resolve?: () => void;
+    reject?: (error: Error) => void;
+  };
+
+  // To store the channel instance for the current environment
+  private static channel: ChannelLike;
+
+  // To store the current environment
+  private static environment: (typeof UniversalStore.Environment)[keyof typeof UniversalStore.Environment];
 
   /** Enable debug logs for this store */
   public debugging = false;
@@ -156,38 +228,72 @@ export class UniversalStore<State, CustomEvent extends { type: string; payload?:
       );
     }
 
-    if (!UniversalStore.channel) {
-      throw new TypeError(
-        `UniversalStore with id ${options.id} was created before Storybook had prepared the environment for it, which is not allowed.`
-      );
-    }
-
     this.id = options.id;
     this.actor = {
-      id: crypto.randomUUID(),
+      id: globalThis.crypto.randomUUID(),
       type: options.leader ? UniversalStore.ActorType.LEADER : UniversalStore.ActorType.FOLLOWER,
+      environment: undefined as any, // Will be set later when the preparation promise has resolved
     };
     this.state = options.initialState as State;
     this.channelEventName = `${CHANNEL_EVENT_PREFIX}${this.id}`;
 
     this.debug('constructor', { options, channelEventName: this.channelEventName });
 
-    debugger;
-    UniversalStore.channel.on(this.channelEventName, this.handleChannelEvents);
-    if (this.actor.type === UniversalStore.ActorType.FOLLOWER) {
-      // 1. Emit a request for the existing state
-      this.emitToChannel({
-        type: UniversalStore.InternalEventTypes.EXISTING_STATE_REQUEST,
+    if (this.actor.type === UniversalStore.ActorType.LEADER) {
+      // If this is a leader, resolve the syncing promise immediately
+      // because the state doesn't need to be synced
+      this.syncing = {
+        state: ProgressState.RESOLVED,
+        promise: Promise.resolve(),
+      };
+    } else {
+      // Set up the syncing promise for followers, that will be resolved when the state
+      // is synced with the leader
+      let syncingResolve: () => void;
+      let syncingReject: (error: Error) => void;
+      const syncingPromise = new Promise<void>((resolve, reject) => {
+        syncingResolve = () => {
+          this.syncing.state = ProgressState.RESOLVED;
+          resolve();
+        };
+        syncingReject = (reason) => {
+          this.syncing.state = ProgressState.REJECTED;
+          reject(reason);
+        };
       });
-      // 2. Wait 1 sec for a response, then throw if no state was found
-      setTimeout(() => {
-        if (this.state === undefined) {
-          throw new TypeError(
-            `No existing state found for follower with id: '${options.id}'. Make sure a leader with the same id exists before creating a follower.`
-          );
-        }
-      }, 1000);
+      this.syncing = {
+        state: ProgressState.PENDING,
+        promise: syncingPromise,
+        resolve: syncingResolve!,
+        reject: syncingReject!,
+      };
     }
+
+    UniversalStore.preparation.promise.then(({ channel, environment }) => {
+      this.debug('prepared');
+      this.actor.environment = environment;
+      UniversalStore.channel.on(this.channelEventName, this.handleChannelEvents);
+
+      if (this.actor.type === UniversalStore.ActorType.FOLLOWER) {
+        // 1. Emit a request for the existing state
+        this.emitToChannel(
+          {
+            type: UniversalStore.InternalEventType.EXISTING_STATE_REQUEST,
+          },
+          { actor: this.actor }
+        );
+        // 2. Wait 1 sec for a response, then reject the syncing promise if not already resolved
+        setTimeout(() => {
+          // if the state is already resolved by a response before this timeout,
+          // rejecting it doesn't do anything, it will be ignored
+          this.syncing.reject!(
+            new TypeError(
+              `No existing state found for follower with id: '${options.id}'. Make sure a leader with the same id exists before creating a follower.`
+            )
+          );
+        }, 1000);
+      }
+    });
   }
 
   /**
@@ -205,7 +311,7 @@ export class UniversalStore<State, CustomEvent extends { type: string; payload?:
   >(options: StoreOptions<State>): UniversalStore<State, CustomEvent> {
     if (options.debug) {
       console.log(
-        dedent`[UniversalStore:${UniversalStore.currentEnvironment}]
+        dedent`[UniversalStore:${UniversalStore.environment}]
         create`,
         { options }
       );
@@ -237,9 +343,9 @@ export class UniversalStore<State, CustomEvent extends { type: string; payload?:
     channel: ChannelLike,
     environment: (typeof UniversalStore.Environment)[keyof typeof UniversalStore.Environment]
   ) {
-    console.log('LOG: __prepare', { channel, environment });
     UniversalStore.channel = channel;
     UniversalStore.environment = environment;
+    UniversalStore.preparation.resolve({ channel, environment });
   }
 
   /**
@@ -249,6 +355,7 @@ export class UniversalStore<State, CustomEvent extends { type: string; payload?:
    */
   public getState(): State {
     this.debug('getState', { state: this.state });
+
     return this.state;
   }
 
@@ -264,16 +371,33 @@ export class UniversalStore<State, CustomEvent extends { type: string; payload?:
 
     this.debug('setState', { newState, previousState, updater });
 
+    if (this.status !== UniversalStore.Status.READY) {
+      throw new TypeError(
+        dedent`Cannot set state before store is ready. You can get the current status with store.status,
+        or await store.readyPromise to wait for the store to be ready before sending events.
+        ${JSON.stringify(
+          {
+            newState,
+            id: this.id,
+            actor: this.actor,
+            environment: UniversalStore.environment,
+          },
+          null,
+          2
+        )}`
+      );
+    }
+
     this.state = newState;
     const event = {
-      type: UniversalStore.InternalEventTypes.SET_STATE,
+      type: UniversalStore.InternalEventType.SET_STATE,
       payload: {
         state: newState,
         previousState,
       },
     };
-    this.emitToChannel(event);
-    this.emitToListeners(event);
+    this.emitToChannel(event, { actor: this.actor });
+    this.emitToListeners(event, { actor: this.actor });
   }
 
   /**
@@ -338,7 +462,7 @@ export class UniversalStore<State, CustomEvent extends { type: string; payload?:
   ) {
     this.debug('onStateChange', { listener });
     return this.subscribe<SetStateEvent<State>>(
-      UniversalStore.InternalEventTypes.SET_STATE,
+      UniversalStore.InternalEventType.SET_STATE,
       ({ payload }, eventInfo) => {
         listener(payload.state, payload.previousState, eventInfo);
       }
@@ -352,67 +476,85 @@ export class UniversalStore<State, CustomEvent extends { type: string; payload?:
    */
   public send(event: CustomEvent) {
     this.debug('send', { event });
-    this.emitToListeners(event);
-    this.emitToChannel(event);
+    if (this.status !== UniversalStore.Status.READY) {
+      throw new TypeError(
+        dedent`Cannot send event before store is ready. You can get the current status with store.status,
+        or await store.readyPromise to wait for the store to be ready before sending events.
+        ${JSON.stringify(
+          {
+            event,
+            id: this.id,
+            actor: this.actor,
+            environment: UniversalStore.environment,
+          },
+          null,
+          2
+        )}`
+      );
+    }
+    this.emitToListeners(event, { actor: this.actor });
+    this.emitToChannel(event, { actor: this.actor });
   }
 
-  private emitToListeners = (event: any) => {
-    const emit = (listener: Listener<CustomEvent>) => listener(event, { actor: this.actor });
-
+  private emitToListeners = (event: any, eventInfo: EventInfo) => {
     const eventTypeListeners = this.listeners.get(event.type);
     const everythingListeners = this.listeners.get('*');
     this.debug('emitToListeners', {
       event,
+      eventInfo,
       eventTypeListeners,
       everythingListeners,
     });
 
-    eventTypeListeners?.forEach(emit);
-    everythingListeners?.forEach(emit);
+    [...(eventTypeListeners ?? []), ...(everythingListeners ?? [])]?.forEach(
+      (listener: Listener<CustomEvent>) => listener(event, eventInfo)
+    );
   };
 
-  private emitToChannel = (event: any) => {
-    this.debug('emitToChannel', { event });
+  private emitToChannel = (event: any, eventInfo: EventInfo) => {
+    this.debug('emitToChannel', { event, eventInfo });
     UniversalStore.channel.emit(this.channelEventName, {
-      ...event,
-      actor: this.actor,
+      event,
+      eventInfo,
     });
   };
 
-  private handleChannelEvents = (event: any) => {
-    if ([event.actor.id, event.originalActor?.id].includes(this.actor.id)) {
+  private handleChannelEvents = (channelEvent: ChannelEvent<State, CustomEvent>) => {
+    const { event, eventInfo } = channelEvent;
+
+    if ([eventInfo.actor.id, eventInfo.forwardingActor?.id].includes(this.actor.id)) {
       // Ignore events from self
-      this.debug('handleChannelEvents: IGNORING SELF', { event });
+      this.debug('handleChannelEvents: IGNORING SELF', { channelEvent });
       return;
     }
-    this.debug('handleChannelEvents', { event });
+    this.debug('handleChannelEvents', { channelEvent });
 
     if (this.actor.type === UniversalStore.ActorType.LEADER) {
       let shouldForwardEvent = true;
       switch (event.type) {
-        case UniversalStore.InternalEventTypes.EXISTING_STATE_REQUEST:
+        case UniversalStore.InternalEventType.EXISTING_STATE_REQUEST:
           // No need to forward request events
           shouldForwardEvent = false;
           // Respond by emitting an event with the existing state
           const responseEvent: ExistingStateResponseEvent<State> = {
-            type: UniversalStore.InternalEventTypes.EXISTING_STATE_RESPONSE,
+            type: UniversalStore.InternalEventType.EXISTING_STATE_RESPONSE,
             payload: this.state,
           };
           this.debug('handleChannelEvents: responding to existing state request', {
             responseEvent,
           });
-          this.emitToChannel(responseEvent);
+          this.emitToChannel(responseEvent, { actor: this.actor });
           break;
       }
       if (shouldForwardEvent) {
         // Forward the event to followers in other environments
-        this.debug('handleChannelEvents: forwarding event', { event });
-        this.emitToChannel({ ...event, originalActor: event.actor });
+        this.debug('handleChannelEvents: forwarding event', { channelEvent });
+        this.emitToChannel(event, { actor: eventInfo.actor, forwardingActor: this.actor });
       }
     }
     if (this.actor.type === UniversalStore.ActorType.FOLLOWER) {
       switch (event.type) {
-        case UniversalStore.InternalEventTypes.EXISTING_STATE_RESPONSE:
+        case UniversalStore.InternalEventType.EXISTING_STATE_RESPONSE:
           // TODO: always handle this event, or only the first time?
           // should we _always_ change the state, or only when undefined?
           if (this.state === undefined) {
@@ -420,24 +562,26 @@ export class UniversalStore<State, CustomEvent extends { type: string; payload?:
               event,
             });
             this.state = event.payload;
+            this.syncing.resolve?.();
           }
           break;
       }
     }
 
     switch (event.type) {
-      // TOOD: Do we need to care about the actor type here?
-      case UniversalStore.InternalEventTypes.SET_STATE:
+      case UniversalStore.InternalEventType.SET_STATE:
         this.debug('handleChannelEvents: setting state', { event });
         this.state = event.payload.state;
         break;
     }
+
+    this.emitToListeners(event, { actor: eventInfo.actor });
   };
 
   private debug = (message: string, data?: any) => {
     if (this.debugging) {
       console.debug(
-        dedent`[UniversalStore::${this.id}::${UniversalStore.currentEnvironment}]
+        dedent`[UniversalStore::${this.id}::${UniversalStore.environment}]
         ${message}`,
         data,
         {
@@ -447,4 +591,16 @@ export class UniversalStore<State, CustomEvent extends { type: string; payload?:
       );
     }
   };
+
+  /**
+   * Used to reset the static fields of the UniversalStore class when cleaning up tests
+   *
+   * @internal
+   */
+  static __reset() {
+    UniversalStore.setupPreparationPromise();
+    UniversalStore.channel = undefined as any;
+    UniversalStore.environment = undefined as any;
+    UniversalStore.isInternalConstructing = false;
+  }
 }
