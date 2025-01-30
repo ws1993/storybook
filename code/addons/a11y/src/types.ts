@@ -1,4 +1,4 @@
-import type { AxeResults } from 'axe-core';
+import type { AxeResults, ElementContext, RunOptions, Spec } from 'axe-core';
 
 export type A11YReport = AxeResults | { error: Error };
 
@@ -10,26 +10,21 @@ export interface A11yParameters {
    */
   a11y?: {
     /** Manual configuration for specific elements */
-    element?: string | string[];
+    element?: ElementContext;
 
-    /** Configuration for the accessibility rules */
-    config?: {
-      /** Rules to run against the matching elements */
-      rules?: Array<{
-        id: string;
-        enabled?: boolean;
-        selector?: string;
-      }>;
-      /** Elements to exclude from accessibility checks */
-      exclude?: string[];
-    };
+    /**
+     * Configuration for the accessibility rules
+     *
+     * @see https://github.com/dequelabs/axe-core/blob/develop/doc/API.md#options-parameter
+     */
+    config?: Spec;
 
     /**
      * Options for the accessibility checks To learn more about the available options,
      *
      * @see https://github.com/dequelabs/axe-core/blob/develop/doc/API.md#options-parameter
      */
-    options?: Record<string, any>;
+    options?: RunOptions;
 
     /** Turn off this addon's behavior */
     disable?: boolean;
@@ -37,6 +32,11 @@ export interface A11yParameters {
 }
 
 export interface A11yGlobals {
+  /**
+   * Accessibility configuration
+   *
+   * @see https://storybook.js.org/docs/writing-tests/accessibility-testing
+   */
   a11y: {
     /**
      * Prevent the addon to execute automatic accessibility checks upon visiting a story. You can
