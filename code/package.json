@@ -85,6 +85,7 @@
     "@types/node": "^22.0.0",
     "@vitest/expect@npm:2.0.5": "patch:@vitest/expect@npm%3A2.0.5#~/.yarn/patches/@vitest-expect-npm-2.0.5-8933466cce.patch",
     "esbuild": "^0.24.0",
+    "typescript": "^5.7.3",
     "playwright": "1.48.1",
     "playwright-core": "1.48.1",
     "serialize-javascript": "^3.1.0",
