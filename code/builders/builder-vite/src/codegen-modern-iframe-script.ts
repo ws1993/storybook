@@ -24,10 +24,9 @@ export async function generateModernIframeScriptCode(options: Options, projectRo
   const getPreviewAnnotationsFunction = `
   const getProjectAnnotations = async (hmrPreviewAnnotationModules = []) => {
     const preview = await import('${previewFileUrl}');
-    const csfFactoryPreview = getCsfFactoryPreview(preview);
-    
-    if (csfFactoryPreview) {
-      return csfFactoryPreview.input;
+ 
+    if (isPreview(preview.default)) {
+      return preview.default.composed;
     }
    
     const configs = await Promise.all([${previewAnnotationURLs
