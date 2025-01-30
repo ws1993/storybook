@@ -55,13 +55,17 @@ interface ReactMeta<
   Context extends { args: Args },
   MetaInput extends ComponentAnnotations<ReactRenderer>,
 > extends Meta<ReactRenderer, Context['args']> {
-  story(
-    story: StoryAnnotations<
-      ReactRenderer,
-      // TODO: infer mocks from story itself as well
-      AddMocks<Context['args'], MetaInput['args']>,
-      SetOptional<Context['args'], keyof Context['args'] & keyof MetaInput['args']>
-    >
+  story<
+    const TInput extends Simplify<
+      StoryAnnotations<
+        ReactRenderer,
+        // TODO: infer mocks from story itself as well
+        AddMocks<Context['args'], MetaInput['args']>,
+        SetOptional<Context['args'], keyof Context['args'] & keyof MetaInput['args']>
+      >
+    >,
+  >(
+    story: TInput
   ): ReactStory;
 }
 
