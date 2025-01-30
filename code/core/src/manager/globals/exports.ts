@@ -963,9 +963,9 @@ export default {
     'UPDATE_QUERY_PARAMS',
     'UPDATE_STORY_ARGS',
   ],
-  'storybook/internal/types': ['Addon_TypesEnum', 'definePreview'],
-  '@storybook/types': ['Addon_TypesEnum', 'definePreview'],
-  '@storybook/core/types': ['Addon_TypesEnum', 'definePreview'],
+  'storybook/internal/types': ['Addon_TypesEnum'],
+  '@storybook/types': ['Addon_TypesEnum'],
+  '@storybook/core/types': ['Addon_TypesEnum'],
   'storybook/internal/manager-errors': [
     'Category',
     'ProviderDoesNotExtendBaseProviderError',

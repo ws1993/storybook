@@ -1,12 +1,15 @@
-import { composeConfigs, normalizeProjectAnnotations } from '@storybook/core/preview-api';
-
-import type { Args, ComponentAnnotations, Renderer, StoryAnnotations } from './csf';
 import type {
+  Args,
+  ComponentAnnotations,
   NormalizedComponentAnnotations,
   NormalizedProjectAnnotations,
   NormalizedStoryAnnotations,
   ProjectAnnotations,
-} from './story';
+  Renderer,
+  StoryAnnotations,
+} from '@storybook/core/types';
+
+import { composeConfigs, normalizeProjectAnnotations } from '@storybook/core/preview-api';
 
 export interface Preview<TRenderer extends Renderer> {
   readonly _tag: 'Preview';

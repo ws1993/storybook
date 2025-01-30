@@ -1,16 +1,15 @@
 import type { ComponentType } from 'react';
 
+import { definePreview as definePreviewBase } from 'storybook/internal/csf';
+import type { Meta, Preview, Story } from 'storybook/internal/csf';
 import type {
   Args,
+  ArgsStoryFn,
   ComponentAnnotations,
-  Meta,
-  Preview,
-  Story,
+  DecoratorFunction,
+  Renderer,
   StoryAnnotations,
 } from 'storybook/internal/types';
-import { definePreview as definePreviewBase } from 'storybook/internal/types';
-
-import type { ArgsStoryFn, DecoratorFunction, LoaderFunction, Renderer } from '@storybook/csf';
 
 import type { AddMocks } from 'src/public-types';
 import type { RemoveIndexSignature, SetOptional, Simplify, UnionToIntersection } from 'type-fest';
