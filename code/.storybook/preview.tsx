@@ -130,7 +130,6 @@ const ThemedSetRoot = () => {
   return null;
 };
 
-// eslint-disable-next-line no-underscore-dangle
 const preview = (window as any).__STORYBOOK_PREVIEW__ as PreviewWeb<ReactRenderer> | undefined;
 const channel = (window as any).__STORYBOOK_ADDONS_CHANNEL__ as Channel | undefined;
 const loaders = [
@@ -373,7 +372,7 @@ const parameters = {
   },
 };
 
-export const config = definePreview({
+export default definePreview({
   addons: [
     addonThemes(),
     addonEssentials(),
