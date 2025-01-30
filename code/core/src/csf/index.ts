@@ -90,6 +90,6 @@ function defineStory<TRenderer extends Renderer>(
   };
 }
 
-export function isStory(input: unknown): input is Story<Renderer> {
+export function isStory<TRenderer extends Renderer>(input: unknown): input is Story<TRenderer> {
   return input != null && typeof input === 'object' && '_tag' in input && input?._tag === 'Story';
 }
