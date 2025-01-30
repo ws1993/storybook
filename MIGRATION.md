@@ -2,6 +2,9 @@
 
 - [From version 8.5.x to 8.6.x](#from-version-85x-to-86x)
   - [Angular: Support experimental zoneless support](#angular-support-experimental-zoneless-support)
+- [From version 8.4.x to 8.5.x](#from-version-84x-to-85x)
+  - [React Vite: react-docgen-typescript is updated](#react-vite-react-docgen-typescript-is-updated)
+  - [Introducing features.developmentModeForBuild](#introducing-featuresdevelopmentmodeforbuild)
   - [Added source code panel to docs](#added-source-code-panel-to-docs)
   - [Addon-a11y: Component test integration](#addon-a11y-component-test-integration)
   - [Addon-a11y: Changing the default element selector](#addon-a11y-changing-the-default-element-selector)
@@ -460,6 +463,24 @@ Storybook now supports [Angular's experimental zoneless mode](https://angular.de
 
 ## From version 8.4.x to 8.5.x
 
+### React Vite: react-docgen-typescript is updated
+
+Storybook now uses [react-docgen-typescript](https://github.com/joshwooding/vite-plugin-react-docgen-typescript) v0.5.0 which updates its internal logic on how it parses files. Depending on how big is your codebase and which version of TypeScript you use, you might have performance issues. If that is the case, you can opt-in to a newer implementation under the `EXPERIMENTAL_useWatchProgram` flag. Keep in mind that this flag is experimental and also does not support the `references` field in tsconfig.json files.
+
+```ts
+// .storybook/main.ts
+const config = {
+  // ...
+  typescript: {
+    reactDocgen: "react-docgen-typescript",
+    reactDocgenTypescriptOptions: {
+      EXPERIMENTAL_useWatchProgram: true,
+    },
+  },
+};
+export default config;
+```
+
 ### Introducing features.developmentModeForBuild
 
 As part of our ongoing efforts to improve the testability and debuggability of Storybook, we are introducing a new feature flag: `developmentModeForBuild`. This feature flag allows you to set `process.env.NODE_ENV` to `development` in built Storybooks, enabling development-related optimizations that are typically disabled in production builds.
@@ -473,7 +494,7 @@ export default {
     developmentModeForBuild: true,
   },
 };
-````
+```
 
 ### Added source code panel to docs
 
