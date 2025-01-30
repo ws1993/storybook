@@ -56,7 +56,7 @@ describe('Meta', () => {
         Component: Button,
         props: args,
         on: {
-          click: (event) => {
+          mousemove: (event) => {
             expectTypeOf(event).toMatchTypeOf<MouseEvent>();
           },
         },
