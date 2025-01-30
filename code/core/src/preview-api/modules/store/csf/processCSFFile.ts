@@ -48,8 +48,6 @@ export function processCSFFile<TRenderer extends Renderer>(
   const { default: defaultExport, __namedExportsOrder, ...namedExports } = moduleExports;
 
   const firstStory = Object.values(namedExports)[0];
-  // CSF4
-  // TODO: @kasperpeulen will fix this once csf factory types are defined
   if (isStory<TRenderer>(firstStory)) {
     const meta: NormalizedComponentAnnotations<TRenderer> =
       normalizeComponentAnnotations<TRenderer>(firstStory.meta.input, title, importPath);
