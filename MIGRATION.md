@@ -465,7 +465,9 @@ Storybook now supports [Angular's experimental zoneless mode](https://angular.de
 
 ### React Vite: react-docgen-typescript is updated
 
-Storybook now uses [react-docgen-typescript](https://github.com/joshwooding/vite-plugin-react-docgen-typescript) v0.5.0 which updates its internal logic on how it parses files. Depending on how big is your codebase and which version of TypeScript you use, you might have performance issues. If that is the case, you can opt-in to a newer implementation under the `EXPERIMENTAL_useWatchProgram` flag. Keep in mind that this flag is experimental and also does not support the `references` field in tsconfig.json files.
+Storybook now uses [react-docgen-typescript](https://github.com/joshwooding/vite-plugin-react-docgen-typescript) v0.5.0 which updates its internal logic on how it parses files, available under an experimental feature flag `EXPERIMENTAL_useWatchProgram`, which is disabled by default.
+
+Previously, once you made changes to a component's props, the controls and args table would not update unless you restarted Storybook. With the `EXPERIMENTAL_useWatchProgram` flag, you do not need to restart Storybook anymore, however you do need to refresh the browser page. Keep in mind that this flag is experimental and also does not support the `references` field in tsconfig.json files. Depending on how big your codebase is, it might have performance issues.
 
 ```ts
 // .storybook/main.ts
