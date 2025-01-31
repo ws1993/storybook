@@ -302,7 +302,6 @@
     "@emotion/styled": "^11.14.0",
     "@emotion/use-insertion-effect-with-fallbacks": "^1.2.0",
     "@fal-works/esbuild-plugin-global-externals": "^2.1.2",
-    "@inkjs/ui": "^2.0.0",
     "@ndelangen/get-tarball": "^3.0.7",
     "@polka/compression": "^1.0.0-next.28",
     "@popperjs/core": "^2.6.0",

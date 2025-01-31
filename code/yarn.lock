@@ -3372,20 +3372,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@inkjs/ui@npm:^2.0.0":
-  version: 2.0.0
-  resolution: "@inkjs/ui@npm:2.0.0"
-  dependencies:
-    chalk: "npm:^5.3.0"
-    cli-spinners: "npm:^3.0.0"
-    deepmerge: "npm:^4.3.1"
-    figures: "npm:^6.1.0"
-  peerDependencies:
-    ink: ">=5"
-  checksum: 10c0/dad9cd79d35853ab6c60316e8a28e5b7ef70a141091dad889a3dc6c04be58675a7bfd94beaef0ffc1d55b408fedf9f60809aecafd91f00988ec7300d5ba05971
-  languageName: node
-  linkType: hard
-
 "@inquirer/checkbox@npm:^4.0.4":
   version: 4.0.6
   resolution: "@inquirer/checkbox@npm:4.0.6"
@@ -6320,7 +6306,6 @@ __metadata:
     "@emotion/styled": "npm:^11.14.0"
     "@emotion/use-insertion-effect-with-fallbacks": "npm:^1.2.0"
     "@fal-works/esbuild-plugin-global-externals": "npm:^2.1.2"
-    "@inkjs/ui": "npm:^2.0.0"
     "@ndelangen/get-tarball": "npm:^3.0.7"
     "@polka/compression": "npm:^1.0.0-next.28"
     "@popperjs/core": "npm:^2.6.0"
@@ -7158,7 +7143,6 @@ __metadata:
   dependencies:
     "@chromatic-com/storybook": "npm:^3.2.4"
     "@happy-dom/global-registrator": "npm:^14.12.0"
-    "@inkjs/ui": "npm:^2.0.0"
     "@nx/eslint": "npm:20.2.2"
     "@nx/vite": "npm:20.2.2"
     "@nx/workspace": "npm:20.2.2"
@@ -12317,13 +12301,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"cli-spinners@npm:^3.0.0":
-  version: 3.2.0
-  resolution: "cli-spinners@npm:3.2.0"
-  checksum: 10c0/c2e99ff14d75e873aceccc13753cbb8856e631147185138014f2eebc01ce95e79211ce780446e907206e600385683fc065f3dbafe368623480cceadc4b83f449
-  languageName: node
-  linkType: hard
-
 "cli-table3@npm:^0.6.1":
   version: 0.6.3
   resolution: "cli-table3@npm:0.6.3"
@@ -13015,7 +12992,6 @@ __metadata:
   resolution: "create-storybook@workspace:lib/create-storybook"
   dependencies:
     "@antfu/ni": "npm:^23.2.0"
-    "@inkjs/ui": "npm:^2.0.0"
     "@types/prompts": "npm:^2.0.9"
     "@types/semver": "npm:^7.3.4"
     "@types/util-deprecate": "npm:^1.0.0"
