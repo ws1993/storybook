@@ -429,7 +429,7 @@ export async function setupVitest(details: TemplateDetails, options: PassedOptio
       import projectAnnotations from './preview'
 
       // setProjectAnnotations still kept to support non-CSF4 story tests
-      const annotations = setProjectAnnotations(projectAnnotations.input)
+      const annotations = setProjectAnnotations(projectAnnotations.composed)
       beforeAll(annotations.beforeAll)
       `
     );
