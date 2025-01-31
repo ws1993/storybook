@@ -79,7 +79,7 @@ export default async function postInstall(options: PostinstallOptions) {
   if (info.frameworkPackageName === '@storybook/nextjs' && !hasCustomWebpackConfig) {
     const out =
       options.yes || !isInteractive
-        ? { migrateToExperimentalNextjsVite: true }
+        ? { migrateToExperimentalNextjsVite: !!options.yes }
         : await prompts({
             type: 'confirm',
             name: 'migrateToExperimentalNextjsVite',
