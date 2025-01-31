@@ -13,7 +13,7 @@ describe('UniversalStore', () => {
     const store = UniversalStore.create<State>({ id: 'test' });
     expectTypeOf(store).toEqualTypeOf<UniversalStore<State, { type: string; payload?: any }>>();
 
-    expectTypeOf(store.getState()).toEqualTypeOf<State>();
+    expectTypeOf(store.getState()).toEqualTypeOf<State | undefined>();
     expectTypeOf(store.setState).parameter(0).toEqualTypeOf<State | ((state: State) => State)>();
     expectTypeOf(store.onStateChange).parameter(0).parameter(0).toEqualTypeOf<State>();
   });

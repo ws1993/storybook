@@ -96,7 +96,7 @@ describe('UniversalStore', () => {
       it('should throw when id is not provided', () => {
         // Arrange, Act, Assert - creating an instance without an id and expect it to throw
         expect(() => (UniversalStore as any).create()).toThrowErrorMatchingInlineSnapshot(
-          `[TypeError: Cannot read properties of undefined (reading 'debug')]`
+          `[TypeError: id is required and must be a string, when creating a UniversalStore]`
         );
       });
 
@@ -538,6 +538,12 @@ You should reuse the existing instance instead of trying to create a new one.`);
         });
       });
     });
+
+    it.todo(
+      'should use selector passed to onStateChange to determine if listener should be called'
+    );
+
+    it.todo('should throw when trying to set state before the store is ready');
   });
 
   describe('Events', () => {
@@ -658,27 +664,6 @@ You should reuse the existing instance instead of trying to create a new one.`);
       });
     });
 
-    it('should unsubscribe listeners from events', () => {
-      // Arrange - create a store, add a listener, send an event, and then remove the listener
-      const store = UniversalStore.create({
-        id: 'env1:test',
-        leader: true,
-        initialState: { count: 0 },
-      });
-      const listener = vi.fn();
-      const unsubscribe = store.subscribe(listener);
-      store.send({ type: 'CUSTOM_EVENT_TYPE', payload: { foo: 'bar' } });
-      expect(listener).toHaveBeenCalledOnce();
-      listener.mockClear();
-
-      // Act - unsubscribe the listener and send the event again
-      unsubscribe();
-      store.send({ type: 'CUSTOM_EVENT_TYPE', payload: { baz: 'meh' } });
-
-      // Assert - the listener should not be called
-      expect(listener).not.toBeCalled();
-    });
-
     it('should emit events on the channel', () => {
       // Arrange - create a store
       const store = UniversalStore.create({
@@ -701,5 +686,30 @@ You should reuse the existing instance instead of trying to create a new one.`);
         },
       });
     });
+
+    it('should unsubscribe listeners from events', () => {
+      // Arrange - create a store, add a listener, send an event, and then remove the listener
+      const store = UniversalStore.create({
+        id: 'env1:test',
+        leader: true,
+        initialState: { count: 0 },
+      });
+      const listener = vi.fn();
+      const unsubscribe = store.subscribe(listener);
+      store.send({ type: 'CUSTOM_EVENT_TYPE', payload: { foo: 'bar' } });
+      expect(listener).toHaveBeenCalledOnce();
+      listener.mockClear();
+
+      // Act - unsubscribe the listener and send the event again
+      unsubscribe();
+      store.send({ type: 'CUSTOM_EVENT_TYPE', payload: { baz: 'meh' } });
+
+      // Assert - the listener should not be called
+      expect(listener).not.toBeCalled();
+    });
+
+    it.todo('should throw when trying to send an event before the store is ready');
+
+    it.todo('should throw when subscribing without a listener');
   });
 });
