@@ -107,6 +107,7 @@ const baseTemplates = {
 
     skipTasks: ['e2e-tests-dev', 'bench', 'vitest-integration'],
     modifications: {
+      useCsfFactory: true,
       extraDependencies: ['prop-types'],
       mainConfig: (config) => {
         const stories = config.getFieldValue<Array<StoriesEntry>>(['stories']);
@@ -288,6 +289,7 @@ const baseTemplates = {
       builder: '@storybook/builder-vite',
     },
     modifications: {
+      useCsfFactory: true,
       extraDependencies: ['prop-types'],
       mainConfig: {
         features: {
