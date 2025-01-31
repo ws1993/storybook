@@ -50,7 +50,7 @@
     "prep": "jiti  ../../../scripts/prepare/bundle.ts"
   },
   "dependencies": {
-    "storybook": "workspace:*"
+    "@storybook/core": "workspace:*"
   },
   "devDependencies": {
     "@types/prompts": "^2.0.9",

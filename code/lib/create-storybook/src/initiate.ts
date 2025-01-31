@@ -1,10 +1,10 @@
 import { execSync } from 'node:child_process';
 import fs from 'node:fs/promises';
 
-import * as babel from 'storybook/internal/babel';
-import type { Builder, NpmOptions } from 'storybook/internal/cli';
-import { ProjectType, installableProjectTypes } from 'storybook/internal/cli';
-import { detect, detectLanguage, detectPnp, isStorybookInstantiated } from 'storybook/internal/cli';
+import * as babel from '@storybook/core/babel';
+import type { Builder, NpmOptions } from '@storybook/core/cli';
+import { ProjectType, installableProjectTypes } from '@storybook/core/cli';
+import { detect, detectLanguage, detectPnp, isStorybookInstantiated } from '@storybook/core/cli';
 import {
   HandledError,
   JsPackageManagerFactory,
@@ -12,11 +12,12 @@ import {
   getProjectRoot,
   paddedLog,
   versions,
-} from 'storybook/internal/common';
-import type { JsPackageManager } from 'storybook/internal/common';
-import { withTelemetry } from 'storybook/internal/core-server';
-import { NxProjectDetectedError } from 'storybook/internal/server-errors';
-import { telemetry } from 'storybook/internal/telemetry';
+} from '@storybook/core/common';
+import type { JsPackageManager } from '@storybook/core/common';
+import { telemetry } from '@storybook/core/telemetry';
+
+import { withTelemetry } from '@storybook/core/core-server';
+import { NxProjectDetectedError } from '@storybook/core/server-errors';
 
 import boxen from 'boxen';
 import { findUp } from 'find-up';

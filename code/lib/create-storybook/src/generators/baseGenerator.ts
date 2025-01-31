@@ -1,15 +1,15 @@
 import { mkdir } from 'node:fs/promises';
 import { dirname, join } from 'node:path';
 
-import type { Builder, NpmOptions } from 'storybook/internal/cli';
-import { SupportedLanguage, externalFrameworks } from 'storybook/internal/cli';
-import { copyTemplateFiles } from 'storybook/internal/cli';
-import { configureEslintPlugin, extractEslintInfo } from 'storybook/internal/cli';
-import { detectBuilder } from 'storybook/internal/cli';
-import type { JsPackageManager } from 'storybook/internal/common';
-import { getPackageDetails, versions as packageVersions } from 'storybook/internal/common';
-import type { SupportedRenderers } from 'storybook/internal/types';
-import type { SupportedFrameworks } from 'storybook/internal/types';
+import type { Builder, NpmOptions } from '@storybook/core/cli';
+import { SupportedLanguage, externalFrameworks } from '@storybook/core/cli';
+import { copyTemplateFiles } from '@storybook/core/cli';
+import { configureEslintPlugin, extractEslintInfo } from '@storybook/core/cli';
+import { detectBuilder } from '@storybook/core/cli';
+import type { JsPackageManager } from '@storybook/core/common';
+import { getPackageDetails, versions as packageVersions } from '@storybook/core/common';
+import type { SupportedRenderers } from '@storybook/core/types';
+import type { SupportedFrameworks } from '@storybook/core/types';
 
 // eslint-disable-next-line depend/ban-dependencies
 import ora from 'ora';

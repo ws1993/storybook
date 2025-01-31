@@ -1,7 +1,7 @@
 import { readdir, rm } from 'node:fs/promises';
 import { join } from 'node:path';
 
-import { SupportedLanguage, cliStoriesTargetPath, detectLanguage } from 'storybook/internal/cli';
+import { SupportedLanguage, cliStoriesTargetPath, detectLanguage } from '@storybook/core/cli';
 
 import { baseGenerator } from '../baseGenerator';
 import type { Generator } from '../types';

@@ -1,9 +1,9 @@
 import { join } from 'node:path';
 
-import { CoreBuilder } from 'storybook/internal/cli';
-import { AngularJSON, compoDocPreviewPrefix, promptForCompoDocs } from 'storybook/internal/cli';
-import { copyTemplate } from 'storybook/internal/cli';
-import { commandLog } from 'storybook/internal/common';
+import { CoreBuilder } from '@storybook/core/cli';
+import { AngularJSON, compoDocPreviewPrefix, promptForCompoDocs } from '@storybook/core/cli';
+import { copyTemplate } from '@storybook/core/cli';
+import { commandLog } from '@storybook/core/common';
 
 import { baseGenerator, getCliDir } from '../baseGenerator';
 import type { Generator } from '../types';

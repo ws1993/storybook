@@ -1,5 +1,5 @@
-import { getVersionSafe } from 'storybook/internal/cli';
-import type { JsPackageManager } from 'storybook/internal/common';
+import { getVersionSafe } from '@storybook/core/cli';
+import type { JsPackageManager } from '@storybook/core/common';
 
 import { major } from 'semver';
 
