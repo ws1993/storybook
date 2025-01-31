@@ -28,10 +28,7 @@
       "import": "./dist/index.js",
       "require": "./dist/index.cjs"
     },
-    "./bin/index.cjs": {
-      "node": "./bin/index.cjs",
-      "require": "./bin/index.cjs"
-    },
+    "./bin/index.cjs": "./bin/index.cjs",
     "./package.json": "./package.json"
   },
   "bin": "./bin/index.cjs",

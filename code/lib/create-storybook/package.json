@@ -23,10 +23,7 @@
       "types": "./dist/index.d.ts",
       "import": "./dist/index.js"
     },
-    "./bin/index.cjs": {
-      "import": "./bin/index.js",
-      "require": "./bin/index.cjs"
-    },
+    "./bin/index.cjs": "./bin/index.cjs",
     "./package.json": "./package.json"
   },
   "main": "dist/index.cjs",
