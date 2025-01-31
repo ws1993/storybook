@@ -300,7 +300,6 @@ export async function doInitiate(options: CommandOptions): Promise<
         { title: 'Testing', value: 'test', selected: true },
       ],
     });
-    globalThis.intents = out.intents;
     intents = out.intents;
   } else {
     intents = ['dev', 'docs', 'test'];
@@ -367,7 +366,7 @@ export async function doInitiate(options: CommandOptions): Promise<
     }
   }
 
-  if (intents.includes('test')) {
+  if (intents.includes('test') && !process.stdout.isTTY && !process.env.CI) {
     const packageVersions = await checks.packageVersions.condition(
       { packageManager } as any,
       {} as any
@@ -391,7 +390,7 @@ export async function doInitiate(options: CommandOptions): Promise<
     }
   }
 
-  if (intents.includes('test')) {
+  if (intents.includes('test') && !process.stdout.isTTY && !process.env.CI) {
     const vitestConfigFiles = await checks.vitestConfigFiles.condition(
       { babel, findUp, fs } as any,
       { directory: process.cwd() } as any
@@ -426,7 +425,7 @@ export async function doInitiate(options: CommandOptions): Promise<
   }
 
   if (!options.disableTelemetry) {
-    await telemetry('init', { projectType });
+    await telemetry('init', { projectType, intents });
   }
 
   if (projectType === ProjectType.REACT_NATIVE) {
