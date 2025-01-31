@@ -370,6 +370,25 @@ export async function doInitiate(options: CommandOptions): Promise<
   }
 
   if (intents.includes('test')) {
+    const supportedFrameworks: ProjectType[] = [
+      ProjectType.REACT,
+      ProjectType.VUE3,
+      ProjectType.NEXTJS,
+      ProjectType.NUXT,
+      ProjectType.PREACT,
+      ProjectType.SVELTE,
+      ProjectType.SVELTEKIT,
+      ProjectType.WEB_COMPONENTS,
+    ];
+    const supportsTestAddon =
+      projectType === ProjectType.NEXTJS ||
+      (options.builder !== 'webpack5' && supportedFrameworks.includes(projectType));
+    if (!supportsTestAddon) {
+      intents.splice(intents.indexOf('test'), 1);
+    }
+  }
+
+  if (intents.includes('test')) {
     const packageVersions = await checks.packageVersions.condition(
       { packageManager } as any,
       {} as any
