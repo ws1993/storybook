@@ -111,11 +111,9 @@ export async function configureMain({
   const mainPath = `./${storybookConfigFolder}/main.${isTypescript ? 'ts' : 'js'}`;
 
   try {
-    const prettier = (await import('prettier')).default;
-    mainJsContents = await prettier.format(dedent(mainJsContents), {
-      ...(await prettier.resolveConfig(mainPath)),
-      filepath: mainPath,
-    });
+    const format = (await import('storybook/internal/common')).formatFileContent;
+
+    mainJsContents = await format(mainPath, dedent(mainJsContents));
   } catch {
     logger.verbose(`Failed to prettify ${mainPath}`);
   }
@@ -174,11 +172,9 @@ export async function configurePreview(options: ConfigurePreviewOptions) {
     .trim();
 
   try {
-    const prettier = (await import('prettier')).default;
-    preview = await prettier.format(preview, {
-      ...(await prettier.resolveConfig(previewPath)),
-      filepath: previewPath,
-    });
+    const format = (await import('storybook/internal/common')).formatFileContent;
+
+    preview = await format(previewPath, dedent(preview));
   } catch {
     logger.verbose(`Failed to prettify ${previewPath}`);
   }

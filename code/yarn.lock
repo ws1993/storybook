@@ -12986,7 +12986,6 @@ __metadata:
     find-up: "npm:^7.0.0"
     ora: "npm:^5.4.1"
     picocolors: "npm:^1.1.0"
-    prettier: "npm:^3.1.1"
     prompts: "npm:^2.4.0"
     react: "npm:^18.2.0"
     react-dom: "npm:^18.2.0"
