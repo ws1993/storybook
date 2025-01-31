@@ -290,9 +290,9 @@ export async function doInitiate(options: CommandOptions): Promise<
 
   const isInteractive = process.stdout.isTTY && !process.env.CI;
 
-  let intents: string[] = [];
-  // if TTY or CI is not set, we can't prompt the user
-  if (isInteractive) {
+  let intents = options.intents || ['dev', 'docs', 'test'];
+
+  if (isInteractive && !options.intents) {
     const out = await prompts({
       type: 'multiselect',
       name: 'intents',
@@ -304,9 +304,9 @@ export async function doInitiate(options: CommandOptions): Promise<
       ],
     });
     intents = out.intents;
-  } else {
-    intents = ['dev', 'docs', 'test'];
   }
+
+  const telemetryIntents = [...intents];
 
   // Check if the current directory is empty.
   if (options.force !== true && currentDirectoryIsEmpty(packageManager.type)) {
@@ -432,7 +432,7 @@ export async function doInitiate(options: CommandOptions): Promise<
   }
 
   if (!options.disableTelemetry) {
-    await telemetry('init', { projectType, intents });
+    await telemetry('init', { projectType, intents: telemetryIntents });
   }
 
   if (projectType === ProjectType.REACT_NATIVE) {

@@ -44,6 +44,7 @@ export type Generator<T = void> = (
 export type CommandOptions = {
   packageManager: PackageManagerName;
   usePnp?: boolean;
+  intents: string[];
   type?: ProjectType;
   force?: any;
   html?: boolean;
