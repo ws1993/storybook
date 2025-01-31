@@ -355,6 +355,8 @@ You should reuse the existing instance instead of trying to create a new one.`);
         );
         expect(follower.status).toBe(UniversalStore.Status.ERROR);
       });
+
+      it.todo('should emit a FOLLOWER_CREATED event when a follower is created');
     });
   });
 

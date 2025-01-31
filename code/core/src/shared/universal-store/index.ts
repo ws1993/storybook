@@ -1,4 +1,5 @@
-import dedent from 'ts-dedent';
+import { isEqual } from 'es-toolkit';
+import { dedent } from 'ts-dedent';
 
 import { instances } from './instances';
 import type {
@@ -165,8 +166,9 @@ export class UniversalStore<State, CustomEvent extends { type: string; payload?:
       case ProgressState.RESOLVED:
       default:
     }
-    switch (this.syncing.state) {
+    switch (this.syncing?.state) {
       case ProgressState.PENDING:
+      case undefined:
         return UniversalStore.Status.SYNCING;
       case ProgressState.REJECTED:
         return UniversalStore.Status.ERROR;
@@ -176,11 +178,11 @@ export class UniversalStore<State, CustomEvent extends { type: string; payload?:
     }
   }
 
-  public untilReady() {
+  public untilReady = () => {
     return Promise.all([UniversalStore.preparation.promise, this.syncing?.promise]);
-  }
+  };
 
-  private syncing: {
+  private syncing?: {
     state: (typeof ProgressState)[keyof typeof ProgressState];
     promise?: Promise<void>;
     resolve?: () => void;
@@ -253,11 +255,17 @@ export class UniversalStore<State, CustomEvent extends { type: string; payload?:
       let syncingReject: (error: Error) => void;
       const syncingPromise = new Promise<void>((resolve, reject) => {
         syncingResolve = () => {
-          this.syncing.state = ProgressState.RESOLVED;
+          if (this.syncing!.state !== ProgressState.PENDING) {
+            return;
+          }
+          this.syncing!.state = ProgressState.RESOLVED;
           resolve();
         };
         syncingReject = (reason) => {
-          this.syncing.state = ProgressState.REJECTED;
+          if (this.syncing!.state !== ProgressState.PENDING) {
+            return;
+          }
+          this.syncing!.state = ProgressState.REJECTED;
           reject(reason);
         };
       });
@@ -269,7 +277,9 @@ export class UniversalStore<State, CustomEvent extends { type: string; payload?:
       };
     }
 
+    console.log('LOG: waiting for preparation promise to resolve');
     UniversalStore.preparation.promise.then(({ channel, environment }) => {
+      console.log('LOG: PREPARATION RESOLVED!!!');
       this.debug('prepared');
       this.actor.environment = environment;
       UniversalStore.channel.on(this.channelEventName, this.handleChannelEvents);
@@ -286,7 +296,7 @@ export class UniversalStore<State, CustomEvent extends { type: string; payload?:
         setTimeout(() => {
           // if the state is already resolved by a response before this timeout,
           // rejecting it doesn't do anything, it will be ignored
-          this.syncing.reject!(
+          this.syncing!.reject!(
             new TypeError(
               `No existing state found for follower with id: '${options.id}'. Make sure a leader with the same id exists before creating a follower.`
             )
@@ -343,6 +353,7 @@ export class UniversalStore<State, CustomEvent extends { type: string; payload?:
     channel: ChannelLike,
     environment: (typeof UniversalStore.Environment)[keyof typeof UniversalStore.Environment]
   ) {
+    console.log('LOG: prepare ws called!', { channel, environment });
     UniversalStore.channel = channel;
     UniversalStore.environment = environment;
     UniversalStore.preparation.resolve({ channel, environment });
@@ -353,18 +364,22 @@ export class UniversalStore<State, CustomEvent extends { type: string; payload?:
    *
    * @returns {State} The current state
    */
-  public getState(): State {
-    this.debug('getState', { state: this.state });
+  public getState = (selector?: ((state?: State) => any) | undefined): State | undefined => {
+    this.debug('getState', { state: this.state, selector });
 
-    return this.state;
-  }
+    if (this.status !== UniversalStore.Status.READY) {
+      return undefined;
+    }
+
+    return selector ? selector(this.state) : this.state;
+  };
 
   /**
    * Updates the store's state
    *
    * @param {State | StateUpdater<State>} updater New state or state updater function
    */
-  public setState(updater: State | StateUpdater<State>) {
+  public setState = (updater: State | StateUpdater<State>) => {
     const previousState = this.state;
     const newState =
       typeof updater === 'function' ? (updater as StateUpdater<State>)(previousState) : updater;
@@ -398,7 +413,7 @@ export class UniversalStore<State, CustomEvent extends { type: string; payload?:
     };
     this.emitToChannel(event, { actor: this.actor });
     this.emitToListeners(event, { actor: this.actor });
-  }
+  };
 
   /**
    * Subscribes to store events
@@ -409,18 +424,13 @@ export class UniversalStore<State, CustomEvent extends { type: string; payload?:
    *   is event type
    * @returns {() => void} Unsubscribe function
    */
-  public subscribe<TEvent extends Event<State, CustomEvent>>(
-    eventType: TEvent['type'],
-    listener: Listener<TEvent>
-  ): () => void;
-  public subscribe<TEvent extends Event<State, CustomEvent>>(
-    listener: Listener<TEvent>
-  ): () => void;
-  public subscribe<TEvent extends Event<State, CustomEvent>>(
-    eventTypeOrListener: TEvent['type'] | Listener<Event<State, CustomEvent>>,
+
+  public subscribe = (
+    eventTypeOrListener: Listener<Event<State, CustomEvent>> | string,
     maybeListener?: Listener<Event<State, CustomEvent>>
-  ) {
-    // TODO: improve parameter typings here, to narrow the listener type based on the event type
+  ) => {
+    // TODO: improve type safety in arguments
+    // eventType shouldn't just be string and event should be inferred from type when two arguments are passed
     const subscribesToAllEvents = typeof eventTypeOrListener === 'function';
 
     const eventType = subscribesToAllEvents ? '*' : eventTypeOrListener;
@@ -449,7 +459,7 @@ export class UniversalStore<State, CustomEvent extends { type: string; payload?:
         this.listeners.delete(eventType);
       }
     };
-  }
+  };
 
   /**
    * Subscribes to state changes
@@ -458,15 +468,24 @@ export class UniversalStore<State, CustomEvent extends { type: string; payload?:
    * @returns {() => void} Unsubscribe function
    */
   public onStateChange(
-    listener: (state: State, previousState: State, eventInfo: EventInfo) => void
+    listener: (state: State, previousState: State, eventInfo: EventInfo) => void,
+    selector?: (state: State) => any | undefined
   ) {
-    this.debug('onStateChange', { listener });
-    return this.subscribe<SetStateEvent<State>>(
-      UniversalStore.InternalEventType.SET_STATE,
-      ({ payload }, eventInfo) => {
+    this.debug('onStateChange', { listener, selector });
+    return this.subscribe(UniversalStore.InternalEventType.SET_STATE, ({ payload }, eventInfo) => {
+      if (!selector) {
+        listener(payload.state, payload.previousState, eventInfo);
+        return;
+      }
+
+      const selectedState = selector(payload.state);
+      const selectedPreviousState = selector(payload.previousState);
+
+      const hasChanges = !isEqual(selectedState, selectedPreviousState);
+      if (hasChanges) {
         listener(payload.state, payload.previousState, eventInfo);
       }
-    );
+    });
   }
 
   /**
@@ -474,7 +493,7 @@ export class UniversalStore<State, CustomEvent extends { type: string; payload?:
    *
    * @param {CustomEvent} event The event to send
    */
-  public send(event: CustomEvent) {
+  public send = (event: CustomEvent) => {
     this.debug('send', { event });
     if (this.status !== UniversalStore.Status.READY) {
       throw new TypeError(
@@ -494,7 +513,7 @@ export class UniversalStore<State, CustomEvent extends { type: string; payload?:
     }
     this.emitToListeners(event, { actor: this.actor });
     this.emitToChannel(event, { actor: this.actor });
-  }
+  };
 
   private emitToListeners = (event: any, eventInfo: EventInfo) => {
     const eventTypeListeners = this.listeners.get(event.type);
@@ -562,7 +581,7 @@ export class UniversalStore<State, CustomEvent extends { type: string; payload?:
               event,
             });
             this.state = event.payload;
-            this.syncing.resolve?.();
+            this.syncing!.resolve?.();
           }
           break;
       }
@@ -587,6 +606,7 @@ export class UniversalStore<State, CustomEvent extends { type: string; payload?:
         {
           actor: this.actor,
           state: this.state,
+          status: this.status,
         }
       );
     }

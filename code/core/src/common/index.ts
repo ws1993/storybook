@@ -46,5 +46,3 @@ export * from './js-package-manager';
 export { versions };
 
 export { createFileSystemCache } from './utils/file-cache';
-
-export { UniversalStore } from '../shared/universal-store';

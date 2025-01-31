@@ -544,6 +544,7 @@ export default {
     'useStoryPrepared',
     'useStorybookApi',
     'useStorybookState',
+    'useUniversalStore',
   ],
   '@storybook/manager-api': [
     'ActiveTabs',
@@ -579,6 +580,7 @@ export default {
     'useStoryPrepared',
     'useStorybookApi',
     'useStorybookState',
+    'useUniversalStore',
   ],
   '@storybook/core/manager-api': [
     'ActiveTabs',
@@ -614,6 +616,7 @@ export default {
     'useStoryPrepared',
     'useStorybookApi',
     'useStorybookState',
+    'useUniversalStore',
   ],
   'storybook/internal/router': [
     'BaseLocationProvider',

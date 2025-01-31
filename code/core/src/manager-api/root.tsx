@@ -515,6 +515,7 @@ export function useArgTypes(): ArgTypes {
 }
 
 export { UniversalStore } from '../shared/universal-store';
+export { useUniversalStore } from '../shared/universal-store/use-universal-store-manager';
 
 export { addons } from './lib/addons';
 
