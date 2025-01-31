@@ -815,7 +815,7 @@ export const extendPreview: Task['run'] = async ({ template, sandboxDir }) => {
   logger.log('📝 Extending preview.js');
   const previewConfig = await readConfig({ cwd: sandboxDir, fileName: 'preview' });
 
-  if (template.modifications.useCsfFactory) {
+  if (template.modifications?.useCsfFactory) {
     previewConfig.setImport(null, '../src/stories/components');
     previewConfig.setImport({ namespace: 'coreAnnotations' }, '../template-stories/core/preview');
     previewConfig.setImport(
@@ -834,7 +834,7 @@ export const extendPreview: Task['run'] = async ({ template, sandboxDir }) => {
 };
 
 export const runMigrations: Task['run'] = async ({ sandboxDir, template }, { dryRun, debug }) => {
-  if (template.modifications.useCsfFactory) {
+  if (template.modifications?.useCsfFactory) {
     await executeCLIStep(steps.automigrate, {
       cwd: sandboxDir,
       argument: 'csf-factories',

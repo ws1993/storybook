@@ -87,7 +87,7 @@
       "import": "./dist/export-mocks/router/index.mjs",
       "require": "./dist/export-mocks/router/index.js"
     },
-    "./main": {
+    "./node": {
       "types": "./dist/node/index.d.ts",
       "node": "./dist/node/index.js",
       "import": "./dist/node/index.mjs",
