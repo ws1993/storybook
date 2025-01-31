@@ -815,15 +815,7 @@ export const extendPreview: Task['run'] = async ({ template, sandboxDir }) => {
   logger.log('📝 Extending preview.js');
   const previewConfig = await readConfig({ cwd: sandboxDir, fileName: 'preview' });
 
-  if (
-    [
-      '@storybook/react-vite',
-      '@storybook/react-webpack5',
-      '@storybook/nextjs',
-      '@storybook/experimental-nextjs-vite',
-    ].includes(template.expected.framework) &&
-    !template.skipTasks.includes('vitest-integration')
-  ) {
+  if (template.modifications.useCsfFactory) {
     previewConfig.setImport(null, '../src/stories/components');
     previewConfig.setImport({ namespace: 'coreAnnotations' }, '../template-stories/core/preview');
     previewConfig.setImport(
@@ -842,15 +834,7 @@ export const extendPreview: Task['run'] = async ({ template, sandboxDir }) => {
 };
 
 export const runMigrations: Task['run'] = async ({ sandboxDir, template }, { dryRun, debug }) => {
-  if (
-    [
-      '@storybook/react-vite',
-      '@storybook/react-webpack5',
-      '@storybook/nextjs',
-      '@storybook/experimental-nextjs-vite',
-    ].includes(template.expected.framework) &&
-    !template.skipTasks.includes('vitest-integration')
-  ) {
+  if (template.modifications.useCsfFactory) {
     await executeCLIStep(steps.automigrate, {
       cwd: sandboxDir,
       argument: 'csf-factories',

@@ -75,6 +75,7 @@ export type Template = {
     disableDocs?: boolean;
     extraDependencies?: string[];
     editAddons?: (addons: string[]) => string[];
+    useCsfFactory?: boolean;
   };
   /**
    * Flag to indicate that this template is a secondary template, which is used mainly to test
@@ -136,6 +137,7 @@ const baseTemplates = {
       builder: '@storybook/builder-webpack5',
     },
     modifications: {
+      useCsfFactory: true,
       extraDependencies: ['prop-types'],
     },
   },
@@ -149,6 +151,7 @@ const baseTemplates = {
       builder: '@storybook/builder-webpack5',
     },
     modifications: {
+      useCsfFactory: true,
       mainConfig: {
         features: {
           experimentalRSC: true,
@@ -169,6 +172,7 @@ const baseTemplates = {
       builder: '@storybook/builder-webpack5',
     },
     modifications: {
+      useCsfFactory: true,
       mainConfig: {
         features: {
           experimentalRSC: true,
@@ -189,6 +193,7 @@ const baseTemplates = {
       builder: '@storybook/builder-webpack5',
     },
     modifications: {
+      useCsfFactory: true,
       mainConfig: {
         features: {
           experimentalRSC: true,
@@ -209,6 +214,7 @@ const baseTemplates = {
       builder: '@storybook/builder-webpack5',
     },
     modifications: {
+      useCsfFactory: true,
       mainConfig: {
         features: {
           experimentalRSC: true,
@@ -229,6 +235,7 @@ const baseTemplates = {
       builder: '@storybook/builder-vite',
     },
     modifications: {
+      useCsfFactory: true,
       mainConfig: {
         framework: '@storybook/experimental-nextjs-vite',
         features: {
@@ -255,6 +262,7 @@ const baseTemplates = {
       builder: '@storybook/builder-vite',
     },
     modifications: {
+      useCsfFactory: true,
       mainConfig: {
         framework: '@storybook/experimental-nextjs-vite',
         features: {
@@ -298,6 +306,7 @@ const baseTemplates = {
       builder: '@storybook/builder-vite',
     },
     modifications: {
+      useCsfFactory: true,
       extraDependencies: ['prop-types'],
       mainConfig: {
         features: {
@@ -329,6 +338,7 @@ const baseTemplates = {
       builder: '@storybook/builder-vite',
     },
     modifications: {
+      useCsfFactory: true,
       extraDependencies: ['prop-types'],
       mainConfig: {
         features: {
@@ -347,6 +357,7 @@ const baseTemplates = {
       builder: '@storybook/builder-webpack5',
     },
     modifications: {
+      useCsfFactory: true,
       extraDependencies: ['prop-types'],
     },
     skipTasks: ['e2e-tests-dev', 'bench', 'vitest-integration'],
@@ -385,6 +396,7 @@ const baseTemplates = {
       builder: '@storybook/builder-webpack5',
     },
     modifications: {
+      useCsfFactory: true,
       extraDependencies: ['prop-types'],
     },
     skipTasks: ['e2e-tests-dev', 'bench', 'vitest-integration'],
