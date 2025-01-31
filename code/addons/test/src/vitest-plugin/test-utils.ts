@@ -1,6 +1,4 @@
 /* eslint-disable @typescript-eslint/naming-convention */
-
-/* eslint-disable no-underscore-dangle */
 import { type RunnerTask, type TaskMeta, type TestContext } from 'vitest';
 
 import {
@@ -33,7 +31,7 @@ export const testStory = (
     const annotations = getCsfFactoryAnnotations(story, meta);
     const composedStory = composeStory(
       annotations.story,
-      annotations.meta,
+      annotations.meta!,
       { initialGlobals: (await getInitialGlobals?.()) ?? {}, tags: await getTags?.() },
       annotations.preview,
       exportName
