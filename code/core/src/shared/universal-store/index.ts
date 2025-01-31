@@ -277,9 +277,7 @@ export class UniversalStore<State, CustomEvent extends { type: string; payload?:
       };
     }
 
-    console.log('LOG: waiting for preparation promise to resolve');
     UniversalStore.preparation.promise.then(({ channel, environment }) => {
-      console.log('LOG: PREPARATION RESOLVED!!!');
       this.debug('prepared');
       this.actor.environment = environment;
       UniversalStore.channel.on(this.channelEventName, this.handleChannelEvents);
@@ -319,15 +317,15 @@ export class UniversalStore<State, CustomEvent extends { type: string; payload?:
     State = any,
     CustomEvent extends { type: string; payload?: any } = { type: string; payload?: any },
   >(options: StoreOptions<State>): UniversalStore<State, CustomEvent> {
+    if (!options || typeof options?.id !== 'string') {
+      throw new TypeError('id is required and must be a string, when creating a UniversalStore');
+    }
     if (options.debug) {
       console.log(
         dedent`[UniversalStore:${UniversalStore.environment}]
         create`,
         { options }
       );
-    }
-    if (typeof options?.id !== 'string') {
-      throw new TypeError('id is required and must be a string, when creating a UniversalStore');
     }
 
     const existing = instances.get(options.id);
@@ -353,7 +351,6 @@ export class UniversalStore<State, CustomEvent extends { type: string; payload?:
     channel: ChannelLike,
     environment: (typeof UniversalStore.Environment)[keyof typeof UniversalStore.Environment]
   ) {
-    console.log('LOG: prepare ws called!', { channel, environment });
     UniversalStore.channel = channel;
     UniversalStore.environment = environment;
     UniversalStore.preparation.resolve({ channel, environment });
