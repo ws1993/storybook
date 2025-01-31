@@ -112,7 +112,7 @@ export async function configureMain({
   const mainPath = `./${storybookConfigFolder}/main.${isTypescript ? 'ts' : 'js'}`;
 
   try {
-    const format = (await import('storybook/internal/common')).formatFileContent;
+    const format = (await import('@storybook/core/common')).formatFileContent;
 
     mainJsContents = await format(mainPath, dedent(mainJsContents));
   } catch {
@@ -173,7 +173,7 @@ export async function configurePreview(options: ConfigurePreviewOptions) {
     .trim();
 
   try {
-    const format = (await import('storybook/internal/common')).formatFileContent;
+    const format = (await import('@storybook/core/common')).formatFileContent;
 
     preview = await format(previewPath, dedent(preview));
   } catch {

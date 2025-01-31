@@ -1,4 +1,4 @@
-import { addToGlobalContext } from 'storybook/internal/telemetry';
+import { addToGlobalContext } from '@storybook/core/telemetry';
 
 import { program } from 'commander';
 

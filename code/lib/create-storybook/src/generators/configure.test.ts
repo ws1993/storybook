@@ -3,7 +3,7 @@ import * as fsp from 'node:fs/promises';
 
 import { beforeAll, describe, expect, it, vi } from 'vitest';
 
-import { SupportedLanguage } from 'storybook/internal/cli';
+import { SupportedLanguage } from '@storybook/core/cli';
 
 import { dedent } from 'ts-dedent';
 

@@ -1,10 +1,11 @@
 import { readdirSync } from 'node:fs';
 import { rm } from 'node:fs/promises';
 
-import type { PackageManagerName } from 'storybook/internal/common';
-import { logger } from 'storybook/internal/node-logger';
-import { GenerateNewProjectOnInitError } from 'storybook/internal/server-errors';
-import { telemetry } from 'storybook/internal/telemetry';
+import type { PackageManagerName } from '@storybook/core/common';
+import { telemetry } from '@storybook/core/telemetry';
+
+import { logger } from '@storybook/core/node-logger';
+import { GenerateNewProjectOnInitError } from '@storybook/core/server-errors';
 
 import boxen from 'boxen';
 // eslint-disable-next-line depend/ban-dependencies
