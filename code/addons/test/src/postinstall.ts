@@ -74,22 +74,23 @@ export default async function postInstall(options: PostinstallOptions) {
 
   const hasCustomWebpackConfig = !!config.getFieldNode(['webpackFinal']);
 
+  const isInteractive = process.stdout.isTTY && !process.env.CI;
+
   if (info.frameworkPackageName === '@storybook/nextjs' && !hasCustomWebpackConfig) {
-    const out = options.yes
-      ? {
-          migrateToExperimentalNextjsVite: true,
-        }
-      : await prompts({
-          type: 'confirm',
-          name: 'migrateToExperimentalNextjsVite',
-          message: dedent`
+    const out =
+      options.yes || !isInteractive
+        ? { migrateToExperimentalNextjsVite: true }
+        : await prompts({
+            type: 'confirm',
+            name: 'migrateToExperimentalNextjsVite',
+            message: dedent`
             The addon requires the use of @storybook/experimental-nextjs-vite to work with Next.js.
             https://storybook.js.org/docs/writing-tests/test-addon#install-and-set-up
 
             Do you want to migrate?
           `,
-          initial: true,
-        });
+            initial: true,
+          });
 
     if (out.migrateToExperimentalNextjsVite) {
       await packageManager.addDependencies({ installAsDevDependencies: true }, [
@@ -228,12 +229,14 @@ export default async function postInstall(options: PostinstallOptions) {
         `
       );
 
-      const response = await prompts({
-        type: 'confirm',
-        name: 'shouldUninstall',
-        message: `Would you like me to remove and unregister ${addonInteractionsName}? Press N to abort the entire installation.`,
-        initial: true,
-      });
+      const response = isInteractive
+        ? await prompts({
+            type: 'confirm',
+            name: 'shouldUninstall',
+            message: `Would you like me to remove and unregister ${addonInteractionsName}? Press N to abort the entire installation.`,
+            initial: true,
+          })
+        : { shouldUninstall: true };
 
       shouldUninstall = response.shouldUninstall;
     }

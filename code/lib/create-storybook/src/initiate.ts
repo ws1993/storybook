@@ -288,9 +288,11 @@ export async function doInitiate(options: CommandOptions): Promise<
     )
   );
 
+  const isInteractive = process.stdout.isTTY && !process.env.CI;
+
   let intents: string[] = [];
   // if TTY or CI is not set, we can't prompt the user
-  if (!process.stdout.isTTY && !process.env.CI) {
+  if (isInteractive) {
     const out = await prompts({
       type: 'multiselect',
       name: 'intents',
@@ -367,22 +369,24 @@ export async function doInitiate(options: CommandOptions): Promise<
     }
   }
 
-  if (intents.includes('test') && !process.stdout.isTTY && !process.env.CI) {
+  if (intents.includes('test')) {
     const packageVersions = await checks.packageVersions.condition(
       { packageManager } as any,
       {} as any
     );
     if (packageVersions.type === 'incompatible') {
-      const { ignorePackageVersions } = await prompts([
-        {
-          type: 'confirm',
-          name: 'ignorePackageVersions',
-          message: dedent`
-            ${packageVersions.reasons.join('\n')}
-            Do you want to continue without Storybook's testing features?
-          `,
-        },
-      ]);
+      const { ignorePackageVersions } = isInteractive
+        ? await prompts([
+            {
+              type: 'confirm',
+              name: 'ignorePackageVersions',
+              message: dedent`
+                ${packageVersions.reasons.join('\n')}
+                Do you want to continue without Storybook's testing features?
+              `,
+            },
+          ])
+        : { ignorePackageVersions: true };
       if (ignorePackageVersions) {
         intents.splice(intents.indexOf('test'), 1);
       } else {
@@ -391,22 +395,24 @@ export async function doInitiate(options: CommandOptions): Promise<
     }
   }
 
-  if (intents.includes('test') && !process.stdout.isTTY && !process.env.CI) {
+  if (intents.includes('test')) {
     const vitestConfigFiles = await checks.vitestConfigFiles.condition(
       { babel, findUp, fs } as any,
       { directory: process.cwd() } as any
     );
     if (vitestConfigFiles.type === 'incompatible') {
-      const { ignoreVitestConfigFiles } = await prompts([
-        {
-          type: 'confirm',
-          name: 'ignoreVitestConfigFiles',
-          message: dedent`
-            ${vitestConfigFiles.reasons.join('\n')}
-            Do you want to continue without Storybook's testing features?
-          `,
-        },
-      ]);
+      const { ignoreVitestConfigFiles } = isInteractive
+        ? await prompts([
+            {
+              type: 'confirm',
+              name: 'ignoreVitestConfigFiles',
+              message: dedent`
+                ${vitestConfigFiles.reasons.join('\n')}
+                Do you want to continue without Storybook's testing features?
+              `,
+            },
+          ])
+        : { ignoreVitestConfigFiles: true };
       if (ignoreVitestConfigFiles) {
         intents.splice(intents.indexOf('test'), 1);
       } else {
@@ -470,16 +476,14 @@ export async function doInitiate(options: CommandOptions): Promise<
       ? `ng run ${installResult.projectName}:storybook`
       : packageManager.getRunStorybookCommand();
 
-  if (!process.stdout.isTTY && !process.env.CI) {
-    if (intents.includes('test')) {
-      logger.log(
-        `> npx sb add @storybook/experimental-addon-test@${versions['@storybook/experimental-addon-test']}`
-      );
-      execSync(
-        `npx sb add @storybook/experimental-addon-test@${versions['@storybook/experimental-addon-test']}`,
-        { cwd: process.cwd(), stdio: 'inherit' }
-      );
-    }
+  if (intents.includes('test')) {
+    logger.log(
+      `> npx sb add @storybook/experimental-addon-test@${versions['@storybook/experimental-addon-test']}`
+    );
+    execSync(
+      `npx sb add @storybook/experimental-addon-test@${versions['@storybook/experimental-addon-test']}`,
+      { cwd: process.cwd(), stdio: 'inherit' }
+    );
   }
 
   logger.log(
