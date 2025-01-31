@@ -183,6 +183,8 @@ You should reuse the existing instance instead of trying to create a new one.`);
           expect(store.status).toBe(UniversalStore.Status.READY);
         });
       });
+
+      it.todo('should throw when creating a leader when a leader already exists with the same id');
     });
 
     describe('Follower', () => {
