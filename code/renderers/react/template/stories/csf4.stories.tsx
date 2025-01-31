@@ -2,7 +2,7 @@
 import config from '#.storybook/preview';
 
 const meta = config.meta({
-  component: globalThis.Components.Button,
+  component: (globalThis as any).Components.Button,
   args: {
     label: 'Hello world!',
   },
