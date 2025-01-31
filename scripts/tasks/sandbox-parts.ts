@@ -816,7 +816,12 @@ export const extendPreview: Task['run'] = async ({ template, sandboxDir }) => {
   const previewConfig = await readConfig({ cwd: sandboxDir, fileName: 'preview' });
 
   if (
-    template.expected.framework === '@storybook/react-vite' &&
+    [
+      '@storybook/react-vite',
+      '@storybook/react-webpack5',
+      '@storybook/nextjs',
+      '@storybook/experimental-nextjs-vite',
+    ].includes(template.expected.framework) &&
     !template.skipTasks.includes('vitest-integration')
   ) {
     previewConfig.setImport(null, '../src/stories/components');
@@ -838,7 +843,12 @@ export const extendPreview: Task['run'] = async ({ template, sandboxDir }) => {
 
 export const runMigrations: Task['run'] = async ({ sandboxDir, template }, { dryRun, debug }) => {
   if (
-    template.expected.framework === '@storybook/react-vite' &&
+    [
+      '@storybook/react-vite',
+      '@storybook/react-webpack5',
+      '@storybook/nextjs',
+      '@storybook/experimental-nextjs-vite',
+    ].includes(template.expected.framework) &&
     !template.skipTasks.includes('vitest-integration')
   ) {
     await executeCLIStep(steps.automigrate, {
