@@ -61,9 +61,11 @@ const fileMocks = {
     export default { "test": "packages/*" }
   `,
   'defineWorkspace.ts': `
+    import { defineWorkspace } from 'vitest/config'
     export default defineWorkspace(['packages/*'])
   `,
   'defineWorkspace-invalid.ts': `
+    import { defineWorkspace } from 'vitest/config'
     export default defineWorkspace({ "test": "packages/*" })
   `,
 };

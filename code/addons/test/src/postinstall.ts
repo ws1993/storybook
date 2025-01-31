@@ -2,7 +2,7 @@ import { existsSync } from 'node:fs';
 import * as fs from 'node:fs/promises';
 import { writeFile } from 'node:fs/promises';
 
-import { traverse } from 'storybook/internal/babel';
+import { babelParse, generate, traverse } from 'storybook/internal/babel';
 import {
   JsPackageManagerFactory,
   extractProperFrameworkName,
@@ -28,16 +28,23 @@ import { dedent } from 'ts-dedent';
 import { type PostinstallOptions } from '../../../lib/cli-storybook/src/add';
 import { SUPPORTED_FRAMEWORKS, SUPPORTED_RENDERERS } from './constants';
 import { printError, printInfo, printSuccess, step } from './postinstall-logger';
+import { updateWorkspaceFile } from './updateWorkspaceFile';
 import { getAddonNames } from './utils';
 
 const ADDON_NAME = '@storybook/experimental-addon-test' as const;
-const EXTENSIONS = ['.js', '.jsx', '.ts', '.tsx', '.cts', '.mts', '.cjs', '.mjs'] as const;
+const EXTENSIONS = ['.ts', '.tsx', '.js', '.jsx', '.cts', '.mts', '.cjs', '.mjs'];
 
 const addonInteractionsName = '@storybook/addon-interactions';
 const addonA11yName = '@storybook/addon-a11y';
 
-const findFile = async (basename: string, extraExtensions: string[] = []) =>
-  findUp([...EXTENSIONS, ...extraExtensions].map((ext) => basename + ext));
+const findFile = async (basename: string, extensions = EXTENSIONS) =>
+  findUp(extensions.map((ext) => basename + ext));
+
+const loadTemplate = async (name: string, replacements: Record<string, string>) => {
+  let template = await fs.readFile(resolve(__dirname, name), 'utf8');
+  Object.entries(replacements).forEach(([key, value]) => (template = template.replace(key, value)));
+  return template;
+};
 
 export default async function postInstall(options: PostinstallOptions) {
   printSuccess(
@@ -299,7 +306,8 @@ export default async function postInstall(options: PostinstallOptions) {
     args: ['playwright', 'install', 'chromium', '--with-deps'],
   });
 
-  const fileExtension = allDeps.typescript || (await findFile('tsconfig', ['.json'])) ? 'ts' : 'js';
+  const fileExtension =
+    allDeps.typescript || (await findFile('tsconfig', [...EXTENSIONS, '.json'])) ? 'ts' : 'js';
 
   const vitestSetupFile = resolve(options.configDir, `vitest.setup.${fileExtension}`);
   if (existsSync(vitestSetupFile)) {
@@ -371,30 +379,11 @@ export default async function postInstall(options: PostinstallOptions) {
     }
   }
 
-  // Check for existing Vitest workspace. We can't extend it so manual setup is required.
-  const vitestWorkspaceFile = await findFile('vitest.workspace');
-  if (vitestWorkspaceFile) {
-    printError(
-      '🚨 Oh no!',
-      dedent`
-        Found an existing Vitest workspace file:
-        ${colors.gray(vitestWorkspaceFile)}
-
-        I was able to configure most of the addon but could not safely extend
-        your existing workspace file automatically, you must do it yourself. This was the last step.
-
-        Please refer to the documentation to complete the setup manually:
-        ${picocolors.cyan(`https://storybook.js.org/docs/writing-tests/test-addon#manual-setup`)}
-      `
-    );
-    logger.line(1);
-    return;
-  }
-
-  // Check for an existing config file. Can be from Vitest (preferred) or Vite (with `test` option).
+  // Check for an existing config file. Can be from Vitest (preferred) or Vite.
   const viteConfigFile = await findFile('vite.config');
   if (viteConfigFile) {
     const viteConfig = await fs.readFile(viteConfigFile, 'utf8');
+    // We don't support extending a test config in a Vite config file, so we bail out.
     if (viteConfig.match(/\Wtest:\s*{/)) {
       printError(
         '🚨 Oh no!',
@@ -414,6 +403,7 @@ export default async function postInstall(options: PostinstallOptions) {
     }
   }
 
+  const vitestWorkspaceFile = await findFile('vitest.workspace', ['.ts', '.js', '.json']);
   const vitestConfigFile = await findFile('vitest.config');
   const vitestShimFile = await findFile('vitest.shims.d');
   const rootConfig = vitestConfigFile || viteConfigFile;
@@ -425,11 +415,7 @@ export default async function postInstall(options: PostinstallOptions) {
         enabled: true,
         headless: true,
         provider: 'playwright',
-        instances: [
-          {
-            browser: 'chromium',
-          }
-        ]
+        instances: [{ browser: 'chromium' }]
       }`
     : `{
         enabled: true,
@@ -445,88 +431,83 @@ export default async function postInstall(options: PostinstallOptions) {
     );
   }
 
-  if (rootConfig) {
-    // If there's an existing config, we create a workspace file so we can run Storybook tests alongside.
-    const extension = extname(rootConfig);
-    const browserWorkspaceFile = resolve(dirname(rootConfig), `vitest.workspace${extension}`);
-    // to be set in vitest config
-    const vitestSetupFilePath = relative(dirname(browserWorkspaceFile), vitestSetupFile);
+  if (vitestWorkspaceFile) {
+    // If there's an existing workspace file, we update that file to include the Storybook test plugin.
+    // We assume the existing workspaces include the Vite(st) config, so we won't add it.
+    const vitestSetupFilePath = relative(dirname(vitestWorkspaceFile), vitestSetupFile);
+    const workspaceTemplate = await loadTemplate('vitest.workspace.template.ts', {
+      EXTENDS_WORKSPACE: viteConfigFile
+        ? relative(dirname(vitestWorkspaceFile), viteConfigFile)
+        : '',
+      CONFIG_DIR: options.configDir,
+      BROWSER_CONFIG: browserConfig,
+      SETUP_FILE: vitestSetupFilePath,
+    }).then((t) => t.replace(`\n  'ROOT_CONFIG',`, '').replace(/\s+extends: '',/, ''));
+    const workspaceFile = await fs.readFile(vitestWorkspaceFile, 'utf8');
+    const source = babelParse(workspaceTemplate);
+    const target = babelParse(workspaceFile);
+
+    const updated = updateWorkspaceFile(source, target);
+    if (!updated) {
+      printError(
+        '🚨 Oh no!',
+        dedent`
+          Could not update existing Vitest workspace file:
+          ${colors.gray(vitestWorkspaceFile)}
+
+          I was able to configure most of the addon but could not safely extend
+          your existing workspace file automatically, you must do it yourself.
+
+          Please refer to the documentation to complete the setup manually:
+          ${picocolors.cyan(`https://storybook.js.org/docs/writing-tests/test-addon#manual-setup`)}
+        `
+      );
+      logger.line(1);
+      return;
+    }
 
     logger.line(1);
-    logger.plain(`${step} Creating a Vitest project workspace file:`);
-    logger.plain(colors.gray(`  ${browserWorkspaceFile}`));
+    logger.plain(`${step} Updating your Vitest workspace file:`);
+    logger.plain(colors.gray(`  ${vitestWorkspaceFile}`));
 
-    await writeFile(
-      browserWorkspaceFile,
-      await formatFileContent(
-        browserWorkspaceFile,
-        dedent`
-        import { defineWorkspace } from 'vitest/config';
-        import { storybookTest } from '@storybook/experimental-addon-test/vitest-plugin';
-        import path from 'node:path';
-        import { fileURLToPath } from 'node:url';
+    const formattedContent = await formatFileContent(vitestWorkspaceFile, generate(target).code);
+    await writeFile(vitestWorkspaceFile, formattedContent);
+  } else if (rootConfig) {
+    // If there's an existing Vite/Vitest config, we create a workspace file so we can run Storybook tests alongside.
+    const extension = extname(rootConfig).includes('ts') ? '.ts' : '.js';
+    const newWorkspaceFile = resolve(dirname(rootConfig), `vitest.workspace${extension}`);
+    const vitestSetupFilePath = relative(dirname(newWorkspaceFile), vitestSetupFile);
+    const workspaceTemplate = await loadTemplate('vitest.workspace.template.ts', {
+      ROOT_CONFIG: relative(dirname(newWorkspaceFile), rootConfig),
+      // We only extend from Vite config (without test property), not Vitest config.
+      EXTENDS_WORKSPACE: viteConfigFile ? relative(dirname(newWorkspaceFile), viteConfigFile) : '',
+      CONFIG_DIR: options.configDir,
+      BROWSER_CONFIG: browserConfig,
+      SETUP_FILE: vitestSetupFilePath,
+    }).then((t) => t.replace(/\s+extends: '',/, ''));
 
-        const dirname = typeof __dirname !== 'undefined'
-          ? __dirname
-          : path.dirname(fileURLToPath(import.meta.url));
+    logger.line(1);
+    logger.plain(`${step} Creating a Vitest workspace file:`);
+    logger.plain(colors.gray(`  ${newWorkspaceFile}`));
 
-        // More info at: https://storybook.js.org/docs/writing-tests/test-addon
-        export default defineWorkspace([
-          '${relative(dirname(browserWorkspaceFile), rootConfig)}',
-          {
-            extends: '${viteConfigFile ? relative(dirname(browserWorkspaceFile), viteConfigFile) : ''}',
-            plugins: [
-              // The plugin will run tests for the stories defined in your Storybook config
-              // See options at: https://storybook.js.org/docs/writing-tests/test-addon#storybooktest
-              storybookTest({ configDir: path.join(dirname, '${options.configDir}') })
-            ],
-            test: {
-              name: 'storybook',
-              browser: ${browserConfig},
-              setupFiles: ['${vitestSetupFilePath}'],
-            },
-          },
-        ]);
-      `.replace(/\s+extends: '',/, '')
-      )
-    );
+    const formattedContent = await formatFileContent(newWorkspaceFile, workspaceTemplate);
+    await writeFile(newWorkspaceFile, formattedContent);
   } else {
     // If there's no existing Vitest/Vite config, we create a new Vitest config file.
-    const newVitestConfigFile = resolve(`vitest.config.${fileExtension}`);
-    // to be set in vitest config
-    const vitestSetupFilePath = relative(dirname(newVitestConfigFile), vitestSetupFile);
+    const newConfigFile = resolve(`vitest.config.${fileExtension}`);
+    const vitestSetupFilePath = relative(dirname(newConfigFile), vitestSetupFile);
+    const configTemplate = await loadTemplate('vitest.config.template.ts', {
+      CONFIG_DIR: options.configDir,
+      BROWSER_CONFIG: browserConfig,
+      SETUP_FILE: vitestSetupFilePath,
+    });
 
     logger.line(1);
-    logger.plain(`${step} Creating a Vitest project config file:`);
-    logger.plain(colors.gray(`  ${newVitestConfigFile}`));
+    logger.plain(`${step} Creating a Vitest config file:`);
+    logger.plain(colors.gray(`  ${newConfigFile}`));
 
-    await writeFile(
-      newVitestConfigFile,
-      dedent`
-        import { defineConfig } from 'vitest/config';
-        import { storybookTest } from '@storybook/experimental-addon-test/vitest-plugin';
-        import path from 'node:path';
-        import { fileURLToPath } from 'node:url';
-
-        const dirname = typeof __dirname !== 'undefined'
-          ? __dirname
-          : path.dirname(fileURLToPath(import.meta.url));
-
-        // More info at: https://storybook.js.org/docs/writing-tests/test-addon
-        export default defineConfig({
-          plugins: [
-            // The plugin will run tests for the stories defined in your Storybook config
-            // See options at: https://storybook.js.org/docs/writing-tests/test-addon#storybooktest
-            storybookTest({ configDir: path.join(dirname, '${options.configDir}') })
-          ],
-          test: {
-            name: 'storybook',
-            browser: ${browserConfig},
-            setupFiles: ['${vitestSetupFilePath}'],
-          },
-        });
-      `
-    );
+    const formattedContent = await formatFileContent(newConfigFile, configTemplate);
+    await writeFile(newConfigFile, formattedContent);
   }
 
   const runCommand = rootConfig ? `npx vitest --project=storybook` : `npx vitest`;

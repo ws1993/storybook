@@ -64,6 +64,22 @@ const isSafeToExtendWorkspace = (path: CallExpression) =>
         ))
   );
 
+export const isValidWorkspaceConfigFile: (fileContents: string, babel: any) => boolean = (
+  fileContents,
+  babel
+) => {
+  let isValidWorkspaceConfig = false;
+  const parsedFile = babel.babelParse(fileContents);
+  babel.traverse(parsedFile, {
+    ExportDefaultDeclaration(path: any) {
+      isValidWorkspaceConfig =
+        isWorkspaceConfigArray(path.node.declaration) ||
+        isDefineWorkspaceExpression(path.node.declaration);
+    },
+  });
+  return isValidWorkspaceConfig;
+};
+
 /**
  * Check if existing Vite/Vitest workspace/config file can be safely modified, if not prompt:
  *
@@ -85,17 +101,8 @@ export const vitestConfigFiles: Check = {
       if (vitestWorkspaceFile?.endsWith('.json')) {
         reasons.push(`Cannot auto-update JSON workspace file: ${vitestWorkspaceFile}`);
       } else if (vitestWorkspaceFile) {
-        let isValidWorkspaceConfig = false;
-        const configContent = await fs.readFile(vitestWorkspaceFile, 'utf8');
-        const parsedConfig = babel.babelParse(configContent);
-        babel.traverse(parsedConfig, {
-          ExportDefaultDeclaration(path) {
-            isValidWorkspaceConfig =
-              isWorkspaceConfigArray(path.node.declaration) ||
-              isDefineWorkspaceExpression(path.node.declaration);
-          },
-        });
-        if (!isValidWorkspaceConfig) {
+        const fileContents = await fs.readFile(vitestWorkspaceFile, 'utf8');
+        if (!isValidWorkspaceConfigFile(fileContents, babel)) {
           reasons.push(`Found an invalid workspace config file: ${vitestWorkspaceFile}`);
         }
       }
