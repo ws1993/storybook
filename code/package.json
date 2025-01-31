@@ -86,12 +86,12 @@
     "@types/react": "^18.0.0",
     "@vitest/expect@npm:2.0.5": "patch:@vitest/expect@npm%3A2.0.5#~/.yarn/patches/@vitest-expect-npm-2.0.5-8933466cce.patch",
     "esbuild": "^0.24.0",
-    "typescript": "^5.7.3",
     "playwright": "1.48.1",
     "playwright-core": "1.48.1",
     "react": "^18.2.0",
     "serialize-javascript": "^3.1.0",
-    "type-fest": "~2.19"
+    "type-fest": "~2.19",
+    "typescript": "^5.7.3"
   },
   "dependencies": {
     "@chromatic-com/storybook": "^3.2.4",
@@ -234,8 +234,7 @@
     "vite": "^4.0.0",
     "vite-plugin-inspect": "^0.8.5",
     "vitest": "^3.0.2",
-    "wait-on": "^7.0.1",
-    "yoga-wasm-web": "^0.3.3"
+    "wait-on": "^7.0.1"
   },
   "dependenciesMeta": {
     "ejs": {

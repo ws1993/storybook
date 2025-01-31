@@ -285,8 +285,7 @@
     "recast": "^0.23.5",
     "semver": "^7.6.2",
     "util": "^0.12.5",
-    "ws": "^8.2.3",
-    "yoga-wasm-web": "^0.3.3"
+    "ws": "^8.2.3"
   },
   "devDependencies": {
     "@aw-web-design/x-default-browser": "1.4.126",
