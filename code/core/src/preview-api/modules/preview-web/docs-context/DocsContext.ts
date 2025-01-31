@@ -1,4 +1,5 @@
 import type { Channel } from '@storybook/core/channels';
+import { isStory } from '@storybook/core/csf';
 import type {
   CSFFile,
   ModuleExport,
@@ -11,7 +12,6 @@ import type {
   StoryName,
 } from '@storybook/core/types';
 
-import { isStory } from 'core/src/csf';
 import { dedent } from 'ts-dedent';
 
 import { type StoryStore } from '../../store';
