@@ -59,8 +59,8 @@ export interface ViewportParameters {
     defaultViewport?: string;
 
     /**
-     * Turn off this addon's behavior. If you wish to turn off this addon for the entire Storybook,
-     * you should do so when registering addon-essentials
+     * Remove the addon panel and disable the addon's behavior . If you wish to turn off this addon
+     * for the entire Storybook, you should do so when registering addon-essentials
      *
      * @see https://storybook.js.org/docs/essentials/index#disabling-addons
      */

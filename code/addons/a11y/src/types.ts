@@ -15,7 +15,7 @@ export interface A11yParameters {
     /**
      * Configuration for the accessibility rules
      *
-     * @see https://github.com/dequelabs/axe-core/blob/develop/doc/API.md#options-parameter
+     * @see https://github.com/dequelabs/axe-core/blob/develop/doc/API.md#api-name-axeconfigure
      */
     config?: Spec;
 
@@ -26,7 +26,7 @@ export interface A11yParameters {
      */
     options?: RunOptions;
 
-    /** Turn off this addon's behavior */
+    /** Remove the addon panel and disable the addon's behavior */
     disable?: boolean;
   };
 }
@@ -39,8 +39,10 @@ export interface A11yGlobals {
    */
   a11y: {
     /**
-     * Prevent the addon to execute automatic accessibility checks upon visiting a story. You can
-     * still trigger the checks from the addon panel.
+     * Prevent the addon from executing automated accessibility checks upon visiting a story. You
+     * can still trigger the checks from the addon panel.
+     *
+     * @see https://storybook.js.org/docs/writing-tests/accessibility-testing#turn-off-automated-a11y-tests
      */
     manual?: boolean;
   };

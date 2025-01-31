@@ -5,17 +5,13 @@ export interface ControlsParameters {
    * @see https://storybook.js.org/docs/essentials/controls#parameters-1
    */
   controls: {
-    /** Turn off this addon's behavior */
+    /** Remove the addon panel and disable the addon's behavior */
     disable?: boolean;
 
     /** Disable the ability to create or edit stories from the Controls panel */
     disableSaveFromUI?: boolean;
 
-    /**
-     * Exclude specific properties from the Controls panel
-     *
-     * @see https://storybook.js.org/docs/essentials/controls#filtering-controls
-     */
+    /** Exclude specific properties from the Controls panel */
     exclude?: string[] | RegExp;
 
     /**
@@ -24,11 +20,7 @@ export interface ControlsParameters {
      */
     expanded?: boolean;
 
-    /**
-     * Exclude only specific properties in the Controls panel
-     *
-     * @see https://storybook.js.org/docs/essentials/controls#filtering-controls
-     */
+    /** Exclude only specific properties in the Controls panel */
     include?: string[] | RegExp;
 
     /**
@@ -36,16 +28,10 @@ export interface ControlsParameters {
      *
      * @example PresetColors: [{ color: '#ff4785', title: 'Coral' }, 'rgba(0, 159, 183, 1)',
      * '#fe4a49']
-     *
-     * @see https://storybook.js.org/docs/essentials/controls#specify-initial-preset-color-swatches
      */
     presetColors?: Array<string | { color: string; title?: string }>;
 
-    /**
-     * Controls sorting order
-     *
-     * @see https://storybook.js.org/docs/essentials/controls#sorting-controls
-     */
+    /** Controls sorting order */
     sort?: 'none' | 'alpha' | 'requiredFirst';
   };
 }

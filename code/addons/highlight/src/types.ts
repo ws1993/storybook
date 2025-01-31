@@ -5,7 +5,7 @@ export interface HighlightParameters {
    * @see https://storybook.js.org/docs/essentials/highlight#parameters
    */
   highlight: {
-    /** Turn off this addon's behavior */
+    /** Remove the addon panel and disable the addon's behavior */
     disable?: boolean;
   };
 }

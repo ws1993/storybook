@@ -6,7 +6,7 @@ export interface ActionsParameters {
    */
   actions: {
     /**
-     * Create actions for each arg that matches the regex.
+     * Create actions for each arg that matches the regex. (**NOT recommended, see below**)
      *
      * This is quite useful when your component has dozens (or hundreds) of methods and you do not
      * want to manually apply the fn utility for each of those methods. However, this is not the
@@ -15,11 +15,11 @@ export interface ActionsParameters {
      * functions, you will need to also define args with the fn utility to test them in your play
      * function.
      *
-     * @example ArgTypesRegex: '^on.*'
+     * @example `argTypesRegex: '^on.*'`
      */
     argTypesRegex?: string;
 
-    /** Turn off this addon's behavior */
+    /** Remove the addon panel and disable the addon's behavior */
     disable?: boolean;
 
     /**
@@ -27,7 +27,11 @@ export interface ActionsParameters {
      * and triggers an action when the event is called for a given selector. The format is
      * `<eventname> <selector>`. The selector is optional; it defaults to all elements.
      *
-     * @example Handles: ['mouseover', 'click .btn']
+     * **To enable this feature, you must use the `withActions` decorator.**
+     *
+     * @example `handles: ['mouseover', 'click .btn']`
+     *
+     * @see https://storybook.js.org/docs/essentials/actions#action-event-handlers
      */
     handles?: string[];
   };

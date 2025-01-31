@@ -18,7 +18,11 @@ export interface ShowErrorArgs {
 export interface ReactParameters {
   /** React renderer configuration */
   react?: {
-    /** Whether to enable React Server Components */
+    /**
+     * Whether to enable React Server Components
+     *
+     * @see https://storybook.js.org/docs/get-started/frameworks/nextjs#react-server-components-rsc
+     */
     rsc?: boolean;
     /** Options passed to React root creation */
     rootOptions?: {

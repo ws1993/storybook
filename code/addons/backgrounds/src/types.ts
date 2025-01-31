@@ -32,7 +32,7 @@ export interface BackgroundsParameters {
     /** Default background color */
     default?: string;
 
-    /** Turn off this addon's behavior */
+    /** Remove the addon panel and disable the addon's behavior */
     disable?: boolean;
 
     /** Configuration for the background grid */

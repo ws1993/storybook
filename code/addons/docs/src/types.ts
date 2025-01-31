@@ -5,7 +5,7 @@ type StoryBlockParameters = {
   autoplay?: boolean;
   /**
    * Set a minimum height (note for an iframe this is the actual height) when rendering a story in
-   * an iframe or inline. This overrides parameters.docs.story.iframeHeight for iframes.
+   * an iframe or inline. This overrides `parameters.docs.story.iframeHeight` for iframes.
    */
   height?: string;
   /** IFrame configuration */
@@ -18,7 +18,7 @@ type StoryBlockParameters = {
   /** Specifies the CSF file to which the story is associated */
   meta: ModuleExports;
   /**
-   * Specifies which story is rendered by the Story block. If no of is defined and the MDX file is
+   * Specifies which story is rendered by the Story block. If no `of` is defined and the MDX file is
    * attached, the primary (first) story will be rendered.
    */
   of: ModuleExport;
@@ -31,11 +31,7 @@ type ControlsBlockParameters = {
   /** Exclude only specific properties in the Controls panel */
   include?: string[] | RegExp;
 
-  /**
-   * Controls sorting order
-   *
-   * @see https://storybook.js.org/docs/api/doc-blocks/doc-block-controls#sort
-   */
+  /** Controls sorting order */
   sort?: 'none' | 'alpha' | 'requiredFirst';
 };
 
@@ -182,7 +178,7 @@ export interface DocsParameters {
      */
     description?: DescriptionBlockParameters;
 
-    /** Turn off this addon's behavior */
+    /** Remove the addon panel and disable the addon's behavior */
     disable?: boolean;
 
     /**

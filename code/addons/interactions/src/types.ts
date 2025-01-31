@@ -4,10 +4,7 @@ export interface InteractionsParameters {
    *
    * @see https://storybook.js.org/docs/essentials/interactions
    */
-  interactions: {
-    /** Turn off this addon's behavior */
-    disable?: boolean;
-
+  test: {
     /** Ignore unhandled errors during test execution */
     dangerouslyIgnoreUnhandledErrors?: boolean;
 

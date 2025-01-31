@@ -20,6 +20,6 @@ export const runStep = instrument(
   // perhaps csf types need to be updated? StepRunner expects Promise<void> and not Promise<void> | void
 ).step as StepRunner;
 
-export const parameters: InteractionsParameters['interactions'] = {
+export const parameters: InteractionsParameters['test'] = {
   throwPlayFunctionExceptions: false,
 };

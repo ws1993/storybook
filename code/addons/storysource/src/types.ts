@@ -8,7 +8,7 @@ export interface StorySourceParameters {
     /** Dark mode for source code */
     dark?: boolean;
 
-    /** Turn off this addon's behavior */
+    /** Remove the addon panel and disable the addon's behavior */
     disable?: boolean;
 
     /** Source code formatting options */
