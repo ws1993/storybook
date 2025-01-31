@@ -1,4 +1,4 @@
-```js filename=".storybook/main.js" renderer="react" language="js"
+```js filename=".storybook/main.js" renderer="preact" language="js"
 export default {
   // ...
   // framework: '@storybook/preact-webpack5', 👈 Remove this
@@ -6,7 +6,7 @@ export default {
 };
 ```
 
-```ts filename=".storybook/main.ts" renderer="react" language="ts"
+```ts filename=".storybook/main.ts" renderer="preact" language="ts"
 import { StorybookConfig } from '@storybook/preact-vite';
 
 const config: StorybookConfig = {
