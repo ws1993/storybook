@@ -1,3 +1,26 @@
+## 8.6.0-alpha.3
+
+- Core: Fix invalid Websocket termination - [#30408](https://github.com/storybookjs/storybook/pull/30408), thanks @valentinpalkovic!
+- Core: Improve type compatibility with React 19 - [#30031](https://github.com/storybookjs/storybook/pull/30031), thanks @mrginglymus!
+- Preview: Add `globals` to `extract()` - [#30415](https://github.com/storybookjs/storybook/pull/30415), thanks @ndelangen!
+
+## 8.6.0-alpha.2
+
+- Addon Test: Support Vitest 3 browser.test.instances field - [#30309](https://github.com/storybookjs/storybook/pull/30309), thanks @valentinpalkovic!
+- Bun: Add support for text lock file - [#30160](https://github.com/storybookjs/storybook/pull/30160), thanks @Arctomachine!
+- CLI: Corrected Next.js createScript for pnpm. - [#30304](https://github.com/storybookjs/storybook/pull/30304), thanks @zhyd1997!
+
+## 8.6.0-alpha.1
+
+- Addon Test: Replace `interaction test` -> `component test` - [#30333](https://github.com/storybookjs/storybook/pull/30333), thanks @kylegach!
+- Angular: Fix accent character issue - [#30276](https://github.com/storybookjs/storybook/pull/30276), thanks @valentinpalkovic!
+- Angular: Support experimental zoneless mode - [#28657](https://github.com/storybookjs/storybook/pull/28657), thanks @anedomansky!
+- CLI: Use correct storybook internals import in automigration - [#30290](https://github.com/storybookjs/storybook/pull/30290), thanks @yannbf!
+- Core: Add connection timeout notification - [#30288](https://github.com/storybookjs/storybook/pull/30288), thanks @valentinpalkovic!
+- Csf Tools: Allow ConfigFile to create more import syntaxes - [#30204](https://github.com/storybookjs/storybook/pull/30204), thanks @yannbf!
+- Manager: Escape single quotes in dynamic import paths in wrapManagerEntries function - [#30278](https://github.com/storybookjs/storybook/pull/30278), thanks @valentinpalkovic!
+- RNW-Vite: Support requires for images/fonts - [#30305](https://github.com/storybookjs/storybook/pull/30305), thanks @dannyhw!
+
 ## 8.6.0-alpha.0
 
 
