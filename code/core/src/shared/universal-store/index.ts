@@ -232,7 +232,10 @@ export class UniversalStore<State, CustomEvent extends { type: string; payload?:
 
     this.id = options.id;
     this.actor = {
-      id: globalThis.crypto.randomUUID(),
+      id: globalThis.crypto
+        ? globalThis.crypto.randomUUID()
+        : // TODO: remove this fallback in SB 9.0 when we no longer support Node 18
+          Date.now().toString(36) + Math.random().toString(36).substring(2),
       type: options.leader ? UniversalStore.ActorType.LEADER : UniversalStore.ActorType.FOLLOWER,
       environment: undefined as any, // Will be set later when the preparation promise has resolved
     };
