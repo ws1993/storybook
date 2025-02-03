@@ -46,7 +46,8 @@ import vue3Generator from './generators/VUE3';
 import webComponentsGenerator from './generators/WEB-COMPONENTS';
 import webpackReactGenerator from './generators/WEBPACK_REACT';
 import type { CommandOptions, GeneratorOptions } from './generators/types';
-import { checks } from './ink/steps/checks';
+import { packageVersions } from './ink/steps/checks/packageVersions';
+import { vitestConfigFiles } from './ink/steps/checks/vitestConfigFiles';
 import { currentDirectoryIsEmpty, scaffoldNewProject } from './scaffold-new-project';
 
 const logger = console;
@@ -390,18 +391,15 @@ export async function doInitiate(options: CommandOptions): Promise<
   }
 
   if (intents.includes('test')) {
-    const packageVersions = await checks.packageVersions.condition(
-      { packageManager } as any,
-      {} as any
-    );
-    if (packageVersions.type === 'incompatible') {
+    const packageVersionsData = await packageVersions.condition({ packageManager }, {} as any);
+    if (packageVersionsData.type === 'incompatible') {
       const { ignorePackageVersions } = isInteractive
         ? await prompts([
             {
               type: 'confirm',
               name: 'ignorePackageVersions',
               message: dedent`
-                ${packageVersions.reasons.join('\n')}
+                ${packageVersionsData.reasons.join('\n')}
                 Do you want to continue without Storybook's testing features?
               `,
             },
@@ -416,18 +414,18 @@ export async function doInitiate(options: CommandOptions): Promise<
   }
 
   if (intents.includes('test')) {
-    const vitestConfigFiles = await checks.vitestConfigFiles.condition(
+    const vitestConfigFilesData = await vitestConfigFiles.condition(
       { babel, findUp, fs } as any,
       { directory: process.cwd() } as any
     );
-    if (vitestConfigFiles.type === 'incompatible') {
+    if (vitestConfigFilesData.type === 'incompatible') {
       const { ignoreVitestConfigFiles } = isInteractive
         ? await prompts([
             {
               type: 'confirm',
               name: 'ignoreVitestConfigFiles',
               message: dedent`
-                ${vitestConfigFiles.reasons.join('\n')}
+                ${vitestConfigFilesData.reasons.join('\n')}
                 Do you want to continue without Storybook's testing features?
               `,
             },

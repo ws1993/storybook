@@ -17,10 +17,9 @@ import { type Check, CompatibilityType } from './index';
 const name = 'Vitest and MSW compatibility';
 export const packageVersions: Check = {
   condition: async (context) => {
-    if (context.packageManager || context.JsPackageManagerFactory) {
+    if (context.packageManager) {
       const reasons = [];
-      const packageManager =
-        context.packageManager || context.JsPackageManagerFactory!.getPackageManager();
+      const packageManager = context.packageManager;
 
       const vitestVersionSpecifier = await packageManager.getInstalledVersion('vitest');
       const coercedVitestVersion = vitestVersionSpecifier ? coerce(vitestVersionSpecifier) : null;

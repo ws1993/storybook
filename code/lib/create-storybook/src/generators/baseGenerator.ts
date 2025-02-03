@@ -22,7 +22,6 @@ import {
 import versions from '../../../../core/src/common/versions';
 import type { SupportedFrameworks } from '../../../../core/src/types/modules/frameworks';
 import type { SupportedRenderers } from '../../../../core/src/types/modules/renderers';
-import { packageVersions } from '../ink/steps/checks/packageVersions';
 import { configureMain, configurePreview } from './configure';
 import type { FrameworkOptions, GeneratorOptions } from './types';
 
@@ -79,7 +78,7 @@ const getFrameworkPackage = (framework: string | undefined, renderer: string, bu
       ? `@storybook/${storybookFramework}`
       : `@storybook/${renderer}-${storybookBuilder}`;
 
-    if (packageVersions[frameworkPackage as keyof typeof packageVersions]) {
+    if (versions[frameworkPackage as keyof typeof versions]) {
       return frameworkPackage;
     }
 
@@ -202,7 +201,7 @@ export async function baseGenerator(
   const shouldApplyRequireWrapperOnPackageNames = isStorybookInMonorepository || pnp;
 
   if (!builder) {
-    builder = await detectBuilder(packageManager, projectType);
+    builder = await detectBuilder(packageManager as any, projectType);
   }
 
   const {
@@ -319,12 +318,13 @@ export async function baseGenerator(
 
   try {
     if (process.env.CI !== 'true') {
-      const { hasEslint, isStorybookPluginInstalled, eslintConfigFile } =
-        await extractEslintInfo(packageManager);
+      const { hasEslint, isStorybookPluginInstalled, eslintConfigFile } = await extractEslintInfo(
+        packageManager as any
+      );
 
       if (hasEslint && !isStorybookPluginInstalled) {
         versionedPackages.push('eslint-plugin-storybook');
-        await configureEslintPlugin(eslintConfigFile ?? undefined, packageManager);
+        await configureEslintPlugin(eslintConfigFile ?? undefined, packageManager as any);
       }
     }
   } catch (err) {
@@ -414,7 +414,7 @@ export async function baseGenerator(
     }
     await copyTemplateFiles({
       renderer: templateLocation,
-      packageManager,
+      packageManager: packageManager as any,
       language,
       destination: componentsDestinationPath,
       commonAssetsDir: join(getCliDir(), 'rendererAssets', 'common'),

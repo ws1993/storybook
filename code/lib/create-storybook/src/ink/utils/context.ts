@@ -4,6 +4,7 @@ import { createContext } from 'react';
 // import type { checkFramework } from '../steps/Framework';
 // import type { checkGitStatus } from '../steps/Git';
 // import type { checkVersion } from '../steps/Version';
+import type { JsPackageManager } from '../../../../../core/src/common/js-package-manager/JsPackageManager';
 
 export const AppContext = createContext({
   // fs: undefined as typeof import('fs/promises') | undefined,
@@ -23,7 +24,9 @@ export const AppContext = createContext({
   //   | undefined,
   // babel: undefined as typeof import('@storybook/core/babel') | undefined,
   // telemetry: undefined as typeof import('@storybook/core/telemetry').telemetry | undefined,
-  // packageManager: undefined as import('@storybook/core/common').JsPackageManager | undefined,
+  packageManager: undefined as
+    | import('../../../../../core/src/common/js-package-manager/JsPackageManager').JsPackageManager
+    | undefined,
   // JsPackageManagerFactory: undefined as
   //   | (typeof import('@storybook/core/common'))['JsPackageManagerFactory']
   //   | undefined,
