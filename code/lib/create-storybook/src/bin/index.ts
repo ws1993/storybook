@@ -53,8 +53,6 @@ const createStorybookProgram = program
 
 createStorybookProgram
   .action(async (options) => {
-    // const d = modernInputs.safeParse(options);
-
     options.debug = options.debug ?? false;
     options.dev = options.dev ?? (IS_NON_CI && IS_NON_STORYBOOK_SANDBOX);
 
