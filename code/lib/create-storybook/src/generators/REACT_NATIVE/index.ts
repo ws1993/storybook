@@ -36,7 +36,7 @@ const generator = async (
 
   const versionedPackages = await packageManager.getVersionedPackages(packagesToResolve);
 
-  const babelDependencies = await getBabelDependencies(packageManager, packageJson);
+  const babelDependencies = await getBabelDependencies(packageManager as any, packageJson);
 
   const packages: string[] = [];
 
@@ -59,7 +59,7 @@ const generator = async (
   const storybookConfigFolder = '.storybook';
 
   await copyTemplateFiles({
-    packageManager,
+    packageManager: packageManager as any,
     renderer: 'react-native',
     // this value for language is not used since we only ship the ts template. This means we just fallback to @storybook/react-native/template/cli.
     language: SupportedLanguage.TYPESCRIPT_4_9,

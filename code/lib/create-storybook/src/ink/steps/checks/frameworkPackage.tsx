@@ -19,8 +19,8 @@ export const frameworkPackage: Check = {
     if (state.framework !== 'nextjs') {
       return { type: CompatibilityType.COMPATIBLE };
     }
-    if (context.JsPackageManagerFactory) {
-      const packageManager = context.JsPackageManagerFactory.getPackageManager();
+    if (context.packageManager) {
+      const packageManager = context.packageManager;
       const nextJsVersionSpecifier = await packageManager.getInstalledVersion('next');
 
       return nextJsVersionSpecifier

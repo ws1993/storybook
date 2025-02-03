@@ -4,6 +4,11 @@
 // import { Box, Text } from 'ink';
 // import { ACTIONS } from '..';
 // import { Confirm } from '../../components/Confirm';
+import * as fs from 'node:fs/promises';
+
+import { findUp } from 'find-up';
+
+import * as babel from '../../../../../../core/src/babel';
 import { type Check, CompatibilityType } from './index';
 
 interface Declaration {
@@ -65,8 +70,7 @@ const isSafeToExtendWorkspace = (path: CallExpression) =>
   );
 
 export const isValidWorkspaceConfigFile: (fileContents: string, babel: any) => boolean = (
-  fileContents,
-  babel
+  fileContents
 ) => {
   let isValidWorkspaceConfig = false;
   const parsedFile = babel.babelParse(fileContents);
@@ -90,7 +94,6 @@ const name = 'Vitest configuration';
 export const vitestConfigFiles: Check = {
   condition: async (context, state) => {
     const deps = ['babel', 'findUp', 'fs'];
-    const { babel, findUp, fs } = context;
     if (babel && findUp && fs) {
       const reasons = [];
 

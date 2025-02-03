@@ -4,6 +4,9 @@
 // import { Box, Text } from 'ink';
 // import { ACTIONS } from '..';
 // import { Confirm } from '../../components/Confirm';
+import * as fs from 'node:fs/promises';
+import path from 'node:path';
+
 import { type Check, CompatibilityType } from './index';
 
 const configPath = '.storybook';
@@ -17,15 +20,14 @@ const configPath = '.storybook';
 const name = '.storybook directory';
 export const configDir: Check = {
   condition: async (context, state) => {
-    if (context.fs && context.path) {
-      return context.fs
-        .stat(context.path.join(state.directory, configPath))
-        .then(() => ({
-          type: CompatibilityType.INCOMPATIBLE,
-          reasons: ['exists'],
-        }))
-        .catch(() => ({ type: CompatibilityType.COMPATIBLE }));
-    }
+    return fs
+      .stat(path.join(state.directory, configPath))
+      .then(() => ({
+        type: CompatibilityType.INCOMPATIBLE,
+        reasons: ['exists'],
+      }))
+      .catch(() => ({ type: CompatibilityType.COMPATIBLE }));
+
     return {
       type: CompatibilityType.INCOMPATIBLE,
       reasons: ['bad context'],

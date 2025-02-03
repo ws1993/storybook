@@ -6,7 +6,7 @@ import { baseGenerator } from '../baseGenerator';
 import type { Generator } from '../types';
 
 export const getAddonSvelteCsfVersion = async (packageManager: JsPackageManager) => {
-  const svelteVersion = await getVersionSafe(packageManager, 'svelte');
+  const svelteVersion = await getVersionSafe(packageManager as any, 'svelte');
   try {
     const svelteMajor = major(svelteVersion ?? '');
     if (svelteMajor === 4) {
