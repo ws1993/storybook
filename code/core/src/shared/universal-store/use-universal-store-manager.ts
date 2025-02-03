@@ -4,11 +4,12 @@ import type { UniversalStore } from './index';
 
 export const useUniversalStore = <
   TUniversalStore extends UniversalStore<any, any>,
-  TState = ReturnType<TUniversalStore['getState']>,
+  TState extends ReturnType<TUniversalStore['getState']>,
+  TSelectedState = NonNullable<TState>,
 >(
   universalStore: TUniversalStore,
-  selector?: (state: TState) => any
-): [TState, React.Dispatch<React.SetStateAction<NonNullable<TState>>>] => {
+  selector?: (state: TState) => TSelectedState
+): [TSelectedState, TUniversalStore['setState']] => {
   const subscribe = React.useCallback<Parameters<(typeof React)['useSyncExternalStore']>[0]>(
     (listener) => universalStore.onStateChange(listener, selector),
     [universalStore, selector]
