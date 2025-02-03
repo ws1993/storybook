@@ -337,15 +337,7 @@ export class UniversalStore<State, CustomEvent extends { type: string; payload?:
     });
   }
 
-  /**
-   * Creates a new instance of UniversalStore
-   *
-   * @template State The type of the state
-   * @template CustomEvent The type of custom events
-   * @param {StoreOptions<State>} options Configuration options for the store
-   * @returns {UniversalStore<State, CustomEvent>} A new store instance
-   * @static
-   */
+  /** Creates a new instance of UniversalStore */
   static create<
     State = any,
     CustomEvent extends { type: string; payload?: any } = { type: string; payload?: any },
@@ -407,7 +399,7 @@ export class UniversalStore<State, CustomEvent extends { type: string; payload?:
   /**
    * Updates the store's state
    *
-   * @param {State | StateUpdater<State>} updater New state or state updater function
+   * Either a new state or a state updater function can be passed to the method.
    */
   public setState = (updater: State | StateUpdater<State>) => {
     const previousState = this.state;
@@ -448,11 +440,7 @@ export class UniversalStore<State, CustomEvent extends { type: string; payload?:
   /**
    * Subscribes to store events
    *
-   * @template TEvent Event type
-   * @param {TEvent['type'] | Listener<TEvent>} eventTypeOrListener Event type or listener function
-   * @param {Listener<Event<State, CustomEvent>>} [maybeListener] Listener function if first param
-   *   is event type
-   * @returns {() => void} Unsubscribe function
+   * @returns A function to unsubscribe
    */
 
   public subscribe = (
@@ -494,8 +482,7 @@ export class UniversalStore<State, CustomEvent extends { type: string; payload?:
   /**
    * Subscribes to state changes
    *
-   * @param {function} listener Callback function called when state changes
-   * @returns {() => void} Unsubscribe function
+   * @returns Unsubscribe function
    */
   public onStateChange(
     listener: (state: State, previousState: State, eventInfo: EventInfo) => void,
@@ -518,11 +505,7 @@ export class UniversalStore<State, CustomEvent extends { type: string; payload?:
     });
   }
 
-  /**
-   * Sends a custom event to the other stores
-   *
-   * @param {CustomEvent} event The event to send
-   */
+  /** Sends a custom event to the other stores */
   public send = (event: CustomEvent) => {
     this.debug('send', { event });
     if (this.status !== UniversalStore.Status.READY) {
