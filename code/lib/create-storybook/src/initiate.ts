@@ -497,10 +497,10 @@ export async function doInitiate(options: CommandOptions): Promise<
 
   if (intents.includes('test')) {
     logger.log(
-      `> npx sb add @storybook/experimental-addon-test@${versions['@storybook/experimental-addon-test']}`
+      `> npx storybook@${versions.storybook} add @storybook/experimental-addon-test@${versions['@storybook/experimental-addon-test']}`
     );
     execSync(
-      `npx sb add @storybook/experimental-addon-test@${versions['@storybook/experimental-addon-test']}`,
+      `npx storybook@${versions.storybook} add @storybook/experimental-addon-test@${versions['@storybook/experimental-addon-test']}`,
       { cwd: process.cwd(), stdio: 'inherit' }
     );
   }
