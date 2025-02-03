@@ -139,6 +139,7 @@
     "access": "public"
   },
   "bundler": {
+    "post": "./scripts/copy-unbundled-to-dist.ts",
     "exportEntries": [
       "./src/index.ts",
       "./src/vitest-plugin/test-utils.ts",
