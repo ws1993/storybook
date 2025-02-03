@@ -26,6 +26,7 @@ type BundlerConfig = {
   pre: string;
   post: string;
   formats: Formats[];
+  types?: boolean;
 };
 type PackageJsonWithBundlerConfig = PackageJson & {
   bundler: BundlerConfig;
@@ -49,6 +50,7 @@ const run = async ({ cwd, flags }: { cwd: string; flags: string[] }) => {
       pre,
       post,
       formats = ['esm', 'cjs'],
+      types = true,
     },
   } = (await fs.readJson(join(cwd, 'package.json'))) as PackageJsonWithBundlerConfig;
 
@@ -89,6 +91,7 @@ const run = async ({ cwd, flags }: { cwd: string; flags: string[] }) => {
     formats,
     entries,
     optimized,
+    types,
   });
 
   /* preset files are always CJS only.
@@ -245,15 +248,17 @@ async function getDTSConfigs({
   formats,
   entries,
   optimized,
+  types,
 }: {
   formats: Formats[];
   entries: string[];
   optimized: boolean;
+  types: boolean;
 }) {
   const tsConfigPath = join(cwd, 'tsconfig.json');
   const tsConfigExists = await fs.pathExists(tsConfigPath);
 
-  const dtsBuild = optimized && formats[0] && tsConfigExists ? formats[0] : undefined;
+  const dtsBuild = types && optimized && formats[0] && tsConfigExists ? formats[0] : undefined;
 
   const dtsConfig: DtsConfigSection = {
     tsconfig: tsConfigPath,

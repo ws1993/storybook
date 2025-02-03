@@ -19,23 +19,12 @@
   "author": "Storybook Team",
   "type": "module",
   "exports": {
-    ".": {
-      "types": "./dist/index.d.ts",
-      "import": "./dist/index.js"
-    },
+    ".": "./dist/index.js",
     "./bin/index.cjs": "./bin/index.cjs",
     "./package.json": "./package.json"
   },
   "main": "dist/index.cjs",
   "module": "dist/index.js",
-  "types": "dist/index.d.ts",
-  "typesVersions": {
-    "*": {
-      "*": [
-        "./dist/index.d.ts"
-      ]
-    }
-  },
   "bin": "./bin/index.cjs",
   "files": [
     "bin/**/*",
@@ -86,7 +75,8 @@
     ],
     "formats": [
       "node-esm"
-    ]
+    ],
+    "types": false
   },
   "gitHead": "e6a7fd8a655c69780bc20b9749c2699e44beae16"
 }

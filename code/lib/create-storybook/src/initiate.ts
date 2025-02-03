@@ -61,7 +61,7 @@ const installStorybook = async <Project extends ProjectType>(
     skipInstall: options.skipInstall,
   };
 
-  const language = await detectLanguage(packageManager);
+  const language = await detectLanguage(packageManager as any);
   const pnp = await detectPnp();
 
   const generatorOptions: GeneratorOptions = {
@@ -341,7 +341,7 @@ export async function doInitiate(options: CommandOptions): Promise<
     }
   } else {
     try {
-      projectType = (await detect(packageManager, options)) as ProjectType;
+      projectType = (await detect(packageManager as any, options)) as ProjectType;
     } catch (err) {
       done(String(err));
       throw new HandledError(err);
