@@ -538,7 +538,7 @@ export class UniversalStore<State, CustomEvent extends { type: string; payload?:
       everythingListeners,
     });
 
-    [...(eventTypeListeners ?? []), ...(everythingListeners ?? [])]?.forEach(
+    [...(eventTypeListeners ?? []), ...(everythingListeners ?? [])].forEach(
       (listener: Listener<CustomEvent>) => listener(event, eventInfo)
     );
   };
