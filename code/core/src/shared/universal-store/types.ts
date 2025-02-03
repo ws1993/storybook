@@ -32,7 +32,7 @@ export interface SetStateEvent<TState> extends BaseEvent {
 }
 export interface ExistingStateRequestEvent extends BaseEvent {
   type: typeof UniversalStore.InternalEventType.EXISTING_STATE_REQUEST;
-  payload?: undefined;
+  payload: never;
 }
 export interface ExistingStateResponseEvent<TState> extends BaseEvent {
   type: typeof UniversalStore.InternalEventType.EXISTING_STATE_RESPONSE;
@@ -44,6 +44,7 @@ export type InternalEvent<TState> =
   | ExistingStateRequestEvent
   | ExistingStateResponseEvent<TState>;
 export type Event<TState, TEvent extends BaseEvent> = TEvent | InternalEvent<TState>;
+
 export type ChannelEvent<TState, TEvent extends BaseEvent> = {
   event: Event<TState, TEvent>;
   eventInfo: EventInfo;
@@ -51,10 +52,16 @@ export type ChannelEvent<TState, TEvent extends BaseEvent> = {
 
 export type ChannelLike = Pick<Channel, 'on' | 'off' | 'emit'>;
 
-export type StoreOptions<TState> = {
-  id: string;
-  leader?: boolean;
-  // TODO: Make leader required when initialState is set
-  initialState?: TState;
-  debug?: boolean;
-};
+export type StoreOptions<TState> =
+  | {
+      id: string;
+      leader?: false;
+      debug?: boolean;
+      initialState?: undefined;
+    }
+  | {
+      id: string;
+      leader: true;
+      debug?: boolean;
+      initialState: TState;
+    };
