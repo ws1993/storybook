@@ -86,6 +86,15 @@
       "*": [
         "dist/index.d.ts"
       ],
+      "angular": [
+        "angular/index.d.ts"
+      ],
+      "blocks": [
+        "dist/blocks.d.ts"
+      ],
+      "ember": [
+        "ember/index.d.ts"
+      ],
       "preview": [
         "dist/preview.d.ts"
       ]
