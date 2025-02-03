@@ -1,10 +1,13 @@
 import { join } from 'node:path';
 
-import { CoreBuilder } from '@storybook/core/cli';
-import { AngularJSON, compoDocPreviewPrefix, promptForCompoDocs } from '@storybook/core/cli';
-import { copyTemplate } from '@storybook/core/cli';
-import { commandLog } from '@storybook/core/common';
-
+import {
+  AngularJSON,
+  compoDocPreviewPrefix,
+  promptForCompoDocs,
+} from '../../../../../core/src/cli/angular/helpers';
+import { copyTemplate } from '../../../../../core/src/cli/helpers';
+import { CoreBuilder } from '../../../../../core/src/cli/project_types';
+import { commandLog } from '../../../../../core/src/common/utils/log';
 import { baseGenerator, getCliDir } from '../baseGenerator';
 import type { Generator } from '../types';
 

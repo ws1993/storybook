@@ -1,11 +1,10 @@
 import { stat, writeFile } from 'node:fs/promises';
 import { resolve } from 'node:path';
 
-import { SupportedLanguage, externalFrameworks } from '@storybook/core/cli';
-
-import { logger } from '@storybook/core/node-logger';
-
 import { dedent } from 'ts-dedent';
+
+import { SupportedLanguage, externalFrameworks } from '../../../../core/src/cli/project_types';
+import { logger } from '../../../../core/src/node-logger';
 
 interface ConfigureMainOptions {
   addons: string[];
@@ -103,7 +102,8 @@ export async function configureMain({
     finalPrefixes.push(`/** @type { import('${frameworkPackage}').StorybookConfig } */`);
   }
 
-  let mainJsContents = mainConfigTemplate
+  let mainJsContents = '';
+  mainJsContents = mainConfigTemplate
     .replace('<<import>>', `${imports.join('\n\n')}\n\n`)
     .replace('<<prefix>>', finalPrefixes.length > 0 ? `${finalPrefixes.join('\n\n')}\n` : '')
     .replace('<<type>>', isTypescript ? ': StorybookConfig' : '')
@@ -111,13 +111,13 @@ export async function configureMain({
 
   const mainPath = `./${storybookConfigFolder}/main.${isTypescript ? 'ts' : 'js'}`;
 
-  try {
-    const format = (await import('@storybook/core/common')).formatFileContent;
+  // try {
+  //   const format = (await import('@storybook/core/common')).formatFileContent;
 
-    mainJsContents = await format(mainPath, dedent(mainJsContents));
-  } catch {
-    logger.verbose(`Failed to prettify ${mainPath}`);
-  }
+  //   mainJsContents = await format(mainPath, dedent(mainJsContents));
+  // } catch {
+  //   logger.verbose(`Failed to prettify ${mainPath}`);
+  // }
 
   await writeFile(mainPath, mainJsContents, { encoding: 'utf8' });
 }
@@ -150,7 +150,8 @@ export async function configurePreview(options: ConfigurePreviewOptions) {
     .filter(Boolean)
     .join('\n');
 
-  let preview = dedent`
+  let preview = '';
+  preview = dedent`
     ${prefix}${prefix.length > 0 ? '\n' : ''}
     ${
       !isTypescript && rendererPackage
@@ -172,13 +173,13 @@ export async function configurePreview(options: ConfigurePreviewOptions) {
     .replace('  \n', '')
     .trim();
 
-  try {
-    const format = (await import('@storybook/core/common')).formatFileContent;
+  // try {
+  //   const format = (await import('@storybook/core/common')).formatFileContent;
 
-    preview = await format(previewPath, dedent(preview));
-  } catch {
-    logger.verbose(`Failed to prettify ${previewPath}`);
-  }
+  //   preview = await format(previewPath, dedent(preview));
+  // } catch {
+  //   logger.verbose(`Failed to prettify ${previewPath}`);
+  // }
 
   await writeFile(previewPath, preview, { encoding: 'utf8' });
 }

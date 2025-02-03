@@ -1,8 +1,7 @@
-import { getVersionSafe } from '@storybook/core/cli';
-import type { JsPackageManager } from '@storybook/core/common';
-
 import { major } from 'semver';
 
+import { getVersionSafe } from '../../../../../core/src/cli/helpers';
+import type { JsPackageManager } from '../../../../../core/src/common/js-package-manager/JsPackageManager';
 import { baseGenerator } from '../baseGenerator';
 import type { Generator } from '../types';
 

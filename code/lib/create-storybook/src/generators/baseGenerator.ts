@@ -1,21 +1,28 @@
 import { mkdir } from 'node:fs/promises';
 import { dirname, join } from 'node:path';
 
-import type { Builder, NpmOptions } from '@storybook/core/cli';
-import { SupportedLanguage, externalFrameworks } from '@storybook/core/cli';
-import { copyTemplateFiles } from '@storybook/core/cli';
-import { configureEslintPlugin, extractEslintInfo } from '@storybook/core/cli';
-import { detectBuilder } from '@storybook/core/cli';
-import type { JsPackageManager } from '@storybook/core/common';
-import { getPackageDetails, versions as packageVersions } from '@storybook/core/common';
-import type { SupportedRenderers } from '@storybook/core/types';
-import type { SupportedFrameworks } from '@storybook/core/types';
-
 // eslint-disable-next-line depend/ban-dependencies
 import ora from 'ora';
 import invariant from 'tiny-invariant';
 import { dedent } from 'ts-dedent';
 
+import type { NpmOptions } from '../../../../core/src/cli/NpmOptions';
+import { detectBuilder } from '../../../../core/src/cli/detect';
+import { configureEslintPlugin, extractEslintInfo } from '../../../../core/src/cli/eslintPlugin';
+import { copyTemplateFiles } from '../../../../core/src/cli/helpers';
+import {
+  type Builder,
+  SupportedLanguage,
+  externalFrameworks,
+} from '../../../../core/src/cli/project_types';
+import {
+  type JsPackageManager,
+  getPackageDetails,
+} from '../../../../core/src/common/js-package-manager/JsPackageManager';
+import versions from '../../../../core/src/common/versions';
+import type { SupportedFrameworks } from '../../../../core/src/types/modules/frameworks';
+import type { SupportedRenderers } from '../../../../core/src/types/modules/renderers';
+import { packageVersions } from '../ink/steps/checks/packageVersions';
 import { configureMain, configurePreview } from './configure';
 import type { FrameworkOptions, GeneratorOptions } from './types';
 
@@ -39,7 +46,7 @@ const defaultOptions: FrameworkOptions = {
 };
 
 const getBuilderDetails = (builder: string) => {
-  const map = packageVersions as Record<string, string>;
+  const map = versions as Record<string, string>;
 
   if (map[builder]) {
     return builder;
@@ -137,8 +144,8 @@ const getFrameworkDetails = (
 
   const isExternalFramework = !!getExternalFramework(frameworkPackage);
   const isKnownFramework =
-    isExternalFramework || !!(packageVersions as Record<string, string>)[frameworkPackage];
-  const isKnownRenderer = !!(packageVersions as Record<string, string>)[rendererPackage];
+    isExternalFramework || !!(versions as Record<string, string>)[frameworkPackage];
+  const isKnownRenderer = !!(versions as Record<string, string>)[rendererPackage];
 
   if (isKnownFramework) {
     return {

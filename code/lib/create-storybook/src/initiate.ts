@@ -1,24 +1,6 @@
 import { execSync } from 'node:child_process';
 import fs from 'node:fs/promises';
 
-import * as babel from '@storybook/core/babel';
-import type { Builder, NpmOptions } from '@storybook/core/cli';
-import { ProjectType, installableProjectTypes } from '@storybook/core/cli';
-import { detect, detectLanguage, detectPnp, isStorybookInstantiated } from '@storybook/core/cli';
-import {
-  HandledError,
-  JsPackageManagerFactory,
-  commandLog,
-  getProjectRoot,
-  paddedLog,
-  versions,
-} from '@storybook/core/common';
-import type { JsPackageManager } from '@storybook/core/common';
-import { telemetry } from '@storybook/core/telemetry';
-
-import { withTelemetry } from '@storybook/core/core-server';
-import { NxProjectDetectedError } from '@storybook/core/server-errors';
-
 import boxen from 'boxen';
 import { findUp } from 'find-up';
 import picocolors from 'picocolors';
@@ -26,6 +8,25 @@ import prompts from 'prompts';
 import { lt, prerelease } from 'semver';
 import { dedent } from 'ts-dedent';
 
+import * as babel from '../../../core/src/babel';
+import type { NpmOptions } from '../../../core/src/cli/NpmOptions';
+import {
+  detect,
+  detectLanguage,
+  detectPnp,
+  isStorybookInstantiated,
+} from '../../../core/src/cli/detect';
+import type { Builder } from '../../../core/src/cli/project_types';
+import { ProjectType, installableProjectTypes } from '../../../core/src/cli/project_types';
+import type { JsPackageManager } from '../../../core/src/common/js-package-manager/JsPackageManager';
+import { JsPackageManagerFactory } from '../../../core/src/common/js-package-manager/JsPackageManagerFactory';
+import { HandledError } from '../../../core/src/common/utils/HandledError';
+import { commandLog, paddedLog } from '../../../core/src/common/utils/log';
+import { getProjectRoot } from '../../../core/src/common/utils/paths';
+import versions from '../../../core/src/common/versions';
+import { withTelemetry } from '../../../core/src/core-server/withTelemetry';
+import { NxProjectDetectedError } from '../../../core/src/server-errors';
+import { telemetry } from '../../../core/src/telemetry';
 import angularGenerator from './generators/ANGULAR';
 import emberGenerator from './generators/EMBER';
 import htmlGenerator from './generators/HTML';

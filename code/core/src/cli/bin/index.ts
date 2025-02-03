@@ -4,18 +4,17 @@ import { addToGlobalContext } from '@storybook/core/telemetry';
 import { logger } from '@storybook/core/node-logger';
 
 import { program } from 'commander';
-import { findPackageSync } from 'fd-package-json';
+import { findPackage } from 'fd-package-json';
 import leven from 'leven';
 import picocolors from 'picocolors';
 import invariant from 'tiny-invariant';
 
+import { version } from '../../../package.json';
 import { build } from '../build';
 import { dev } from '../dev';
 
 addToGlobalContext('cliVersion', versions.storybook);
 
-const pkg = findPackageSync(__dirname);
-invariant(pkg, 'Failed to find the closest package.json file.');
 const consoleLogger = console;
 
 const command = (name: string) =>
@@ -70,6 +69,9 @@ command('dev')
   )
   .action(async (options) => {
     logger.setLevel(options.loglevel);
+    const pkg = await findPackage(__dirname);
+    invariant(pkg, 'Failed to find the closest package.json file.');
+
     consoleLogger.log(picocolors.bold(`${pkg.name} v${pkg.version}`) + picocolors.reset('\n'));
 
     // The key is the field created in `options` variable for
@@ -111,6 +113,9 @@ command('build')
     const { env } = process;
     env.NODE_ENV = env.NODE_ENV || 'production';
 
+    const pkg = await findPackage(__dirname);
+    invariant(pkg, 'Failed to find the closest package.json file.');
+
     logger.setLevel(options.loglevel);
     consoleLogger.log(picocolors.bold(`${pkg.name} v${pkg.version}\n`));
 
@@ -142,4 +147,4 @@ program.on('command:*', ([invalidCmd]) => {
   process.exit(1);
 });
 
-program.usage('<command> [options]').version(String(pkg.version)).parse(process.argv);
+program.usage('<command> [options]').version(String(version)).parse(process.argv);

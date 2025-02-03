@@ -50,9 +50,12 @@
     "prep": "jiti  ../../../scripts/prepare/bundle.ts"
   },
   "dependencies": {
-    "@storybook/core": "workspace:*"
+    "process": "^0.11.10",
+    "prompts": "^2.4.0",
+    "recast": "^0.23.5"
   },
   "devDependencies": {
+    "@storybook/core": "workspace:*",
     "@types/prompts": "^2.0.9",
     "@types/semver": "^7.3.4",
     "@types/util-deprecate": "^1.0.0",
@@ -65,7 +68,6 @@
     "find-up": "^7.0.0",
     "ora": "^5.4.1",
     "picocolors": "^1.1.0",
-    "prompts": "^2.4.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "semver": "^7.3.7",

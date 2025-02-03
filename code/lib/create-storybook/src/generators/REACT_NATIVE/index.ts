@@ -1,7 +1,7 @@
-import { copyTemplateFiles, getBabelDependencies } from '@storybook/core/cli';
-import type { NpmOptions } from '@storybook/core/cli';
-import { SupportedLanguage } from '@storybook/core/cli';
-import type { JsPackageManager } from '@storybook/core/common';
+import type { NpmOptions } from '../../../../../core/src/cli/NpmOptions';
+import { copyTemplateFiles, getBabelDependencies } from '../../../../../core/src/cli/helpers';
+import { SupportedLanguage } from '../../../../../core/src/cli/project_types';
+import type { JsPackageManager } from '../../../../../core/src/common/js-package-manager/JsPackageManager';
 
 const generator = async (
   packageManager: JsPackageManager,
