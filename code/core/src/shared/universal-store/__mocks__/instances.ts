@@ -39,8 +39,7 @@ class MockInstancesMap {
     return environment.delete(instanceKey);
   });
 
-  clear = vi.fn((environmentKey?: string) => {
-    invariant(environmentKey, 'Environment key is required when clearing instances.');
+  clear = vi.fn((environmentKey: string) => {
     invariant(
       this.environments.has(environmentKey),
       'Environment key is required when clearing instances. To clear all environments, use `clearAllEnvironments`'
@@ -49,7 +48,7 @@ class MockInstancesMap {
   });
 
   environmentSize = vi.fn((environmentKey: string) => {
-    return this.environments.get(environmentKey)!.size;
+    return this.environments.get(environmentKey)?.size ?? 0;
   });
 
   clearAllEnvironments = vi.fn(() => {
