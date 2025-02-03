@@ -118,19 +118,30 @@ export class UniversalStore<State, CustomEvent extends { type: string; payload?:
     ERROR: 'ERROR',
   } as const;
 
-  // To check if constructor was called from the static factory create()
+  // This is used to check if constructor was called from the static factory create()
   private static isInternalConstructing = false;
 
+  // Will be set when Storybook prepares the static store with UniversalStore.__prepare()
+  private static channel: ChannelLike;
+
+  // Will be set when Storybook prepares the static store with UniversalStore.__prepare()
+  private static environment: (typeof UniversalStore.Environment)[keyof typeof UniversalStore.Environment];
+
+  static {
+    UniversalStore.setupPreparationPromise();
+  }
+
+  /**
+   * The preparation construct is used to keep track of all store's preparation state the promise is
+   * resolved when the store is prepared with the static __prepare() method which will also change
+   * the state from PENDING to RESOLVED
+   */
   private static preparation: {
     state: (typeof ProgressState)[keyof typeof ProgressState];
     resolve: (args: Awaited<typeof UniversalStore.preparation.promise>) => void;
     reject: (error: Error) => void;
     promise: Promise<{ channel: ChannelLike; environment: EnvironmentType }>;
   };
-
-  static {
-    UniversalStore.setupPreparationPromise();
-  }
 
   private static setupPreparationPromise() {
     let resolveRef: typeof UniversalStore.preparation.resolve;
@@ -157,7 +168,23 @@ export class UniversalStore<State, CustomEvent extends { type: string; payload?:
     };
   }
 
-  public get status() {
+  /** Enable debug logs for this store */
+  public debugging = false;
+
+  /** The actor object representing the store instance with a unique ID and a type */
+  public get actor(): Actor {
+    return Object.freeze({
+      id: this.actorId,
+      type: this.actorType,
+      environment: UniversalStore.environment,
+    });
+  }
+
+  /**
+   * The current state of the store, that signals both if the store is prepared by Storybook and
+   * also - in the case of a follower - if the state has been synced with the leader's state.
+   */
+  public get status(): (typeof UniversalStore.Status)[keyof typeof UniversalStore.Status] {
     switch (UniversalStore.preparation.state) {
       case ProgressState.PENDING:
         return UniversalStore.Status.UNPREPARED;
@@ -178,28 +205,29 @@ export class UniversalStore<State, CustomEvent extends { type: string; payload?:
     }
   }
 
+  /**
+   * A promise that resolves when the store is fully ready. A leader will be ready when the store
+   * has been prepared by Storybook, which is almost instantly.
+   *
+   * A follower will be ready when the state has been synced with the leader's state, within a few
+   * hundred milliseconds.
+   */
   public untilReady = () => {
     return Promise.all([UniversalStore.preparation.promise, this.syncing?.promise]);
   };
 
+  /**
+   * The syncing construct is used to keep track of if the instance's state has been synced with the
+   * other instances. A leader will immediately have the promise resolved. A follower will initially
+   * be in a PENDING state, and resolve the the leader has sent the existing state, or reject if no
+   * leader has responded before the timeout.
+   */
   private syncing?: {
     state: (typeof ProgressState)[keyof typeof ProgressState];
     promise?: Promise<void>;
     resolve?: () => void;
     reject?: (error: Error) => void;
   };
-
-  // To store the channel instance for the current environment
-  private static channel: ChannelLike;
-
-  // To store the current environment
-  private static environment: (typeof UniversalStore.Environment)[keyof typeof UniversalStore.Environment];
-
-  /** Enable debug logs for this store */
-  public debugging = false;
-
-  /** The actor object representing the store instance with a unique ID and a type */
-  readonly actor: Actor;
 
   private channelEventName: string;
 
@@ -212,9 +240,13 @@ export class UniversalStore<State, CustomEvent extends { type: string; payload?:
 
   private id: string;
 
+  private actorId: Actor['id'];
+
+  private actorType: Actor['type'];
+
   private constructor(options: StoreOptions<State>) {
     this.debugging = options.debug ?? false;
-    // This constructor is a simulated private constructor as described in
+    // This constructor is a simulated private constructor
     // it can only be called from within the static factory method create()
     // See: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Classes/Private_propertiessimulating_private_constructors
     if (!UniversalStore.isInternalConstructing) {
@@ -231,14 +263,13 @@ export class UniversalStore<State, CustomEvent extends { type: string; payload?:
     }
 
     this.id = options.id;
-    this.actor = {
-      id: globalThis.crypto
-        ? globalThis.crypto.randomUUID()
-        : // TODO: remove this fallback in SB 9.0 when we no longer support Node 18
-          Date.now().toString(36) + Math.random().toString(36).substring(2),
-      type: options.leader ? UniversalStore.ActorType.LEADER : UniversalStore.ActorType.FOLLOWER,
-      environment: undefined as any, // Will be set later when the preparation promise has resolved
-    };
+    this.actorId = globalThis.crypto
+      ? globalThis.crypto.randomUUID()
+      : // TODO: remove this fallback in SB 9.0 when we no longer support Node 18
+        Date.now().toString(36) + Math.random().toString(36).substring(2);
+    this.actorType = options.leader
+      ? UniversalStore.ActorType.LEADER
+      : UniversalStore.ActorType.FOLLOWER;
     this.state = options.initialState as State;
     this.channelEventName = `${CHANNEL_EVENT_PREFIX}${this.id}`;
 
@@ -281,8 +312,7 @@ export class UniversalStore<State, CustomEvent extends { type: string; payload?:
     }
 
     UniversalStore.preparation.promise.then(({ channel, environment }) => {
-      this.debug('prepared');
-      this.actor.environment = environment;
+      this.debug('prepared', { channel, environment });
       UniversalStore.channel.on(this.channelEventName, this.handleChannelEvents);
 
       if (this.actor.type === UniversalStore.ActorType.FOLLOWER) {
@@ -489,7 +519,7 @@ export class UniversalStore<State, CustomEvent extends { type: string; payload?:
   }
 
   /**
-   * Sends a custom event through the store
+   * Sends a custom event to the other stores
    *
    * @param {CustomEvent} event The event to send
    */
@@ -543,7 +573,7 @@ export class UniversalStore<State, CustomEvent extends { type: string; payload?:
 
     if ([eventInfo.actor.id, eventInfo.forwardingActor?.id].includes(this.actor.id)) {
       // Ignore events from self
-      this.debug('handleChannelEvents: IGNORING SELF', { channelEvent });
+      this.debug('handleChannelEvents: Ignoring event from self', { channelEvent });
       return;
     }
     this.debug('handleChannelEvents', { channelEvent });
@@ -577,7 +607,7 @@ export class UniversalStore<State, CustomEvent extends { type: string; payload?:
           // TODO: always handle this event, or only the first time?
           // should we _always_ change the state, or only when undefined?
           if (this.state === undefined) {
-            this.debug('handleChannelEvents: setting state from existing state response', {
+            this.debug("handleChannelEvents: Setting state from leader's existing state response", {
               event,
             });
             this.state = event.payload;
@@ -589,7 +619,7 @@ export class UniversalStore<State, CustomEvent extends { type: string; payload?:
 
     switch (event.type) {
       case UniversalStore.InternalEventType.SET_STATE:
-        this.debug('handleChannelEvents: setting state', { event });
+        this.debug('handleChannelEvents: Setting state', { event });
         this.state = event.payload.state;
         break;
     }

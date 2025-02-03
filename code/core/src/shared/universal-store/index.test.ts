@@ -714,4 +714,6 @@ You should reuse the existing instance instead of trying to create a new one.`);
 
     it.todo('should throw when subscribing without a listener');
   });
+
+  it.todo('logs debug logs when debug is set to true');
 });
