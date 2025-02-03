@@ -8,7 +8,7 @@ export const useUniversalStore = <
 >(
   universalStore: TUniversalStore,
   selector?: (state: TState) => any
-): [TState | undefined, React.Dispatch<React.SetStateAction<TState>>] => {
+): [TState, React.Dispatch<React.SetStateAction<NonNullable<TState>>>] => {
   const subscribe = React.useCallback<Parameters<(typeof React)['useSyncExternalStore']>[0]>(
     (listener) => universalStore.onStateChange(listener, selector),
     [universalStore, selector]
