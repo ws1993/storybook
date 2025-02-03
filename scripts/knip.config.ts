@@ -13,7 +13,6 @@ const project = [
   '!**/__testfixtures__/**',
   '!**/__mocks-ng-workspace__/**',
   '!**/__mockdata__/**',
-  '!**/create-storybook/src/**',
 ];
 
 // Adding an explicit MDX "compiler", as the dependency knip looks for isn't listed (@mdx-js/mdx or astro)

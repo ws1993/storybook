@@ -206,7 +206,7 @@ jobs:
           name: Knip
           command: |
             cd code
-            yarn knip --no-exit-code 
+            NODE_OPTIONS=--max_old_space_size=6144 yarn knip --no-exit-code 
           environment:
             NODE_OPTIONS: --max_old_space_size=6144
       - report-workflow-on-failure
