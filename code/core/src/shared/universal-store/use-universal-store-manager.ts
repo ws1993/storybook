@@ -1,5 +1,7 @@
 import * as React from 'react';
 
+import { isEqual } from 'es-toolkit';
+
 import type { UniversalStore } from './index';
 
 /**
@@ -11,25 +13,53 @@ import type { UniversalStore } from './index';
  * @remark This hook is intended for use in the manager UI. For use in the preview, import from
  * `storybook/internal/preview-api` instead.
  */
-export const useUniversalStore = <
+export const useUniversalStore: {
+  <
+    TUniversalStore extends UniversalStore<TState, any>,
+    TState = TUniversalStore extends UniversalStore<infer S, any> ? S : never,
+  >(
+    universalStore: TUniversalStore
+  ): [TState, TUniversalStore['setState']];
+  <
+    TUniversalStore extends UniversalStore<any, any>,
+    TSelectedState,
+    TState = TUniversalStore extends UniversalStore<infer S, any> ? S : never,
+  >(
+    universalStore: TUniversalStore,
+    selector: (state: TState) => TSelectedState
+  ): [TSelectedState, TUniversalStore['setState']];
+} = <
   TUniversalStore extends UniversalStore<any, any>,
-  TState extends ReturnType<TUniversalStore['getState']>,
-  TSelectedState = NonNullable<TState>,
+  TSelectedState,
+  TState = TUniversalStore extends UniversalStore<infer S, any> ? S : never,
 >(
   universalStore: TUniversalStore,
   selector?: (state: TState) => TSelectedState
 ): [TSelectedState, TUniversalStore['setState']] => {
   const subscribe = React.useCallback<Parameters<(typeof React)['useSyncExternalStore']>[0]>(
-    (listener) => universalStore.onStateChange(listener, selector),
+    (listener) =>
+      universalStore.onStateChange((state, previousState) => {
+        if (!selector) {
+          listener();
+          return;
+        }
+        const selectedState = selector(state);
+        const selectedPreviousState = selector(previousState);
+
+        const hasChanges = !isEqual(selectedState, selectedPreviousState);
+        if (hasChanges) {
+          listener();
+        }
+      }),
     [universalStore, selector]
   );
 
   const getSnapshot = React.useCallback(
-    () => universalStore.getState(selector),
+    () => (selector ? selector(universalStore.getState()) : universalStore.getState()),
     [universalStore, selector]
   );
 
-  const state = React.useSyncExternalStore<TState>(subscribe, getSnapshot);
+  const state = React.useSyncExternalStore(subscribe, getSnapshot);
 
   return [state, universalStore.setState];
 };

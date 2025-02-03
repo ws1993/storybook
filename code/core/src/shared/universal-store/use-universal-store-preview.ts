@@ -1,5 +1,7 @@
 import { useEffect, useState } from '@storybook/core/preview-api';
 
+import { isEqual } from 'es-toolkit';
+
 import type { UniversalStore } from './index';
 
 /**
@@ -11,21 +13,47 @@ import type { UniversalStore } from './index';
  * @remark This hook is intended for use in the preview. For use in the manager UI, import from
  * `storybook/internal/manager-api` instead.
  */
-export const useUniversalStore = <
+export const useUniversalStore: {
+  <
+    TUniversalStore extends UniversalStore<TState, any>,
+    TState = TUniversalStore extends UniversalStore<infer S, any> ? S : never,
+  >(
+    universalStore: TUniversalStore
+  ): [TState, TUniversalStore['setState']];
+  <
+    TUniversalStore extends UniversalStore<any, any>,
+    TSelectedState,
+    TState = TUniversalStore extends UniversalStore<infer S, any> ? S : never,
+  >(
+    universalStore: TUniversalStore,
+    selector: (state: TState) => TSelectedState
+  ): [TSelectedState, TUniversalStore['setState']];
+} = <
   TUniversalStore extends UniversalStore<any, any>,
-  TState extends ReturnType<TUniversalStore['getState']>,
-  TSelectedState = NonNullable<TState>,
+  TSelectedState,
+  TState = TUniversalStore extends UniversalStore<infer S, any> ? S : never,
 >(
   universalStore: TUniversalStore,
   selector?: (state: TState) => TSelectedState
 ): [TSelectedState, TUniversalStore['setState']] => {
-  const [state, setState] = useState(universalStore.getState(selector));
+  const [state, setState] = useState(
+    selector ? selector(universalStore.getState()) : universalStore.getState()
+  );
 
   useEffect(() => {
-    const stateChangeHandler = (nextState: NonNullable<TState>) => {
-      setState(selector ? selector(nextState) : nextState);
-    };
-    return universalStore.onStateChange(stateChangeHandler, selector);
+    return universalStore.onStateChange((nextState, previousState) => {
+      if (!selector) {
+        setState(nextState);
+        return;
+      }
+      const selectedNextState = selector(nextState);
+      const selectedPreviousState = selector(previousState);
+
+      const hasChanges = !isEqual(selectedNextState, selectedPreviousState);
+      if (hasChanges) {
+        setState(selectedNextState);
+      }
+    });
   }, [universalStore, setState, selector]);
 
   return [state, universalStore.setState];

@@ -191,6 +191,7 @@ export class UniversalStore<State, CustomEvent extends { type: string; payload?:
       case ProgressState.REJECTED:
         return UniversalStore.Status.ERROR;
       case ProgressState.RESOLVED:
+        break;
       default:
     }
     switch (this.syncing?.state) {
@@ -234,9 +235,7 @@ export class UniversalStore<State, CustomEvent extends { type: string; payload?:
   private state: State;
 
   // TODO: narrow type of listeners based on event type
-  private listeners: Map<string, Set<Listener<Event<State, CustomEvent>>>> = new Map([
-    ['*', new Set()],
-  ]);
+  private listeners: Map<string, Set<Listener<any>>> = new Map([['*', new Set()]]);
 
   private id: string;
 
@@ -381,19 +380,10 @@ export class UniversalStore<State, CustomEvent extends { type: string; payload?:
     UniversalStore.preparation.resolve({ channel, environment });
   }
 
-  /**
-   * Gets the current state
-   *
-   * @returns {State} The current state
-   */
-  public getState = (selector?: ((state?: State) => any) | undefined): State | undefined => {
-    this.debug('getState', { state: this.state, selector });
-
-    if (this.status !== UniversalStore.Status.READY) {
-      return undefined;
-    }
-
-    return selector ? selector(this.state) : this.state;
+  /** Gets the current state */
+  public getState = (): State => {
+    this.debug('getState', { state: this.state });
+    return this.state;
   };
 
   /**
@@ -443,9 +433,15 @@ export class UniversalStore<State, CustomEvent extends { type: string; payload?:
    * @returns A function to unsubscribe
    */
 
-  public subscribe = (
-    eventTypeOrListener: Listener<Event<State, CustomEvent>> | string,
-    maybeListener?: Listener<Event<State, CustomEvent>>
+  public subscribe: {
+    (listener: Listener<Event<State, CustomEvent>>): () => void;
+    <EventType extends Event<State, CustomEvent>['type']>(
+      eventType: EventType,
+      listener: Listener<Extract<Event<State, CustomEvent>, { type: EventType }>>
+    ): () => void;
+  } = <EventType extends Event<State, CustomEvent>['type']>(
+    eventTypeOrListener: Listener<Event<State, CustomEvent>> | EventType,
+    maybeListener?: Listener<Extract<Event<State, CustomEvent>, { type: EventType }>>
   ) => {
     // TODO: improve type safety in arguments
     // eventType shouldn't just be string and event should be inferred from type when two arguments are passed
@@ -484,26 +480,17 @@ export class UniversalStore<State, CustomEvent extends { type: string; payload?:
    *
    * @returns Unsubscribe function
    */
-  public onStateChange(
-    listener: (state: State, previousState: State, eventInfo: EventInfo) => void,
-    selector?: (state: State) => any | undefined
-  ) {
-    this.debug('onStateChange', { listener, selector });
-    return this.subscribe(UniversalStore.InternalEventType.SET_STATE, ({ payload }, eventInfo) => {
-      if (!selector) {
-        listener(payload.state, payload.previousState, eventInfo);
-        return;
-      }
-
-      const selectedState = selector(payload.state);
-      const selectedPreviousState = selector(payload.previousState);
-
-      const hasChanges = !isEqual(selectedState, selectedPreviousState);
-      if (hasChanges) {
+  public onStateChange = (
+    listener: (state: State, previousState: State, eventInfo: EventInfo) => void
+  ) => {
+    this.debug('onStateChange', { listener });
+    return this.subscribe(
+      UniversalStore.InternalEventType.SET_STATE as any,
+      ({ payload }, eventInfo) => {
         listener(payload.state, payload.previousState, eventInfo);
       }
-    });
-  }
+    );
+  };
 
   /** Sends a custom event to the other stores */
   public send = (event: CustomEvent) => {
@@ -587,15 +574,11 @@ export class UniversalStore<State, CustomEvent extends { type: string; payload?:
     if (this.actor.type === UniversalStore.ActorType.FOLLOWER) {
       switch (event.type) {
         case UniversalStore.InternalEventType.EXISTING_STATE_RESPONSE:
-          // TODO: always handle this event, or only the first time?
-          // should we _always_ change the state, or only when undefined?
-          if (this.state === undefined) {
-            this.debug("handleChannelEvents: Setting state from leader's existing state response", {
-              event,
-            });
-            this.state = event.payload;
-            this.syncing!.resolve?.();
-          }
+          this.debug("handleChannelEvents: Setting state from leader's existing state response", {
+            event,
+          });
+          this.state = event.payload;
+          this.syncing!.resolve?.();
           break;
       }
     }
