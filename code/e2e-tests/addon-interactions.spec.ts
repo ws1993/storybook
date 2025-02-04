@@ -31,7 +31,15 @@ test.describe('addon-interactions', () => {
     const sbPage = new SbPage(page, expect);
 
     await sbPage.navigateToStory('example/page', 'logged-in');
-    await sbPage.viewAddonPanel('Interactions');
+
+    // Some sandboxes get experiment-addon-test, some get addon-interactions, the panels are pretty inter-changeable..
+    // .so we try both
+    try {
+      await sbPage.viewAddonPanel('Interactions');
+    } catch (e) {
+      await sbPage.viewAddonPanel('Component tests');
+      //
+    }
 
     const welcome = sbPage.previewRoot().locator('.welcome');
     await expect(welcome).toContainText('Welcome, Jane Doe!', { timeout: 50000 });
