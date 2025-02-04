@@ -109,6 +109,8 @@ export class UniversalStore<State, CustomEvent extends { type: string; payload?:
     EXISTING_STATE_REQUEST: '__EXISTING_STATE_REQUEST',
     EXISTING_STATE_RESPONSE: '__EXISTING_STATE_RESPONSE',
     SET_STATE: '__SET_STATE',
+    LEADER_CREATED: '__LEADER_CREATED',
+    FOLLOWER_CREATED: '__FOLLOWER_CREATED',
   } as const;
 
   public static readonly Status = {
@@ -255,12 +257,6 @@ export class UniversalStore<State, CustomEvent extends { type: string; payload?:
     }
     UniversalStore.isInternalConstructing = false;
 
-    if (!options.leader && typeof options.initialState !== 'undefined') {
-      throw new TypeError(
-        `setting initialState requires that leader is also true, when creating a UniversalStore. id: '${options.id}'`
-      );
-    }
-
     this.id = options.id;
     this.actorId = globalThis.crypto
       ? globalThis.crypto.randomUUID()
@@ -314,7 +310,20 @@ export class UniversalStore<State, CustomEvent extends { type: string; payload?:
       this.debug('prepared', { channel, environment });
       UniversalStore.channel.on(this.channelEventName, this.handleChannelEvents);
 
-      if (this.actor.type === UniversalStore.ActorType.FOLLOWER) {
+      if (this.actor.type === UniversalStore.ActorType.LEADER) {
+        this.emitToChannel(
+          {
+            type: UniversalStore.InternalEventType.LEADER_CREATED,
+          },
+          { actor: this.actor }
+        );
+      } else {
+        this.emitToChannel(
+          {
+            type: UniversalStore.InternalEventType.FOLLOWER_CREATED,
+          },
+          { actor: this.actor }
+        );
         // 1. Emit a request for the existing state
         this.emitToChannel(
           {
@@ -345,7 +354,7 @@ export class UniversalStore<State, CustomEvent extends { type: string; payload?:
       throw new TypeError('id is required and must be a string, when creating a UniversalStore');
     }
     if (options.debug) {
-      console.log(
+      console.debug(
         dedent`[UniversalStore:${UniversalStore.environment}]
         create`,
         { options }
@@ -443,8 +452,6 @@ export class UniversalStore<State, CustomEvent extends { type: string; payload?:
     eventTypeOrListener: Listener<Event<State, CustomEvent>> | EventType,
     maybeListener?: Listener<Extract<Event<State, CustomEvent>, { type: EventType }>>
   ) => {
-    // TODO: improve type safety in arguments
-    // eventType shouldn't just be string and event should be inferred from type when two arguments are passed
     const subscribesToAllEvents = typeof eventTypeOrListener === 'function';
 
     const eventType = subscribesToAllEvents ? '*' : eventTypeOrListener;
@@ -563,6 +570,24 @@ export class UniversalStore<State, CustomEvent extends { type: string; payload?:
             responseEvent,
           });
           this.emitToChannel(responseEvent, { actor: this.actor });
+          break;
+        case UniversalStore.InternalEventType.LEADER_CREATED:
+          // if a leader receives a LEADER_CREATED event it should not forward it,
+          // as that would lead to infinite forwarding between the two leaders
+          // all instances will go in an error state in this scenario anyway
+          shouldForwardEvent = false;
+          this.syncing!.state = ProgressState.REJECTED;
+          this.debug('handleChannelEvents: erroring due to second leader being created', {
+            event,
+          });
+          console.error(
+            dedent`Detected multiple UniversalStore leaders created with the same id "${this.id}".
+            Only one leader can exists at a time, your stores are now in an invalid state.
+            Leaders detected:
+            this: ${JSON.stringify(this.actor, null, 2)}
+            other: ${JSON.stringify(eventInfo.actor, null, 2)}`
+          );
+
           break;
       }
       if (shouldForwardEvent) {

@@ -38,11 +38,21 @@ export interface ExistingStateResponseEvent<TState> extends BaseEvent {
   type: typeof UniversalStore.InternalEventType.EXISTING_STATE_RESPONSE;
   payload: TState;
 }
+export interface LeaderCreatedEvent extends BaseEvent {
+  type: typeof UniversalStore.InternalEventType.LEADER_CREATED;
+  payload: never;
+}
+export interface FollowerCreatedEvent extends BaseEvent {
+  type: typeof UniversalStore.InternalEventType.FOLLOWER_CREATED;
+  payload: never;
+}
 
 export type InternalEvent<TState> =
   | SetStateEvent<TState>
   | ExistingStateRequestEvent
-  | ExistingStateResponseEvent<TState>;
+  | ExistingStateResponseEvent<TState>
+  | FollowerCreatedEvent
+  | LeaderCreatedEvent;
 export type Event<TState, TEvent extends BaseEvent> = TEvent | InternalEvent<TState>;
 
 export type ChannelEvent<TState, TEvent extends BaseEvent> = {
@@ -52,16 +62,9 @@ export type ChannelEvent<TState, TEvent extends BaseEvent> = {
 
 export type ChannelLike = Pick<Channel, 'on' | 'off' | 'emit'>;
 
-export type StoreOptions<TState> =
-  | {
-      id: string;
-      leader?: false;
-      debug?: boolean;
-      initialState?: undefined;
-    }
-  | {
-      id: string;
-      leader: true;
-      debug?: boolean;
-      initialState: TState;
-    };
+export type StoreOptions<TState> = {
+  id: string;
+  leader?: boolean;
+  initialState?: TState;
+  debug?: boolean;
+};
