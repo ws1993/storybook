@@ -60,12 +60,7 @@ export {
 } from './store';
 
 /** CSF API */
-export {
-  createPlaywrightTest,
-  getCsfFactoryPreview,
-  getCsfFactoryAnnotations,
-  isCsfFactory,
-} from './modules/store/csf';
+export { createPlaywrightTest, getCsfFactoryAnnotations } from './modules/store/csf';
 
 export type { PropDescriptor } from './store';
 
