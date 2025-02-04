@@ -1213,17 +1213,4 @@ You should reuse the existing instance instead of trying to create a new one.`);
       ]
     `);
   });
-
-  describe.todo('useUniversalStore', () => {
-    describe('Manager', () => {
-      it('should re-render when the state changes');
-      it('should only re-render when the selected state changes');
-      it('should set the state when the setter is called');
-    });
-    describe('Preview', () => {
-      it('should re-render when the state changes');
-      it('should only re-render when the selected state changes');
-      it('should set the state when the setter is called');
-    });
-  });
 });
