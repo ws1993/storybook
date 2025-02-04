@@ -41,7 +41,14 @@ const findFile = async (basename: string, extensions = EXTENSIONS) =>
   findUp(extensions.map((ext) => basename + ext));
 
 const loadTemplate = async (name: string, replacements: Record<string, string>) => {
-  let template = await fs.readFile(resolve(__dirname, 'templates', name), 'utf8');
+  let template = await fs.readFile(
+    join(
+      dirname(require.resolve('@storybook/experimental-addon-test/package.json')),
+      'templates',
+      name
+    ),
+    'utf8'
+  );
   Object.entries(replacements).forEach(([key, value]) => (template = template.replace(key, value)));
   return template;
 };
