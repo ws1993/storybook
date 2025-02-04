@@ -197,7 +197,7 @@ export const baseTemplates = {
       },
       extraDependencies: ['server-only', 'prop-types'],
     },
-    skipTasks: ['e2e-tests-dev', 'bench', 'vitest-integration'],
+    skipTasks: ['e2e-tests-dev', 'bench'],
   },
   'nextjs/prerelease': {
     name: 'Next.js Prerelease (Webpack | TypeScript)',
@@ -441,7 +441,7 @@ export const baseTemplates = {
       renderer: '@storybook/vue3',
       builder: '@storybook/builder-vite',
     },
-    skipTasks: ['e2e-tests-dev', 'bench', 'vitest-integration'],
+    skipTasks: ['e2e-tests-dev', 'bench'],
   },
   'html-webpack/default': {
     name: 'HTML Latest (Webpack | JavaScript)',

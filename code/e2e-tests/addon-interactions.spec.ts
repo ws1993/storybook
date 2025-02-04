@@ -31,15 +31,7 @@ test.describe('addon-interactions', () => {
     const sbPage = new SbPage(page, expect);
 
     await sbPage.navigateToStory('example/page', 'logged-in');
-
-    // Some sandboxes get experiment-addon-test, some get addon-interactions, the panels are pretty inter-changeable..
-    // .so we try both
-    try {
-      await sbPage.viewAddonPanel('Interactions');
-    } catch (e) {
-      await sbPage.viewAddonPanel('Component tests');
-      //
-    }
+    await sbPage.viewAddonPanel('Interactions');
 
     const welcome = sbPage.previewRoot().locator('.welcome');
     await expect(welcome).toContainText('Welcome, Jane Doe!', { timeout: 50000 });
@@ -71,15 +63,7 @@ test.describe('addon-interactions', () => {
     const sbPage = new SbPage(page, expect);
 
     await sbPage.deepLinkToStory(storybookUrl, 'addons/interactions/basics', 'type-and-clear');
-
-    // Some sandboxes get experiment-addon-test, some get addon-interactions, the panels are pretty inter-changeable..
-    // .so we try both
-    try {
-      await sbPage.viewAddonPanel('Interactions');
-    } catch (e) {
-      await sbPage.viewAddonPanel('Component tests');
-      //
-    }
+    await sbPage.viewAddonPanel('Interactions');
 
     // Test initial state - Interactions have run, count is correct and values are as expected
     const formInput = sbPage.previewRoot().locator('#interaction-test-form input');
@@ -155,15 +139,7 @@ test.describe('addon-interactions', () => {
     const sbPage = new SbPage(page, expect);
 
     await sbPage.deepLinkToStory(storybookUrl, 'addons/interactions/unhandled-errors', 'default');
-
-    // Some sandboxes get experiment-addon-test, some get addon-interactions, the panels are pretty inter-changeable..
-    // .so we try both
-    try {
-      await sbPage.viewAddonPanel('Interactions');
-    } catch (e) {
-      await sbPage.viewAddonPanel('Component tests');
-      //
-    }
+    await sbPage.viewAddonPanel('Interactions');
 
     const button = sbPage.previewRoot().locator('button');
     await expect(button).toContainText('Button', { timeout: 50000 });
