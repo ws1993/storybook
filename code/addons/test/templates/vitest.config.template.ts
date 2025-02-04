@@ -10,15 +10,20 @@ const dirname =
 
 // More info at: https://storybook.js.org/docs/writing-tests/test-addon
 export default defineConfig({
-  plugins: [
-    // The plugin will run tests for the stories defined in your Storybook config
-    // See options at: https://storybook.js.org/docs/writing-tests/test-addon#storybooktest
-    storybookTest({ configDir: path.join(dirname, 'CONFIG_DIR') }),
-  ],
   test: {
-    name: 'storybook',
-    // @ts-expect-error (not defined, will be replaced)
-    browser: BROWSER_CONFIG,
-    setupFiles: ['SETUP_FILE'],
+    workspace: [
+      {
+        plugins: [
+          // The plugin will run tests for the stories defined in your Storybook config
+          // See options at: https://storybook.js.org/docs/writing-tests/test-addon#storybooktest
+          storybookTest({ configDir: path.join(dirname, 'CONFIG_DIR') }),
+        ],
+        test: {
+          name: 'storybook',
+          browser: BROWSER_CONFIG,
+          setupFiles: ['SETUP_FILE'],
+        },
+      },
+    ],
   },
 });
