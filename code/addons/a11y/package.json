@@ -85,13 +85,7 @@
     "vitest-axe": "^0.1.0"
   },
   "peerDependencies": {
-    "storybook": "workspace:^",
-    "vitest": "^2.1.1 || ^3.0.0"
-  },
-  "peerDependenciesMeta": {
-    "vitest": {
-      "optional": true
-    }
+    "storybook": "workspace:^"
   },
   "publishConfig": {
     "access": "public"
