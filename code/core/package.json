@@ -97,6 +97,11 @@
       "import": "./dist/csf-tools/index.js",
       "require": "./dist/csf-tools/index.cjs"
     },
+    "./csf": {
+      "types": "./dist/csf/index.d.ts",
+      "import": "./dist/csf/index.js",
+      "require": "./dist/csf/index.cjs"
+    },
     "./common": {
       "types": "./dist/common/index.d.ts",
       "import": "./dist/common/index.js",
@@ -218,6 +223,9 @@
       ],
       "csf-tools": [
         "./dist/csf-tools/index.d.ts"
+      ],
+      "csf": [
+        "./dist/csf/index.d.ts"
       ],
       "common": [
         "./dist/common/index.d.ts"
