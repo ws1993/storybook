@@ -22,11 +22,11 @@ const typesDisallowList = [
   'ComponentMeta',
 ];
 
-type Options = { previewConfigPath: string; useImportsMap: boolean };
+type Options = { previewConfigPath: string; useSubPathImports: boolean };
 
 export async function storyToCsfFactory(
   info: FileInfo,
-  { previewConfigPath, useImportsMap }: Options
+  { previewConfigPath, useSubPathImports }: Options
 ) {
   const csf = loadCsf(info.source, { makeTitle: () => 'FIXME' });
   try {
@@ -54,7 +54,7 @@ export async function storyToCsfFactory(
   );
 
   let previewPath = '#.storybook/preview';
-  if (!useImportsMap) {
+  if (!useSubPathImports) {
     // calculate relative path from info.path to previewConfigPath
     const relativePath = relative(dirname(info.path), previewConfigPath)
       // Convert Windows backslashes to forward slashes if present

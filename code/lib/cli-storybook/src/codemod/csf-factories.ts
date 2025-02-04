@@ -14,7 +14,7 @@ export const logger = console;
 async function runStoriesCodemod(options: {
   dryRun: boolean | undefined;
   packageManager: JsPackageManager;
-  useImportsMap: boolean;
+  useSubPathImports: boolean;
   previewConfigPath: string;
 }) {
   const { dryRun, packageManager, ...codemodOptions } = options;
@@ -72,32 +72,45 @@ export const csfFactories: CommandFix = {
     packageJson,
     packageManager,
   }) {
-    // prompt whether the user wants to use imports map
-    logger.log(
-      dedent`The CSF factories format relies on having an import map in your package.json so that it's more convenient to import the preview config in your stories.
+    let useSubPathImports = true;
+    if (!process.env.IN_STORYBOOK_SANDBOX) {
+      // prompt whether the user wants to use imports map
+      logger.log(
+        dedent`
+        The CSF factories format relies on subpath imports (the imports map in your \`package.json\`), which makes it more convenient to import the preview config in your stories.
       
-      Here's how it looks like:
-      - imports map: \`import preview from '#.storybook/preview'\`
-      - relative map: \`import preview from '../../.storybook/preview'\`
-      `
-    );
-    const { useImportsMap } = await prompts(
-      {
-        type: 'select',
-        name: 'useImportsMap',
-        message: 'Which would you like to use?',
-        choices: [
-          { title: 'Imports map', value: true },
-          { title: 'Relative imports', value: false },
-        ],
-        initial: 0,
-      },
-      {
-        onCancel: () => process.exit(0),
-      }
-    );
+        We recommend using the **imports map** option, as it's the TypeScript standard for module resolution.
+        However, please note that this might not work if you have an outdated tsconfig, use custom paths or type alias plugins configured in your project.
+      
+        More info: https://storybook.js.org/docs/writing-stories/mocking-data-and-modules/mocking-modules#subpath-imports
 
-    if (useImportsMap) {
+        As we modify your story files, we can provide two options of imports:
+      
+        - **Subpath imports (recommended):** \`import preview from '#.storybook/preview'\`
+        - **Relative imports (fallback):** \`import preview from '../../.storybook/preview'\`
+      `
+      );
+      useSubPathImports = (
+        await prompts(
+          {
+            type: 'select',
+            name: 'useSubPathImports',
+            message: 'Which would you like to use?',
+            choices: [
+              { title: 'Subpath imports', value: true },
+              { title: 'Relative imports', value: false },
+            ],
+            initial: 0,
+          },
+          {
+            onCancel: () => process.exit(0),
+          }
+        )
+      ).useSubPathImports;
+      logger.log();
+    }
+
+    if (useSubPathImports) {
       logger.log(`Adding imports map in ${packageManager.packageJsonPath()}`);
       packageJson.imports = {
         ...packageJson.imports,
@@ -110,7 +123,7 @@ export const csfFactories: CommandFix = {
     await runStoriesCodemod({
       dryRun,
       packageManager,
-      useImportsMap,
+      useSubPathImports,
       previewConfigPath: previewConfigPath!,
     });
 
