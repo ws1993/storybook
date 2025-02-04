@@ -48,6 +48,9 @@
       ],
       "preset": [
         "dist/preset.d.ts"
+      ],
+      "node": [
+        "dist/node/index.d.ts"
       ]
     }
   },
