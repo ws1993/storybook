@@ -44,7 +44,7 @@ const mockChannel = {
 
 describe('UniversalStore', () => {
   beforeEach((context) => {
-    vi.useRealTimers();
+    vi.useFakeTimers();
     let randomUUIDCounter = 0;
     vi.spyOn(globalThis.crypto, 'randomUUID').mockImplementation(() => {
       return `mocked-random-uuid-v4-${randomUUIDCounter++}`;
@@ -57,6 +57,7 @@ describe('UniversalStore', () => {
 
     return () => {
       randomUUIDCounter = 0;
+      vi.clearAllTimers();
       mockedInstances.clearAllEnvironments();
       mockChannelListeners.clear();
       UniversalStore.__reset();
@@ -641,9 +642,6 @@ You should reuse the existing instance instead of trying to create a new one.`);
       });
 
       it('should throw when creating a follower without an existing leader', async () => {
-        // Arrange - mock the timers to allow advancing
-        vi.useFakeTimers();
-
         // Act - create a follower without a leader
         const follower = UniversalStore.create({
           id: 'env1:test',
@@ -1128,7 +1126,6 @@ You should reuse the existing instance instead of trying to create a new one.`);
       const follower = UniversalStore.create({
         id: 'env2:test',
         leader: false,
-        debug: true,
       });
       expect(follower.status).toBe(UniversalStore.Status.SYNCING);
 
@@ -1149,9 +1146,6 @@ You should reuse the existing instance instead of trying to create a new one.`);
           "environment": "MANAGER"
         }]
       `);
-
-      // Arrange - make sure follower completes the sync before cleaning up the test
-      await follower.untilReady();
     });
   });
 

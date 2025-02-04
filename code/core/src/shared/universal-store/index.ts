@@ -639,6 +639,7 @@ export class UniversalStore<State, CustomEvent extends { type: string; payload?:
    * @internal
    */
   static __reset() {
+    UniversalStore.preparation.reject(new Error('reset'));
     UniversalStore.setupPreparationPromise();
     UniversalStore.channel = undefined as any;
     UniversalStore.environment = undefined as any;
