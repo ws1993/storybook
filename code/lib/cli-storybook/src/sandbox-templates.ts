@@ -374,6 +374,7 @@ const baseTemplates = {
       builder: '@storybook/builder-webpack5',
     },
     modifications: {
+      useCsfFactory: true,
       extraDependencies: ['prop-types'],
     },
     skipTasks: ['e2e-tests-dev', 'bench', 'vitest-integration'],
