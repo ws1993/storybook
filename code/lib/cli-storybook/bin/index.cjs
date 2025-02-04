@@ -23,7 +23,4 @@ process.once('uncaughtException', (error) => {
   throw error;
 });
 
-import('../dist/bin/index.js').catch((error) => {
-  console.error(error);
-  process.exit(1);
-});
+require('../dist/bin/index.cjs');
