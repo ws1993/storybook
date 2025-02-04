@@ -2,6 +2,8 @@
 import { types as t, traverse } from 'storybook/internal/babel';
 import { isValidPreviewPath, loadCsf, printCsf } from 'storybook/internal/csf-tools';
 
+import { dirname, relative } from 'path';
+
 import type { FileInfo } from '../../automigrate/codemod';
 import { logger } from '../csf-factories';
 import { cleanupTypeImports } from './csf-factories-utils';
@@ -20,7 +22,12 @@ const typesDisallowList = [
   'ComponentMeta',
 ];
 
-export async function storyToCsfFactory(info: FileInfo) {
+type Options = { previewConfigPath: string; useImportsMap: boolean };
+
+export async function storyToCsfFactory(
+  info: FileInfo,
+  { previewConfigPath, useImportsMap }: Options
+) {
   const csf = loadCsf(info.source, { makeTitle: () => 'FIXME' });
   try {
     csf.parse();
@@ -45,6 +52,20 @@ export async function storyToCsfFactory(info: FileInfo) {
       t.isVariableDeclaration(n) &&
       n.declarations.some((declaration) => t.isIdentifier(declaration.id, { name: 'preview' }))
   );
+
+  let previewPath = '#.storybook/preview';
+  if (!useImportsMap) {
+    // calculate relative path from info.path to previewConfigPath
+    const relativePath = relative(dirname(info.path), previewConfigPath)
+      // Convert Windows backslashes to forward slashes if present
+      .replace(/\\/g, '/')
+      // Remove .ts or .js extension
+      .replace(/\.(ts|js)x?$/, '');
+
+    // If the path doesn't start with . or .., add ./
+    const normalizedPath = relativePath.startsWith('.') ? relativePath : `./${relativePath}`;
+    previewPath = normalizedPath;
+  }
 
   let sbConfigImportName = hasRootLevelConfig ? 'storybookPreview' : 'preview';
 
@@ -228,7 +249,7 @@ export async function storyToCsfFactory(info: FileInfo) {
   if (hasMeta && !foundConfigImport) {
     const configImport = t.importDeclaration(
       [t.importDefaultSpecifier(t.identifier(sbConfigImportName))],
-      t.stringLiteral('#.storybook/preview')
+      t.stringLiteral(previewPath)
     );
     programNode.body.unshift(configImport);
   }
