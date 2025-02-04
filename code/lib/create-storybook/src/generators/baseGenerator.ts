@@ -192,7 +192,7 @@ const hasFrameworkTemplates = (framework?: SupportedFrameworks) => {
 export async function baseGenerator(
   packageManager: JsPackageManager,
   npmOptions: NpmOptions,
-  { language, builder, pnp, frameworkPreviewParts, projectType }: GeneratorOptions,
+  { language, builder, pnp, frameworkPreviewParts, projectType, intents }: GeneratorOptions,
   renderer: SupportedRenderers,
   options: FrameworkOptions = defaultOptions,
   framework?: SupportedFrameworks
@@ -266,7 +266,7 @@ export async function baseGenerator(
 
   addonPackages.push('@storybook/test');
 
-  if (hasInteractiveStories(rendererId)) {
+  if (hasInteractiveStories(rendererId) && !intents.includes('test')) {
     addons.push('@storybook/addon-interactions');
     addonPackages.push('@storybook/addon-interactions');
   }

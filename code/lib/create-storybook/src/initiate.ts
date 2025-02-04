@@ -72,6 +72,7 @@ const installStorybook = async <Project extends ProjectType>(
     pnp: pnp || (options.usePnp as boolean),
     yes: options.yes as boolean,
     projectType,
+    intents: options.intents || [],
   };
 
   const runGenerator: () => Promise<any> = async () => {
@@ -308,6 +309,10 @@ export async function doInitiate(options: CommandOptions): Promise<
     intents = out.intents;
   }
 
+  if (!intents.includes('dev')) {
+    intents.push('dev');
+  }
+
   const telemetryIntents = [...intents];
 
   // Check if the current directory is empty.
@@ -442,6 +447,9 @@ export async function doInitiate(options: CommandOptions): Promise<
   if (!options.skipInstall) {
     await packageManager.installDependencies();
   }
+
+  // update the mutated value
+  options.intents = intents;
 
   const installResult = await installStorybook(projectType as ProjectType, packageManager, options);
 

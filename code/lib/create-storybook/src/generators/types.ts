@@ -19,6 +19,7 @@ export type GeneratorOptions = {
   frameworkPreviewParts?: FrameworkPreviewParts;
   // skip prompting the user
   yes: boolean;
+  intents: string[];
 };
 
 export interface FrameworkOptions {
