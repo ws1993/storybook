@@ -293,7 +293,7 @@ export async function doInitiate(options: CommandOptions): Promise<
 
   const isInteractive = process.stdout.isTTY && !process.env.CI;
 
-  let intents = options.intents || ['dev', 'docs', 'test'];
+  let intents = options.intents || isInteractive ? ['dev', 'docs', 'test'] : ['dev', 'docs'];
 
   if (isInteractive && !options.intents) {
     const out = await prompts({
@@ -301,7 +301,7 @@ export async function doInitiate(options: CommandOptions): Promise<
       name: 'intents',
       message: `What are you using Storybook for?`,
       choices: [
-        { title: 'Development', value: 'dev', selected: true },
+        { title: 'Development', value: 'dev', selected: true, disabled: true },
         { title: 'Documentation', value: 'docs', selected: true },
         { title: 'Testing', value: 'test', selected: true },
       ],
