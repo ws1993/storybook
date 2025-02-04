@@ -321,10 +321,6 @@ const decorators = [
 ] satisfies Decorator[];
 
 const parameters = {
-  options: {
-    storySort: (a, b) =>
-      a.title === b.title ? 0 : a.id.localeCompare(b.id, undefined, { numeric: true }),
-  },
   docs: {
     theme: themes.light,
     toc: {},
@@ -382,8 +378,8 @@ export default definePreview({
     addonsPreview,
     templatePreview,
   ],
-  parameters,
   decorators,
   loaders,
   tags: ['test', 'vitest'],
+  parameters,
 });

@@ -85,6 +85,9 @@
       ],
       "navigation.mock": [
         "dist/export-mocks/navigation/index.d.ts"
+      ],
+      "node": [
+        "dist/node/index.d.ts"
       ]
     }
   },
