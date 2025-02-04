@@ -20,7 +20,6 @@ export default defineWorkspace([
     ],
     test: {
       name: 'storybook',
-      // @ts-expect-error (not defined, will be replaced)
       browser: BROWSER_CONFIG,
       setupFiles: ['SETUP_FILE'],
     },
