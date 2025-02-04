@@ -9,7 +9,7 @@ export const loadTemplate = async (name: string, replacements: Record<string, st
   let template = await fs.readFile(
     join(
       dirname(require.resolve('@storybook/experimental-addon-test/package.json')),
-      '../templates',
+      'templates',
       name
     ),
     'utf8'
