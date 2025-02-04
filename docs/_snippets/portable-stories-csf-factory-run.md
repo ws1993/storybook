@@ -8,7 +8,7 @@ import * as stories from './Button.stories';
 const { Primary, Secondary } = stories;
 
 test('renders primary button with default args', async () => {
-  // The run function will mount the componetn and run all of Storybook's lifecycle hooks
+  // The run function will mount the component and run all of Storybook's lifecycle hooks
   await Primary.run();
   const buttonElement = screen.getByText('Text coming from args in stories file!');
   expect(buttonElement).not.toBeNull();

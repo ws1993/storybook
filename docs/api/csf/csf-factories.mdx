@@ -26,7 +26,7 @@ This reference will provide an overview of the API and a migration guide to upgr
 
 ## Overview
 
-The CSF Factories API is composed of four main functions to help you write stories. Note how the functions operate as a factory, each producing the next function in the chain (`definePreview` → `preview.meta` → `meta.story`), providing full type safety at each step.
+The CSF Factories API is composed of four main functions to help you write stories. Note how three of the functions operate as factories, each producing the next function in the chain (`definePreview` → `preview.meta` → `meta.story`), providing full type safety at each step.
 
 ### `defineMain`
 
@@ -41,6 +41,8 @@ With CSF Factories, your [main Storybook config](../main-config/main-config.mdx)
 Similarly, your project's stories configuration is specified by the `definePreview` function. This is also type-safe and will infer types throughout your project.
 
 Importantly, by specifying addons here, their types will be available throughout your project, enabling autocompletion and type checking.
+
+You will import the result of this function, `preview`, in your story files to define the component meta.
 
 {/* prettier-ignore-start */}
 <CodeSnippets path="csf-factories-preview-example.md" />
@@ -107,15 +109,9 @@ The [CSF Factories codemod](#codemod) will automatically add the necessary subpa
 
 For more details, refer to the [subpath imports documentation](../../writing-stories/mocking-data-and-modules/mocking-modules.mdx#subpath-imports).
 
-## Upgrading from CSF 3
+## Upgrading from CSF 1, 2, or 3
 
 You can upgrade your project's story files to CSF Factories incrementally or all at once. However, you must upgrade your `.storybook/main.ts` and `.storybook/preview.ts` files first before you can use CSF Factories in a story file.
-
-<Callout variant="info">
-  If your story files are not using CSF 3 already, please run `npx storybook migrate csf-2-to-3` to automatically upgrade your project from CSF 2 to CSF 3.
-
-  You can also [migrate manually](./index.mdx#upgrading-from-csf-2-to-csf-3).
-</Callout>
 
 ### Codemod
 
@@ -136,7 +132,7 @@ This command performs the following actions:
 - [Migrates `.storybook/preview.js`](#3-update-your-preview-config-file)
 - Converts all story files to [use CSF Factories](#4-update-your-story-files)
 
-This should get you started with CSF Factories immediately. If you prefer a manual migration, the next sections detail the neccessary updates.
+This should get you started with CSF Factories immediately. If you prefer a manual migration, the next sections detail the necessary updates.
 
 ### 1. Add subpath import in `package.json`
 
@@ -175,9 +171,26 @@ Update your `.storybook/main.ts` file to use the new [`defineMain`](#definemain)
 
 Update your `.storybook/preview.ts` file to use the new [`definePreview`](#definepreview) function.
 
+<details>
+<summary>Which addons should be specified in `preview`?</summary>
+
+The ability for an addon to provide annotation types (`parameters`, `globals`, etc.) is new and not all addons support it yet. 
+
+If an addon provides annotations (i.e. it distributes a `./preview` export), it can be imported in two ways:
+
+1. For official Storybook addons, you import the default export:
+   `import addonName from '@storybook/addon-name'`
+
+2. For community addons, you should import the entire module and access the addon from there:
+   `import * as addonName from 'community-addon-name'`
+
+Sound complicated? The [codemod](#codemod) will automatically add the necessary imports for you.   
+
+</details>
+
 ```diff title=".storybook/preview.ts"
 // Replace your-framework with the framework you are using (e.g., react-vite, nextjs, experimental-nextjs-vite)
-+ import { definePreview } from '@storybook/your-framework/node';
++ import { definePreview } from '@storybook/your-framework';
 - import { Preview } from '@storybook/your-renderer';
 // 👇 Import the addons you are using
 + import addonTest from '@storybook/experimental-addon-test';
@@ -199,6 +212,10 @@ Story files have been updated for improved usability. With the new format:
 - Import the preview construct from the Storybook preview file
 - The meta object is now created via the [`preview.meta`](#previewmeta) function and does not have to be exported as a default export
 - Stories are now created from the meta object, via the [`meta.story`](#metastory) function
+
+<Callout variant="info">
+The examples below show the changes needed to upgrade a story file from CSF 3 to CSF Factories. You can also upgrade from CSF 1 or 2 using similar steps.
+</Callout>
 
 ```diff title="Button.stories.ts"
 // Learn about the # subpath import: https://storybook.js.org/docs/api/csf/csf-factories#subpath-imports
@@ -255,6 +272,8 @@ All of the story properties are now contained within a new property called `comp
   The property name "composed" was chosen because the values within are composed from the story, its component meta, and the preview configuration.
 
   If you wish instead to access only the direct input to the story, you can use `Story.input` instead of `Story.composed`.
+
+  When running the [codemod](#codemod), it will automatically update usages of `Story.args` to `Story.input.args`. This is to ensure that your stories continue to work as expected. However, using `Story.composed.args` is likely more helpful in most cases.
 </Callout>
 
 ### 5. Reusing stories in test files
@@ -297,6 +316,10 @@ Here's an example of how you can reuse a story in a test file by rendering its c
 Storybook will continue to support CSF 1, [CSF 2](../../../release-6-5/docs/api/stories/csf.mdx), and [CSF 3](./index.mdx) for the foreseeable future. None of these prior formats are deprecated.
 
 While using CSF Factories, you can still use the older formats, as long as they are not mixed in the same file. If you want to migrate your existing files to the new format, refer to [the upgrade section](#upgrading-from-csf-3), above.
+
+### Will this format work with MDX docs pages?
+
+Yes, the [doc blocks](../../writing-docs/doc-blocks.mdx) used to reference stories in MDX files support the CSF Factories format with no changes needed.
 
 ### How can I know more about this format and provide feedback?
 
