@@ -53,9 +53,7 @@ async function runStoriesCodemod(options: {
       dryRun,
     });
   } catch (err: any) {
-    console.log('err message', err.message);
     if (err.message === 'No files matched') {
-      console.log('going to run again');
       await runStoriesCodemod(options);
     } else {
       throw err;
