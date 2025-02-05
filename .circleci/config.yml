@@ -632,29 +632,25 @@ jobs:
           clone_options: "--depth 1 --verbose"
       - attach_workspace:
           at: .
-      - when:
-          condition:
-            equal: ["npm", << parameters.packageManager >>]
-          steps:
-            - run:
-                name: Storybook init for intents
-                command: |
-                  cd code
-                  yarn local-registry --open &
-                  cd ../../
-                  mkdir intents-1
-                  cd intents-1
-                  npm set registry http://localhost:6001
-                  npx create-storybook --yes --package-manager npm --intents dev docs test
-                environment:
-                  IN_STORYBOOK_SANDBOX: true
-                  STORYBOOK_INIT_EMPTY_TYPE: react-vite-ts
-                  STORYBOOK_DISABLE_TELEMETRY: true
-            - run:
-                name: Run vitest
-                command: |
-                  cd intents-1
-                  npx vitest
+      - run:
+          name: Storybook init for intents
+          command: |
+            cd code
+            yarn local-registry --open &
+            cd ../../
+            mkdir intents-1
+            cd intents-1
+            npm set registry http://localhost:6001
+            npx create-storybook --yes --package-manager npm --intents dev docs test
+          environment:
+            IN_STORYBOOK_SANDBOX: true
+            STORYBOOK_INIT_EMPTY_TYPE: react-vite-ts
+            STORYBOOK_DISABLE_TELEMETRY: true
+      - run:
+          name: Run vitest
+          command: |
+            cd intents-1
+            npx vitest
 
   test-init-empty:
     executor:
