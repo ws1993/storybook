@@ -627,11 +627,6 @@ jobs:
     executor:
       class: small
       name: sb_node_22_browsers
-    parameters:
-      packageManager:
-        type: string
-      template:
-        type: string
     steps:
       - git-shallow-clone/checkout_advanced:
           clone_options: "--depth 1 --verbose"
