@@ -488,10 +488,13 @@ export default async function postInstall(options: PostinstallOptions) {
       const newWorkspaceFile = resolve(dirname(rootConfig), `vitest.workspace${extension}`);
       const workspaceTemplate = await loadTemplate('vitest.workspace.template.ts', {
         ROOT_CONFIG: relative(dirname(newWorkspaceFile), rootConfig),
+        EXTENDS_WORKSPACE: viteConfigFile
+          ? relative(dirname(newWorkspaceFile), viteConfigFile)
+          : '',
         CONFIG_DIR: options.configDir,
         BROWSER_CONFIG: browserConfig,
         SETUP_FILE: relative(dirname(newWorkspaceFile), vitestSetupFile),
-      });
+      }).then((t) => t.replace(/\s+extends: '',/, ''));
 
       logger.line(1);
       logger.plain(`${step} Creating a Vitest workspace file:`);
