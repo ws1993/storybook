@@ -377,30 +377,8 @@ export default async function postInstall(options: PostinstallOptions) {
   }
 
   // Check for an existing config file. Can be from Vitest (preferred) or Vite.
-  const viteConfigFile = await findFile('vite.config');
-  if (viteConfigFile) {
-    const viteConfig = await fs.readFile(viteConfigFile, 'utf8');
-    // We don't support extending a test config in a Vite config file, so we bail out.
-    if (viteConfig.match(/\Wtest:\s*{/)) {
-      printError(
-        '🚨 Oh no!',
-        dedent`
-          You seem to have an existing test configuration in your Vite config file:
-          ${colors.gray(viteConfigFile || '')}
-
-          I was able to configure most of the addon but could not safely extend
-          your existing workspace file automatically, you must do it yourself. This was the last step.
-
-          Please refer to the documentation to complete the setup manually:
-          ${picocolors.cyan(`https://storybook.js.org/docs/writing-tests/test-addon#manual-setup`)}
-        `
-      );
-      logger.line(1);
-      return;
-    }
-  }
-
   const vitestWorkspaceFile = await findFile('vitest.workspace', ['.ts', '.js', '.json']);
+  const viteConfigFile = await findFile('vite.config');
   const vitestConfigFile = await findFile('vitest.config');
   const vitestShimFile = await findFile('vitest.shims.d');
   const rootConfig = vitestConfigFile || viteConfigFile;
@@ -470,20 +448,22 @@ export default async function postInstall(options: PostinstallOptions) {
     }
   } else if (rootConfig) {
     // If there's an existing Vite/Vitest config, we update it to include the Storybook test plugin.
-    const configTemplate = await loadTemplate('vitest.config.template.ts', {
-      // We only extend from Vite config (without test property), not Vitest config.
-      CONFIG_DIR: options.configDir,
-      BROWSER_CONFIG: browserConfig,
-      SETUP_FILE: relative(dirname(rootConfig), vitestSetupFile),
-    });
-    const configFile = await fs.readFile(rootConfig, 'utf8');
-    const source = babelParse(configTemplate);
-    const target = babelParse(configFile);
-
-    const updated = updateConfigFile(source, target);
-    if (updated) {
+    let target, updated;
+    // For Vitest 3+, we extend the config file, otherwise we fall back to creating a workspace file.
+    if (isVitest3OrLater) {
+      const configTemplate = await loadTemplate('vitest.config.template.ts', {
+        CONFIG_DIR: options.configDir,
+        BROWSER_CONFIG: browserConfig,
+        SETUP_FILE: relative(dirname(rootConfig), vitestSetupFile),
+      });
+      const configFile = await fs.readFile(rootConfig, 'utf8');
+      const source = babelParse(configTemplate);
+      target = babelParse(configFile);
+      updated = updateConfigFile(source, target);
+    }
+    if (target && updated) {
       logger.line(1);
-      logger.plain(`${step} Updating your Vitest config file:`);
+      logger.plain(`${step} Updating your ${vitestConfigFile ? 'Vitest' : 'Vite'} config file:`);
       logger.plain(colors.gray(`  ${rootConfig}`));
 
       const formattedContent = await formatFileContent(rootConfig, generate(target).code);
@@ -493,7 +473,7 @@ export default async function postInstall(options: PostinstallOptions) {
       printWarning(
         '⚠️ Cannot update config file',
         dedent`
-          Could not update your existing Vitest config file:
+          Could not update your existing ${vitestConfigFile ? 'Vitest' : 'Vite'} config file:
           ${colors.gray(rootConfig)}
 
           Your existing config file cannot be safely updated, so instead a new Vitest
