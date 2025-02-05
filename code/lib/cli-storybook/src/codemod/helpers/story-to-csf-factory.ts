@@ -2,7 +2,7 @@
 import { types as t, traverse } from 'storybook/internal/babel';
 import { isValidPreviewPath, loadCsf, printCsf } from 'storybook/internal/csf-tools';
 
-import { dirname, relative } from 'path';
+import path from 'path';
 
 import type { FileInfo } from '../../automigrate/codemod';
 import { logger } from '../csf-factories';
@@ -44,7 +44,7 @@ export async function storyToCsfFactory(
    * `import preview from '#.storybook/preview'`;
    */
   const programNode = csf._ast.program;
-  let foundConfigImport = false;
+  let previewImport: t.ImportDeclaration | undefined;
 
   // Check if a root-level constant named 'preview' exists
   const hasRootLevelConfig = programNode.body.some(
@@ -55,16 +55,20 @@ export async function storyToCsfFactory(
 
   let previewPath = '#.storybook/preview';
   if (!useSubPathImports) {
-    // calculate relative path from info.path to previewConfigPath
-    const relativePath = relative(dirname(info.path), previewConfigPath)
-      // Convert Windows backslashes to forward slashes if present
-      .replace(/\\/g, '/')
-      // Remove .ts or .js extension
-      .replace(/\.(ts|js)x?$/, '');
+    // calculate relative path from story file to preview file
+    const relativePath = path.relative(path.dirname(info.path), previewConfigPath);
+    const { dir, name } = path.parse(relativePath);
 
-    // If the path doesn't start with . or .., add ./
-    const normalizedPath = relativePath.startsWith('.') ? relativePath : `./${relativePath}`;
-    previewPath = normalizedPath;
+    // Construct the path manually and replace Windows backslashes
+    previewPath = `${dir ? `${dir}/` : ''}${name}`;
+
+    // account for stories in the same path as preview file
+    if (!previewPath.startsWith('.')) {
+      previewPath = `./${previewPath}`;
+    }
+
+    // Convert Windows backslashes to forward slashes
+    previewPath = previewPath.replace(/\\/g, '/');
   }
 
   let sbConfigImportName = hasRootLevelConfig ? 'storybookPreview' : 'preview';
@@ -83,7 +87,7 @@ export async function storyToCsfFactory(
         sbConfigImportName = defaultImportSpecifier.local.name;
       }
 
-      foundConfigImport = true;
+      previewImport = node;
     }
   });
 
@@ -92,7 +96,7 @@ export async function storyToCsfFactory(
   // @TODO: Support unconventional formats:
   // `export function Story() { };` and `export { Story };
   // These are not part of csf._storyExports but rather csf._storyStatements and are tricky to support.
-  Object.entries(csf._storyExports).forEach(([key, decl]) => {
+  Object.entries(csf._storyExports).forEach(([_key, decl]) => {
     const id = decl.id;
     const declarator = decl as t.VariableDeclarator;
     let init = t.isVariableDeclarator(declarator) ? declarator.init : undefined;
@@ -140,15 +144,15 @@ export async function storyToCsfFactory(
   // For each story, replace any reference of story reuse e.g.
   // Story.args -> Story.input.args
   traverse(csf._ast, {
-    Identifier(path) {
-      const binding = path.scope.getBinding(path.node.name);
+    Identifier(nodePath) {
+      const binding = nodePath.scope.getBinding(nodePath.node.name);
 
       // Check if the identifier corresponds to a story export
       if (binding && storyExportDecls.has(binding.identifier.name)) {
-        const parent = path.parent;
+        const parent = nodePath.parent;
 
         // Skip declarations (e.g., `const Story = {};`)
-        if (t.isVariableDeclarator(parent) && parent.id === path.node) {
+        if (t.isVariableDeclarator(parent) && parent.id === nodePath.node) {
           return;
         }
 
@@ -177,7 +181,9 @@ export async function storyToCsfFactory(
 
         try {
           // Replace the identifier with `Story.input`
-          path.replaceWith(t.memberExpression(t.identifier(path.node.name), t.identifier('input')));
+          nodePath.replaceWith(
+            t.memberExpression(t.identifier(nodePath.node.name), t.identifier('input'))
+          );
         } catch (err: any) {
           // This is a tough one to support, we just skip for now.
           // Relates to `Stories.Story.args` where Stories is coming from another file. We can't know whether it should be transformed or not.
@@ -246,7 +252,14 @@ export async function storyToCsfFactory(
     }
   }
 
-  if (hasMeta && !foundConfigImport) {
+  if (previewImport) {
+    // If there is alerady an import, just update the path. This is useful for users
+    // who rerun the codemod to change the preview import to use (or not) subpaths
+    if (previewImport.source.value !== previewPath) {
+      previewImport.source = t.stringLiteral(previewPath);
+    }
+  } else if (hasMeta) {
+    // If the import doesn't exist, create a new one
     const configImport = t.importDeclaration(
       [t.importDefaultSpecifier(t.identifier(sbConfigImportName))],
       t.stringLiteral(previewPath)

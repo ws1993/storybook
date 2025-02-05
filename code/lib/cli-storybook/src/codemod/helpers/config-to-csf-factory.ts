@@ -131,7 +131,6 @@ export async function configToCsfFactory(
   const existingImport = programNode.body.find(
     (node) =>
       t.isImportDeclaration(node) &&
-      !t.isImportSpecifier(node) &&
       node.importKind !== 'type' &&
       node.source.value === configImport.source.value
   );
