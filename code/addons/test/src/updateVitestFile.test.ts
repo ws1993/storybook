@@ -49,6 +49,7 @@ describe('updateConfigFile', () => {
         test: {
           globals: true,
           workspace: ['packages/*', {
+            extends: true,
             plugins: [
             // The plugin will run tests for the stories defined in your Storybook config
             // See options at: https://storybook.js.org/docs/writing-tests/test-addon#storybooktest
@@ -111,6 +112,7 @@ describe('updateConfigFile', () => {
         test: {
           globals: true,
           workspace: ['packages/*', {
+            extends: true,
             plugins: [
             // The plugin will run tests for the stories defined in your Storybook config
             // See options at: https://storybook.js.org/docs/writing-tests/test-addon#storybooktest
@@ -199,6 +201,7 @@ describe('updateConfigFile', () => {
         test: {
           globals: true,
           workspace: [{
+            extends: true,
             plugins: [
             // The plugin will run tests for the stories defined in your Storybook config
             // See options at: https://storybook.js.org/docs/writing-tests/test-addon#storybooktest
@@ -257,6 +260,7 @@ describe('updateConfigFile', () => {
         plugins: [react()],
         test: {
           workspace: [{
+            extends: true,
             plugins: [
             // The plugin will run tests for the stories defined in your Storybook config
             // See options at: https://storybook.js.org/docs/writing-tests/test-addon#storybooktest
