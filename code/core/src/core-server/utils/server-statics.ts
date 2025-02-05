@@ -27,7 +27,7 @@ export async function useStatics(app: Polka.Polka, options: Options): Promise<vo
       }
 
       if (existsSync(staticPath) && statSync(staticPath).isFile()) {
-        // sirv doesn't support serving single files, so we need to pass the the file's directory to sirv instead
+        // sirv doesn't support serving single files, so we need to pass the file's directory to sirv instead
         const staticPathDir = resolve(staticPath, '..');
         const staticPathFile = basename(staticPath);
         app.use(targetEndpoint, (req, res, next) => {
