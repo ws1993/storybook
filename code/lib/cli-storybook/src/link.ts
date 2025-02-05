@@ -114,7 +114,6 @@ export const link = async ({ target, local, start }: LinkOptions) => {
       ...reproPackageJson.devDependencies,
       'webpack-hot-middleware': '*',
     };
-    await exec(`yarn add -D webpack-hot-middleware`, { cwd: reproDir });
   }
 
   // ensure that linking is possible
