@@ -77,14 +77,13 @@ export const csfFactories: CommandFix = {
       // prompt whether the user wants to use imports map
       logger.log(
         dedent`
-        The CSF factories format relies on subpath imports (the imports map in your \`package.json\`), which makes it more convenient to import the preview config in your stories.
+        The CSF factories format benefits from subpath imports (the imports property in your \`package.json\`), which is a node standard for module resolution. This makes it more convenient to import the preview config in your story files.
       
-        We recommend using the **imports map** option, as it's the TypeScript standard for module resolution.
-        However, please note that this might not work if you have an outdated tsconfig, use custom paths or type alias plugins configured in your project.
+        However, please note that this might not work if you have an outdated tsconfig, use custom paths, or have type alias plugins configured in your project.
       
         More info: https://storybook.js.org/docs/writing-stories/mocking-data-and-modules/mocking-modules#subpath-imports
 
-        As we modify your story files, we can provide two options of imports:
+        As we modify your story files, we can create two types of imports:
       
         - **Subpath imports (recommended):** \`import preview from '#.storybook/preview'\`
         - **Relative imports (fallback):** \`import preview from '../../.storybook/preview'\`
