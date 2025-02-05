@@ -7306,6 +7306,7 @@ __metadata:
     http-server: "npm:^14.1.1"
     husky: "npm:^4.3.7"
     intl-segmenter-polyfill-rs: "npm:^0.1.7"
+    jiti: "npm:^1.21.6"
     lint-staged: "npm:^13.2.2"
     mock-require: "npm:^3.0.3"
     nx: "npm:^20.4.0"

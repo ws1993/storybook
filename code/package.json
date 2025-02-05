@@ -205,6 +205,7 @@
     "http-server": "^14.1.1",
     "husky": "^4.3.7",
     "intl-segmenter-polyfill-rs": "^0.1.7",
+    "jiti": "^1.21.6",
     "lint-staged": "^13.2.2",
     "mock-require": "^3.0.3",
     "nx": "^20.4.0",
