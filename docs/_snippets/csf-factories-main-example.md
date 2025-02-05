@@ -5,6 +5,6 @@ import { defineMain } from '@storybook/your-framework/node';
 export default defineMain({
   framework: '@storybook/your-framework',
   stories: ['../src/**/*.mdx', '../src/**/*.stories.@(js|jsx|mjs|ts|tsx)'],
-  addons: ['@storybook/experimental-addon-test'],
+  addons: ['@storybook/addon-a11y'],
 });
 ```

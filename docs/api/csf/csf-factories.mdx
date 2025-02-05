@@ -193,13 +193,13 @@ Sound complicated? The [codemod](#codemod) will automatically add the necessary 
 + import { definePreview } from '@storybook/your-framework';
 - import { Preview } from '@storybook/your-renderer';
 // 👇 Import the addons you are using
-+ import addonTest from '@storybook/experimental-addon-test';
++ import addonA11y from '@storybook/addon-a11y';
 
 + export default definePreview({
 - export const preview: Preview = {
     // ...current config
     // 👇 Add your addons here
-+   addons: [addonTest()],
++   addons: [addonA11y()],
 + });
 - };
 - export default preview;
