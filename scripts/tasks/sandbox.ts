@@ -4,6 +4,7 @@ import { pathExists, remove } from 'fs-extra';
 import { join } from 'path';
 import { promisify } from 'util';
 
+import { JsPackageManagerFactory } from '../../code/core/src/common';
 import { now, saveBench } from '../bench/utils';
 import type { Task, TaskKey } from '../task';
 
@@ -146,6 +147,10 @@ export const sandbox: Task = {
     await extendPreview(details, options);
 
     await setImportMap(details.sandboxDir);
+
+    const packageManager = JsPackageManagerFactory.getPackageManager({}, details.sandboxDir);
+
+    await packageManager.installDependencies();
 
     logger.info(`✅ Storybook sandbox created at ${details.sandboxDir}`);
   },
