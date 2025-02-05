@@ -4,7 +4,6 @@ import { pathExists, remove } from 'fs-extra';
 import { join } from 'path';
 import { promisify } from 'util';
 
-import { JsPackageManagerFactory } from '../../code/core/src/common';
 import { now, saveBench } from '../bench/utils';
 import type { Task, TaskKey } from '../task';
 
@@ -147,6 +146,8 @@ export const sandbox: Task = {
     await extendPreview(details, options);
 
     await setImportMap(details.sandboxDir);
+
+    const { JsPackageManagerFactory } = await import('../../code/core/src/common');
 
     const packageManager = JsPackageManagerFactory.getPackageManager({}, details.sandboxDir);
 
