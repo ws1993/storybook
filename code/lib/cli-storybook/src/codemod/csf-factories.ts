@@ -81,7 +81,7 @@ export const csfFactories: CommandFix = {
         printBoxedMessage(dedent`
         The CSF factories format benefits from subpath imports (the imports property in your \`package.json\`), which is a node standard for module resolution. This makes it more convenient to import the preview config in your story files.
       
-        However, please note that this might not work if you have an outdated tsconfig, use custom paths, or have type alias plugins configured in your project.
+        However, please note that this might not work if you have an outdated tsconfig, use custom paths, or have type alias plugins configured in your project. You can always rerun this codemod and select another option to update your code later.
       
         More info: ${picocolors.yellow('https://storybook.js.org/docs/api/csf/csf-factories#subpath-imports')}
 
