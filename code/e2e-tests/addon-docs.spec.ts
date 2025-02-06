@@ -205,6 +205,14 @@ test.describe('addon-docs', () => {
       expectedReactVersionRange = /^17/;
     } else if (templateName.includes('react16')) {
       expectedReactVersionRange = /^16/;
+    } else if (
+      templateName.includes('internal/react18-webpack-babel') ||
+      templateName.includes('preact-vite/default-js') ||
+      templateName.includes('preact-vite/default-ts') ||
+      templateName.includes('react-native-web-vite/expo-ts') ||
+      templateName.includes('react-webpack/18-ts')
+    ) {
+      expectedReactVersionRange = /^18/;
     }
 
     // Arrange - Get the actual versions
