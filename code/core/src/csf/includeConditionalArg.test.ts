@@ -66,16 +66,22 @@ describe('includeConditionalArg', () => {
     it('should throw if arg and global are both specified', () => {
       expect(() =>
         includeConditionalArg({ if: { arg: 'a', global: 'b' } }, {}, {})
-      ).toThrowErrorMatchingInlineSnapshot(`[Error: Invalid conditional value {"arg":"a","global":"b"}]`);
+      ).toThrowErrorMatchingInlineSnapshot(
+        `[Error: Invalid conditional value {"arg":"a","global":"b"}]`
+      );
     });
     it('should throw if mulitiple exists / eq / neq are specified', () => {
       expect(() =>
         includeConditionalArg({ if: { arg: 'a', exists: true, eq: 1 } }, {}, {})
-      ).toThrowErrorMatchingInlineSnapshot(`[Error: Invalid conditional test {"exists":true,"eq":1}]`);
+      ).toThrowErrorMatchingInlineSnapshot(
+        `[Error: Invalid conditional test {"exists":true,"eq":1}]`
+      );
 
       expect(() =>
         includeConditionalArg({ if: { arg: 'a', exists: false, neq: 0 } }, {}, {})
-      ).toThrowErrorMatchingInlineSnapshot(`[Error: Invalid conditional test {"exists":false,"neq":0}]`);
+      ).toThrowErrorMatchingInlineSnapshot(
+        `[Error: Invalid conditional test {"exists":false,"neq":0}]`
+      );
 
       expect(() =>
         includeConditionalArg({ if: { arg: 'a', eq: 1, neq: 0 } }, {}, {})
