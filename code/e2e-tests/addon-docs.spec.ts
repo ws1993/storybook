@@ -209,6 +209,8 @@ test.describe('addon-docs', () => {
       templateName.includes('nextjs/default-ts') ||
       templateName.includes('nextjs/prerelease') ||
       templateName.includes('react-vite/prerelease') ||
+      templateName.includes('react-vite/default-js') ||
+      templateName.includes('react-vite/default-ts') ||
       templateName.includes('react-webpack/prerelease')
     ) {
       expectedReactVersionRange = /^19/;
