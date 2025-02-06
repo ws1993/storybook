@@ -200,20 +200,11 @@ test.describe('addon-docs', () => {
     const root = sbPage.previewRoot();
 
     // Arrange - Setup expectations
-    let expectedReactVersionRange = /^18/;
+    let expectedReactVersionRange = /^19/;
     if (templateName.includes('react-webpack/17') || templateName.includes('react-vite/17')) {
       expectedReactVersionRange = /^17/;
     } else if (templateName.includes('react16')) {
       expectedReactVersionRange = /^16/;
-    } else if (
-      templateName.includes('nextjs/default-ts') ||
-      templateName.includes('nextjs/prerelease') ||
-      templateName.includes('react-vite/prerelease') ||
-      templateName.includes('react-vite/default-js') ||
-      templateName.includes('react-vite/default-ts') ||
-      templateName.includes('react-webpack/prerelease')
-    ) {
-      expectedReactVersionRange = /^19/;
     }
 
     // Arrange - Get the actual versions
