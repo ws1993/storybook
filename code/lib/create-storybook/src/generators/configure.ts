@@ -111,14 +111,6 @@ export async function configureMain({
 
   const mainPath = `./${storybookConfigFolder}/main.${isTypescript ? 'ts' : 'js'}`;
 
-  // try {
-  //   const format = (await import('@storybook/core/common')).formatFileContent;
-
-  //   mainJsContents = await format(mainPath, dedent(mainJsContents));
-  // } catch {
-  //   logger.verbose(`Failed to prettify ${mainPath}`);
-  // }
-
   await writeFile(mainPath, mainJsContents, { encoding: 'utf8' });
 }
 
@@ -172,14 +164,6 @@ export async function configurePreview(options: ConfigurePreviewOptions) {
     `
     .replace('  \n', '')
     .trim();
-
-  // try {
-  //   const format = (await import('@storybook/core/common')).formatFileContent;
-
-  //   preview = await format(previewPath, dedent(preview));
-  // } catch {
-  //   logger.verbose(`Failed to prettify ${previewPath}`);
-  // }
 
   await writeFile(previewPath, preview, { encoding: 'utf8' });
 }
