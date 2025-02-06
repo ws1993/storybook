@@ -70,7 +70,6 @@
     "dist/**/*",
     "templates/**/*",
     "!dist/dummy.*",
-    "templates/*.template.ts",
     "README.md",
     "*.mjs",
     "*.js",
