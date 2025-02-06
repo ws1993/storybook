@@ -38,7 +38,7 @@ With CSF Factories, your [main Storybook config](../main-config/main-config.mdx)
 
 ### `definePreview`
 
-Similarly, your project's stories configuration is specified by the `definePreview` function. This is also type-safe and will infer types throughout your project.
+Similarly, the `definePreview` function specifies your project's story configuration. This function is also type-safe and will infer types throughout your project.
 
 Importantly, by specifying addons here, their types will be available throughout your project, enabling autocompletion and type checking.
 
@@ -73,7 +73,7 @@ export default meta;
 
 ### `meta.story`
 
-Finally, the `story` function on the `meta` object is used to define the stories themselves. This function accepts an object containing the `name`, `args`, `parameters`, and other story properties.
+Finally, the `story` function on the `meta` object defines the stories. This function accepts an object containing the `name`, `args`, `parameters`, and other story properties.
 
 {/* TODO: Snippetize */}
 ```ts title="Button.stories.ts"
@@ -111,7 +111,7 @@ For more details, refer to the [subpath imports documentation](../../writing-sto
 
 ## Upgrading from CSF 1, 2, or 3
 
-You can upgrade your project's story files to CSF Factories incrementally or all at once. However, you must upgrade your `.storybook/main.ts` and `.storybook/preview.ts` files first before you can use CSF Factories in a story file.
+You can upgrade your project's story files to CSF Factories incrementally or all at once. However, before using CSF Factories in a story file, you must upgrade your `.storybook/main.ts` and `.storybook/preview.ts` files.
 
 ### Codemod
 
@@ -240,7 +240,7 @@ import { Button } from './Button';
 - };
 ```
 
-Note how it is no longer necessary to import any types or manually apply types to the meta or stories. The types are now inferred automatically, thanks to the factory function pattern.
+Note that importing or manually applying any type to the meta or stories is no longer necessary. Thanks to the factory function pattern, the types are now inferred automatically.
 
 #### 4.1 Reusing story properties
 
@@ -271,14 +271,14 @@ All of the story properties are now contained within a new property called `comp
 <Callout variant="info">
   The property name "composed" was chosen because the values within are composed from the story, its component meta, and the preview configuration.
 
-  If you wish instead to access only the direct input to the story, you can use `Story.input` instead of `Story.composed`.
+ If you want to access the direct input to the story, you can use `Story.input` instead of `Story.composed`.
 
   When running the [codemod](#codemod), it will automatically update usages of `Story.args` to `Story.input.args`. This is to ensure that your stories continue to work as expected. However, using `Story.composed.args` is likely more helpful in most cases.
 </Callout>
 
 ### 5. Reusing stories in test files
 
-[Storybook's Test addon](../../writing-tests/test-addon.mdx) allows you to test your components directly inside Storybook. All of the stories are automatically turned into Vitest tests, so the integration is seamless in your testing suite.
+[Storybook's Test addon](../../writing-tests/test-addon.mdx) allows you to test your components directly inside Storybook. All the stories are automatically turned into Vitest tests, making integration seamless in your testing suite.
 
 If you cannot use Storybook Test, you can still reuse the stories in your test files using [portable stories](../portable-stories/portable-stories-vitest.mdx). In prior story formats, you had to compose the stories before rendering them in your test files. With CSF Factories, you can now reuse the stories directly.
 
@@ -301,7 +301,7 @@ test('renders primary button with default args', async () => {
 });
 ```
 
-The `Story` object also provides a `Component` property in case you want to render it using another method of your choosing, for instance, with [Testing Library](https://testing-library.com/). You also have access to its composed properties (args, parameters, etc.) via the `composed` property.
+The `Story` object also provides a `Component` property, enabling you to render the component with any method you choose, such as [Testing Library](https://testing-library.com/). You can also access its composed properties (`args`, `parameters`, etc.) via the `composed` property.
 
 Here's an example of how you can reuse a story in a test file by rendering its component:
 
@@ -323,6 +323,6 @@ Yes, the [doc blocks](../../writing-docs/doc-blocks.mdx) used to reference stori
 
 ### How can I know more about this format and provide feedback?
 
-For more information on the original proposal of this experimental format, refer to its [RFC on GitHub](https://github.com/storybookjs/storybook/discussions/30112). We welcome your comments!
+For more information on this experimental format's original proposal, refer to its [RFC on GitHub](https://github.com/storybookjs/storybook/discussions/30112). We welcome your comments!
 
 </If>
