@@ -146,7 +146,7 @@ describe('includeConditionalArg', () => {
     describe('eq', () => {
       it.each([
         ['scalar true', { if: { global: 'a', eq: 1 } }, {}, { a: 1 }, true],
-        ['scalar false', { if: { global: 'a', eq: 1 } }, { a: 2 }, { a: 1 }, false],
+        ['scalar false', { if: { global: 'a', eq: 1 } }, { a: 2 }, { a: 2 }, false],
       ])('%s', (_name, argType, args, globals, expected) => {
         expect(includeConditionalArg(argType, args, globals)).toBe(expected);
       });
