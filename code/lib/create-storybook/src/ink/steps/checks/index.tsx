@@ -26,12 +26,6 @@ export interface Check {
     context: ContextType<typeof AppContext>,
     state: State
   ) => Promise<CompatibilityResult>;
-  // render: FC<{
-  //   s: CompatibilityResult;
-  //   state: State;
-  //   setter: (val: CompatibilityResult) => void;
-  //   dispatch: Dispatch<Action>;
-  // }>;
 }
 
 export const checks = {
