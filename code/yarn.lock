@@ -4162,6 +4162,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@ngard/tiny-isequal@npm:^1.1.0":
+  version: 1.1.0
+  resolution: "@ngard/tiny-isequal@npm:1.1.0"
+  checksum: 10c0/c980ee5e3315a9bbabf4bf973940a68fe817aa490f35a2f93a45442e5606a8cc6a29fa6b767f07755b1a67f3eeea8a7da70d701e130545620b2e6e08b57fd27e
+  languageName: node
+  linkType: hard
+
 "@ngtools/webpack@npm:19.1.1":
   version: 19.1.1
   resolution: "@ngtools/webpack@npm:19.1.1"
@@ -6362,6 +6369,7 @@ __metadata:
     "@emotion/use-insertion-effect-with-fallbacks": "npm:^1.2.0"
     "@fal-works/esbuild-plugin-global-externals": "npm:^2.1.2"
     "@ndelangen/get-tarball": "npm:^3.0.7"
+    "@ngard/tiny-isequal": "npm:^1.1.0"
     "@polka/compression": "npm:^1.0.0-next.28"
     "@popperjs/core": "npm:^2.6.0"
     "@radix-ui/react-dialog": "npm:^1.1.2"

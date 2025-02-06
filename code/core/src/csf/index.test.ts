@@ -1,4 +1,6 @@
-import { toId, storyNameFromExport, isExportStory, combineTags } from './index.js';
+import { describe, expect, it } from 'vitest';
+
+import { combineTags, isExportStory, storyNameFromExport, toId } from './index';
 
 describe('toId', () => {
   const testCases: [string, string, string | undefined, string][] = [
@@ -15,7 +17,6 @@ describe('toId', () => {
   ];
 
   testCases.forEach(([name, kind, story, output]) => {
-    // eslint-disable-next-line jest/valid-title
     it(name, () => {
       expect(toId(kind, story)).toBe(output);
     });

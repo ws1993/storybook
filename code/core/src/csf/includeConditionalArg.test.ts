@@ -1,5 +1,7 @@
-import { includeConditionalArg, testValue } from './includeConditionalArg.js';
-import type { Conditional } from './story.js';
+import { describe, expect, it } from 'vitest';
+
+import { includeConditionalArg, testValue } from './includeConditionalArg';
+import type { Conditional } from './story';
 
 describe('testValue', () => {
   describe('truthy', () => {
@@ -17,6 +19,7 @@ describe('testValue', () => {
       expect(testValue(cond, value)).toBe(expected);
     });
   });
+
   describe('exists', () => {
     it.each([
       ['exist', { exists: true }, 1, true],
