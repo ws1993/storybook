@@ -376,7 +376,6 @@ export default async function postInstall(options: PostinstallOptions) {
     }
   }
 
-  // Check for an existing config file. Can be from Vitest (preferred) or Vite.
   const vitestWorkspaceFile = await findFile('vitest.workspace', ['.ts', '.js', '.json']);
   const viteConfigFile = await findFile('vite.config');
   const vitestConfigFile = await findFile('vitest.config');
