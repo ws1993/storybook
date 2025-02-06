@@ -28,7 +28,7 @@ describe('main/preview codemod: general parsing functionality', () => {
         };
       `)
     ).resolves.toMatchInlineSnapshot(`
-      import { defineMain } from '@storybook/react-vite';
+      import { defineMain } from '@storybook/react-vite/node';
 
       export default defineMain({
         stories: ['../src/**/*.stories.@(js|jsx|ts|tsx)'],
@@ -49,7 +49,7 @@ describe('main/preview codemod: general parsing functionality', () => {
         export default config;
       `)
     ).resolves.toMatchInlineSnapshot(`
-      import { defineMain } from '@storybook/react-vite';
+      import { defineMain } from '@storybook/react-vite/node';
 
       export default defineMain({
         stories: ['../src/**/*.stories.@(js|jsx|ts|tsx)'],
@@ -58,10 +58,12 @@ describe('main/preview codemod: general parsing functionality', () => {
       });
     `);
   });
+
   it('should wrap defineMain call from const declared default export and default export mix', async () => {
     await expect(
       transform(dedent`
         export const tags = [];
+        export async function viteFinal(config) { return config };
         const config = {
           framework: '@storybook/react-vite',
         };
@@ -69,11 +71,14 @@ describe('main/preview codemod: general parsing functionality', () => {
         export default config;
       `)
     ).resolves.toMatchInlineSnapshot(`
-      import { defineMain } from '@storybook/react-vite';
+      import { defineMain } from '@storybook/react-vite/node';
 
       const config = {
         framework: '@storybook/react-vite',
         tags: [],
+        viteFinal: () => {
+          return config;
+        },
       };
 
       export default config;
@@ -82,16 +87,22 @@ describe('main/preview codemod: general parsing functionality', () => {
   it('should wrap defineMain call from named exports format', async () => {
     await expect(
       transform(dedent`
-        export const stories = ['../src/**/*.stories.@(js|jsx|ts|tsx)'];
+        export function stories() { return ['../src/**/*.stories.@(js|jsx|ts|tsx)'] };
         export const addons = ['@storybook/addon-essentials'];
+        export async function viteFinal(config) { return config };
         export const framework = '@storybook/react-vite';
       `)
     ).resolves.toMatchInlineSnapshot(`
-      import { defineMain } from '@storybook/react-vite';
+      import { defineMain } from '@storybook/react-vite/node';
 
       export default defineMain({
-        stories: ['../src/**/*.stories.@(js|jsx|ts|tsx)'],
+        stories: () => {
+          return ['../src/**/*.stories.@(js|jsx|ts|tsx)'];
+        },
         addons: ['@storybook/addon-essentials'],
+        viteFinal: () => {
+          return config;
+        },
         framework: '@storybook/react-vite',
       });
     `);
@@ -108,6 +119,16 @@ describe('main/preview codemod: general parsing functionality', () => {
     ).toHaveLength(1);
   });
 
+  it('should leave already transformed code as is', async () => {
+    const original = dedent`
+      import { defineMain } from '@storybook/react-vite/node';
+
+      export default defineMain({});
+    `;
+    const transformed = await transform(original);
+    expect(transformed).toEqual(original);
+  });
+
   it('should remove legacy main config type imports', async () => {
     await expect(
       transform(dedent`
@@ -119,7 +140,7 @@ describe('main/preview codemod: general parsing functionality', () => {
         export default config;
       `)
     ).resolves.toMatchInlineSnapshot(`
-      import { defineMain } from '@storybook/react-vite';
+      import { defineMain } from '@storybook/react-vite/node';
 
       export default defineMain({
         stories: [],
@@ -145,7 +166,7 @@ describe('preview specific functionality', () => {
         };
       `)
     ).resolves.toMatchInlineSnapshot(`
-      import { definePreview } from '@storybook/react/preview';
+      import { definePreview } from '@storybook/react-vite';
 
       export default definePreview({
         tags: ['test'],
@@ -156,7 +177,7 @@ describe('preview specific functionality', () => {
   it('should remove legacy preview type imports', async () => {
     await expect(
       transform(dedent`
-        import type { Preview } from '@storybook/react'
+        import type { Preview } from '@storybook/react-vite'
 
         const preview: Preview = {
           tags: []
@@ -164,7 +185,7 @@ describe('preview specific functionality', () => {
         export default preview;
       `)
     ).resolves.toMatchInlineSnapshot(`
-      import { definePreview } from '@storybook/react/preview';
+      import { definePreview } from '@storybook/react-vite';
 
       export default definePreview({
         tags: [],

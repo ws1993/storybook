@@ -1,4 +1,3 @@
-/* eslint-disable import/namespace */
 import * as React from 'react';
 import { Fragment, useEffect } from 'react';
 
@@ -18,17 +17,16 @@ import {
 import { DocsContext } from '@storybook/blocks';
 import { global } from '@storybook/global';
 import type { Decorator, Loader, ReactRenderer } from '@storybook/react';
-import { definePreview } from '@storybook/react/preview';
 
 // TODO add empty preview
 // import * as storysource from '@storybook/addon-storysource';
 // import * as designs from '@storybook/addon-designs/preview';
-// import * as test from '@storybook/experimental-addon-test/preview';
-import * as a11y from '@storybook/addon-a11y/preview';
-// @ts-expect-error Must be typed
-import * as essentials from '@storybook/addon-essentials/entry-preview';
-// @ts-expect-error Must be typed
-import * as addonThemes from '@storybook/addon-themes/preview';
+import addonTest from '@storybook/experimental-addon-test';
+import { definePreview } from '@storybook/react-vite';
+
+import addonA11y from '@storybook/addon-a11y';
+import addonEssentials from '@storybook/addon-essentials';
+import addonThemes from '@storybook/addon-themes';
 
 import * as addonsPreview from '../addons/toolbars/template/stories/preview';
 import * as templatePreview from '../core/template/stories/preview';
@@ -323,10 +321,6 @@ const decorators = [
 ] satisfies Decorator[];
 
 const parameters = {
-  options: {
-    storySort: (a, b) =>
-      a.title === b.title ? 0 : a.id.localeCompare(b.id, undefined, { numeric: true }),
-  },
   docs: {
     theme: themes.light,
     toc: {},
@@ -375,10 +369,17 @@ const parameters = {
   },
 };
 
-export const config = definePreview({
-  addons: [addonThemes, essentials, a11y, addonsPreview, templatePreview],
-  parameters,
+export default definePreview({
+  addons: [
+    addonThemes(),
+    addonEssentials(),
+    addonA11y(),
+    addonTest(),
+    addonsPreview,
+    templatePreview,
+  ],
   decorators,
   loaders,
   tags: ['test', 'vitest'],
+  parameters,
 });

@@ -7,7 +7,11 @@ import picocolors from 'picocolors';
 
 import type { FileInfo } from '../../automigrate/codemod';
 import { logger } from '../csf-factories';
-import { cleanupTypeImports } from './csf-factories-utils';
+import {
+  cleanupTypeImports,
+  getConfigProperties,
+  removeExportDeclarations,
+} from './csf-factories-utils';
 
 export async function configToCsfFactory(
   info: FileInfo,
@@ -23,13 +27,6 @@ export async function configToCsfFactory(
   }
 
   const methodName = configType === 'main' ? 'defineMain' : 'definePreview';
-  // TODO: remove this later, it's just a quick workaround for preview imports
-  // while it is part of @storybook/react and not @storybook/react-vite
-  frameworkPackage =
-    configType === 'preview' && frameworkPackage === '@storybook/react-vite'
-      ? '@storybook/react'
-      : frameworkPackage;
-
   const programNode = config._ast.program;
   const hasNamedExports = Object.keys(config._exportDecls).length > 0;
 
@@ -48,23 +45,10 @@ export async function configToCsfFactory(
   if (config._exportsObject && hasNamedExports) {
     const exportDecls = config._exportDecls;
 
-    for (const [name, decl] of Object.entries(exportDecls)) {
-      if (decl.init) {
-        config._exportsObject.properties.push(t.objectProperty(t.identifier(name), decl.init));
-      }
-    }
+    const defineConfigProps = getConfigProperties(exportDecls);
+    config._exportsObject.properties.push(...defineConfigProps);
 
-    programNode.body = programNode.body.filter((node) => {
-      if (t.isExportNamedDeclaration(node) && node.declaration) {
-        if (t.isVariableDeclaration(node.declaration)) {
-          node.declaration.declarations = node.declaration.declarations.filter(
-            (decl) => t.isIdentifier(decl.id) && !exportDecls[decl.id.name]
-          );
-          return node.declaration.declarations.length > 0;
-        }
-      }
-      return true;
-    });
+    programNode.body = removeExportDeclarations(programNode, exportDecls);
   } else if (config._exportsObject) {
     /**
      * Scenario 2: Default exports
@@ -124,14 +108,7 @@ export async function configToCsfFactory(
      * Transform into: export default defineMain({ foo: {}, bar: '' });
      */
     const exportDecls = config._exportDecls;
-    const defineConfigProps = [];
-
-    // Collect properties from named exports
-    for (const [name, decl] of Object.entries(exportDecls)) {
-      if (decl.init) {
-        defineConfigProps.push(t.objectProperty(t.identifier(name), decl.init));
-      }
-    }
+    const defineConfigProps = getConfigProperties(exportDecls);
 
     // Construct the `define` call
     const defineConfigCall = t.callExpression(t.identifier(methodName), [
@@ -139,17 +116,7 @@ export async function configToCsfFactory(
     ]);
 
     // Remove all related named exports
-    programNode.body = programNode.body.filter((node) => {
-      if (t.isExportNamedDeclaration(node) && node.declaration) {
-        if (t.isVariableDeclaration(node.declaration)) {
-          node.declaration.declarations = node.declaration.declarations.filter(
-            (decl) => t.isIdentifier(decl.id) && !exportDecls[decl.id.name]
-          );
-          return node.declaration.declarations.length > 0;
-        }
-      }
-      return true;
-    });
+    programNode.body = removeExportDeclarations(programNode, exportDecls);
 
     // Add the new export default declaration
     programNode.body.push(t.exportDefaultDeclaration(defineConfigCall));
@@ -157,15 +124,15 @@ export async function configToCsfFactory(
 
   const configImport = t.importDeclaration(
     [t.importSpecifier(t.identifier(methodName), t.identifier(methodName))],
-    t.stringLiteral(frameworkPackage + `${configType === 'preview' ? '/preview' : ''}`)
+    t.stringLiteral(frameworkPackage + `${configType === 'main' ? '/node' : ''}`)
   );
 
   // Check whether @storybook/framework import already exists
   const existingImport = programNode.body.find(
     (node) =>
       t.isImportDeclaration(node) &&
-      node.source.value === configImport.source.value &&
-      !node.importKind
+      node.importKind !== 'type' &&
+      node.source.value === configImport.source.value
   );
 
   if (existingImport && t.isImportDeclaration(existingImport)) {

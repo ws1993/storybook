@@ -1,2 +1,2 @@
 export * from './types';
-export * from './defineMainConfig';
+export { definePreview } from '@storybook/react';

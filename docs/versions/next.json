@@ -1,1 +1,1 @@
-{"version":"8.6.0-alpha.0","info":{"plain":""}}
+{"version":"8.6.0-alpha.4","info":{"plain":"- Addon A11y: Make Vitest Axe optional - [#30442](https://github.com/storybookjs/storybook/pull/30442), thanks @valentinpalkovic!\n- Builder-Vite: Fix allowedHosts handling for custom hosts - [#30432](https://github.com/storybookjs/storybook/pull/30432), thanks @JSMike!\n- Vite: Fix add component UI invalidation - [#30438](https://github.com/storybookjs/storybook/pull/30438), thanks @shilman!"}}

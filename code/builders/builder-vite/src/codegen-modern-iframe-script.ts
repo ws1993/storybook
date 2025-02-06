@@ -24,12 +24,9 @@ export async function generateModernIframeScriptCode(options: Options, projectRo
   const getPreviewAnnotationsFunction = `
   const getProjectAnnotations = async (hmrPreviewAnnotationModules = []) => {
     const preview = await import('${previewFileUrl}');
-    const csfFactoryPreview = Object.values(preview).find(module => {
-      return 'isCSFFactoryPreview' in module
-    });
-    
-    if (csfFactoryPreview) {
-      return csfFactoryPreview.annotations;
+ 
+    if (isPreview(preview.default)) {
+      return preview.default.composed;
     }
    
     const configs = await Promise.all([${previewAnnotationURLs
@@ -82,6 +79,7 @@ export async function generateModernIframeScriptCode(options: Options, projectRo
   setup();
  
   import { composeConfigs, PreviewWeb, ClientApi } from 'storybook/internal/preview-api';
+  import { isPreview } from 'storybook/internal/csf';
   import { importFn } from '${SB_VIRTUAL_FILES.VIRTUAL_STORIES_FILE}';
   
   

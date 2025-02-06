@@ -21,8 +21,8 @@ import * as ButtonStories from './Button.csf4.stories';
 import * as ComponentWithErrorStories from './ComponentWithError.stories';
 
 const HooksStory = composeStory(
-  ButtonStories.HooksStory.annotations,
-  ButtonStories.CSF3Primary.meta.annotations
+  ButtonStories.HooksStory.input,
+  ButtonStories.CSF3Primary.meta.input
 );
 
 const projectAnnotations = setProjectAnnotations([]);
@@ -43,8 +43,8 @@ afterEach(() => {
 
 // example with composeStory, returns a single story composed with args/decorators
 const Secondary = composeStory(
-  ButtonStories.CSF2Secondary.annotations,
-  ButtonStories.CSF3Primary.meta.annotations
+  ButtonStories.CSF2Secondary.input,
+  ButtonStories.CSF3Primary.meta.input
 );
 describe('renders', () => {
   it('renders primary button', () => {
@@ -109,8 +109,8 @@ describe('projectAnnotations', () => {
       },
     ]);
     const WithEnglishText = composeStory(
-      ButtonStories.CSF2StoryWithLocale.annotations,
-      ButtonStories.CSF3Primary.meta.annotations
+      ButtonStories.CSF2StoryWithLocale.input,
+      ButtonStories.CSF3Primary.meta.input
     );
     const { getByText } = render(<WithEnglishText />);
     const buttonElement = getByText('Hello!');
@@ -120,8 +120,8 @@ describe('projectAnnotations', () => {
 
   it('renders with custom projectAnnotations via composeStory params', () => {
     const WithPortugueseText = composeStory(
-      ButtonStories.CSF2StoryWithLocale.annotations,
-      ButtonStories.CSF3Primary.meta.annotations,
+      ButtonStories.CSF2StoryWithLocale.input,
+      ButtonStories.CSF3Primary.meta.input,
       {
         initialGlobals: { locale: 'pt' },
       }
@@ -133,12 +133,12 @@ describe('projectAnnotations', () => {
 
   it('has action arg from argTypes when addon-actions annotations are added', () => {
     const Story = composeStory(
-      ButtonStories.WithActionArgType.annotations,
-      ButtonStories.CSF3Primary.meta.annotations,
+      ButtonStories.WithActionArgType.input,
+      ButtonStories.CSF3Primary.meta.input,
       addonActionsPreview as ProjectAnnotations<ReactRenderer>
     );
 
-    // @ts-expect-error TODO: add a way to provide custom args/argTypes
+    // TODO: add a way to provide custom args/argTypes, right now it's type any
     expect(Story.args.someActionArg).toHaveProperty('isAction', true);
   });
 });
@@ -146,8 +146,8 @@ describe('projectAnnotations', () => {
 describe('CSF3', () => {
   it('renders with inferred globalRender', () => {
     const Primary = composeStory(
-      ButtonStories.CSF3Button.annotations,
-      ButtonStories.CSF3Primary.meta.annotations
+      ButtonStories.CSF3Button.input,
+      ButtonStories.CSF3Primary.meta.input
     );
 
     render(<Primary>Hello world</Primary>);
@@ -157,8 +157,8 @@ describe('CSF3', () => {
 
   it('renders with custom render function', () => {
     const Primary = composeStory(
-      ButtonStories.CSF3ButtonWithRender.annotations,
-      ButtonStories.CSF3Primary.meta.annotations
+      ButtonStories.CSF3ButtonWithRender.input,
+      ButtonStories.CSF3Primary.meta.input
     );
 
     render(<Primary />);
@@ -167,8 +167,8 @@ describe('CSF3', () => {
 
   it('renders with play function without canvas element', async () => {
     const CSF3InputFieldFilled = composeStory(
-      ButtonStories.CSF3InputFieldFilled.annotations,
-      ButtonStories.CSF3Primary.meta.annotations
+      ButtonStories.CSF3InputFieldFilled.input,
+      ButtonStories.CSF3Primary.meta.input
     );
     await CSF3InputFieldFilled.run();
 
@@ -178,8 +178,8 @@ describe('CSF3', () => {
 
   it('renders with play function with canvas element', async () => {
     const CSF3InputFieldFilled = composeStory(
-      ButtonStories.CSF3InputFieldFilled.annotations,
-      ButtonStories.CSF3Primary.meta.annotations
+      ButtonStories.CSF3InputFieldFilled.input,
+      ButtonStories.CSF3Primary.meta.input
     );
 
     let divElement;
@@ -209,8 +209,8 @@ describe('CSF3', () => {
 // common in addons that need to communicate between manager and preview
 it('should pass with decorators that need addons channel', () => {
   const PrimaryWithChannels = composeStory(
-    ButtonStories.CSF3Primary.annotations,
-    ButtonStories.CSF3Primary.meta.annotations,
+    ButtonStories.CSF3Primary.input,
+    ButtonStories.CSF3Primary.meta.input,
     {
       decorators: [
         (StoryFn: any) => {
@@ -232,12 +232,12 @@ describe('ComposeStories types', () => {
 
     expectTypeOf({
       ...ButtonStories,
-      default: ButtonStories.CSF3Primary.meta.annotations as Meta<typeof Button>,
+      default: ButtonStories.CSF3Primary.meta.input as Meta<typeof Button>,
     }).toMatchTypeOf<ComposeStoriesParam>();
 
     expectTypeOf({
       ...ButtonStories,
-      default: ButtonStories.CSF3Primary.meta.annotations satisfies Meta<typeof Button>,
+      default: ButtonStories.CSF3Primary.meta.input satisfies Meta<typeof Button>,
     }).toMatchTypeOf<ComposeStoriesParam>();
   });
 });

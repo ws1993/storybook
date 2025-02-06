@@ -182,13 +182,13 @@ describe('enrichCsf', () => {
           }
         });
         export const Story = meta.story({});
-        Story.annotations.parameters = {
-          ...Story.annotations.parameters,
+        Story.input.parameters = {
+          ...Story.input.parameters,
           docs: {
-            ...Story.annotations.parameters?.docs,
+            ...Story.input.parameters?.docs,
             source: {
               originalSource: "meta.story({})",
-              ...Story.annotations.parameters?.docs?.source
+              ...Story.input.parameters?.docs?.source
             }
           }
         };
