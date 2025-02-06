@@ -1,8 +1,8 @@
 import type { BoundFunctions } from '@testing-library/dom';
 
-import type { LoaderFunction } from '@storybook/csf';
 import { global } from '@storybook/global';
 import { instrument } from '@storybook/instrumenter';
+import type { LoaderFunction } from '@storybook/internal/csf';
 
 import * as chai from 'chai';
 

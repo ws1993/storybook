@@ -24,7 +24,6 @@ import { addons, useStorybookState } from 'storybook/internal/manager-api';
 import type { API } from 'storybook/internal/manager-api';
 import { styled, useTheme } from 'storybook/internal/theming';
 
-import type { Tag } from '@storybook/csf';
 import {
   AccessibilityIcon,
   EditIcon,
@@ -34,6 +33,7 @@ import {
   ShieldIcon,
   StopAltIcon,
 } from '@storybook/icons';
+import type { Tag } from '@storybook/internal/csf';
 
 import { isEqual } from 'es-toolkit';
 import { debounce } from 'es-toolkit/compat';

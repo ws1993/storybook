@@ -1,7 +1,7 @@
 /* eslint-disable no-underscore-dangle */
 import { UnsupportedViewportDimensionError } from 'storybook/internal/preview-errors';
 
-import type { Globals, Parameters } from '@storybook/csf';
+import type { Globals, Parameters } from '@storybook/internal/csf';
 
 import { MINIMAL_VIEWPORTS } from '../../../viewport/src/defaults';
 import type { ViewportMap, ViewportStyles } from '../../../viewport/src/types';

@@ -8,7 +8,7 @@ import React from 'react';
 
 import { addons } from 'storybook/internal/preview-api';
 
-import type { ProjectAnnotations } from '@storybook/csf';
+import type { ProjectAnnotations } from '@storybook/internal/csf';
 import type { Meta, ReactRenderer } from '@storybook/react';
 
 import * as addonActionsPreview from '@storybook/addon-actions/preview';

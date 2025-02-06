@@ -8,7 +8,7 @@ import React from 'react';
 import { satisfies } from 'storybook/internal/common';
 import type { Args, StoryAnnotations, StrictArgs } from 'storybook/internal/types';
 
-import type { Canvas } from '@storybook/csf';
+import type { Canvas } from '@storybook/internal/csf';
 import type { Mock } from '@storybook/test';
 import { fn } from '@storybook/test';
 

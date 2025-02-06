@@ -15,7 +15,7 @@ import {
 } from 'storybook/internal/manager-api';
 import { color } from 'storybook/internal/theming';
 
-import type { Args } from '@storybook/csf';
+import type { Args } from '@storybook/internal/csf';
 
 import { dequal as deepEqual } from 'dequal';
 

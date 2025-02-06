@@ -9,7 +9,7 @@ import {
 import type { PreviewWeb } from 'storybook/internal/preview-api';
 import type { ModuleExport, WebRenderer } from 'storybook/internal/types';
 
-import type { PlayFunctionContext } from '@storybook/csf';
+import type { PlayFunctionContext } from '@storybook/internal/csf';
 import type { Meta, ReactRenderer, StoryObj } from '@storybook/react';
 import { within } from '@storybook/test';
 

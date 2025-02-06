@@ -5,8 +5,8 @@ import { once } from 'storybook/internal/client-logger';
 import { IconButton, Link, ResetWrapper } from 'storybook/internal/components';
 import { styled } from 'storybook/internal/theming';
 
-import { includeConditionalArg } from '@storybook/csf';
 import { DocumentIcon, UndoIcon } from '@storybook/icons';
+import { includeConditionalArg } from '@storybook/internal/csf';
 
 import { pickBy } from 'es-toolkit/compat';
 import { transparentize } from 'polished';
