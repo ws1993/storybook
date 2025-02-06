@@ -3,10 +3,10 @@ import React from 'react';
 
 import { once } from 'storybook/internal/client-logger';
 import { IconButton, Link, ResetWrapper } from 'storybook/internal/components';
+import { includeConditionalArg } from 'storybook/internal/csf';
 import { styled } from 'storybook/internal/theming';
 
 import { DocumentIcon, UndoIcon } from '@storybook/icons';
-import { includeConditionalArg } from '@storybook/internal/csf';
 
 import { pickBy } from 'es-toolkit/compat';
 import { transparentize } from 'polished';
