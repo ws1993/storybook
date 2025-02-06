@@ -37,7 +37,7 @@ describe('testValue', () => {
       ['undefined', { eq: undefined }, undefined, false],
       ['undefined false', { eq: 1 }, undefined, false],
       ['object true', { eq: { x: 1 } }, { x: 1 }, true],
-      ['object true', { eq: { x: 1 } }, { x: 2 }, false],
+      ['object false', { eq: { x: 1 } }, { x: 2 }, false],
     ])('%s', (_name, cond, value, expected) => {
       expect(testValue(cond, value)).toBe(expected);
     });
@@ -70,7 +70,7 @@ describe('includeConditionalArg', () => {
         `[Error: Invalid conditional value {"arg":"a","global":"b"}]`
       );
     });
-    it('should throw if mulitiple exists / eq / neq are specified', () => {
+    it('should throw if multiple exists / eq / neq are specified', () => {
       expect(() =>
         includeConditionalArg({ if: { arg: 'a', exists: true, eq: 1 } }, {}, {})
       ).toThrowErrorMatchingInlineSnapshot(
@@ -146,7 +146,7 @@ describe('includeConditionalArg', () => {
     describe('eq', () => {
       it.each([
         ['scalar true', { if: { global: 'a', eq: 1 } }, {}, { a: 1 }, true],
-        ['scalar false', { if: { arg: 'a', eq: 1 } }, { a: 2 }, { a: 1 }, false],
+        ['scalar false', { if: { global: 'a', eq: 1 } }, { a: 2 }, { a: 1 }, false],
       ])('%s', (_name, argType, args, globals, expected) => {
         expect(includeConditionalArg(argType, args, globals)).toBe(expected);
       });
