@@ -1,12 +1,4 @@
-import React, {
-  type ComponentProps,
-  type FC,
-  useCallback,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from 'react';
+import React, { type ComponentProps, type FC, useMemo, useState } from 'react';
 
 import {
   Button,
@@ -15,12 +7,8 @@ import {
   TooltipNote,
   WithTooltip,
 } from 'storybook/internal/components';
-import {
-  TESTING_MODULE_CONFIG_CHANGE,
-  type TestProviderConfig,
-  type TestProviderState,
-} from 'storybook/internal/core-events';
-import { addons, useStorybookState } from 'storybook/internal/manager-api';
+import { type TestProviderConfig, type TestProviderState } from 'storybook/internal/core-events';
+import { addons, experimental_useUniversalStore } from 'storybook/internal/manager-api';
 import type { API } from 'storybook/internal/manager-api';
 import { styled, useTheme } from 'storybook/internal/theming';
 
@@ -35,15 +23,13 @@ import {
   StopAltIcon,
 } from '@storybook/icons';
 
-import { isEqual } from 'es-toolkit';
-import { debounce } from 'es-toolkit/compat';
-
 import {
   ADDON_ID as A11Y_ADDON_ID,
   PANEL_ID as A11y_ADDON_PANEL_ID,
 } from '../../../a11y/src/constants';
 import { type Config, type Details, PANEL_ID } from '../constants';
 import { type TestStatus } from '../node/reporter';
+import { universalStore } from '../universal-store/manager';
 import { Description } from './Description';
 import { TestStatusIcon } from './TestStatusIcon';
 
@@ -130,24 +116,10 @@ export const TestProviderRender: FC<TestProviderRenderProps> = ({
   const [isEditing, setIsEditing] = useState(false);
   const theme = useTheme();
   const coverageSummary = state.details?.coverageSummary;
-  const storybookState = useStorybookState();
 
   const isA11yAddon = addons.experimental_getRegisteredAddons().includes(A11Y_ADDON_ID);
 
-  const isA11yAddonInitiallyChecked = useMemo(() => {
-    const internalIndex = storybookState.internal_index;
-    if (!internalIndex || !isA11yAddon) {
-      return false;
-    }
-
-    return Object.values(internalIndex.entries).some((entry) => entry.tags?.includes('a11y-test'));
-  }, [isA11yAddon, storybookState.internal_index]);
-
-  const [config, updateConfig] = useConfig(
-    api,
-    state.id,
-    state.config || { a11y: isA11yAddonInitiallyChecked, coverage: false }
-  );
+  const [{ config }, setUniversalStoreState] = experimental_useUniversalStore(universalStore);
 
   const isStoryEntry = entryId?.includes('--') ?? false;
 
@@ -339,7 +311,12 @@ export const TestProviderRender: FC<TestProviderRenderProps> = ({
                 <Checkbox
                   type="checkbox"
                   checked={config.a11y}
-                  onChange={() => updateConfig({ a11y: !config.a11y })}
+                  onChange={() =>
+                    setUniversalStoreState((s) => ({
+                      ...s,
+                      config: { ...s.config, a11y: !config.a11y },
+                    }))
+                  }
                 />
               }
             />
@@ -354,7 +331,12 @@ export const TestProviderRender: FC<TestProviderRenderProps> = ({
                   type="checkbox"
                   checked={state.watching ? false : config.coverage}
                   disabled={state.watching}
-                  onChange={() => updateConfig({ coverage: !config.coverage })}
+                  onChange={() =>
+                    setUniversalStoreState((s) => ({
+                      ...s,
+                      config: { ...s.config, coverage: !config.coverage },
+                    }))
+                  }
                 />
               }
             />
@@ -447,44 +429,3 @@ export const TestProviderRender: FC<TestProviderRenderProps> = ({
     </Container>
   );
 };
-
-function useConfig(api: API, providerId: string, initialConfig: Config) {
-  const updateTestProviderState = useCallback(
-    (config: Config) => {
-      api.updateTestProviderState(providerId, { config });
-      api.emit(TESTING_MODULE_CONFIG_CHANGE, { providerId, config });
-    },
-    [api, providerId]
-  );
-
-  const [currentConfig, setConfig] = useState<Config>(initialConfig);
-
-  const lastConfig = useRef(initialConfig);
-
-  const saveConfig = useCallback(
-    debounce((config: Config) => {
-      if (!isEqual(config, lastConfig.current)) {
-        updateTestProviderState(config);
-        lastConfig.current = config;
-      }
-    }, 500),
-    [api, providerId]
-  );
-
-  const updateConfig = useCallback(
-    (update: Partial<Config>) => {
-      setConfig((value) => {
-        const updated = { ...value, ...update };
-        saveConfig(updated);
-        return updated;
-      });
-    },
-    [saveConfig]
-  );
-
-  useEffect(() => {
-    updateTestProviderState(initialConfig);
-  }, []);
-
-  return [currentConfig, updateConfig] as const;
-}

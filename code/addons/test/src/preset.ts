@@ -9,7 +9,6 @@ import {
   serverRequire,
 } from 'storybook/internal/common';
 import {
-  TESTING_MODULE_CONFIG_CHANGE,
   TESTING_MODULE_RUN_REQUEST,
   TESTING_MODULE_WATCH_MODE_REQUEST,
 } from 'storybook/internal/core-events';
@@ -82,7 +81,9 @@ export const experimental_serverChannel = async (channel: Channel, options: Opti
       execute(TESTING_MODULE_WATCH_MODE_REQUEST)(payload);
     }
   });
-  channel.on(TESTING_MODULE_CONFIG_CHANGE, execute(TESTING_MODULE_CONFIG_CHANGE));
+  // this is just here to trigger the creation of the universal store
+  const { universalStore } = await import('./universal-store/server');
+  universalStore.getState();
 
   if (!core.disableTelemetry) {
     const packageJsonPath = require.resolve('@storybook/experimental-addon-test/package.json');

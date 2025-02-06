@@ -3,7 +3,6 @@ import { type ChildProcess } from 'node:child_process';
 import type { Channel } from 'storybook/internal/channels';
 import {
   TESTING_MODULE_CANCEL_TEST_RUN_REQUEST,
-  TESTING_MODULE_CONFIG_CHANGE,
   TESTING_MODULE_CRASH_REPORT,
   TESTING_MODULE_RUN_REQUEST,
   TESTING_MODULE_WATCH_MODE_REQUEST,
@@ -14,7 +13,7 @@ import {
 import { execaNode } from 'execa';
 import { join } from 'pathe';
 
-import { TEST_PROVIDER_ID } from '../constants';
+import { TEST_PROVIDER_ID, UNIVERSAL_STORE_CHANNEL_EVENT_NAME } from '../constants';
 import { log } from '../logger';
 
 const MAX_START_TIME = 30000;
@@ -47,14 +46,15 @@ const bootTestRunner = async (channel: Channel) => {
     child?.send({ args, from: 'server', type: TESTING_MODULE_WATCH_MODE_REQUEST });
   const forwardCancel = (...args: any[]) =>
     child?.send({ args, from: 'server', type: TESTING_MODULE_CANCEL_TEST_RUN_REQUEST });
-  const forwardConfigChange = (...args: any[]) =>
-    child?.send({ args, from: 'server', type: TESTING_MODULE_CONFIG_CHANGE });
+  const forwardUniversalStore = (...args: any) => {
+    child?.send({ args, from: 'server', type: UNIVERSAL_STORE_CHANNEL_EVENT_NAME });
+  };
 
   const killChild = () => {
     channel.off(TESTING_MODULE_RUN_REQUEST, forwardRun);
     channel.off(TESTING_MODULE_WATCH_MODE_REQUEST, forwardWatchMode);
     channel.off(TESTING_MODULE_CANCEL_TEST_RUN_REQUEST, forwardCancel);
-    channel.off(TESTING_MODULE_CONFIG_CHANGE, forwardConfigChange);
+    channel.off(UNIVERSAL_STORE_CHANNEL_EVENT_NAME, forwardUniversalStore);
     child?.kill();
     child = null;
   };
@@ -95,7 +95,7 @@ const bootTestRunner = async (channel: Channel) => {
           channel.on(TESTING_MODULE_RUN_REQUEST, forwardRun);
           channel.on(TESTING_MODULE_WATCH_MODE_REQUEST, forwardWatchMode);
           channel.on(TESTING_MODULE_CANCEL_TEST_RUN_REQUEST, forwardCancel);
-          channel.on(TESTING_MODULE_CONFIG_CHANGE, forwardConfigChange);
+          channel.on(UNIVERSAL_STORE_CHANNEL_EVENT_NAME, forwardUniversalStore);
 
           resolve();
         } else if (result.type === 'error') {

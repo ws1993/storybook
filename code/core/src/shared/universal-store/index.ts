@@ -355,7 +355,7 @@ export class UniversalStore<State, CustomEvent extends { type: string; payload?:
     }
     if (options.debug) {
       console.debug(
-        dedent`[UniversalStore:${UniversalStore.environment}]
+        dedent`[UniversalStore::${UniversalStore.environment ?? 'UNKNOWN ENVIRONMENT'}]
         create`,
         { options }
       );
@@ -621,7 +621,7 @@ export class UniversalStore<State, CustomEvent extends { type: string; payload?:
   private debug = (message: string, data?: any) => {
     if (this.debugging) {
       console.debug(
-        dedent`[UniversalStore::${this.id}::${UniversalStore.environment}]
+        dedent`[UniversalStore::${this.id}::${UniversalStore.environment ?? 'UNKNOWN ENVIRONMENT'}]
         ${message}`,
         data,
         {

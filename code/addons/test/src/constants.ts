@@ -32,3 +32,24 @@ export type Details = {
     percentage: number;
   };
 };
+
+export type UniversalStoreState = {
+  config: {
+    coverage: boolean;
+    a11y: boolean;
+  };
+};
+
+export type UniversalStoreEvent = any;
+
+export const universalStoreConfig = {
+  id: ADDON_ID,
+  initialState: {
+    config: {
+      coverage: false,
+      a11y: false,
+    },
+  },
+};
+
+export const UNIVERSAL_STORE_CHANNEL_EVENT_NAME = `UNIVERSAL_STORE:${universalStoreConfig.id}`;

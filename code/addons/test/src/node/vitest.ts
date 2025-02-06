@@ -1,6 +1,7 @@
 import process from 'node:process';
 
 import { Channel } from 'storybook/internal/channels';
+import { experimental_UniversalStore } from 'storybook/internal/core-server';
 
 import { TestManager } from './test-manager';
 
@@ -19,6 +20,12 @@ const channel: Channel = new Channel({
     },
   },
 });
+
+// eslint-disable-next-line no-underscore-dangle
+(experimental_UniversalStore as any).__prepare(
+  channel,
+  experimental_UniversalStore.Environment.SERVER
+);
 
 new TestManager(channel, {
   onError: (message, error) => {

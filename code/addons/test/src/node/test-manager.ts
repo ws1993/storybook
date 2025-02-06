@@ -34,11 +34,21 @@ export class TestManager {
     this.vitestManager = new VitestManager(this);
 
     this.channel.on(TESTING_MODULE_RUN_REQUEST, this.handleRunRequest.bind(this));
-    this.channel.on(TESTING_MODULE_CONFIG_CHANGE, this.handleConfigChange.bind(this));
     this.channel.on(TESTING_MODULE_WATCH_MODE_REQUEST, this.handleWatchModeRequest.bind(this));
     this.channel.on(TESTING_MODULE_CANCEL_TEST_RUN_REQUEST, this.handleCancelRequest.bind(this));
 
-    this.vitestManager.startVitest().then(() => options.onReady?.());
+    this.vitestManager
+      .startVitest()
+      .then(() => options.onReady?.())
+      .then(async () => {
+        const { universalStore } = await import('../universal-store/vitest-process');
+        universalStore.onStateChange((state) => {
+          this.handleConfigChange({
+            providerId: TEST_PROVIDER_ID,
+            config: state.config,
+          });
+        });
+      });
   }
 
   async handleConfigChange(payload: TestingModuleConfigChangePayload<Config>) {
