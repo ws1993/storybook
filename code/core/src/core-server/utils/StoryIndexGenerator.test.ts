@@ -4,8 +4,8 @@ import { join } from 'node:path';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { normalizeStoriesEntry } from '@storybook/core/common';
+import { toId } from '@storybook/core/csf';
 import type { NormalizedStoriesSpecifier, StoryIndexEntry } from '@storybook/core/types';
-import { toId } from '@storybook/csf';
 
 import { getStorySortParameter, readCsf } from '@storybook/core/csf-tools';
 import { logger, once } from '@storybook/core/node-logger';

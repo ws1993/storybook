@@ -8,7 +8,7 @@ import type {
   LoaderFunction,
   Renderer,
   StepRunner,
-} from '@storybook/csf';
+} from '@storybook/core/csf';
 
 import type {
   ComponentAnnotations,
