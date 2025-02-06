@@ -873,7 +873,7 @@ workflows:
           requires:
             - create-sandboxes
       - test-runner-production:
-          parallelism: 9
+          parallelism: 8
           requires:
             - create-sandboxes
       - vitest-integration:
@@ -948,7 +948,7 @@ workflows:
           requires:
             - create-sandboxes
       - test-runner-production:
-          parallelism: 15
+          parallelism: 14
           requires:
             - create-sandboxes
       - vitest-integration:
@@ -1024,7 +1024,7 @@ workflows:
           requires:
             - create-sandboxes
       - test-runner-production:
-          parallelism: 32
+          parallelism: 30
           requires:
             - create-sandboxes
       - vitest-integration:
