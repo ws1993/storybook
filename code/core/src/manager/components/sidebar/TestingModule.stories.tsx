@@ -6,7 +6,7 @@ import { Addon_TypesEnum } from '@storybook/core/types';
 import type { Meta, StoryObj } from '@storybook/react';
 import { fireEvent, fn } from '@storybook/test';
 
-import { TESTING_MODULE_CONFIG_CHANGE, type TestProviders } from '@storybook/core/core-events';
+import { type TestProviders } from '@storybook/core/core-events';
 import { ManagerContext, mockChannel } from '@storybook/core/manager-api';
 
 import { TestingModule } from './TestingModule';
@@ -56,14 +56,10 @@ const testProviders: TestProviders[keyof TestProviders][] = [
   },
 ];
 
-let triggerUpdate: () => void;
 const channel = mockChannel();
 const managerContext: any = {
   api: {
     on: (eventName: string, listener: Listener) => {
-      if (eventName === TESTING_MODULE_CONFIG_CHANGE) {
-        triggerUpdate = listener;
-      }
       return channel.on(eventName, listener);
     },
     off: (eventName: string, listener: Listener) => channel.off(eventName, listener),
@@ -229,14 +225,6 @@ export const Crashed: Story = {
     ],
   },
   play: Expanded.play,
-};
-
-export const Updated: Story = {
-  args: {},
-  play: async (context) => {
-    await Expanded.play!(context);
-    triggerUpdate?.();
-  },
 };
 
 export const NoTestProvider: Story = {

@@ -93,15 +93,12 @@ export const init: ModuleFn<SubAPI, SubState> = ({ store, fullAPI }) => {
         progress: undefined,
       });
 
-      const provider = store.getState().testProviders[id];
-
       const indexUrl = new URL('index.json', window.location.href).toString();
 
       if (!options?.entryId) {
         const payload: TestingModuleRunRequestPayload = {
           providerId: id,
           indexUrl,
-          config: provider.config,
         };
 
         fullAPI.emit(TESTING_MODULE_RUN_REQUEST, payload);
@@ -129,18 +126,15 @@ export const init: ModuleFn<SubAPI, SubState> = ({ store, fullAPI }) => {
         providerId: id,
         indexUrl,
         storyIds: findStories(options.entryId),
-        config: provider.config,
       };
       fullAPI.emit(TESTING_MODULE_RUN_REQUEST, payload);
       return () => api.cancelTestProvider(id);
     },
     setTestProviderWatchMode(id, watchMode) {
       api.updateTestProviderState(id, { watching: watchMode });
-      const config = store.getState().testProviders[id].config;
       fullAPI.emit(TESTING_MODULE_WATCH_MODE_REQUEST, {
         providerId: id,
         watchMode,
-        config,
       } as TestingModuleWatchModeRequestPayload);
     },
     cancelTestProvider(id) {

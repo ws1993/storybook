@@ -1165,7 +1165,7 @@ You should reuse the existing instance instead of trying to create a new one.`);
     expect(vi.mocked(console.debug).mock.calls).toMatchInlineSnapshot(`
       [
         [
-          "[UniversalStore:MANAGER]
+          "[UniversalStore::MANAGER]
       create",
           {
             "options": {

@@ -41,6 +41,7 @@ const exit = (code = 0) => {
   process.exit(code);
 };
 
+console.log('LOG: PROCESS ON EXIT IN VITEST.TS');
 process.on('exit', exit);
 process.on('SIGINT', () => exit(0));
 process.on('SIGTERM', () => exit(0));

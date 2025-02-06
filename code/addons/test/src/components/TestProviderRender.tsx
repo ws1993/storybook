@@ -27,7 +27,7 @@ import {
   ADDON_ID as A11Y_ADDON_ID,
   PANEL_ID as A11y_ADDON_PANEL_ID,
 } from '../../../a11y/src/constants';
-import { type Config, type Details, PANEL_ID } from '../constants';
+import { type Details, PANEL_ID } from '../constants';
 import { type TestStatus } from '../node/reporter';
 import { universalStore } from '../universal-store/manager';
 import { Description } from './Description';
@@ -103,7 +103,7 @@ const statusMap: Record<TestStatus, ComponentProps<typeof TestStatusIcon>['statu
 
 type TestProviderRenderProps = {
   api: API;
-  state: TestProviderConfig & TestProviderState<Details, Config>;
+  state: TestProviderConfig & TestProviderState<Details>;
   entryId?: string;
 } & ComponentProps<typeof Container>;
 
@@ -163,13 +163,13 @@ export const TestProviderRender: FC<TestProviderRenderProps> = ({
     return 'positive';
   }, [state.running, isA11yAddon, config.a11y, a11yResults]);
 
-  const a11yNotPassedAmount = state.config?.a11y
+  const a11yNotPassedAmount = config?.a11y
     ? a11yResults?.filter((result) => result?.status === 'failed' || result?.status === 'warning')
         .length
     : undefined;
 
   const a11ySkippedAmount =
-    state.running || !state?.details.config?.a11y || !state.config?.a11y
+    state.running || !config?.a11y || !config?.a11y
       ? null
       : a11yResults?.filter((result) => !result).length;
 

@@ -21,7 +21,7 @@ import path, { dirname, join, normalize } from 'pathe';
 import { satisfies } from 'semver';
 import slash from 'slash';
 
-import { COVERAGE_DIRECTORY, type Config } from '../constants';
+import { COVERAGE_DIRECTORY } from '../constants';
 import { log } from '../logger';
 import type { StorybookCoverageReporterOptions } from './coverage-reporter';
 import { StorybookReporter } from './reporter';
@@ -227,7 +227,7 @@ export class VitestManager {
     this.runningPromise = null;
   }
 
-  async runTests(requestPayload: TestingModuleRunRequestPayload<Config>) {
+  async runTests(requestPayload: TestingModuleRunRequestPayload) {
     if (!this.vitest) {
       await this.startVitest();
     } else {

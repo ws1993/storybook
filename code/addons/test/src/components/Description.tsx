@@ -27,27 +27,12 @@ interface DescriptionProps extends Omit<ComponentProps<typeof Wrapper>, 'results
 }
 
 export function Description({ state, entryId, results, ...props }: DescriptionProps) {
-  const isMounted = React.useRef(false);
-  const [isUpdated, setUpdated] = React.useState(false);
   const { setModalOpen } = React.useContext(GlobalErrorContext);
-
-  useEffect(() => {
-    if (isMounted.current) {
-      setUpdated(true);
-      const timeout = setTimeout(setUpdated, 2000, false);
-      return () => {
-        clearTimeout(timeout);
-      };
-    }
-    isMounted.current = true;
-  }, [state.config]);
 
   const errorMessage = state.error?.message;
 
   let description: string | React.ReactNode = 'Not run';
-  if (isUpdated) {
-    description = <PositiveText>Settings updated</PositiveText>;
-  } else if (state.running) {
+  if (state.running) {
     description = state.progress
       ? `Testing... ${state.progress.numPassedTests}/${state.progress.numTotalTests}`
       : 'Starting...';
