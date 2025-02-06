@@ -14,8 +14,8 @@ import { csfIndexer } from '../presets/common-preset';
 import type { StoryIndexGeneratorOptions } from './StoryIndexGenerator';
 import { StoryIndexGenerator } from './StoryIndexGenerator';
 
-vi.mock('@storybook/csf', async (importOriginal) => {
-  const csf = await importOriginal<typeof import('@storybook/csf')>();
+vi.mock('@storybook/core/csf', async (importOriginal) => {
+  const csf = await importOriginal<typeof import('@storybook/core/csf')>();
   return {
     ...csf,
     toId: vi.fn(csf.toId),
