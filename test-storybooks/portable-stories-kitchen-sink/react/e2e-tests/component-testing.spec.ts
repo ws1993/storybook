@@ -266,8 +266,6 @@ test.describe("component testing", () => {
     // Act - Enable coverage and run tests
     await page.getByLabel("Show settings").click();
     await page.getByLabel("Coverage").click();
-    await expect(page.getByText("Settings updated")).toBeVisible({ timeout: 3000 });
-    await page.getByLabel("Hide settings").click();
     // Wait for Vitest to have (re)started
     await page.waitForTimeout(2000);
 

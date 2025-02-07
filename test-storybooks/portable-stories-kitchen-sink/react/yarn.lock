@@ -1944,7 +1944,6 @@ __metadata:
     "@storybook/addon-highlight": "workspace:*"
     "@storybook/test": "workspace:*"
     axe-core: "npm:^4.2.0"
-    vitest-axe: "npm:^0.1.0"
   peerDependencies:
     storybook: "workspace:^"
   languageName: node
@@ -2120,11 +2119,11 @@ __metadata:
   linkType: soft
 
 "@storybook/components@file:../../../code/deprecated/components::locator=portable-stories-react%40workspace%3A.":
-  version: 8.6.0-alpha.1
-  resolution: "@storybook/components@file:../../../code/deprecated/components#../../../code/deprecated/components::hash=c9596a&locator=portable-stories-react%40workspace%3A."
+  version: 8.6.0-alpha.4
+  resolution: "@storybook/components@file:../../../code/deprecated/components#../../../code/deprecated/components::hash=d43ca6&locator=portable-stories-react%40workspace%3A."
   peerDependencies:
     storybook: ^8.2.0 || ^8.3.0-0 || ^8.4.0-0 || ^8.5.0-0 || ^8.6.0-0
-  checksum: 10/7ebd0d72a525485aa308af9592341481c6026458c848e44ea98b5e9dc58e2ce524bca3af9b05c398e3b3f840583ba3626ba02e638fc728678e0310f36f247418
+  checksum: 10/a1faee240c65462a0f088f59bcebf352b4e21e833082ebd4ede8092d00b4a0fe81da9d8fb0fedb2ed2ed88d916b69333e2ecc4e3d6e72c6dbce5680e295d0c91
   languageName: node
   linkType: hard
 
@@ -2181,8 +2180,8 @@ __metadata:
   linkType: hard
 
 "@storybook/experimental-addon-test@file:../../../code/addons/test::locator=portable-stories-react%40workspace%3A.":
-  version: 8.6.0-alpha.1
-  resolution: "@storybook/experimental-addon-test@file:../../../code/addons/test#../../../code/addons/test::hash=6f8286&locator=portable-stories-react%40workspace%3A."
+  version: 8.6.0-alpha.4
+  resolution: "@storybook/experimental-addon-test@file:../../../code/addons/test#../../../code/addons/test::hash=896702&locator=portable-stories-react%40workspace%3A."
   dependencies:
     "@storybook/csf": "npm:0.1.12"
     "@storybook/global": "npm:^5.0.0"
@@ -2204,7 +2203,7 @@ __metadata:
       optional: true
     vitest:
       optional: true
-  checksum: 10/bcdb9c0836b1e5456489f321cd330317c85cc9d384a7183284b4313d79afdb18d5cd412147063906fa41c6091e769a6b1b821e0cd3fc89acfb1e7e245339f925
+  checksum: 10/c067c23d094157f654d2dc49c94059809b5efadd12f79b9b05a1537e7ea2ece8e98950cb7b1e893fc575707396984d6b90c17c9828ec761bac4517c7f6d47d10
   languageName: node
   linkType: hard
 
@@ -2237,20 +2236,20 @@ __metadata:
   linkType: soft
 
 "@storybook/manager-api@file:../../../code/deprecated/manager-api::locator=portable-stories-react%40workspace%3A.":
-  version: 8.6.0-alpha.1
-  resolution: "@storybook/manager-api@file:../../../code/deprecated/manager-api#../../../code/deprecated/manager-api::hash=583d03&locator=portable-stories-react%40workspace%3A."
+  version: 8.6.0-alpha.4
+  resolution: "@storybook/manager-api@file:../../../code/deprecated/manager-api#../../../code/deprecated/manager-api::hash=25046a&locator=portable-stories-react%40workspace%3A."
   peerDependencies:
     storybook: ^8.2.0 || ^8.3.0-0 || ^8.4.0-0 || ^8.5.0-0 || ^8.6.0-0
-  checksum: 10/747947eb0bc2f61c1057e3933de7551dbce4e9dc354f7e45fd38d6d828d433f33988970730f871ee804a87ca9e2041394472b2f08d9f886828a7cc8977d628da
+  checksum: 10/7510c83f50abbee40b543e59d48c3e3f6507e3aa27d702ee7b38225e25b16ca961758604dca935c4413bc859623399c6edd383edddb4f070b43ce9e215dff043
   languageName: node
   linkType: hard
 
 "@storybook/preview-api@file:../../../code/deprecated/preview-api::locator=portable-stories-react%40workspace%3A.":
-  version: 8.6.0-alpha.1
-  resolution: "@storybook/preview-api@file:../../../code/deprecated/preview-api#../../../code/deprecated/preview-api::hash=5e0245&locator=portable-stories-react%40workspace%3A."
+  version: 8.6.0-alpha.4
+  resolution: "@storybook/preview-api@file:../../../code/deprecated/preview-api#../../../code/deprecated/preview-api::hash=6f333d&locator=portable-stories-react%40workspace%3A."
   peerDependencies:
     storybook: ^8.2.0 || ^8.3.0-0 || ^8.4.0-0 || ^8.5.0-0 || ^8.6.0-0
-  checksum: 10/378a2c84c71bf862b92275e6bd9faef61659a4c49a9a831e03e51c68563a34f209dbbe5fdc144a081ad97fcc293efa495a9356fed6d2fc07b56ea63d52ddf954
+  checksum: 10/80f5b22f96acc68da195883ea53235a8c0be90968f375f16891cb549730946206c1f5b6634c4095cff15a23685f74bf8f11c5ec360aa8fa36ed1a6e83ad13fe6
   languageName: node
   linkType: hard
 
@@ -2331,11 +2330,11 @@ __metadata:
   linkType: soft
 
 "@storybook/theming@file:../../../code/deprecated/theming::locator=portable-stories-react%40workspace%3A.":
-  version: 8.6.0-alpha.1
-  resolution: "@storybook/theming@file:../../../code/deprecated/theming#../../../code/deprecated/theming::hash=dab1ad&locator=portable-stories-react%40workspace%3A."
+  version: 8.6.0-alpha.4
+  resolution: "@storybook/theming@file:../../../code/deprecated/theming#../../../code/deprecated/theming::hash=042886&locator=portable-stories-react%40workspace%3A."
   peerDependencies:
     storybook: ^8.2.0 || ^8.3.0-0 || ^8.4.0-0 || ^8.5.0-0 || ^8.6.0-0
-  checksum: 10/276d691a56edde265d105a62762616211bd310472a0895970d85677830f9111430d0ee92c7f5643945627d9cc7868476fe85870e9e92bcf8bdacca3bea0fe31d
+  checksum: 10/75ebade401ffc3353b6b4d74546784e4eaaf831c4e6d171ec1ab465d9237edfc9ef6502fdd782882723ce14bb98cf02cd663f75f0b54458af1f494bca039f662
   languageName: node
   linkType: hard
 
@@ -3554,7 +3553,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"axe-core@npm:^4.2.0, axe-core@npm:^4.4.2":
+"axe-core@npm:^4.2.0":
   version: 4.10.2
   resolution: "axe-core@npm:4.10.2"
   checksum: 10/a69423b2ff16c15922c4ea7cf9cc5112728a2817bbe0f2cc212248d648885ffd1ba554e3a341dfc289cd9e67fc0d06f333b5c6837c5c38ca6652507381216fc1
@@ -3891,13 +3890,6 @@ __metadata:
     ansi-styles: "npm:^4.1.0"
     supports-color: "npm:^7.1.0"
   checksum: 10/cb3f3e594913d63b1814d7ca7c9bafbf895f75fbf93b92991980610dfd7b48500af4e3a5d4e3a8f337990a96b168d7eb84ee55efdce965e2ee8efc20f8c8f139
-  languageName: node
-  linkType: hard
-
-"chalk@npm:^5.0.1":
-  version: 5.3.0
-  resolution: "chalk@npm:5.3.0"
-  checksum: 10/6373caaab21bd64c405bfc4bd9672b145647fc9482657b5ea1d549b3b2765054e9d3d928870cdf764fb4aad67555f5061538ff247b8310f110c5c888d92397ea
   languageName: node
   linkType: hard
 
@@ -4422,7 +4414,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"dom-accessibility-api@npm:^0.5.14, dom-accessibility-api@npm:^0.5.9":
+"dom-accessibility-api@npm:^0.5.9":
   version: 0.5.16
   resolution: "dom-accessibility-api@npm:0.5.16"
   checksum: 10/377b4a7f9eae0a5d72e1068c369c99e0e4ca17fdfd5219f3abd32a73a590749a267475a59d7b03a891f9b673c27429133a818c44b2e47e32fec024b34274e2ca
@@ -7076,13 +7068,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"lodash-es@npm:^4.17.21":
-  version: 4.17.21
-  resolution: "lodash-es@npm:4.17.21"
-  checksum: 10/03f39878ea1e42b3199bd3f478150ab723f93cc8730ad86fec1f2804f4a07c6e30deaac73cad53a88e9c3db33348bb8ceeb274552390e7a75d7849021c02df43
-  languageName: node
-  linkType: hard
-
 "lodash.merge@npm:^4.6.2":
   version: 4.6.2
   resolution: "lodash.merge@npm:4.6.2"
@@ -9551,22 +9536,6 @@ __metadata:
   bin:
     vite: bin/vite.js
   checksum: 10/60dfb3912ba6367d2d128e798d899caae3f4ec58990657b9f679c4d9de21ddec7eba5f6ad3d4fa0e8ea31771d477521b8e757a622ecc54829d73cb7f7c146bc4
-  languageName: node
-  linkType: hard
-
-"vitest-axe@npm:^0.1.0":
-  version: 0.1.0
-  resolution: "vitest-axe@npm:0.1.0"
-  dependencies:
-    aria-query: "npm:^5.0.0"
-    axe-core: "npm:^4.4.2"
-    chalk: "npm:^5.0.1"
-    dom-accessibility-api: "npm:^0.5.14"
-    lodash-es: "npm:^4.17.21"
-    redent: "npm:^3.0.0"
-  peerDependencies:
-    vitest: ">=0.16.0"
-  checksum: 10/2304b352ce001b86f57ca23e2e47e708a36a41783ebf130a84c86b2d75fe7161888ae78fa9de69ced3eb0865bfe0ce076e2c86b2161f7ffc1afaa76fcd11942e
   languageName: node
   linkType: hard
 

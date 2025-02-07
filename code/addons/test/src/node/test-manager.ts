@@ -3,25 +3,21 @@ import {
   TESTING_MODULE_CANCEL_TEST_RUN_REQUEST,
   TESTING_MODULE_PROGRESS_REPORT,
   TESTING_MODULE_RUN_REQUEST,
-  TESTING_MODULE_WATCH_MODE_REQUEST,
   type TestingModuleCancelTestRunRequestPayload,
   type TestingModuleProgressReportPayload,
   type TestingModuleRunRequestPayload,
-  type TestingModuleWatchModeRequestPayload,
 } from 'storybook/internal/core-events';
 
+import { isEqual } from 'es-toolkit';
+
 import { TEST_PROVIDER_ID, type UniversalStoreState } from '../constants';
-import type { universalStore } from '../universal-store/vitest-process';
+import { getStore } from '../universal-store/vitest-process';
 import { VitestManager } from './vitest-manager';
 
 export class TestManager {
   vitestManager: VitestManager;
 
-  universalStore: typeof universalStore | undefined;
-
-  config = {
-    watchMode: false,
-  };
+  universalStore = getStore();
 
   constructor(
     private channel: Channel,
@@ -33,19 +29,18 @@ export class TestManager {
     this.vitestManager = new VitestManager(this);
 
     this.channel.on(TESTING_MODULE_RUN_REQUEST, this.handleRunRequest.bind(this));
-    this.channel.on(TESTING_MODULE_WATCH_MODE_REQUEST, this.handleWatchModeRequest.bind(this));
     this.channel.on(TESTING_MODULE_CANCEL_TEST_RUN_REQUEST, this.handleCancelRequest.bind(this));
 
-    this.vitestManager
-      .startVitest()
-      .then(() => options.onReady?.())
-      .then(async () => {
-        const { universalStore } = await import('../universal-store/vitest-process');
-        this.universalStore = universalStore;
-        universalStore.onStateChange((state, previousState) => {
-          this.handleConfigChange(state.config, previousState.config);
-        });
-      });
+    this.universalStore.onStateChange((state, previousState) => {
+      if (!isEqual(state.config, previousState.config)) {
+        this.handleConfigChange(state.config, previousState.config);
+      }
+      if (state.watching !== previousState.watching) {
+        this.handleWatchModeRequest(state.watching);
+      }
+    });
+
+    this.vitestManager.startVitest().then(() => options.onReady?.());
   }
 
   async handleConfigChange(
@@ -65,17 +60,12 @@ export class TestManager {
     }
   }
 
-  async handleWatchModeRequest(payload: TestingModuleWatchModeRequestPayload) {
-    if (payload.providerId !== TEST_PROVIDER_ID) {
-      return;
-    }
-    this.config.watchMode = payload.watchMode;
-
-    const coverage = this.universalStore?.getState().config.coverage ?? false;
+  async handleWatchModeRequest(watching: boolean) {
+    const coverage = this.universalStore.getState().config.coverage ?? false;
 
     if (coverage) {
       try {
-        if (payload.watchMode) {
+        if (watching) {
           // if watch mode is toggled on and coverage is already enabled, restart vitest without coverage to automatically disable it
           await this.vitestManager.restartVitest({ coverage: false });
         } else {
@@ -94,14 +84,14 @@ export class TestManager {
         return;
       }
 
-      const coverage = this.universalStore?.getState().config.coverage ?? false;
+      const state = this.universalStore.getState();
 
       /*
         If we're only running a subset of stories, we have to temporarily disable coverage,
         as a coverage report for a subset of stories is not useful.
       */
       const temporarilyDisableCoverage =
-        coverage && !this.config.watchMode && (payload.storyIds ?? []).length > 0;
+        state?.config.coverage && !state.watching && (payload.storyIds ?? []).length > 0;
       if (temporarilyDisableCoverage) {
         await this.vitestManager.restartVitest({
           coverage: false,
@@ -114,7 +104,7 @@ export class TestManager {
 
       if (temporarilyDisableCoverage) {
         // Re-enable coverage if it was temporarily disabled because of a subset of stories was run
-        await this.vitestManager.restartVitest({ coverage });
+        await this.vitestManager.restartVitest({ coverage: state?.config.coverage });
       }
     } catch (e) {
       this.reportFatalError('Failed to run tests', e);

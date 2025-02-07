@@ -8,7 +8,8 @@ import { Addon_TypesEnum } from 'storybook/internal/types';
 import type { Meta, StoryObj } from '@storybook/react';
 import { fn, within } from '@storybook/test';
 
-import type { Details } from '../constants';
+import { type Details, universalStoreConfig } from '../constants';
+import { getStore } from '../universal-store/manager';
 import { TestProviderRender } from './TestProviderRender';
 
 type Story = StoryObj<typeof TestProviderRender>;
@@ -36,7 +37,6 @@ const config: TestProviderConfig = {
   name: 'Test Provider',
   type: Addon_TypesEnum.experimental_TEST_PROVIDER,
   runnable: true,
-  watchable: true,
 };
 
 const baseState: TestProviderState<Details> = {
@@ -46,7 +46,6 @@ const baseState: TestProviderState<Details> = {
   error: undefined,
   failed: false,
   running: false,
-  watching: false,
   details: {
     testResults: [
       {
@@ -100,6 +99,13 @@ export default {
   parameters: {
     layout: 'fullscreen',
   },
+  beforeEach: async () => {
+    // initialize the addon's universal store as leader because it's disconnected from the real stores in stories
+    await getStore(true).untilReady();
+    return () => {
+      getStore().setState(universalStoreConfig.initialState);
+    };
+  },
 } as Meta<typeof TestProviderRender>;
 
 export const Default: Story = {
@@ -126,8 +132,10 @@ export const Watching: Story = {
     state: {
       ...config,
       ...baseState,
-      watching: true,
     },
+  },
+  beforeEach: async () => {
+    getStore().setState((s) => ({ ...s, watching: true }));
   },
 };
 
@@ -202,11 +210,11 @@ export const EditingAndWatching: Story = {
     state: {
       ...config,
       ...baseState,
-      watching: true,
       details: {
         testResults: [],
       },
     },
   },
+  beforeEach: Watching.beforeEach,
   play: Editing.play,
 };

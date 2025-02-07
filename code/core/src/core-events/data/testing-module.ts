@@ -71,8 +71,3 @@ export type TestingModuleCancelTestRunResponsePayload =
       status: 'failed';
       message: string;
     };
-
-export type TestingModuleWatchModeRequestPayload = {
-  providerId: TestProviderId;
-  watchMode: boolean;
-};

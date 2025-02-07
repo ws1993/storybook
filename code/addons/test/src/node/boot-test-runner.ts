@@ -5,7 +5,6 @@ import {
   TESTING_MODULE_CANCEL_TEST_RUN_REQUEST,
   TESTING_MODULE_CRASH_REPORT,
   TESTING_MODULE_RUN_REQUEST,
-  TESTING_MODULE_WATCH_MODE_REQUEST,
   type TestingModuleCrashReportPayload,
 } from 'storybook/internal/core-events';
 
@@ -42,8 +41,6 @@ const bootTestRunner = async (channel: Channel) => {
 
   const forwardRun = (...args: any[]) =>
     child?.send({ args, from: 'server', type: TESTING_MODULE_RUN_REQUEST });
-  const forwardWatchMode = (...args: any[]) =>
-    child?.send({ args, from: 'server', type: TESTING_MODULE_WATCH_MODE_REQUEST });
   const forwardCancel = (...args: any[]) =>
     child?.send({ args, from: 'server', type: TESTING_MODULE_CANCEL_TEST_RUN_REQUEST });
   const forwardUniversalStore = (...args: any) => {
@@ -52,7 +49,6 @@ const bootTestRunner = async (channel: Channel) => {
 
   const killChild = () => {
     channel.off(TESTING_MODULE_RUN_REQUEST, forwardRun);
-    channel.off(TESTING_MODULE_WATCH_MODE_REQUEST, forwardWatchMode);
     channel.off(TESTING_MODULE_CANCEL_TEST_RUN_REQUEST, forwardCancel);
     channel.off(UNIVERSAL_STORE_CHANNEL_EVENT_NAME, forwardUniversalStore);
     child?.kill();
@@ -83,6 +79,8 @@ const bootTestRunner = async (channel: Channel) => {
         }
       });
 
+      channel.on(UNIVERSAL_STORE_CHANNEL_EVENT_NAME, forwardUniversalStore);
+
       child.on('message', (result: any) => {
         if (result.type === 'ready') {
           // Resend events that triggered (during) the boot sequence, now that Vitest is ready
@@ -93,9 +91,7 @@ const bootTestRunner = async (channel: Channel) => {
 
           // Forward all events from the channel to the child process
           channel.on(TESTING_MODULE_RUN_REQUEST, forwardRun);
-          channel.on(TESTING_MODULE_WATCH_MODE_REQUEST, forwardWatchMode);
           channel.on(TESTING_MODULE_CANCEL_TEST_RUN_REQUEST, forwardCancel);
-          channel.on(UNIVERSAL_STORE_CHANNEL_EVENT_NAME, forwardUniversalStore);
 
           resolve();
         } else if (result.type === 'error') {

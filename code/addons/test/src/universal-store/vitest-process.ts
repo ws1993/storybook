@@ -6,12 +6,7 @@ import {
   universalStoreConfig,
 } from '../constants';
 
-export const universalStore = experimental_UniversalStore.create<
-  UniversalStoreState,
-  UniversalStoreEvent
->(universalStoreConfig);
-
-// export const universalStore = experimental_UniversalStore.create<
-//   UniversalStoreState,
-//   UniversalStoreEvent
-// >({ ...universalStoreConfig, debug: true });
+export const getStore = () =>
+  experimental_UniversalStore.create<UniversalStoreState, UniversalStoreEvent>(
+    universalStoreConfig
+  );

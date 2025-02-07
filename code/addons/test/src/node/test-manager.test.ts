@@ -38,14 +38,12 @@ vi.mock('vitest/node', async (importOriginal) => ({
 }));
 const createVitest = vi.mocked(actualCreateVitest);
 
-const universalStoreGetState = vi.hoisted(() =>
-  vi.fn(() => ({ config: { coverage: false, a11y: false } }))
-);
+const storeGetState = vi.hoisted(() => vi.fn(() => ({ config: { coverage: false, a11y: false } })));
 vi.mock('../universal-store/vitest-process.ts', async () => ({
-  universalStore: {
+  getStore: vi.fn(() => ({
     onStateChange: vi.fn(),
-    getState: universalStoreGetState,
-  },
+    getState: storeGetState,
+  })),
 }));
 
 const transport = { setHandler: vi.fn(), send: vi.fn() } satisfies ChannelTransport;
@@ -99,14 +97,16 @@ const options: ConstructorParameters<typeof TestManager>[1] = {
 describe('TestManager', () => {
   it('should create a vitest instance', async () => {
     new TestManager(mockChannel, options);
-    await new Promise((r) => setTimeout(r, 1000));
-    expect(createVitest).toHaveBeenCalled();
+    await vi.waitFor(() => {
+      expect(createVitest).toHaveBeenCalled();
+    });
   });
 
   it('should call onReady callback', async () => {
     new TestManager(mockChannel, options);
-    await new Promise((r) => setTimeout(r, 1000));
-    expect(options.onReady).toHaveBeenCalled();
+    await vi.waitFor(() => {
+      expect(options.onReady).toHaveBeenCalled();
+    });
   });
 
   it('TestManager.start should start vitest and resolve when ready', async () => {
@@ -117,11 +117,9 @@ describe('TestManager', () => {
 
   it('should handle watch mode request', async () => {
     const testManager = await TestManager.start(mockChannel, options);
-    expect(testManager.config.watchMode).toBe(false);
     expect(createVitest).toHaveBeenCalledTimes(1);
 
-    await testManager.handleWatchModeRequest({ providerId: TEST_PROVIDER_ID, watchMode: true });
-    expect(testManager.config.watchMode).toBe(true);
+    await testManager.handleWatchModeRequest(true);
     expect(createVitest).toHaveBeenCalledTimes(1); // shouldn't restart vitest
   });
 
@@ -202,7 +200,7 @@ describe('TestManager', () => {
     expect(createVitest).toHaveBeenCalledTimes(1);
     createVitest.mockClear();
 
-    universalStoreGetState.mockReturnValueOnce({ config: { coverage: true, a11y: false } });
+    storeGetState.mockReturnValueOnce({ config: { coverage: true, a11y: false } });
 
     await testManager.handleRunRequest({
       providerId: TEST_PROVIDER_ID,
@@ -215,7 +213,7 @@ describe('TestManager', () => {
     expect(vitest.runFiles).toHaveBeenCalledWith([], true);
     createVitest.mockClear();
 
-    universalStoreGetState.mockReturnValueOnce({ config: { coverage: false, a11y: false } });
+    storeGetState.mockReturnValueOnce({ config: { coverage: false, a11y: false } });
 
     await testManager.handleRunRequest({
       providerId: TEST_PROVIDER_ID,
