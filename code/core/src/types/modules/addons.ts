@@ -487,17 +487,15 @@ export interface Addon_TestProviderType<
     update: Partial<Addon_TestProviderState<Details>>
   ) => void | Partial<TestProviderConfig & Addon_TestProviderState<Details>>;
   runnable?: boolean;
-  watchable?: boolean;
 }
 
 export type Addon_TestProviderState<Details extends { [key: string]: any } = NonNullable<unknown>> =
-  Pick<Addon_TestProviderType, 'runnable' | 'watchable'> & {
+  Pick<Addon_TestProviderType, 'runnable'> & {
     progress?: TestingModuleProgressReportProgress;
     details: Details;
     cancellable: boolean;
     cancelling: boolean;
     running: boolean;
-    watching: boolean;
     failed: boolean;
     crashed: boolean;
     error?: {

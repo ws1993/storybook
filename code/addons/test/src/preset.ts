@@ -9,10 +9,13 @@ import {
   serverRequire,
 } from 'storybook/internal/common';
 import {
+  TESTING_MODULE_CRASH_REPORT,
+  TESTING_MODULE_PROGRESS_REPORT,
   TESTING_MODULE_RUN_REQUEST,
-  TESTING_MODULE_WATCH_MODE_REQUEST,
+  type TestingModuleCrashReportPayload,
+  type TestingModuleProgressReportPayload,
 } from 'storybook/internal/core-events';
-import { oneWayHash, telemetry } from 'storybook/internal/telemetry';
+import { cleanPaths, oneWayHash, sanitizeError, telemetry } from 'storybook/internal/telemetry';
 import type { Options, PresetProperty, PresetPropertyFn, StoryId } from 'storybook/internal/types';
 
 import { isAbsolute, join } from 'pathe';
@@ -22,6 +25,7 @@ import { dedent } from 'ts-dedent';
 import { COVERAGE_DIRECTORY, STORYBOOK_ADDON_TEST_CHANNEL, TEST_PROVIDER_ID } from './constants';
 import { log } from './logger';
 import { runTestRunner } from './node/boot-test-runner';
+import { getStore } from './universal-store/server';
 
 export const checkActionsLoaded = (configDir: string) => {
   checkAddonOrder({
@@ -76,15 +80,12 @@ export const experimental_serverChannel = async (channel: Channel, options: Opti
     };
 
   channel.on(TESTING_MODULE_RUN_REQUEST, execute(TESTING_MODULE_RUN_REQUEST));
-  channel.on(TESTING_MODULE_WATCH_MODE_REQUEST, (payload) => {
-    if (payload.watchMode) {
-      execute(TESTING_MODULE_WATCH_MODE_REQUEST)(payload);
+
+  getStore().onStateChange((state) => {
+    if (state.watching) {
+      runTestRunner(channel);
     }
   });
-  // this is just here to trigger the creation of the universal store
-  const { universalStore } = await import('./universal-store/server');
-  universalStore.getState();
-
   if (!core.disableTelemetry) {
     const packageJsonPath = require.resolve('@storybook/experimental-addon-test/package.json');
 
@@ -101,6 +102,65 @@ export const experimental_serverChannel = async (channel: Channel, options: Opti
           storyId: oneWayHash(event.payload.storyId),
         },
         addonVersion,
+      });
+    });
+
+    getStore().onStateChange(async (state, previous) => {
+      if (state.watching && !previous.watching) {
+        await telemetry('testing-module-watch-mode', {
+          provider: TEST_PROVIDER_ID,
+          watchMode: state.watching,
+        });
+      }
+    });
+
+    channel.on(
+      TESTING_MODULE_PROGRESS_REPORT,
+      async (payload: TestingModuleProgressReportPayload) => {
+        if (payload.providerId !== TEST_PROVIDER_ID) {
+          return;
+        }
+        const status = 'status' in payload ? payload.status : undefined;
+        const progress = 'progress' in payload ? payload.progress : undefined;
+        const error = 'error' in payload ? payload.error : undefined;
+
+        const config = getStore().getState().config;
+
+        if ((status === 'success' || status === 'cancelled') && progress?.finishedAt) {
+          await telemetry('testing-module-completed-report', {
+            provider: TEST_PROVIDER_ID,
+            status,
+            config,
+            duration: progress?.finishedAt - progress?.startedAt,
+            numTotalTests: progress?.numTotalTests,
+            numFailedTests: progress?.numFailedTests,
+            numPassedTests: progress?.numPassedTests,
+          });
+        }
+
+        if (status === 'failed') {
+          await telemetry('testing-module-completed-report', {
+            provider: TEST_PROVIDER_ID,
+            status,
+            config,
+            ...(options.enableCrashReports && {
+              error: error && sanitizeError(error),
+            }),
+          });
+        }
+      }
+    );
+
+    channel.on(TESTING_MODULE_CRASH_REPORT, async (payload: TestingModuleCrashReportPayload) => {
+      if (payload.providerId !== TEST_PROVIDER_ID) {
+        return;
+      }
+      await telemetry('testing-module-crash-report', {
+        provider: payload.providerId,
+
+        ...(options.enableCrashReports && {
+          error: cleanPaths(payload.error.message),
+        }),
       });
     });
   }

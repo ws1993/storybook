@@ -33,6 +33,7 @@ export type UniversalStoreState = {
     coverage: boolean;
     a11y: boolean;
   };
+  watching: boolean;
 };
 
 export type UniversalStoreEvent = any;
@@ -44,6 +45,7 @@ export const universalStoreConfig = {
       coverage: false,
       a11y: false,
     },
+    watching: false,
   },
 };
 

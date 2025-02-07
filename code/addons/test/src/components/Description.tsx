@@ -22,11 +22,12 @@ const PositiveText = styled.span(({ theme }) => ({
 
 interface DescriptionProps extends Omit<ComponentProps<typeof Wrapper>, 'results'> {
   state: TestProviderConfig & TestProviderState;
+  watching: boolean;
   entryId?: string;
   results?: TestResultResult[];
 }
 
-export function Description({ state, entryId, results, ...props }: DescriptionProps) {
+export function Description({ state, watching, entryId, results, ...props }: DescriptionProps) {
   const { setModalOpen } = React.useContext(GlobalErrorContext);
 
   const errorMessage = state.error?.message;
@@ -55,7 +56,7 @@ export function Description({ state, entryId, results, ...props }: DescriptionPr
         <RelativeTime timestamp={state.progress.finishedAt} />
       </>
     );
-  } else if (state.watching) {
+  } else if (watching) {
     description = 'Watching for file changes';
   }
 

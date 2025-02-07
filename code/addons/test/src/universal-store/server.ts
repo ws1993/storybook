@@ -6,10 +6,8 @@ import {
   universalStoreConfig,
 } from '../constants';
 
-export const universalStore = experimental_UniversalStore.create<
-  UniversalStoreState,
-  UniversalStoreEvent
->({
-  ...universalStoreConfig,
-  leader: true,
-});
+export const getStore = () =>
+  experimental_UniversalStore.create<UniversalStoreState, UniversalStoreEvent>({
+    ...universalStoreConfig,
+    leader: true,
+  });

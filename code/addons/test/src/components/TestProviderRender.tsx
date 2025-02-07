@@ -12,7 +12,6 @@ import { addons, experimental_useUniversalStore } from 'storybook/internal/manag
 import type { API } from 'storybook/internal/manager-api';
 import { styled, useTheme } from 'storybook/internal/theming';
 
-import type { Tag } from '@storybook/csf';
 import {
   AccessibilityIcon,
   EditIcon,
@@ -29,7 +28,7 @@ import {
 } from '../../../a11y/src/constants';
 import { type Details, PANEL_ID } from '../constants';
 import { type TestStatus } from '../node/reporter';
-import { universalStore } from '../universal-store/manager';
+import { getStore } from '../universal-store/manager';
 import { Description } from './Description';
 import { TestStatusIcon } from './TestStatusIcon';
 
@@ -119,7 +118,7 @@ export const TestProviderRender: FC<TestProviderRenderProps> = ({
 
   const isA11yAddon = addons.experimental_getRegisteredAddons().includes(A11Y_ADDON_ID);
 
-  const [{ config }, setUniversalStoreState] = experimental_useUniversalStore(universalStore);
+  const [{ config, watching }, setUniversalStoreState] = experimental_useUniversalStore(getStore());
 
   const isStoryEntry = entryId?.includes('--') ?? false;
 
@@ -212,6 +211,7 @@ export const TestProviderRender: FC<TestProviderRenderProps> = ({
             state={state}
             entryId={entryId}
             results={results}
+            watching={watching}
           />
         </Info>
 
@@ -234,18 +234,23 @@ export const TestProviderRender: FC<TestProviderRenderProps> = ({
               </Button>
             </WithTooltip>
           )}
-          {!entryId && state.watchable && (
+          {!entryId && (
             <WithTooltip
               hasChrome={false}
               trigger="hover"
-              tooltip={<TooltipNote note={`${state.watching ? 'Disable' : 'Enable'} watch mode`} />}
+              tooltip={<TooltipNote note={`${watching ? 'Disable' : 'Enable'} watch mode`} />}
             >
               <Button
-                aria-label={`${state.watching ? 'Disable' : 'Enable'} watch mode`}
+                aria-label={`${watching ? 'Disable' : 'Enable'} watch mode`}
                 variant="ghost"
                 padding="small"
-                active={state.watching}
-                onClick={() => api.setTestProviderWatchMode(state.id, !state.watching)}
+                active={watching}
+                onClick={() =>
+                  setUniversalStoreState((s) => ({
+                    ...s,
+                    watching: !watching,
+                  }))
+                }
                 disabled={state.running || isEditing}
               >
                 <EyeIcon />
@@ -329,8 +334,8 @@ export const TestProviderRender: FC<TestProviderRenderProps> = ({
               right={
                 <Checkbox
                   type="checkbox"
-                  checked={state.watching ? false : config.coverage}
-                  disabled={state.watching}
+                  checked={watching ? false : config.coverage}
+                  disabled={watching}
                   onChange={() =>
                     setUniversalStoreState((s) => ({
                       ...s,
