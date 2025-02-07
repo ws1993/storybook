@@ -1,11 +1,5 @@
 import { experimental_UniversalStore } from 'storybook/internal/manager-api';
 
-import {
-  type UniversalStoreEvent,
-  type UniversalStoreState,
-  universalStoreConfig,
-} from './constants';
+import { type StoreEvent, type StoreState, storeConfig } from './constants';
 
-export const store = experimental_UniversalStore.create<UniversalStoreState, UniversalStoreEvent>(
-  universalStoreConfig
-);
+export const store = experimental_UniversalStore.create<StoreState, StoreEvent>(storeConfig);

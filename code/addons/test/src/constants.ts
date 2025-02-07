@@ -28,7 +28,7 @@ export type Details = {
   };
 };
 
-export type UniversalStoreState = {
+export type StoreState = {
   config: {
     coverage: boolean;
     a11y: boolean;
@@ -36,9 +36,9 @@ export type UniversalStoreState = {
   watching: boolean;
 };
 
-export type UniversalStoreEvent = any;
+export type StoreEvent = any;
 
-export const universalStoreConfig = {
+export const storeConfig = {
   id: ADDON_ID,
   initialState: {
     config: {
@@ -49,4 +49,4 @@ export const universalStoreConfig = {
   },
 };
 
-export const UNIVERSAL_STORE_CHANNEL_EVENT_NAME = `UNIVERSAL_STORE:${universalStoreConfig.id}`;
+export const STORE_CHANNEL_EVENT_NAME = `UNIVERSAL_STORE:${storeConfig.id}`;

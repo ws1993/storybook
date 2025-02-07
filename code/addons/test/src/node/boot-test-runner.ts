@@ -12,7 +12,7 @@ import {
 import { execaNode } from 'execa';
 import { join } from 'pathe';
 
-import { TEST_PROVIDER_ID, UNIVERSAL_STORE_CHANNEL_EVENT_NAME } from '../constants';
+import { STORE_CHANNEL_EVENT_NAME, TEST_PROVIDER_ID } from '../constants';
 import { log } from '../logger';
 
 const MAX_START_TIME = 30000;
@@ -44,13 +44,13 @@ const bootTestRunner = async (channel: Channel) => {
   const forwardCancel = (...args: any[]) =>
     child?.send({ args, from: 'server', type: TESTING_MODULE_CANCEL_TEST_RUN_REQUEST });
   const forwardUniversalStore = (...args: any) => {
-    child?.send({ args, from: 'server', type: UNIVERSAL_STORE_CHANNEL_EVENT_NAME });
+    child?.send({ args, from: 'server', type: STORE_CHANNEL_EVENT_NAME });
   };
 
   const killChild = () => {
     channel.off(TESTING_MODULE_RUN_REQUEST, forwardRun);
     channel.off(TESTING_MODULE_CANCEL_TEST_RUN_REQUEST, forwardCancel);
-    channel.off(UNIVERSAL_STORE_CHANNEL_EVENT_NAME, forwardUniversalStore);
+    channel.off(STORE_CHANNEL_EVENT_NAME, forwardUniversalStore);
     child?.kill();
     child = null;
   };
@@ -79,7 +79,7 @@ const bootTestRunner = async (channel: Channel) => {
         }
       });
 
-      channel.on(UNIVERSAL_STORE_CHANNEL_EVENT_NAME, forwardUniversalStore);
+      channel.on(STORE_CHANNEL_EVENT_NAME, forwardUniversalStore);
 
       child.on('message', (result: any) => {
         if (result.type === 'ready') {

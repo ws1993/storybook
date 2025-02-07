@@ -11,20 +11,13 @@ import { experimental_UniversalStore } from 'storybook/internal/core-server';
 
 import { isEqual } from 'es-toolkit';
 
-import {
-  TEST_PROVIDER_ID,
-  type UniversalStoreEvent,
-  type UniversalStoreState,
-  universalStoreConfig,
-} from '../constants';
+import { type StoreEvent, type StoreState, TEST_PROVIDER_ID, storeConfig } from '../constants';
 import { VitestManager } from './vitest-manager';
 
 export class TestManager {
   vitestManager: VitestManager;
 
-  universalStore = experimental_UniversalStore.create<UniversalStoreState, UniversalStoreEvent>(
-    universalStoreConfig
-  );
+  universalStore = experimental_UniversalStore.create<StoreState, StoreEvent>(storeConfig);
 
   constructor(
     private channel: Channel,
@@ -50,10 +43,7 @@ export class TestManager {
     this.vitestManager.startVitest().then(() => options.onReady?.());
   }
 
-  async handleConfigChange(
-    config: UniversalStoreState['config'],
-    previousConfig: UniversalStoreState['config']
-  ) {
+  async handleConfigChange(config: StoreState['config'], previousConfig: StoreState['config']) {
     process.env.VITEST_STORYBOOK_CONFIG = JSON.stringify(config);
 
     if (config.coverage !== previousConfig.coverage) {
