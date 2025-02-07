@@ -15,8 +15,8 @@ import { Panel } from './components/Panel';
 import { PanelTitle } from './components/PanelTitle';
 import { TestProviderRender } from './components/TestProviderRender';
 import { ADDON_ID, type Details, PANEL_ID, TEST_PROVIDER_ID } from './constants';
+import { store } from './manager-universal-store';
 import type { TestStatus } from './node/reporter';
-import { getStore } from './universal-store/manager';
 
 const statusMap: Record<TestStatus, API_StatusValue> = {
   failed: 'error',
@@ -82,7 +82,7 @@ addons.register(ADDON_ID, (api) => {
           details: { ...state.details, ...update.details },
         };
 
-        if ((!state.running && update.running) || getStore().getState().watching) {
+        if ((!state.running && update.running) || store.getState().watching) {
           // Clear coverage data when starting test run or enabling watch mode
           delete updated.details.coverageSummary;
         }

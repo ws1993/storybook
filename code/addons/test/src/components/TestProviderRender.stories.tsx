@@ -9,7 +9,7 @@ import type { Meta, StoryObj } from '@storybook/react';
 import { fn, within } from '@storybook/test';
 
 import { type Details, universalStoreConfig } from '../constants';
-import { getStore } from '../universal-store/manager';
+import { store } from '../manager-universal-store';
 import { TestProviderRender } from './TestProviderRender';
 
 type Story = StoryObj<typeof TestProviderRender>;
@@ -100,10 +100,10 @@ export default {
     layout: 'fullscreen',
   },
   beforeEach: async () => {
-    // initialize the addon's universal store as leader because it's disconnected from the real stores in stories
-    await getStore(true).untilReady();
+    // TODO: initialize the addon's universal store as leader because it's disconnected from the real stores in stories
+    await store.untilReady();
     return () => {
-      getStore().setState(universalStoreConfig.initialState);
+      store.setState(universalStoreConfig.initialState);
     };
   },
 } as Meta<typeof TestProviderRender>;
@@ -135,7 +135,7 @@ export const Watching: Story = {
     },
   },
   beforeEach: async () => {
-    getStore().setState((s) => ({ ...s, watching: true }));
+    store.setState((s) => ({ ...s, watching: true }));
   },
 };
 

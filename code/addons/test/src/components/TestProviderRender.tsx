@@ -27,8 +27,8 @@ import {
   PANEL_ID as A11y_ADDON_PANEL_ID,
 } from '../../../a11y/src/constants';
 import { type Details, PANEL_ID } from '../constants';
+import { store } from '../manager-universal-store';
 import { type TestStatus } from '../node/reporter';
-import { getStore } from '../universal-store/manager';
 import { Description } from './Description';
 import { TestStatusIcon } from './TestStatusIcon';
 
@@ -118,7 +118,7 @@ export const TestProviderRender: FC<TestProviderRenderProps> = ({
 
   const isA11yAddon = addons.experimental_getRegisteredAddons().includes(A11Y_ADDON_ID);
 
-  const [{ config, watching }, setUniversalStoreState] = experimental_useUniversalStore(getStore());
+  const [{ config, watching }, setUniversalStoreState] = experimental_useUniversalStore(store);
 
   const isStoryEntry = entryId?.includes('--') ?? false;
 

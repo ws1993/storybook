@@ -7,17 +7,24 @@ import {
   type TestingModuleProgressReportPayload,
   type TestingModuleRunRequestPayload,
 } from 'storybook/internal/core-events';
+import { experimental_UniversalStore } from 'storybook/internal/core-server';
 
 import { isEqual } from 'es-toolkit';
 
-import { TEST_PROVIDER_ID, type UniversalStoreState } from '../constants';
-import { getStore } from '../universal-store/vitest-process';
+import {
+  TEST_PROVIDER_ID,
+  type UniversalStoreEvent,
+  type UniversalStoreState,
+  universalStoreConfig,
+} from '../constants';
 import { VitestManager } from './vitest-manager';
 
 export class TestManager {
   vitestManager: VitestManager;
 
-  universalStore = getStore();
+  universalStore = experimental_UniversalStore.create<UniversalStoreState, UniversalStoreEvent>(
+    universalStoreConfig
+  );
 
   constructor(
     private channel: Channel,

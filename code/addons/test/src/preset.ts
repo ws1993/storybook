@@ -15,6 +15,7 @@ import {
   type TestingModuleCrashReportPayload,
   type TestingModuleProgressReportPayload,
 } from 'storybook/internal/core-events';
+import { experimental_UniversalStore } from 'storybook/internal/core-server';
 import { cleanPaths, oneWayHash, sanitizeError, telemetry } from 'storybook/internal/telemetry';
 import type { Options, PresetProperty, PresetPropertyFn, StoryId } from 'storybook/internal/types';
 
@@ -22,10 +23,16 @@ import { isAbsolute, join } from 'pathe';
 import picocolors from 'picocolors';
 import { dedent } from 'ts-dedent';
 
-import { COVERAGE_DIRECTORY, STORYBOOK_ADDON_TEST_CHANNEL, TEST_PROVIDER_ID } from './constants';
+import {
+  COVERAGE_DIRECTORY,
+  STORYBOOK_ADDON_TEST_CHANNEL,
+  TEST_PROVIDER_ID,
+  type UniversalStoreEvent,
+  type UniversalStoreState,
+  universalStoreConfig,
+} from './constants';
 import { log } from './logger';
 import { runTestRunner } from './node/boot-test-runner';
-import { getStore } from './universal-store/server';
 
 export const checkActionsLoaded = (configDir: string) => {
   checkAddonOrder({
@@ -59,6 +66,11 @@ export const experimental_serverChannel = async (channel: Channel, options: Opti
   const builderName = typeof core?.builder === 'string' ? core.builder : core?.builder?.name;
   const framework = await getFrameworkName(options);
 
+  const store = experimental_UniversalStore.create<UniversalStoreState, UniversalStoreEvent>({
+    ...universalStoreConfig,
+    leader: true,
+  });
+
   // Only boot the test runner if the builder is vite, else just provide interactions functionality
   if (!builderName?.includes('vite')) {
     if (framework.includes('nextjs')) {
@@ -81,7 +93,7 @@ export const experimental_serverChannel = async (channel: Channel, options: Opti
 
   channel.on(TESTING_MODULE_RUN_REQUEST, execute(TESTING_MODULE_RUN_REQUEST));
 
-  getStore().onStateChange((state) => {
+  store.onStateChange((state) => {
     if (state.watching) {
       runTestRunner(channel);
     }
@@ -105,7 +117,7 @@ export const experimental_serverChannel = async (channel: Channel, options: Opti
       });
     });
 
-    getStore().onStateChange(async (state, previous) => {
+    store.onStateChange(async (state, previous) => {
       if (state.watching && !previous.watching) {
         await telemetry('testing-module-watch-mode', {
           provider: TEST_PROVIDER_ID,
@@ -124,7 +136,7 @@ export const experimental_serverChannel = async (channel: Channel, options: Opti
         const progress = 'progress' in payload ? payload.progress : undefined;
         const error = 'error' in payload ? payload.error : undefined;
 
-        const config = getStore().getState().config;
+        const config = store.getState().config;
 
         if ((status === 'success' || status === 'cancelled') && progress?.finishedAt) {
           await telemetry('testing-module-completed-report', {
