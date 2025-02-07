@@ -121,7 +121,7 @@ export class UniversalStore<State, CustomEvent extends { type: string; payload?:
   } as const;
 
   // This is used to check if constructor was called from the static factory create()
-  private static isInternalConstructing = false;
+  protected static isInternalConstructing = false;
 
   // Will be set when Storybook prepares the static store with UniversalStore.__prepare()
   private static channel: ChannelLike;
@@ -245,7 +245,7 @@ export class UniversalStore<State, CustomEvent extends { type: string; payload?:
 
   private actorType: Actor['type'];
 
-  private constructor(options: StoreOptions<State>) {
+  protected constructor(options: StoreOptions<State>) {
     this.debugging = options.debug ?? false;
     // This constructor is a simulated private constructor
     // it can only be called from within the static factory method create()

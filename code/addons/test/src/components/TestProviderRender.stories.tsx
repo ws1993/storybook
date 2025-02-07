@@ -1,14 +1,15 @@
 import React from 'react';
 
 import type { TestProviderConfig, TestProviderState } from 'storybook/internal/core-events';
-import { ManagerContext } from 'storybook/internal/manager-api';
+import { ManagerContext, experimental_MockUniversalStore } from 'storybook/internal/manager-api';
 import { styled } from 'storybook/internal/theming';
 import { Addon_TypesEnum } from 'storybook/internal/types';
 
 import type { Meta, StoryObj } from '@storybook/react';
 import { fn, within } from '@storybook/test';
 
-import { type Details, universalStoreConfig } from '../constants';
+import type { StoreState } from '../constants';
+import { type Details, type StoreEvent, storeConfig } from '../constants';
 import { store } from '../manager-universal-store';
 import { TestProviderRender } from './TestProviderRender';
 
@@ -99,14 +100,14 @@ export default {
   parameters: {
     layout: 'fullscreen',
   },
-  beforeEach: async () => {
-    // TODO: initialize the addon's universal store as leader because it's disconnected from the real stores in stories
-    await store.untilReady();
-    return () => {
-      store.setState(universalStoreConfig.initialState);
-    };
-  },
 } as Meta<typeof TestProviderRender>;
+
+// create a mock store acting as a leader controlling the UI's follower instance
+// this also automatically ensures that the state is reset before each story
+const mockStore = new experimental_MockUniversalStore<StoreState, StoreEvent>({
+  ...storeConfig,
+  leader: true,
+});
 
 export const Default: Story = {
   args: {
