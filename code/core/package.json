@@ -282,7 +282,6 @@
     "prep": "jiti ./scripts/prep.ts"
   },
   "dependencies": {
-    "@storybook/csf": "0.1.12",
     "@storybook/theming": "workspace:*",
     "better-opn": "^3.0.2",
     "browser-assert": "^1.2.1",
