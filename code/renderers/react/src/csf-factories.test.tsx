@@ -6,9 +6,9 @@ import { expect, test } from 'vitest';
 import type { KeyboardEventHandler, ReactElement, ReactNode } from 'react';
 import React from 'react';
 
+import type { Canvas } from 'storybook/internal/csf';
 import type { Args, StrictArgs } from 'storybook/internal/types';
 
-import type { Canvas } from '@storybook/csf';
 import type { Mock } from '@storybook/test';
 import { fn } from '@storybook/test';
 
