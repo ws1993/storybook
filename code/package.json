@@ -1,6 +1,6 @@
 {
   "name": "@storybook/root",
-  "version": "8.6.0-alpha.4",
+  "version": "8.6.0-alpha.5",
   "private": true,
   "description": "Storybook root",
   "homepage": "https://storybook.js.org/",
@@ -125,7 +125,6 @@
     "@storybook/codemod": "workspace:*",
     "@storybook/core": "workspace:*",
     "@storybook/core-webpack": "workspace:*",
-    "@storybook/csf": "0.1.12",
     "@storybook/csf-plugin": "workspace:*",
     "@storybook/ember": "workspace:*",
     "@storybook/eslint-config-storybook": "^4.0.0",
