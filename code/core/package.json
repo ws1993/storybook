@@ -282,7 +282,6 @@
     "prep": "jiti ./scripts/prep.ts"
   },
   "dependencies": {
-    "@storybook/csf": "0.1.14--canary.f3da709.0",
     "@storybook/theming": "workspace:*",
     "better-opn": "^3.0.2",
     "browser-assert": "^1.2.1",
@@ -311,6 +310,7 @@
     "@emotion/use-insertion-effect-with-fallbacks": "^1.2.0",
     "@fal-works/esbuild-plugin-global-externals": "^2.1.2",
     "@ndelangen/get-tarball": "^3.0.7",
+    "@ngard/tiny-isequal": "^1.1.0",
     "@polka/compression": "^1.0.0-next.28",
     "@popperjs/core": "^2.6.0",
     "@radix-ui/react-dialog": "^1.1.2",
