@@ -2,7 +2,6 @@ import * as React from 'react';
 import { Fragment, useEffect } from 'react';
 
 import type { Channel } from 'storybook/internal/channels';
-import { experimental_UniversalStore } from 'storybook/internal/manager-api';
 import {
   DocsContext as DocsContextProps,
   mockChannel,
@@ -363,14 +362,6 @@ export const parameters = {
       opacity: 0.4,
     },
   },
-};
-
-export const beforeAll = async () => {
-  // eslint-disable-next-line no-underscore-dangle
-  (experimental_UniversalStore as any).__prepare(
-    mockChannel(),
-    experimental_UniversalStore.Environment.MANAGER
-  );
 };
 
 export const tags = ['test', 'vitest'];

@@ -29,7 +29,7 @@ import {
   type StoreEvent,
   type StoreState,
   TEST_PROVIDER_ID,
-  storeConfig,
+  storeOptions,
 } from './constants';
 import { log } from './logger';
 import { runTestRunner } from './node/boot-test-runner';
@@ -67,7 +67,7 @@ export const experimental_serverChannel = async (channel: Channel, options: Opti
   const framework = await getFrameworkName(options);
 
   const store = experimental_UniversalStore.create<StoreState, StoreEvent>({
-    ...storeConfig,
+    ...storeOptions,
     leader: true,
   });
 

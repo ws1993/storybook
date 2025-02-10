@@ -11,13 +11,13 @@ import { experimental_UniversalStore } from 'storybook/internal/core-server';
 
 import { isEqual } from 'es-toolkit';
 
-import { type StoreEvent, type StoreState, TEST_PROVIDER_ID, storeConfig } from '../constants';
+import { type StoreEvent, type StoreState, TEST_PROVIDER_ID, storeOptions } from '../constants';
 import { VitestManager } from './vitest-manager';
 
 export class TestManager {
   vitestManager: VitestManager;
 
-  universalStore = experimental_UniversalStore.create<StoreState, StoreEvent>(storeConfig);
+  universalStore = experimental_UniversalStore.create<StoreState, StoreEvent>(storeOptions);
 
   constructor(
     private channel: Channel,

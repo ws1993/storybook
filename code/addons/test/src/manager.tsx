@@ -10,12 +10,13 @@ import {
   Addon_TypesEnum,
 } from 'storybook/internal/types';
 
+import { store } from '#manager-store';
+
 import { GlobalErrorContext, GlobalErrorModal } from './components/GlobalErrorModal';
 import { Panel } from './components/Panel';
 import { PanelTitle } from './components/PanelTitle';
 import { TestProviderRender } from './components/TestProviderRender';
 import { ADDON_ID, type Details, PANEL_ID, TEST_PROVIDER_ID } from './constants';
-import { store } from './manager-universal-store';
 import type { TestStatus } from './node/reporter';
 
 const statusMap: Record<TestStatus, API_StatusValue> = {

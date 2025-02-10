@@ -63,6 +63,12 @@
     "./postinstall": "./dist/postinstall.js",
     "./package.json": "./package.json"
   },
+  "imports": {
+    "#manager-store": {
+      "storybook": "./src/manager-store.mock.ts",
+      "default": "./src/manager-store.ts"
+    }
+  },
   "main": "dist/index.js",
   "module": "dist/index.mjs",
   "types": "dist/index.d.ts",

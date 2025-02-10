@@ -1,44 +1,68 @@
+import { Channel } from '@storybook/core/channels';
+
 import { UniversalStore } from '.';
-import type { ExistingStateResponseEvent, StoreOptions } from './types';
+import type { StoreOptions } from './types';
 
 /**
  * A mock universal store that can be used when testing code that relies on a universal store. It
- * functions exactly like a normal universal store.
+ * functions exactly like a normal universal store, with a few exceptions:
  *
- * If the code under test uses a Follower store, create a Leader MockUniversalStore with the same
- * configuration, to satisfy the Follower's need for a leader to exist.
+ * - It is fully isolated, meaning that it doesn't interact with any channel, and it is always a
+ *   leader.
  *
- * If the code under test uses a Leader store, you can create a follower MockUniversalStore with the
- * same configuration to listen for state changes, events, or anything else you need to, to test the
- * leader.
+ * If the second testUtils argument is provided, all the public methods are spied on, so they can be
+ * asserted.
+ *
+ * When a mock store is re-used across tests (eg. in stories), you manually need to reset the state
+ * after each test.
+ *
+ * @example
+ *
+ * ```ts
+ * import * as testUtils from '@storybook/test'; // in stories
+ * import { vi as testUtils } from 'vitest'; // ... or in Vitest tests
+ *
+ * const initialState = { ... };
+ * const store = new MockUniversalStore({ initialState }, testUtils);
+ *
+ * expoert default {
+ *   title: 'My story',
+ *   beforeEach: () => {
+ *     return () => {
+ *       store.setState(initialState);
+ *     };
+ *   }
+ * }
+ * ```
  */
 export class MockUniversalStore<
   State,
   CustomEvent extends { type: string; payload?: any },
 > extends UniversalStore<State, CustomEvent> {
-  public constructor(options: StoreOptions<State>) {
+  public constructor(options: StoreOptions<State>, testUtils?: any) {
     UniversalStore.isInternalConstructing = true;
-    super(options);
+    super(
+      { ...options, leader: true },
+      { channel: new Channel({}), environment: UniversalStore.Environment.MOCK }
+    );
     UniversalStore.isInternalConstructing = false;
 
-    if (this.actor.type === UniversalStore.ActorType.LEADER) {
-      this.untilReady().then(() => {
-        // always send an existing state response event asap, because
-        // a follower might be waiting for it because it was created before this mock leader
-        const responseEvent: ExistingStateResponseEvent<State> = {
-          type: UniversalStore.InternalEventType.EXISTING_STATE_RESPONSE,
-          payload: this.getState(),
-        };
-        this.send(responseEvent as any);
-      });
+    if (!testUtils) {
+      return;
     }
+
+    this.getState = testUtils.fn(this.getState);
+    this.setState = testUtils.fn(this.setState);
+    this.subscribe = testUtils.fn(this.subscribe);
+    this.onStateChange = testUtils.fn(this.onStateChange);
+    this.send = testUtils.fn(this.send);
   }
 
-  /** Create a mock universal store. This is just an alias for new MockUniversalStore(options). */
+  /** Create a mock universal store. This is just an alias for the constructor */
   static create<
     State = any,
     CustomEvent extends { type: string; payload?: any } = { type: string; payload?: any },
-  >(options: StoreOptions<State>): UniversalStore<State, CustomEvent> {
-    return new MockUniversalStore(options);
+  >(options: StoreOptions<State>, testUtils?: any): MockUniversalStore<State, CustomEvent> {
+    return new MockUniversalStore(options, testUtils);
   }
 }

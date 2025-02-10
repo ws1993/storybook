@@ -22,12 +22,13 @@ import {
   StopAltIcon,
 } from '@storybook/icons';
 
+import { store } from '#manager-store';
+
 import {
   ADDON_ID as A11Y_ADDON_ID,
   PANEL_ID as A11y_ADDON_PANEL_ID,
 } from '../../../a11y/src/constants';
 import { type Details, PANEL_ID } from '../constants';
-import { store } from '../manager-universal-store';
 import { type TestStatus } from '../node/reporter';
 import { Description } from './Description';
 import { TestStatusIcon } from './TestStatusIcon';

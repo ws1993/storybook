@@ -38,7 +38,7 @@ export type StoreState = {
 
 export type StoreEvent = any;
 
-export const storeConfig = {
+export const storeOptions = {
   id: ADDON_ID,
   initialState: {
     config: {
@@ -49,4 +49,4 @@ export const storeConfig = {
   },
 };
 
-export const STORE_CHANNEL_EVENT_NAME = `UNIVERSAL_STORE:${storeConfig.id}`;
+export const STORE_CHANNEL_EVENT_NAME = `UNIVERSAL_STORE:${storeOptions.id}`;

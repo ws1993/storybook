@@ -1,16 +1,15 @@
 import React from 'react';
 
 import type { TestProviderConfig, TestProviderState } from 'storybook/internal/core-events';
-import { ManagerContext, experimental_MockUniversalStore } from 'storybook/internal/manager-api';
+import { ManagerContext } from 'storybook/internal/manager-api';
 import { styled } from 'storybook/internal/theming';
 import { Addon_TypesEnum } from 'storybook/internal/types';
 
 import type { Meta, StoryObj } from '@storybook/react';
-import { fn, within } from '@storybook/test';
+import { expect, fn } from '@storybook/test';
 
-import type { StoreState } from '../constants';
-import { type Details, type StoreEvent, storeConfig } from '../constants';
-import { store } from '../manager-universal-store';
+import { type Details, storeOptions } from '../constants';
+import { store as mockStore } from '../manager-store.mock';
 import { TestProviderRender } from './TestProviderRender';
 
 type Story = StoryObj<typeof TestProviderRender>;
@@ -100,14 +99,12 @@ export default {
   parameters: {
     layout: 'fullscreen',
   },
+  beforeEach: async () => {
+    return () => {
+      mockStore.setState(storeOptions.initialState);
+    };
+  },
 } as Meta<typeof TestProviderRender>;
-
-// create a mock store acting as a leader controlling the UI's follower instance
-// this also automatically ensures that the state is reset before each story
-const mockStore = new experimental_MockUniversalStore<StoreState, StoreEvent>({
-  ...storeConfig,
-  leader: true,
-});
 
 export const Default: Story = {
   args: {
@@ -136,7 +133,7 @@ export const Watching: Story = {
     },
   },
   beforeEach: async () => {
-    store.setState((s) => ({ ...s, watching: true }));
+    mockStore.setState((s) => ({ ...s, watching: true }));
   },
 };
 
@@ -199,10 +196,8 @@ export const Editing: Story = {
     },
   },
 
-  play: async ({ canvasElement }) => {
-    const screen = within(canvasElement);
-
-    screen.getByLabelText(/Show settings/).click();
+  play: async ({ canvas }) => {
+    (await canvas.findByLabelText('Show settings')).click();
   },
 };
 
@@ -218,4 +213,36 @@ export const EditingAndWatching: Story = {
   },
   beforeEach: Watching.beforeEach,
   play: Editing.play,
+};
+
+export const TogglingSettings: Story = {
+  args: {
+    state: {
+      ...config,
+      ...baseState,
+      details: {
+        testResults: [],
+      },
+    },
+  },
+  play: async ({ canvas, step }) => {
+    await step('Enable coverage', async () => {
+      (await canvas.findByLabelText('Show settings')).click();
+
+      (await canvas.findByLabelText('Coverage')).click();
+      await expect(mockStore.setState).toHaveBeenCalledOnce();
+      mockStore.setState.mockClear();
+    });
+
+    (await canvas.findByLabelText('Hide settings')).click();
+
+    await step('Enable watch mode', async () => {
+      (await canvas.findByLabelText('Enable watch mode')).click();
+      await expect(mockStore.setState).toHaveBeenCalledOnce();
+
+      (await canvas.findByLabelText('Show settings')).click();
+
+      await expect(await canvas.findByLabelText('Coverage')).toBeDisabled();
+    });
+  },
 };
