@@ -13,6 +13,7 @@ import {
   writeFile,
   writeJson,
 } from 'fs-extra';
+import { readFile } from 'fs/promises';
 import JSON5 from 'json5';
 import { createRequire } from 'module';
 import { join, relative, resolve, sep } from 'path';
@@ -144,7 +145,7 @@ export const init: Task['run'] = async (
 
   await executeCLIStep(steps.init, {
     cwd,
-    optionValues: { debug, yes: true, ...extra },
+    optionValues: { debug, yes: true, 'skip-install': true, ...extra },
     dryRun,
     debug,
   });
@@ -416,7 +417,6 @@ export async function setupVitest(details: TemplateDetails, options: PassedOptio
   const storybookPackage = portableStoriesFrameworks.includes(template.expected.framework)
     ? template.expected.framework
     : template.expected.renderer;
-  const viteConfigPath = template.name.includes('JavaScript') ? 'vite.config.js' : 'vite.config.ts';
 
   await writeFile(
     join(sandboxDir, '.storybook/vitest.setup.ts'),
@@ -446,22 +446,100 @@ export async function setupVitest(details: TemplateDetails, options: PassedOptio
     beforeAll(annotations.beforeAll)`
   );
 
-  await writeFile(
-    join(sandboxDir, 'vitest.workspace.ts'),
-    dedent`
-      import { defineWorkspace, defaultExclude } from "vitest/config";
-      import { storybookTest } from "@storybook/experimental-addon-test/vitest-plugin";
-      import path from 'node:path';
-      import { fileURLToPath } from 'node:url';
+  const opts = { cwd: sandboxDir };
+  const viteConfigFile = await findFirstPath(['vite.config.ts', 'vite.config.js'], opts);
+  const vitestConfigFile = await findFirstPath(['vitest.config.ts', 'vitest.config.js'], opts);
+  const workspaceFile = await findFirstPath(['vitest.workspace.ts', 'vitest.workspace.js'], opts);
 
-      import viteConfig from './vite.config';
+  if (workspaceFile) {
+    await writeFile(
+      join(sandboxDir, workspaceFile),
+      dedent`
+        import path from 'node:path';
+        import { fileURLToPath } from 'node:url';
+        import { defineWorkspace, defaultExclude } from "vitest/config";
+        import { storybookTest } from "@storybook/experimental-addon-test/vitest-plugin";
 
-      const dirname =
-        typeof __dirname !== 'undefined' ? __dirname : path.dirname(fileURLToPath(import.meta.url));
+        ${viteConfigFile ? `import viteConfig from './${viteConfigFile}';` : ''}
 
-      export default defineWorkspace([
-        {
-          ${!isNextjs ? `extends: "${viteConfigPath}",` : ''}
+        const dirname =
+          typeof __dirname !== 'undefined' ? __dirname : path.dirname(fileURLToPath(import.meta.url));
+
+        export default defineWorkspace([
+          {
+            ${!isNextjs ? `extends: "${viteConfigFile}",` : ''}
+            plugins: [
+              storybookTest({
+                configDir: path.join(dirname, '.storybook'),
+                storybookScript: "yarn storybook --ci",
+                tags: {
+                  include: ["vitest"],
+                },
+              }),
+            ],
+            ${
+              isNextjs
+                ? `optimizeDeps: {
+              include: [
+                "next/image",
+                "next/legacy/image",
+                "next/dist/compiled/react",
+                "sb-original/default-loader",
+                "sb-original/image-context",
+              ],
+            },`
+                : ''
+            }
+            resolve: {
+              preserveSymlinks: true,
+            },
+            test: {
+              name: "storybook",
+              pool: "threads",
+              exclude: [
+                ...defaultExclude,
+                // TODO: investigate TypeError: Cannot read properties of null (reading 'useContext')
+                "**/*argtypes*",
+              ],
+              /**
+               * TODO: Either fix or acknowledge limitation of:
+               * - @storybook/core/preview-api hooks:
+               * -- UseState
+               */
+              // @ts-expect-error this type does not exist but the property does!
+              testNamePattern: /^(?!.*(UseState)).*$/,
+              browser: {
+                enabled: true,
+                name: "chromium",
+                provider: "playwright",
+                headless: true,
+              },
+              setupFiles: ["./.storybook/vitest.setup.ts"],
+              environment: "happy-dom",
+            },
+          },
+        ]);
+      `
+    );
+  } else {
+    const defaultConfigFile = template.name.includes('JavaScript')
+      ? 'vitest.config.js'
+      : 'vitest.config.ts';
+    await writeFile(
+      join(sandboxDir, vitestConfigFile || viteConfigFile || defaultConfigFile),
+      dedent`
+        import path from 'node:path';
+        import { fileURLToPath } from 'node:url';
+        import { defineConfig, defaultExclude } from "vitest/config";
+        import { storybookTest } from "@storybook/experimental-addon-test/vitest-plugin";
+
+        ${vitestConfigFile && viteConfigFile ? `import viteConfig from './${viteConfigFile}';` : ''}
+
+        const dirname =
+          typeof __dirname !== 'undefined' ? __dirname : path.dirname(fileURLToPath(import.meta.url));
+
+        export default defineConfig({
+          ${!isNextjs ? `extends: "${viteConfigFile}",` : ''}
           plugins: [
             storybookTest({
               configDir: path.join(dirname, '.storybook'),
@@ -511,10 +589,10 @@ export async function setupVitest(details: TemplateDetails, options: PassedOptio
             setupFiles: ["./.storybook/vitest.setup.ts"],
             environment: "happy-dom",
           },
-        },
-      ]);
-  `
-  );
+        });
+      `
+    );
+  }
 }
 
 export async function addExtraDependencies({
@@ -538,17 +616,24 @@ export async function addExtraDependencies({
     return;
   }
 
+  const packageJson = JSON.parse(await readFile(join(cwd, 'package.json'), { encoding: 'utf8' }));
+
   const packageManager = JsPackageManagerFactory.getPackageManager({}, cwd);
-  await packageManager.addDependencies({ installAsDevDependencies: true }, extraDevDeps);
+  await packageManager.addDependencies(
+    { installAsDevDependencies: true, skipInstall: true, packageJson },
+    extraDevDeps
+  );
 
   if (extraDeps) {
     const versionedExtraDeps = await packageManager.getVersionedPackages(extraDeps);
     if (debug) {
       logger.log('\uD83C\uDF81 Adding extra deps', versionedExtraDeps);
     }
-    await packageManager.addDependencies({ installAsDevDependencies: true }, versionedExtraDeps);
+    await packageManager.addDependencies(
+      { installAsDevDependencies: true, skipInstall: true, packageJson },
+      versionedExtraDeps
+    );
   }
-  await packageManager.installDependencies();
 }
 
 export const addStories: Task['run'] = async (
@@ -845,7 +930,7 @@ async function prepareAngularSandbox(cwd: string, templateName: string) {
 
   packageJson.scripts = {
     ...packageJson.scripts,
-    'docs:json': 'DIR=$PWD; cd ../../scripts; jiti combine-compodoc $DIR',
+    'docs:json': 'DIR=$PWD; yarn --cwd ../../scripts jiti combine-compodoc $DIR',
     storybook: `yarn docs:json && ${packageJson.scripts.storybook}`,
     'build-storybook': `yarn docs:json && ${packageJson.scripts['build-storybook']}`,
   };
