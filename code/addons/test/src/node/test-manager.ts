@@ -7,7 +7,7 @@ import {
   type TestingModuleProgressReportPayload,
   type TestingModuleRunRequestPayload,
 } from 'storybook/internal/core-events';
-import type { experimental_UniversalStore } from 'storybook/internal/preview-api';
+import type { experimental_UniversalStore } from 'storybook/internal/core-server';
 
 import { isEqual } from 'es-toolkit';
 
