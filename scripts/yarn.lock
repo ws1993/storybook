@@ -156,11 +156,11 @@ __metadata:
   linkType: hard
 
 "@babel/runtime@npm:^7.12.5":
-  version: 7.26.7
-  resolution: "@babel/runtime@npm:7.26.7"
+  version: 7.23.2
+  resolution: "@babel/runtime@npm:7.23.2"
   dependencies:
     regenerator-runtime: "npm:^0.14.0"
-  checksum: 10c0/60199c049f90e5e41c687687430052a370aca60bac7859ff4ee761c5c1739b8ba1604d391d01588c22dc0e93828cbadb8ada742578ad1b1df240746bce98729a
+  checksum: 10c0/271fcfad8574269d9967b8a1c03f2e1eab108a52ad7c96ed136eee0b11f46156f1186637bd5e79a4207163db9a00413cd70a6428e137b982d0ee8ab85eb9f438
   languageName: node
   linkType: hard
 
@@ -1588,7 +1588,7 @@ __metadata:
     jiti: "npm:^1.21.6"
     json5: "npm:^2.2.3"
     junit-xml: "npm:^1.2.0"
-    knip: "npm:^5.30.1"
+    knip: "npm:^5.43.6"
     lint-staged: "npm:^15.2.7"
     memoizerific: "npm:^1.11.3"
     minimatch: "npm:^10.0.1"
@@ -8560,9 +8560,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"knip@npm:^5.30.1":
-  version: 5.44.0
-  resolution: "knip@npm:5.44.0"
+"knip@npm:^5.43.6":
+  version: 5.43.6
+  resolution: "knip@npm:5.43.6"
   dependencies:
     "@nodelib/fs.walk": "npm:3.0.1"
     "@snyk/github-codeowners": "npm:1.1.0"
@@ -8586,7 +8586,7 @@ __metadata:
   bin:
     knip: bin/knip.js
     knip-bun: bin/knip-bun.js
-  checksum: 10c0/6fca4125cd0423eed90be1f181c1288df2f09155ed89a0f7bc2202b46d4e17f171d91d2e6f1197b22a76166fbd75b9b88f8b570cf6b52aa02b01635af9fb51d1
+  checksum: 10c0/fb8d2be32c6ac21997c78b77cbf67c1c9bb8e525f9838811b80e6a32b57723c2a1f7cb8a86621bd81c9e28582839732f79b1005628e3bc8991f5848777075630
   languageName: node
   linkType: hard
 
