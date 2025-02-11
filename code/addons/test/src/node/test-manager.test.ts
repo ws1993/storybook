@@ -228,8 +228,6 @@ describe('TestManager', () => {
     expect(vitest.runFiles).toHaveBeenCalledWith([], true);
     createVitest.mockClear();
 
-    // storeGetState.mockReturnValueOnce({ config: { coverage: false, a11y: false } });
-
     await testManager.handleRunRequest({
       providerId: TEST_PROVIDER_ID,
       indexUrl: 'http://localhost:6006/index.json',

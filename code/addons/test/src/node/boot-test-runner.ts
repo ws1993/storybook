@@ -43,14 +43,14 @@ const bootTestRunner = async (channel: Channel) => {
     child?.send({ args, from: 'server', type: TESTING_MODULE_RUN_REQUEST });
   const forwardCancel = (...args: any[]) =>
     child?.send({ args, from: 'server', type: TESTING_MODULE_CANCEL_TEST_RUN_REQUEST });
-  const forwardUniversalStore = (...args: any) => {
+  const forwardStore = (...args: any) => {
     child?.send({ args, from: 'server', type: STORE_CHANNEL_EVENT_NAME });
   };
 
   const killChild = () => {
     channel.off(TESTING_MODULE_RUN_REQUEST, forwardRun);
     channel.off(TESTING_MODULE_CANCEL_TEST_RUN_REQUEST, forwardCancel);
-    channel.off(STORE_CHANNEL_EVENT_NAME, forwardUniversalStore);
+    channel.off(STORE_CHANNEL_EVENT_NAME, forwardStore);
     child?.kill();
     child = null;
   };
@@ -79,7 +79,7 @@ const bootTestRunner = async (channel: Channel) => {
         }
       });
 
-      channel.on(STORE_CHANNEL_EVENT_NAME, forwardUniversalStore);
+      channel.on(STORE_CHANNEL_EVENT_NAME, forwardStore);
 
       child.on('message', (result: any) => {
         if (result.type === 'ready') {

@@ -323,7 +323,7 @@ export const experimental_serverChannel = async (
 
     channel.on(TESTING_MODULE_CRASH_REPORT, async (payload: TestingModuleCrashReportPayload) => {
       if (payload.providerId === ADDON_TEST_PROVIDER_ID) {
-        // addon-test does it's own telemetry
+        // addon-test does its own telemetry
         return;
       }
       await telemetry('testing-module-crash-report', {

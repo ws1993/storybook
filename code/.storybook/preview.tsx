@@ -2,11 +2,7 @@ import * as React from 'react';
 import { Fragment, useEffect } from 'react';
 
 import type { Channel } from 'storybook/internal/channels';
-import {
-  DocsContext as DocsContextProps,
-  mockChannel,
-  useArgs,
-} from 'storybook/internal/preview-api';
+import { DocsContext as DocsContextProps, useArgs } from 'storybook/internal/preview-api';
 import type { PreviewWeb } from 'storybook/internal/preview-api';
 import {
   Global,

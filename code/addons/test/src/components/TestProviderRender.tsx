@@ -119,7 +119,7 @@ export const TestProviderRender: FC<TestProviderRenderProps> = ({
 
   const isA11yAddon = addons.experimental_getRegisteredAddons().includes(A11Y_ADDON_ID);
 
-  const [{ config, watching }, setUniversalStoreState] = experimental_useUniversalStore(store);
+  const [{ config, watching }, setStoreState] = experimental_useUniversalStore(store);
 
   const isStoryEntry = entryId?.includes('--') ?? false;
 
@@ -247,7 +247,7 @@ export const TestProviderRender: FC<TestProviderRenderProps> = ({
                 padding="small"
                 active={watching}
                 onClick={() =>
-                  setUniversalStoreState((s) => ({
+                  setStoreState((s) => ({
                     ...s,
                     watching: !watching,
                   }))
@@ -318,7 +318,7 @@ export const TestProviderRender: FC<TestProviderRenderProps> = ({
                   type="checkbox"
                   checked={config.a11y}
                   onChange={() =>
-                    setUniversalStoreState((s) => ({
+                    setStoreState((s) => ({
                       ...s,
                       config: { ...s.config, a11y: !config.a11y },
                     }))
@@ -338,7 +338,7 @@ export const TestProviderRender: FC<TestProviderRenderProps> = ({
                   checked={watching ? false : config.coverage}
                   disabled={watching}
                   onChange={() =>
-                    setUniversalStoreState((s) => ({
+                    setStoreState((s) => ({
                       ...s,
                       config: { ...s.config, coverage: !config.coverage },
                     }))
