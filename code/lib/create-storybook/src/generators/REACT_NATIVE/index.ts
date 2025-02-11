@@ -1,12 +1,8 @@
-import type { NpmOptions } from '../../../../../core/src/cli/NpmOptions';
 import { copyTemplateFiles, getBabelDependencies } from '../../../../../core/src/cli/helpers';
 import { SupportedLanguage } from '../../../../../core/src/cli/project_types';
-import type { JsPackageManager } from '../../../../../core/src/common/js-package-manager/JsPackageManager';
+import type { Generator } from '../types';
 
-const generator = async (
-  packageManager: JsPackageManager,
-  npmOptions: NpmOptions
-): Promise<void> => {
+const generator: Generator = async (packageManager, npmOptions, options) => {
   const packageJson = await packageManager.retrievePackageJson();
 
   const missingReactDom =
@@ -64,6 +60,7 @@ const generator = async (
     // this value for language is not used since we only ship the ts template. This means we just fallback to @storybook/react-native/template/cli.
     language: SupportedLanguage.TYPESCRIPT_4_9,
     destination: storybookConfigFolder,
+    features: options.features,
   });
 };
 

@@ -109,6 +109,15 @@ const getRendererPackage = (framework: string | undefined, renderer: string) => 
 
 const applyRequireWrapper = (packageName: string) => `%%getAbsolutePath('${packageName}')%%`;
 
+const applyAddonRequireWrapper = (pkg: string | { name: string }) => {
+  if (typeof pkg === 'string') {
+    return applyRequireWrapper(pkg);
+  }
+  const obj = { ...pkg } as { name: string };
+  obj.name = applyRequireWrapper(pkg.name);
+  return obj;
+};
+
 const getFrameworkDetails = (
   renderer: SupportedRenderers,
   builder: Builder,
@@ -261,6 +270,10 @@ export async function baseGenerator(
 
   const compiler = webpackCompiler ? webpackCompiler({ builder }) : undefined;
 
+  const essentials = features.includes('docs')
+    ? '@storybook/addon-essentials'
+    : { name: '@storybook/addon-essentials', options: { docs: false } };
+
   const extraAddonsToInstall =
     typeof extraAddonPackages === 'function'
       ? await extraAddonPackages({
@@ -269,22 +282,23 @@ export async function baseGenerator(
         })
       : extraAddonPackages;
 
-  extraAddonsToInstall.push('@storybook/addon-essentials', '@chromatic-com/storybook@^3');
+  extraAddonsToInstall.push('@chromatic-com/storybook@^3');
 
   // added to main.js
   const addons = [
     ...(compiler ? [`@storybook/addon-webpack5-compiler-${compiler}`] : []),
+    essentials,
     ...stripVersions(extraAddonsToInstall),
   ].filter(Boolean);
 
   // added to package.json
   const addonPackages = [
+    '@storybook/addon-essentials',
     '@storybook/blocks',
+    '@storybook/test',
     ...(compiler ? [`@storybook/addon-webpack5-compiler-${compiler}`] : []),
     ...extraAddonsToInstall,
   ].filter(Boolean);
-
-  addonPackages.push('@storybook/test');
 
   if (hasInteractiveStories(rendererId) && !features.includes('test')) {
     addons.push('@storybook/addon-interactions');
@@ -396,7 +410,7 @@ export async function baseGenerator(
       prefixes,
       storybookConfigFolder,
       addons: shouldApplyRequireWrapperOnPackageNames
-        ? addons.map((addon) => applyRequireWrapper(addon))
+        ? addons.map((addon) => applyAddonRequireWrapper(addon))
         : addons,
       extensions,
       language,
@@ -438,6 +452,7 @@ export async function baseGenerator(
       language,
       destination: componentsDestinationPath,
       commonAssetsDir: join(getCliDir(), 'rendererAssets', 'common'),
+      features,
     });
   }
 }

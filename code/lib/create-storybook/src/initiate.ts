@@ -88,7 +88,7 @@ const installStorybook = async <Project extends ProjectType>(
         );
 
       case ProjectType.REACT_NATIVE: {
-        return reactNativeGenerator(packageManager, npmOptions).then(
+        return reactNativeGenerator(packageManager, npmOptions, generatorOptions).then(
           commandLog('Adding Storybook support to your "React Native" app')
         );
       }
@@ -222,6 +222,7 @@ const projectTypeInquirer = async (
           type: 'confirm',
           name: 'manual',
           message: 'Do you want to manually choose a Storybook project type to install?',
+          initial: true,
         },
       ]);
 
