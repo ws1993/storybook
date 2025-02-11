@@ -433,7 +433,7 @@ describe('addonA11yAddonTest', () => {
 
         beforeAll(annotations.beforeAll);
 
-        2) We have to update your .storybook/preview.js file to set up tags from @storybook/addon-a11y.
+        2) We have to update your .storybook/preview.js file to set up parameters.a11y.test from @storybook/addon-a11y.
 
         For more information, please refer to the accessibility addon documentation: 
         https://storybook.js.org/docs/writing-tests/accessibility-testing#test-addon-integration"
@@ -508,7 +508,7 @@ describe('addonA11yAddonTest', () => {
 
         @storybook/addon-a11y now integrates with @storybook/experimental-addon-test to provide automatic accessibility checks for your stories, powered by Axe and Vitest.
 
-        1) We have to update your .storybook/preview.js file to set up tags from @storybook/addon-a11y.
+        1) We have to update your .storybook/preview.js file to set up parameters.a11y.test from @storybook/addon-a11y.
 
         For more information, please refer to the accessibility addon documentation: 
         https://storybook.js.org/docs/writing-tests/accessibility-testing#test-addon-integration"

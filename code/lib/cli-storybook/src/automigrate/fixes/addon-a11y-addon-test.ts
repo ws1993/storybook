@@ -203,7 +203,7 @@ export const addonA11yAddonTest: Fix<AddonA11yAddonTestOptions> = {
 
         prompt.push(
           dedent`
-            ${counter++}) We have to update your ${picocolors.cyan(`.storybook/preview${fileExtensionPreviewFile}`)} file to set up tags from ${picocolors.magenta(`@storybook/addon-a11y`)}.
+            ${counter++}) We have to update your ${picocolors.cyan(`.storybook/preview${fileExtensionPreviewFile}`)} file to set up ${picocolors.yellow('parameters.a11y.test')} from ${picocolors.magenta(`@storybook/addon-a11y`)}.
           `
         );
       }
