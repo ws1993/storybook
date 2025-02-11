@@ -20,11 +20,11 @@ import {
   type TestProviderConfig,
   type TestProviderState,
 } from 'storybook/internal/core-events';
+import type { Tag } from 'storybook/internal/csf';
 import { addons, useStorybookState } from 'storybook/internal/manager-api';
 import type { API } from 'storybook/internal/manager-api';
 import { styled, useTheme } from 'storybook/internal/theming';
 
-import type { Tag } from '@storybook/csf';
 import {
   AccessibilityIcon,
   EditIcon,
@@ -379,7 +379,7 @@ export const TestProviderRender: FC<TestProviderRenderProps> = ({
             icon={
               state.crashed ? (
                 <TestStatusIcon status="critical" aria-label="status: crashed" />
-              ) : // @ts-expect-error: TODO: Fix types
+              ) : // @ts-expect-error @ghengeveld should check whether this is a bug or not
               status === 'unknown' ? (
                 <TestStatusIcon status="unknown" aria-label="status: unknown" />
               ) : (
