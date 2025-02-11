@@ -24,8 +24,8 @@ const name = 'Framework test compatibility';
 export const frameworkTest: Check = {
   condition: async (context, state) => {
     if (
-      !state.intents ||
-      !state.intents.includes('test') ||
+      !state.features ||
+      !state.features.includes('test') ||
       SUPPORTED_FRAMEWORKS.includes(state.framework)
     ) {
       return { type: CompatibilityType.COMPATIBLE };

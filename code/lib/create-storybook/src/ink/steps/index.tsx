@@ -2,7 +2,7 @@ import type { Framework } from '../../bin/modernInputs';
 
 export type State = Omit<
   {
-    intents: string[];
+    features: string[];
     framework: Framework;
   },
   'width' | 'height'

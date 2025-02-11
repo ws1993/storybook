@@ -19,7 +19,7 @@ export type GeneratorOptions = {
   frameworkPreviewParts?: FrameworkPreviewParts;
   // skip prompting the user
   yes: boolean;
-  intents: string[];
+  features: string[];
 };
 
 export interface FrameworkOptions {
@@ -51,7 +51,7 @@ export type Generator<T = void> = (
 export type CommandOptions = {
   packageManager: PackageManagerName;
   usePnp?: boolean;
-  intents: string[];
+  features: string[];
   type?: ProjectType;
   force?: any;
   html?: boolean;

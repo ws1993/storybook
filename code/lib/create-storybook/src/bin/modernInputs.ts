@@ -1,5 +1,3 @@
-import { z } from 'zod';
-
 export type Framework = (typeof supportedFrameworks)[number];
 
 // TODO: sync this/pull this from core
@@ -88,38 +86,3 @@ export const supportedFrameworksNames = {
   sveltekit: 'SvelteKit',
   'react-native': 'React Native',
 } satisfies Record<Framework, string>;
-
-export const modernInputs = z.strictObject({
-  intents: z //
-    .array(z.enum(['dev', 'docs', 'test']))
-    .optional()
-    .describe('What are you using Storybook for?'),
-  features: z //
-    .array(z.enum(['onboarding', 'examples', 'essentials', 'typescript', 'vrt']))
-    .optional()
-    .describe('Choose your features?'),
-
-  directory: z //
-    .string()
-    .optional()
-    .describe('Path where to initialize storybook')
-    .default('.'),
-  framework: z //
-    .enum(supportedFrameworks)
-    .optional()
-    .describe('Which framework'),
-
-  install: z //
-    .boolean()
-    .optional()
-    .describe('Install dependencies using the package manager'),
-
-  ignoreGitNotClean: z //
-    .boolean()
-    .optional()
-    .describe('Ignore git not clean'),
-  ignoreVersion: z //
-    .boolean()
-    .optional()
-    .describe('Ignore version warning'),
-});

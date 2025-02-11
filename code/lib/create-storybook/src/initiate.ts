@@ -72,7 +72,7 @@ const installStorybook = async <Project extends ProjectType>(
     pnp: pnp || (options.usePnp as boolean),
     yes: options.yes as boolean,
     projectType,
-    intents: options.intents || [],
+    features: options.features || [],
   };
 
   const runGenerator: () => Promise<any> = async () => {
@@ -293,12 +293,12 @@ export async function doInitiate(options: CommandOptions): Promise<
 
   const isInteractive = process.stdout.isTTY && !process.env.CI;
 
-  let intents = options.intents || isInteractive ? ['dev', 'docs', 'test'] : ['dev', 'docs'];
+  let features = options.features || isInteractive ? ['dev', 'docs', 'test'] : ['dev', 'docs'];
 
-  if (isInteractive && !options.intents) {
+  if (isInteractive && !options.features) {
     const out = await prompts({
       type: 'multiselect',
-      name: 'intents',
+      name: 'features',
       message: `What are you using Storybook for?`,
       choices: [
         { title: 'Development', value: 'dev', selected: true, disabled: true },
@@ -306,14 +306,14 @@ export async function doInitiate(options: CommandOptions): Promise<
         { title: 'Testing', value: 'test', selected: true },
       ],
     });
-    intents = out.intents;
+    features = out.features;
   }
 
-  if (!intents.includes('dev')) {
-    intents.push('dev');
+  if (!features.includes('dev')) {
+    features.push('dev');
   }
 
-  const telemetryIntents = [...intents];
+  const telemetryFeatures = [...features];
 
   // Check if the current directory is empty.
   if (options.force !== true && currentDirectoryIsEmpty(packageManager.type)) {
@@ -376,7 +376,7 @@ export async function doInitiate(options: CommandOptions): Promise<
     }
   }
 
-  if (intents.includes('test')) {
+  if (features.includes('test')) {
     const supportedFrameworks: ProjectType[] = [
       ProjectType.REACT,
       ProjectType.VUE3,
@@ -391,11 +391,11 @@ export async function doInitiate(options: CommandOptions): Promise<
       projectType === ProjectType.NEXTJS ||
       (options.builder !== 'webpack5' && supportedFrameworks.includes(projectType));
     if (!supportsTestAddon) {
-      intents.splice(intents.indexOf('test'), 1);
+      features.splice(features.indexOf('test'), 1);
     }
   }
 
-  if (intents.includes('test')) {
+  if (features.includes('test')) {
     const packageVersionsData = await packageVersions.condition({ packageManager }, {} as any);
     if (packageVersionsData.type === 'incompatible') {
       const { ignorePackageVersions } = isInteractive
@@ -411,14 +411,14 @@ export async function doInitiate(options: CommandOptions): Promise<
           ])
         : { ignorePackageVersions: true };
       if (ignorePackageVersions) {
-        intents.splice(intents.indexOf('test'), 1);
+        features.splice(features.indexOf('test'), 1);
       } else {
         process.exit(0);
       }
     }
   }
 
-  if (intents.includes('test')) {
+  if (features.includes('test')) {
     const vitestConfigFilesData = await vitestConfigFiles.condition(
       { babel, findUp, fs } as any,
       { directory: process.cwd() } as any
@@ -437,7 +437,7 @@ export async function doInitiate(options: CommandOptions): Promise<
           ])
         : { ignoreVitestConfigFiles: true };
       if (ignoreVitestConfigFiles) {
-        intents.splice(intents.indexOf('test'), 1);
+        features.splice(features.indexOf('test'), 1);
       } else {
         process.exit(0);
       }
@@ -449,7 +449,7 @@ export async function doInitiate(options: CommandOptions): Promise<
   }
 
   // update the mutated value
-  options.intents = intents;
+  options.features = features;
 
   const installResult = await installStorybook(projectType as ProjectType, packageManager, options);
 
@@ -458,7 +458,7 @@ export async function doInitiate(options: CommandOptions): Promise<
   }
 
   if (!options.disableTelemetry) {
-    await telemetry('init', { projectType, intents: telemetryIntents });
+    await telemetry('init', { projectType, features: telemetryFeatures });
   }
 
   if (projectType === ProjectType.REACT_NATIVE) {
@@ -502,7 +502,7 @@ export async function doInitiate(options: CommandOptions): Promise<
       ? `ng run ${installResult.projectName}:storybook`
       : packageManager.getRunStorybookCommand();
 
-  if (intents.includes('test')) {
+  if (features.includes('test')) {
     logger.log(
       `> npx storybook@${versions.storybook} add @storybook/experimental-addon-test@${versions['@storybook/experimental-addon-test']}`
     );

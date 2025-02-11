@@ -621,7 +621,7 @@ jobs:
           command: yarn upload-bench $(yarn get-template --cadence << pipeline.parameters.workflow >> --task bench) << pipeline.parameters.ghPrNumber >> << pipeline.parameters.ghBaseBranch >>
       - report-workflow-on-failure:
           template: $(yarn get-template --cadence << pipeline.parameters.workflow >> --task bench)
-  test-init-intents:
+  test-init-features:
     executor:
       class: small
       name: sb_node_22_browsers
@@ -631,15 +631,15 @@ jobs:
       - attach_workspace:
           at: .
       - run:
-          name: Storybook init for intents
+          name: Storybook init for features
           command: |
             cd code
             yarn local-registry --open &
             cd ../../
-            mkdir intents-1
-            cd intents-1
+            mkdir features-1
+            cd features-1
             npm set registry http://localhost:6001
-            npx create-storybook --yes --package-manager npm --intents dev docs test
+            npx create-storybook --yes --package-manager npm --features dev docs test
             npx vitest
           environment:
             IN_STORYBOOK_SANDBOX: true
@@ -885,7 +885,7 @@ workflows:
       - test-ui-testing-module:
           requires:
             - build
-      - test-init-intents:
+      - test-init-features:
           requires:
             - build
       - test-portable-stories:
@@ -962,7 +962,7 @@ workflows:
       - test-ui-testing-module:
           requires:
             - build
-      - test-init-intents:
+      - test-init-features:
           requires:
             - build
       - bench-sandboxes:
@@ -1038,7 +1038,7 @@ workflows:
       - test-ui-testing-module:
           requires:
             - build
-      - test-init-intents:
+      - test-init-features:
           requires:
             - build
       - test-init-empty:
