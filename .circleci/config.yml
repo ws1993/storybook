@@ -272,13 +272,23 @@ jobs:
           keys:
             - build-yarn-2-cache-v8--{{ checksum "code/yarn.lock" }}--{{ checksum "scripts/yarn.lock" }}
       - run:
+          name: Install Scripts
+          command: |
+            cd scripts
+            yarn install
+      - run:
+          name: Install Code
+          command: |
+            cd code
+            yarn install
+      - run:
           name: Compile
           command: |
-            yarn task --task compile --start-from=auto --no-link --debug
+            yarn task check -s compile --no-link --debug
       - run:
           name: Check
           command: |
-            yarn task --task check --start-from=auto --no-link --debug
+            yarn task check --no-link --debug
       - run:
           name: Ensure no changes pending
           command: |
