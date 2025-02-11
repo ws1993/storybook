@@ -79,7 +79,10 @@ const ProgressState = {
  * @throws {Error} If a follower is created with initial state
  * @throws {Error} If a follower cannot find its leader within 1 second
  */
-export class UniversalStore<State, CustomEvent extends { type: string; payload?: any }> {
+export class UniversalStore<
+  State,
+  CustomEvent extends { type: string; payload?: any } = { type: string; payload?: any },
+> {
   /**
    * Defines the possible actor types in the store system
    *

@@ -36,8 +36,6 @@ export type StoreState = {
   watching: boolean;
 };
 
-export type StoreEvent = any;
-
 export const storeOptions = {
   id: ADDON_ID,
   initialState: {

@@ -5,6 +5,10 @@ import dedent from 'ts-dedent';
 import { UniversalStore } from '.';
 import type { StoreOptions } from './types';
 
+type TestUtils = {
+  fn: <Func extends (...args: any[]) => any>(fn: Func) => Func;
+};
+
 /**
  * A mock universal store that can be used when testing code that relies on a universal store. It
  * functions exactly like a normal universal store, with a few exceptions:
@@ -27,7 +31,7 @@ import type { StoreOptions } from './types';
  * const initialState = { ... };
  * const store = new MockUniversalStore({ initialState }, testUtils);
  *
- * expoert default {
+ * export default {
  *   title: 'My story',
  *   beforeEach: () => {
  *     return () => {
@@ -39,11 +43,11 @@ import type { StoreOptions } from './types';
  */
 export class MockUniversalStore<
   State,
-  CustomEvent extends { type: string; payload?: any },
+  CustomEvent extends { type: string; payload?: any } = { type: string; payload?: any },
 > extends UniversalStore<State, CustomEvent> {
   private testUtils;
 
-  public constructor(options: StoreOptions<State>, testUtils?: any) {
+  public constructor(options: StoreOptions<State>, testUtils?: TestUtils) {
     UniversalStore.isInternalConstructing = true;
     super(
       { ...options, leader: true },
@@ -67,7 +71,7 @@ export class MockUniversalStore<
   static create<
     State = any,
     CustomEvent extends { type: string; payload?: any } = { type: string; payload?: any },
-  >(options: StoreOptions<State>, testUtils?: any): MockUniversalStore<State, CustomEvent> {
+  >(options: StoreOptions<State>, testUtils?: TestUtils): MockUniversalStore<State, CustomEvent> {
     return new MockUniversalStore(options, testUtils);
   }
 
@@ -78,7 +82,6 @@ export class MockUniversalStore<
         dedent`Cannot call unsubscribeAll on a store that does not have testUtils.
         Please provide testUtils as the second argument when creating the store.`
       );
-      return;
     }
     // unsubscribe all listeners by calling the unsubscribe methods returned from the calls
     const callReturnedUnsubscribeFn = (result: any) => {
@@ -88,7 +91,9 @@ export class MockUniversalStore<
         // ignore
       }
     };
-    this.testUtils.mocked(this.subscribe).mock.results.forEach(callReturnedUnsubscribeFn);
-    this.testUtils.mocked(this.onStateChange).mock.results.forEach(callReturnedUnsubscribeFn);
+    //@ts-expect-error - TS doesn't know that it's a mock
+    this.subscribe.mock?.results.forEach(callReturnedUnsubscribeFn);
+    //@ts-expect-error - TS doesn't know that it's a mock
+    this.onStateChange.mock?.results.forEach(callReturnedUnsubscribeFn);
   }
 }

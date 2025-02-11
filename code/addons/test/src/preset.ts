@@ -26,7 +26,6 @@ import { dedent } from 'ts-dedent';
 import {
   COVERAGE_DIRECTORY,
   STORYBOOK_ADDON_TEST_CHANNEL,
-  type StoreEvent,
   type StoreState,
   TEST_PROVIDER_ID,
   storeOptions,
@@ -66,7 +65,7 @@ export const experimental_serverChannel = async (channel: Channel, options: Opti
   const builderName = typeof core?.builder === 'string' ? core.builder : core?.builder?.name;
   const framework = await getFrameworkName(options);
 
-  const store = experimental_UniversalStore.create<StoreState, StoreEvent>({
+  const store = experimental_UniversalStore.create<StoreState>({
     ...storeOptions,
     leader: true,
   });

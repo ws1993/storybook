@@ -11,7 +11,7 @@ import type { experimental_UniversalStore } from 'storybook/internal/core-server
 
 import { isEqual } from 'es-toolkit';
 
-import { type StoreEvent, type StoreState, TEST_PROVIDER_ID } from '../constants';
+import { type StoreState, TEST_PROVIDER_ID } from '../constants';
 import { VitestManager } from './vitest-manager';
 
 export class TestManager {
@@ -19,7 +19,7 @@ export class TestManager {
 
   constructor(
     private channel: Channel,
-    public store: experimental_UniversalStore<StoreState, StoreEvent>,
+    public store: experimental_UniversalStore<StoreState>,
     private options: {
       onError?: (message: string, error: Error) => void;
       onReady?: () => void;
@@ -87,7 +87,7 @@ export class TestManager {
         as a coverage report for a subset of stories is not useful.
       */
       const temporarilyDisableCoverage =
-        state?.config.coverage && !state.watching && (payload.storyIds ?? []).length > 0;
+        state.config.coverage && !state.watching && (payload.storyIds ?? []).length > 0;
       if (temporarilyDisableCoverage) {
         await this.vitestManager.restartVitest({
           coverage: false,
@@ -129,7 +129,7 @@ export class TestManager {
 
   static async start(
     channel: Channel,
-    store: experimental_UniversalStore<StoreState, StoreEvent>,
+    store: experimental_UniversalStore<StoreState>,
     options: typeof TestManager.prototype.options = {}
   ) {
     return new Promise<TestManager>((resolve) => {

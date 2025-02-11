@@ -291,7 +291,7 @@ export const experimental_serverChannel = async (
       TESTING_MODULE_PROGRESS_REPORT,
       async (payload: TestingModuleProgressReportPayload) => {
         if (payload.providerId === ADDON_TEST_PROVIDER_ID) {
-          // addon-test does it's own telemetry
+          // addon-test does its own telemetry
           return;
         }
         const status = 'status' in payload ? payload.status : undefined;

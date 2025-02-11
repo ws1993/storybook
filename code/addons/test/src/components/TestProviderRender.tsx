@@ -169,9 +169,7 @@ export const TestProviderRender: FC<TestProviderRenderProps> = ({
     : undefined;
 
   const a11ySkippedAmount =
-    state.running || !config?.a11y || !config?.a11y
-      ? null
-      : a11yResults?.filter((result) => !result).length;
+    state.running || !config?.a11y ? null : a11yResults?.filter((result) => !result).length;
 
   const a11ySkippedLabel = a11ySkippedAmount
     ? a11ySkippedAmount === 1 && isStoryEntry
