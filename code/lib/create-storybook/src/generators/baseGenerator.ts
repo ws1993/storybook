@@ -12,6 +12,7 @@ import { configureEslintPlugin, extractEslintInfo } from '../../../../core/src/c
 import { copyTemplateFiles } from '../../../../core/src/cli/helpers';
 import {
   type Builder,
+  ProjectType,
   SupportedLanguage,
   externalFrameworks,
 } from '../../../../core/src/cli/project_types';
@@ -202,6 +203,25 @@ export async function baseGenerator(
 
   if (!builder) {
     builder = await detectBuilder(packageManager as any, projectType);
+  }
+
+  if (features.includes('test')) {
+    const supportedFrameworks: ProjectType[] = [
+      ProjectType.REACT,
+      ProjectType.VUE3,
+      ProjectType.NEXTJS,
+      ProjectType.NUXT,
+      ProjectType.PREACT,
+      ProjectType.SVELTE,
+      ProjectType.SVELTEKIT,
+      ProjectType.WEB_COMPONENTS,
+    ];
+    const supportsTestAddon =
+      projectType === ProjectType.NEXTJS ||
+      (builder !== 'webpack5' && supportedFrameworks.includes(projectType));
+    if (!supportsTestAddon) {
+      features.splice(features.indexOf('test'), 1);
+    }
   }
 
   const {

@@ -377,25 +377,6 @@ export async function doInitiate(options: CommandOptions): Promise<
   }
 
   if (features.includes('test')) {
-    const supportedFrameworks: ProjectType[] = [
-      ProjectType.REACT,
-      ProjectType.VUE3,
-      ProjectType.NEXTJS,
-      ProjectType.NUXT,
-      ProjectType.PREACT,
-      ProjectType.SVELTE,
-      ProjectType.SVELTEKIT,
-      ProjectType.WEB_COMPONENTS,
-    ];
-    const supportsTestAddon =
-      projectType === ProjectType.NEXTJS ||
-      (options.builder !== 'webpack5' && supportedFrameworks.includes(projectType));
-    if (!supportsTestAddon) {
-      features.splice(features.indexOf('test'), 1);
-    }
-  }
-
-  if (features.includes('test')) {
     const packageVersionsData = await packageVersions.condition({ packageManager }, {} as any);
     if (packageVersionsData.type === 'incompatible') {
       const { ignorePackageVersions } = isInteractive
