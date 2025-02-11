@@ -164,7 +164,7 @@ export const TableOfContents = ({
         if (e.currentTarget instanceof HTMLAnchorElement) {
           const [, headerId] = e.currentTarget.href.split('#');
           if (headerId) {
-            channel.emit(NAVIGATE_URL, `#${encodeURIComponent(headerId)}`);
+            channel.emit(NAVIGATE_URL, `#${headerId}`);
           }
         }
       },
