@@ -130,23 +130,13 @@ export const TestProviderRender: FC<TestProviderRenderProps> = ({
   const [isEditing, setIsEditing] = useState(false);
   const theme = useTheme();
   const coverageSummary = state.details?.coverageSummary;
-  const storybookState = useStorybookState();
 
   const isA11yAddon = addons.experimental_getRegisteredAddons().includes(A11Y_ADDON_ID);
-
-  const isA11yAddonInitiallyChecked = useMemo(() => {
-    const internalIndex = storybookState.internal_index;
-    if (!internalIndex || !isA11yAddon) {
-      return false;
-    }
-
-    return Object.values(internalIndex.entries).some((entry) => entry.tags?.includes('a11y-test'));
-  }, [isA11yAddon, storybookState.internal_index]);
 
   const [config, updateConfig] = useConfig(
     api,
     state.id,
-    state.config || { a11y: isA11yAddonInitiallyChecked, coverage: false }
+    state.config || { a11y: false, coverage: false }
   );
 
   const isStoryEntry = entryId?.includes('--') ?? false;

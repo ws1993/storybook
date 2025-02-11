@@ -4,7 +4,6 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 import type { StoryContext } from 'storybook/internal/csf';
 
 import { run } from './a11yRunner';
-import { A11Y_TEST_TAG } from './constants';
 import { experimental_afterEach } from './preview';
 import { getIsVitestRunning, getIsVitestStandaloneRun } from './utils';
 
@@ -93,7 +92,6 @@ describe('afterEach', () => {
       globals: {
         a11y: {},
       },
-      tags: [A11Y_TEST_TAG],
       ...overrides,
     }) as any;
 
@@ -156,27 +154,6 @@ describe('afterEach', () => {
     });
   });
 
-  it('should run accessibility checks if "a11y-test" flag is not available and is not running in Vitest', async () => {
-    const context = createContext({
-      tags: [],
-    });
-    const result = {
-      violations: [],
-    };
-    mockedRun.mockResolvedValue(result as any);
-    vi.mocked(getIsVitestRunning).mockReturnValue(false);
-
-    await experimental_afterEach(context);
-
-    expect(mockedRun).toHaveBeenCalledWith(context.parameters.a11y);
-    expect(context.reporting.addReport).toHaveBeenCalledWith({
-      type: 'a11y',
-      version: 1,
-      result,
-      status: 'passed',
-    });
-  });
-
   it('should not run accessibility checks when manual is true', async () => {
     const context = createContext({
       parameters: {
@@ -215,18 +192,6 @@ describe('afterEach', () => {
         },
       },
     });
-
-    await experimental_afterEach(context);
-
-    expect(mockedRun).not.toHaveBeenCalled();
-    expect(context.reporting.addReport).not.toHaveBeenCalled();
-  });
-
-  it('should not run accessibility checks if vitest is running and story is not tagged with a11ytest', async () => {
-    const context = createContext({
-      tags: [],
-    });
-    vi.mocked(getIsVitestRunning).mockReturnValue(true);
 
     await experimental_afterEach(context);
 

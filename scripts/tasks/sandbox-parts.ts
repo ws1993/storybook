@@ -807,7 +807,7 @@ export const extendPreview: Task['run'] = async ({ template, sandboxDir }) => {
   const previewConfig = await readConfig({ cwd: sandboxDir, fileName: 'preview' });
 
   if (template.expected.builder.includes('vite')) {
-    previewConfig.setFieldValue(['tags'], ['vitest', '!a11y-test']);
+    previewConfig.setFieldValue(['tags'], ['vitest']);
   }
 
   await writeConfig(previewConfig);
