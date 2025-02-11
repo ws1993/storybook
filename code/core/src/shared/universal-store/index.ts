@@ -43,8 +43,8 @@ const ProgressState = {
  *
  * @remarks
  * - The store must be created using the static `create()` method, not the constructor
- * - Only leader stores can set initial state
- * - Follower stores will automatically sync with their leader's state
+ * - Follower stores will automatically sync with their leader's state. If they have initial state, it
+ *   will be replaced immediately when it has synced with the leader.
  *
  * @example
  *
