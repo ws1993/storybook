@@ -3,6 +3,7 @@ import process from 'node:process';
 import { Channel } from 'storybook/internal/channels';
 import { experimental_UniversalStore } from 'storybook/internal/core-server';
 
+import { storeOptions } from '../constants';
 import { TestManager } from './test-manager';
 
 process.env.TEST = 'true';
@@ -27,7 +28,7 @@ const channel: Channel = new Channel({
   experimental_UniversalStore.Environment.SERVER
 );
 
-new TestManager(channel, {
+new TestManager(channel, experimental_UniversalStore.create(storeOptions), {
   onError: (message, error) => {
     process.send?.({ type: 'error', message, error: error.stack ?? error });
   },

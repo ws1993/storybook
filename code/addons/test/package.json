@@ -23,6 +23,12 @@
     "url": "https://opencollective.com/storybook"
   },
   "license": "MIT",
+  "imports": {
+    "#manager-store": {
+      "storybook": "./src/manager-store.mock.ts",
+      "default": "./src/manager-store.ts"
+    }
+  },
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
@@ -62,12 +68,6 @@
     "./preset": "./dist/preset.js",
     "./postinstall": "./dist/postinstall.js",
     "./package.json": "./package.json"
-  },
-  "imports": {
-    "#store/manager": {
-      "storybook": "./src/store/manager.mock.ts",
-      "default": "./src/store/manager.ts"
-    }
   },
   "main": "dist/index.js",
   "module": "dist/index.mjs",

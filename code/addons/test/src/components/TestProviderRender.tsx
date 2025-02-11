@@ -22,7 +22,7 @@ import {
   StopAltIcon,
 } from '@storybook/icons';
 
-import { store } from '#store/manager';
+import { store } from '#manager-store';
 
 import {
   ADDON_ID as A11Y_ADDON_ID,

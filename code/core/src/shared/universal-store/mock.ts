@@ -1,5 +1,7 @@
 import { Channel } from '@storybook/core/channels';
 
+import dedent from 'ts-dedent';
+
 import { UniversalStore } from '.';
 import type { StoreOptions } from './types';
 
@@ -69,19 +71,24 @@ export class MockUniversalStore<
     return new MockUniversalStore(options, testUtils);
   }
 
-  public mockClear() {
+  public unsubscribeAll() {
     if (!this.testUtils) {
+      // eslint-disable-next-line local-rules/no-uncategorized-errors
+      throw new Error(
+        dedent`Cannot call unsubscribeAll on a store that does not have testUtils.
+        Please provide testUtils as the second argument when creating the store.`
+      );
       return;
     }
     // unsubscribe all listeners by calling the unsubscribe methods returned from the calls
-    const callReturnedUnsubscribe = (result: any) => {
+    const callReturnedUnsubscribeFn = (result: any) => {
       try {
         result.value();
       } catch (e) {
         // ignore
       }
     };
-    this.testUtils.mocked(this.subscribe).mock.results.forEach(callReturnedUnsubscribe);
-    this.testUtils.mocked(this.onStateChange).mock.results.forEach(callReturnedUnsubscribe);
+    this.testUtils.mocked(this.subscribe).mock.results.forEach(callReturnedUnsubscribeFn);
+    this.testUtils.mocked(this.onStateChange).mock.results.forEach(callReturnedUnsubscribeFn);
   }
 }

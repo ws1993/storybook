@@ -7,11 +7,11 @@ import {
   type TestingModuleProgressReportPayload,
   type TestingModuleRunRequestPayload,
 } from 'storybook/internal/core-events';
+import type { experimental_UniversalStore } from 'storybook/internal/preview-api';
 
 import { isEqual } from 'es-toolkit';
 
-import { type StoreState, TEST_PROVIDER_ID } from '../constants';
-import { store } from '../store/vitest';
+import { type StoreEvent, type StoreState, TEST_PROVIDER_ID } from '../constants';
 import { VitestManager } from './vitest-manager';
 
 export class TestManager {
@@ -19,6 +19,7 @@ export class TestManager {
 
   constructor(
     private channel: Channel,
+    public store: experimental_UniversalStore<StoreState, StoreEvent>,
     private options: {
       onError?: (message: string, error: Error) => void;
       onReady?: () => void;
@@ -29,7 +30,7 @@ export class TestManager {
     this.channel.on(TESTING_MODULE_RUN_REQUEST, this.handleRunRequest.bind(this));
     this.channel.on(TESTING_MODULE_CANCEL_TEST_RUN_REQUEST, this.handleCancelRequest.bind(this));
 
-    store.onStateChange((state, previousState) => {
+    this.store.onStateChange((state, previousState) => {
       if (!isEqual(state.config, previousState.config)) {
         this.handleConfigChange(state.config, previousState.config);
       }
@@ -56,7 +57,7 @@ export class TestManager {
   }
 
   async handleWatchModeRequest(watching: boolean) {
-    const coverage = store.getState().config.coverage ?? false;
+    const coverage = this.store.getState().config.coverage ?? false;
 
     if (coverage) {
       try {
@@ -79,7 +80,7 @@ export class TestManager {
         return;
       }
 
-      const state = store.getState();
+      const state = this.store.getState();
 
       /*
         If we're only running a subset of stories, we have to temporarily disable coverage,
@@ -126,9 +127,13 @@ export class TestManager {
     this.options.onError?.(message, error);
   }
 
-  static async start(channel: Channel, options: typeof TestManager.prototype.options = {}) {
+  static async start(
+    channel: Channel,
+    store: experimental_UniversalStore<StoreState, StoreEvent>,
+    options: typeof TestManager.prototype.options = {}
+  ) {
     return new Promise<TestManager>((resolve) => {
-      const testManager = new TestManager(channel, {
+      const testManager = new TestManager(channel, store, {
         ...options,
         onReady: () => {
           resolve(testManager);
