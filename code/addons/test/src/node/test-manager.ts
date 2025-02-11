@@ -7,17 +7,15 @@ import {
   type TestingModuleProgressReportPayload,
   type TestingModuleRunRequestPayload,
 } from 'storybook/internal/core-events';
-import { experimental_UniversalStore } from 'storybook/internal/core-server';
 
 import { isEqual } from 'es-toolkit';
 
-import { type StoreEvent, type StoreState, TEST_PROVIDER_ID, storeOptions } from '../constants';
+import { type StoreState, TEST_PROVIDER_ID } from '../constants';
+import { store } from '../store/vitest';
 import { VitestManager } from './vitest-manager';
 
 export class TestManager {
   vitestManager: VitestManager;
-
-  universalStore = experimental_UniversalStore.create<StoreState, StoreEvent>(storeOptions);
 
   constructor(
     private channel: Channel,
@@ -31,7 +29,7 @@ export class TestManager {
     this.channel.on(TESTING_MODULE_RUN_REQUEST, this.handleRunRequest.bind(this));
     this.channel.on(TESTING_MODULE_CANCEL_TEST_RUN_REQUEST, this.handleCancelRequest.bind(this));
 
-    this.universalStore.onStateChange((state, previousState) => {
+    store.onStateChange((state, previousState) => {
       if (!isEqual(state.config, previousState.config)) {
         this.handleConfigChange(state.config, previousState.config);
       }
@@ -58,7 +56,7 @@ export class TestManager {
   }
 
   async handleWatchModeRequest(watching: boolean) {
-    const coverage = this.universalStore.getState().config.coverage ?? false;
+    const coverage = store.getState().config.coverage ?? false;
 
     if (coverage) {
       try {
@@ -81,7 +79,7 @@ export class TestManager {
         return;
       }
 
-      const state = this.universalStore.getState();
+      const state = store.getState();
 
       /*
         If we're only running a subset of stories, we have to temporarily disable coverage,

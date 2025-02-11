@@ -9,7 +9,7 @@ import type { Meta, StoryObj } from '@storybook/react';
 import { expect, fn } from '@storybook/test';
 
 import { type Details, storeOptions } from '../constants';
-import { store as mockStore } from '../manager-store.mock';
+import { store as mockStore } from '../store/manager.mock';
 import { TestProviderRender } from './TestProviderRender';
 
 type Story = StoryObj<typeof TestProviderRender>;

@@ -39,6 +39,8 @@ export class MockUniversalStore<
   State,
   CustomEvent extends { type: string; payload?: any },
 > extends UniversalStore<State, CustomEvent> {
+  private testUtils;
+
   public constructor(options: StoreOptions<State>, testUtils?: any) {
     UniversalStore.isInternalConstructing = true;
     super(
@@ -51,6 +53,7 @@ export class MockUniversalStore<
       return;
     }
 
+    this.testUtils = testUtils;
     this.getState = testUtils.fn(this.getState);
     this.setState = testUtils.fn(this.setState);
     this.subscribe = testUtils.fn(this.subscribe);
@@ -64,5 +67,21 @@ export class MockUniversalStore<
     CustomEvent extends { type: string; payload?: any } = { type: string; payload?: any },
   >(options: StoreOptions<State>, testUtils?: any): MockUniversalStore<State, CustomEvent> {
     return new MockUniversalStore(options, testUtils);
+  }
+
+  public mockClear() {
+    if (!this.testUtils) {
+      return;
+    }
+    // unsubscribe all listeners by calling the unsubscribe methods returned from the calls
+    const callReturnedUnsubscribe = (result: any) => {
+      try {
+        result.value();
+      } catch (e) {
+        // ignore
+      }
+    };
+    this.testUtils.mocked(this.subscribe).mock.results.forEach(callReturnedUnsubscribe);
+    this.testUtils.mocked(this.onStateChange).mock.results.forEach(callReturnedUnsubscribe);
   }
 }

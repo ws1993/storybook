@@ -10,7 +10,7 @@ import {
   Addon_TypesEnum,
 } from 'storybook/internal/types';
 
-import { store } from '#manager-store';
+import { store } from '#store/manager';
 
 import { GlobalErrorContext, GlobalErrorModal } from './components/GlobalErrorModal';
 import { Panel } from './components/Panel';

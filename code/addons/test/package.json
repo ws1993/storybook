@@ -64,9 +64,9 @@
     "./package.json": "./package.json"
   },
   "imports": {
-    "#manager-store": {
-      "storybook": "./src/manager-store.mock.ts",
-      "default": "./src/manager-store.ts"
+    "#store/manager": {
+      "storybook": "./src/store/manager.mock.ts",
+      "default": "./src/store/manager.ts"
     }
   },
   "main": "dist/index.js",

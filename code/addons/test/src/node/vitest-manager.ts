@@ -23,6 +23,7 @@ import slash from 'slash';
 
 import { COVERAGE_DIRECTORY } from '../constants';
 import { log } from '../logger';
+import { store } from '../store/vitest';
 import type { StorybookCoverageReporterOptions } from './coverage-reporter';
 import { StorybookReporter } from './reporter';
 import type { TestManager } from './test-manager';
@@ -253,7 +254,7 @@ export class VitestManager {
           this.filterStories(story, spec.moduleId, { include, exclude, skip })
         );
         if (matches.length) {
-          if (!this.testManager.universalStore.getState().watching) {
+          if (!store.getState().watching) {
             // Clear the file cache if watch mode is not enabled
             this.updateLastChanged(spec.moduleId);
           }
@@ -387,7 +388,7 @@ export class VitestManager {
 
     // when watch mode is disabled, don't trigger any tests (below)
     // but still invalidate the cache for the changed file, which is handled above
-    if (!this.testManager.universalStore?.getState().watching) {
+    if (!store.getState().watching) {
       return;
     }
 
