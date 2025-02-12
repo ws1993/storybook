@@ -1,18 +1,19 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
+import { getAddonNames } from 'storybook/internal/common';
+
 import { existsSync, readFileSync, writeFileSync } from 'fs';
 import * as jscodeshift from 'jscodeshift';
 import path from 'path';
 import dedent from 'ts-dedent';
 
-import { getAddonNames } from '../helpers/mainConfigFile';
 import {
   addonA11yAddonTest,
   transformPreviewFile,
   transformSetupFile,
 } from './addon-a11y-addon-test';
 
-vi.mock('../helpers/mainConfigFile', async (importOriginal) => {
+vi.mock('storybook/internal/common', async (importOriginal) => {
   const mod = (await importOriginal()) as any;
   return {
     ...mod,
