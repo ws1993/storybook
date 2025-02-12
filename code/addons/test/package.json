@@ -23,6 +23,12 @@
     "url": "https://opencollective.com/storybook"
   },
   "license": "MIT",
+  "imports": {
+    "#manager-store": {
+      "storybook": "./src/manager-store.mock.ts",
+      "default": "./src/manager-store.ts"
+    }
+  },
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
