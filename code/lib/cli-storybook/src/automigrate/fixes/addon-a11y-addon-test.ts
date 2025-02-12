@@ -1,4 +1,4 @@
-import { formatFileContent, rendererPackages } from 'storybook/internal/common';
+import { formatFileContent, getAddonNames, rendererPackages } from 'storybook/internal/common';
 import { formatConfig, loadConfig } from 'storybook/internal/csf-tools';
 
 import { type ArrayExpression } from '@babel/types';
@@ -13,7 +13,7 @@ import {
   SUPPORTED_FRAMEWORKS,
   SUPPORTED_RENDERERS,
 } from '../../../../../addons/test/src/constants';
-import { getAddonNames, getFrameworkPackageName, getRendererName } from '../helpers/mainConfigFile';
+import { getFrameworkPackageName, getRendererName } from '../helpers/mainConfigFile';
 import type { Fix } from '../types';
 
 export const fileExtensions = [
