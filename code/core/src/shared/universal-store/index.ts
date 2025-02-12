@@ -578,6 +578,13 @@ export class UniversalStore<
       // Ignore events from self
       this.debug('handleChannelEvents: Ignoring event from self', { channelEvent });
       return;
+    } else if (
+      this.syncing?.state === ProgressState.PENDING &&
+      event.type !== UniversalStore.InternalEventType.EXISTING_STATE_RESPONSE
+    ) {
+      // Ignore events while syncing because it can cause sync issues if the state is updated
+      this.debug('handleChannelEvents: Ignoring event while syncing', { channelEvent });
+      return;
     }
     this.debug('handleChannelEvents', { channelEvent });
 
@@ -662,12 +669,16 @@ export class UniversalStore<
       console.debug(
         dedent`[UniversalStore::${this.id}::${this.environment ?? UniversalStore.Environment.UNKNOWN}]
         ${message}`,
-        data,
-        {
-          actor: this.actor,
-          state: this.state,
-          status: this.status,
-        }
+        JSON.stringify(
+          {
+            data,
+            actor: this.actor,
+            state: this.state,
+            status: this.status,
+          },
+          null,
+          2
+        )
       );
     }
   }
