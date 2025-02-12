@@ -284,7 +284,7 @@ jobs:
       - run:
           name: Compile
           command: |
-            yarn task check -s compile --no-link --debug
+            yarn task check --no-link --debug
       - run:
           name: Check
           command: |
