@@ -87,7 +87,9 @@ describe('afterEach', () => {
         addReport: vi.fn(),
       },
       parameters: {
-        a11y: {},
+        a11y: {
+          test: 'error',
+        },
       },
       globals: {
         a11y: {},
@@ -133,6 +135,33 @@ describe('afterEach', () => {
       version: 1,
       result,
       status: 'failed',
+    });
+  });
+
+  it('should run accessibility checks and should report them as warnings', async () => {
+    const context = createContext({
+      parameters: {
+        a11y: {
+          test: 'todo',
+        },
+      },
+    });
+    const result = {
+      violations,
+    };
+
+    mockedRun.mockResolvedValue(result as any);
+    mocks.getIsVitestStandaloneRun.mockReturnValue(false);
+
+    await experimental_afterEach(context);
+
+    expect(mockedRun).toHaveBeenCalledWith(context.parameters.a11y);
+
+    expect(context.reporting.addReport).toHaveBeenCalledWith({
+      type: 'a11y',
+      version: 1,
+      result,
+      status: 'warning',
     });
   });
 
@@ -189,6 +218,21 @@ describe('afterEach', () => {
       globals: {
         a11y: {
           manual: true,
+        },
+      },
+    });
+
+    await experimental_afterEach(context);
+
+    expect(mockedRun).not.toHaveBeenCalled();
+    expect(context.reporting.addReport).not.toHaveBeenCalled();
+  });
+
+  it('should not run accessibility checks when parameters.a11y.test is "off"', async () => {
+    const context = createContext({
+      parameters: {
+        a11y: {
+          test: 'off',
         },
       },
     });
