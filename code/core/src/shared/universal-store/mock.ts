@@ -5,10 +5,6 @@ import dedent from 'ts-dedent';
 import { UniversalStore } from '.';
 import type { StoreOptions } from './types';
 
-type TestUtils = {
-  fn: <Func extends (...args: any[]) => any>(fn: Func) => Func;
-};
-
 /**
  * A mock universal store that can be used when testing code that relies on a universal store. It
  * functions exactly like a normal universal store, with a few exceptions:
@@ -47,7 +43,7 @@ export class MockUniversalStore<
 > extends UniversalStore<State, CustomEvent> {
   private testUtils;
 
-  public constructor(options: StoreOptions<State>, testUtils?: TestUtils) {
+  public constructor(options: StoreOptions<State>, testUtils?: any) {
     UniversalStore.isInternalConstructing = true;
     super(
       { ...options, leader: true },
@@ -55,7 +51,7 @@ export class MockUniversalStore<
     );
     UniversalStore.isInternalConstructing = false;
 
-    if (!testUtils) {
+    if (typeof testUtils?.fn !== 'function') {
       return;
     }
 
@@ -71,7 +67,7 @@ export class MockUniversalStore<
   static create<
     State = any,
     CustomEvent extends { type: string; payload?: any } = { type: string; payload?: any },
-  >(options: StoreOptions<State>, testUtils?: TestUtils): MockUniversalStore<State, CustomEvent> {
+  >(options: StoreOptions<State>, testUtils?: any): MockUniversalStore<State, CustomEvent> {
     return new MockUniversalStore(options, testUtils);
   }
 
