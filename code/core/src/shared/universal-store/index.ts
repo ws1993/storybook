@@ -12,6 +12,7 @@ import type {
   EventInfo,
   ExistingStateResponseEvent,
   Listener,
+  SetStateEvent,
   StateUpdater,
   StatusType,
   StoreOptions,
@@ -627,8 +628,21 @@ export class UniversalStore<
           this.debug("handleChannelEvents: Setting state from leader's existing state response", {
             event,
           });
-          this.state = event.payload;
+          if (this.syncing?.state !== ProgressState.PENDING) {
+            // ignore the response if this follower has already synced
+            break;
+          }
           this.syncing!.resolve?.();
+          // notify internal listeners that the state has changed because of the sync
+          const setStateEvent: SetStateEvent<State> = {
+            type: UniversalStore.InternalEventType.SET_STATE,
+            payload: {
+              state: event.payload,
+              previousState: this.state,
+            },
+          };
+          this.state = event.payload;
+          this.emitToListeners(setStateEvent, eventInfo);
           break;
       }
     }
