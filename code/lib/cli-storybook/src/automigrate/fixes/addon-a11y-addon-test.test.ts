@@ -110,7 +110,7 @@ describe('addonA11yAddonTest', () => {
             export default {
               parameters: {
                 a11y: {
-                  test: 'to-do'
+                  test: 'todo'
                 }
               }
             }
@@ -293,7 +293,7 @@ describe('addonA11yAddonTest', () => {
             export default {
               parameters: {
                 a11y: {
-                  test: 'to-do'
+                  test: 'todo'
                 }
               }
             }

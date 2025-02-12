@@ -283,8 +283,10 @@ export function transformPreviewFile(source: string, filePath: string) {
   const formattedPreviewConfig = formatConfig(previewConfig);
   const lines = formattedPreviewConfig.split('\n');
 
-  // Find the line with the "tags" property
-  const parametersLineIndex = lines.findIndex((line) => line.includes('todo'));
+  // Find the line with the "parameters.a11y.test" property
+  const parametersLineIndex = lines.findIndex(
+    (line) => line.includes('test: "todo"') || line.includes("test: 'todo'")
+  );
   if (parametersLineIndex === -1) {
     return formattedPreviewConfig;
   }
