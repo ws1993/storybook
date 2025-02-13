@@ -316,7 +316,7 @@ jobs:
     executor:
       class: xlarge
       name: sb_playwright
-    parallelism: 1
+    parallelism: 2
     steps:
       - git-shallow-clone/checkout_advanced:
           clone_options: "--depth 1 --verbose"
