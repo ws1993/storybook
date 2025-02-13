@@ -1545,10 +1545,10 @@ __metadata:
     "@typescript-eslint/experimental-utils": "npm:^5.62.0"
     "@typescript-eslint/parser": "npm:^7.16.0"
     "@verdaccio/types": "npm:^10.8.0"
-    "@vitest/coverage-v8": "npm:^3.0.2"
+    "@vitest/coverage-v8": "npm:^3.0.5"
     ansi-regex: "npm:^6.0.1"
     browser-assert: "npm:^1.2.1"
-    chromatic: "npm:^11.20.2"
+    chromatic: "npm:^11.25.2"
     codecov: "npm:^3.8.1"
     commander: "npm:^12.1.0"
     cross-env: "npm:^7.0.3"
@@ -1559,7 +1559,7 @@ __metadata:
     diff-match-patch-es: "npm:^0.1.0"
     ejs: "npm:^3.1.10"
     ejs-lint: "npm:^2.0.0"
-    es-toolkit: "npm:^1.22.0"
+    es-toolkit: "npm:^1.32.0"
     esbuild: "npm:^0.25.0"
     esbuild-plugin-alias: "npm:^0.2.1"
     eslint: "npm:^8.57.0"
@@ -1637,10 +1637,10 @@ __metadata:
     uuid: "npm:^9.0.1"
     verdaccio: "npm:^5.31.1"
     verdaccio-auth-memory: "npm:^10.2.2"
-    vitest: "npm:^3.0.2"
+    vitest: "npm:^3.0.5"
     wait-on: "npm:^7.2.0"
     window-size: "npm:^1.1.1"
-    yaml: "npm:^2.4.5"
+    yaml: "npm:^2.7.0"
     zod: "npm:^3.23.8"
   dependenciesMeta:
     "@verdaccio/types":
@@ -2799,7 +2799,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@vitest/coverage-v8@npm:^3.0.2":
+"@vitest/coverage-v8@npm:^3.0.5":
   version: 3.0.5
   resolution: "@vitest/coverage-v8@npm:3.0.5"
   dependencies:
@@ -3995,7 +3995,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"chromatic@npm:^11.20.2":
+"chromatic@npm:^11.25.2":
   version: 11.25.2
   resolution: "chromatic@npm:11.25.2"
   peerDependencies:
@@ -5386,7 +5386,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"es-toolkit@npm:^1.22.0":
+"es-toolkit@npm:^1.32.0":
   version: 1.32.0
   resolution: "es-toolkit@npm:1.32.0"
   dependenciesMeta:
@@ -15138,7 +15138,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"vitest@npm:^3.0.2":
+"vitest@npm:^3.0.5":
   version: 3.0.5
   resolution: "vitest@npm:3.0.5"
   dependencies:
@@ -15582,7 +15582,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"yaml@npm:^2.0.0, yaml@npm:^2.4.5, yaml@npm:^2.7.0":
+"yaml@npm:^2.0.0, yaml@npm:^2.7.0":
   version: 2.7.0
   resolution: "yaml@npm:2.7.0"
   bin:
