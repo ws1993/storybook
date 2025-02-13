@@ -294,27 +294,36 @@ export async function doInitiate(options: CommandOptions): Promise<
 
   const isInteractive = process.stdout.isTTY && !process.env.CI;
 
-  let features = options.features || isInteractive ? ['dev', 'docs', 'test'] : ['dev', 'docs'];
+  let features = new Set(['dev']);
 
-  if (isInteractive && !options.features) {
+  if (options.features?.length > 0) {
+    if (options.features.includes('docs')) {
+      features.add('docs');
+    }
+    if (options.features.includes('test')) {
+      features.add('test');
+    }
+  } else if (options.yes || !isInteractive) {
+    features.add('docs');
+
+    if (isInteractive) {
+      // Don't automatically add test feature in CI
+      features.add('test');
+    }
+  } else {
     const out = await prompts({
       type: 'multiselect',
       name: 'features',
       message: `What are you using Storybook for?`,
       choices: [
-        { title: 'Development', value: 'dev', selected: true, disabled: true },
         { title: 'Documentation', value: 'docs', selected: true },
         { title: 'Testing', value: 'test', selected: true },
       ],
     });
-    features = out.features;
+    features = new Set(['dev', ...out.features]);
   }
 
-  if (!features.includes('dev')) {
-    features.push('dev');
-  }
-
-  const telemetryFeatures = [...features];
+  const telemetryFeatures = Array.from(features);
 
   // Check if the current directory is empty.
   if (options.force !== true && currentDirectoryIsEmpty(packageManager.type)) {
@@ -377,7 +386,7 @@ export async function doInitiate(options: CommandOptions): Promise<
     }
   }
 
-  if (features.includes('test')) {
+  if (features.has('test')) {
     const packageVersionsData = await packageVersions.condition({ packageManager }, {} as any);
     if (packageVersionsData.type === 'incompatible') {
       const { ignorePackageVersions } = isInteractive
@@ -393,14 +402,14 @@ export async function doInitiate(options: CommandOptions): Promise<
           ])
         : { ignorePackageVersions: true };
       if (ignorePackageVersions) {
-        features.splice(features.indexOf('test'), 1);
+        features.delete('test');
       } else {
         process.exit(0);
       }
     }
   }
 
-  if (features.includes('test')) {
+  if (features.has('test')) {
     const vitestConfigFilesData = await vitestConfigFiles.condition(
       { babel, findUp, fs } as any,
       { directory: process.cwd() } as any
@@ -419,7 +428,7 @@ export async function doInitiate(options: CommandOptions): Promise<
           ])
         : { ignoreVitestConfigFiles: true };
       if (ignoreVitestConfigFiles) {
-        features.splice(features.indexOf('test'), 1);
+        features.delete('test');
       } else {
         process.exit(0);
       }
@@ -430,10 +439,13 @@ export async function doInitiate(options: CommandOptions): Promise<
     await packageManager.installDependencies();
   }
 
-  // update the mutated value
-  options.features = features;
+  // Update the options object with the selected features before passing it down to the generator
+  options.features = Array.from(features);
 
   const installResult = await installStorybook(projectType as ProjectType, packageManager, options);
+
+  // Sync features back because they may have been mutated by the generator (e.g. in case of undetected project type)
+  features = new Set(options.features);
 
   if (!options.skipInstall) {
     await packageManager.installDependencies();
@@ -484,7 +496,7 @@ export async function doInitiate(options: CommandOptions): Promise<
       ? `ng run ${installResult.projectName}:storybook`
       : packageManager.getRunStorybookCommand();
 
-  if (features.includes('test')) {
+  if (features.has('test')) {
     logger.log(
       `> npx storybook@${versions.storybook} add @storybook/experimental-addon-test@${versions['@storybook/experimental-addon-test']}`
     );
