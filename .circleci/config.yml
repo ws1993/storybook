@@ -115,7 +115,7 @@ jobs:
       - restore_cache:
           name: Restore Yarn cache
           keys:
-            - prettydocs-yarn-2-cache-v8--{{ checksum "code/yarn.lock" }}--{{ checksum "scripts/yarn.lock" }}
+            - prettydocs-yarn-2-cache-v7--{{ checksum "code/yarn.lock" }}--{{ checksum "scripts/yarn.lock" }}
       - run:
           name: Install
           command: |
@@ -123,7 +123,7 @@ jobs:
             yarn install
       - save_cache:
           name: Save Yarn cache
-          key: prettydocs-yarn-2-cache-v8--{{ checksum "code/yarn.lock" }}--{{ checksum "scripts/yarn.lock" }}
+          key: prettydocs-yarn-2-cache-v7--{{ checksum "code/yarn.lock" }}--{{ checksum "scripts/yarn.lock" }}
           paths:
             - ~/.yarn/berry/cache
       - run:
@@ -141,21 +141,11 @@ jobs:
       - restore_cache:
           name: Restore Yarn cache
           keys:
-            - build-yarn-2-cache-v8--{{ checksum "code/yarn.lock" }}--{{ checksum "scripts/yarn.lock" }}
-      - run:
-          name: Install Scripts
-          command: |
-            cd scripts
-            yarn install
-      - run:
-          name: Install Code
-          command: |
-            cd code
-            yarn install
+            - build-yarn-2-cache-v4--{{ checksum "code/yarn.lock" }}--{{ checksum "scripts/yarn.lock" }}
       - run:
           name: Compile
           command: |
-            yarn task --task compile -s compile --no-link --debug
+            yarn task --task compile --start-from=auto --no-link --debug
             git diff --exit-code
             yarn dedupe --check
       - run:
@@ -168,13 +158,24 @@ jobs:
           path: code/bench/esbuild-metafiles
       - save_cache:
           name: Save Yarn cache
-          key: build-yarn-2-cache-v8--{{ checksum "code/yarn.lock" }}--{{ checksum "scripts/yarn.lock" }}
+          key: build-yarn-2-cache-v4--{{ checksum "code/yarn.lock" }}--{{ checksum "scripts/yarn.lock" }}
           paths:
             - ~/.yarn/berry/cache
       - persist_to_workspace:
           root: .
           paths:
-            - code
+            - code/node_modules
+            - code/addons
+            - scripts/node_modules
+            - code/bench
+            - code/examples
+            - code/frameworks
+            - code/deprecated
+            - code/lib
+            - code/core
+            - code/builders
+            - code/renderers
+            - code/presets
             - .verdaccio-cache
   lint:
     executor:
@@ -270,25 +271,15 @@ jobs:
       - restore_cache:
           name: Restore Yarn cache
           keys:
-            - build-yarn-2-cache-v8--{{ checksum "code/yarn.lock" }}--{{ checksum "scripts/yarn.lock" }}
-      - run:
-          name: Install Scripts
-          command: |
-            cd scripts
-            yarn install
-      - run:
-          name: Install Code
-          command: |
-            cd code
-            yarn install
+            - build-yarn-2-cache-v4--{{ checksum "code/yarn.lock" }}--{{ checksum "scripts/yarn.lock" }}
       - run:
           name: Compile
           command: |
-            yarn task check --no-link --debug
+            yarn task --task compile --start-from=auto --no-link --debug
       - run:
           name: Check
           command: |
-            yarn task check --no-link --debug
+            yarn task --task check --start-from=auto --no-link --debug
       - run:
           name: Ensure no changes pending
           command: |
