@@ -902,8 +902,8 @@ export const extendPreview: Task['run'] = async ({ template, sandboxDir }) => {
 
   if (template.modifications?.useCsfFactory) {
     const storiesDir = (await pathExists(join(sandboxDir, 'src/stories')))
-      ? '../src/stories'
-      : '../stories';
+      ? '../src/stories/components'
+      : '../stories/components';
     previewConfig.setImport(null, storiesDir);
     previewConfig.setImport({ namespace: 'coreAnnotations' }, '../template-stories/core/preview');
     previewConfig.setImport(
