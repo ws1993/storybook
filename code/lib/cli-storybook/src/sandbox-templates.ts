@@ -689,6 +689,9 @@ export const baseTemplates = {
       renderer: '@storybook/react',
       builder: '@storybook/builder-vite',
     },
+    modifications: {
+      useCsfFactory: true,
+    },
     skipTasks: ['e2e-tests-dev', 'bench', 'vitest-integration'],
   },
   'react-native-web-vite/rn-cli-ts': {
@@ -727,6 +730,7 @@ const internalTemplates = {
       builder: '@storybook/builder-webpack5',
     },
     modifications: {
+      useCsfFactory: true,
       extraDependencies: ['@storybook/addon-webpack5-compiler-babel', 'prop-types'],
       editAddons: (addons) =>
         [...addons, '@storybook/addon-webpack5-compiler-babel'].filter(
@@ -746,6 +750,7 @@ const internalTemplates = {
       builder: '@storybook/builder-webpack5',
     },
     modifications: {
+      useCsfFactory: true,
       extraDependencies: ['prop-types'],
     },
     skipTasks: ['e2e-tests-dev', 'bench', 'vitest-integration'],
