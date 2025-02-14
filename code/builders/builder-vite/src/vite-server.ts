@@ -31,7 +31,11 @@ export async function createViteServer(options: Options, devServer: Server) {
 
   const ipRegex = /^(?:\d{1,3}\.){3}\d{1,3}$|^(?:[a-fA-F0-9]{1,4}:){7}[a-fA-F0-9]{1,4}$/;
 
-  if (!config.server.allowedHosts?.length && options.host && !ipRegex.test(options.host)) {
+  if (
+    !(config.server.allowedHosts as string[])?.length &&
+    options.host &&
+    !ipRegex.test(options.host)
+  ) {
     config.server.allowedHosts = [options.host.toLowerCase()];
   }
 
