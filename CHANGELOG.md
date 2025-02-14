@@ -1,3 +1,19 @@
+## 8.5.6
+
+- Builder-Vite: Fix defaulting to allowing all hosts - [#30523](https://github.com/storybookjs/storybook/pull/30523), thanks @JReinhold!
+- UI: Fix tags sort for browser back-compat - [#30547](https://github.com/storybookjs/storybook/pull/30547), thanks @shilman!
+
+## 8.5.5
+
+- Builder-Vite: Fix Turbosnap - [#30522](https://github.com/storybookjs/storybook/pull/30522), thanks @valentinpalkovic!
+
+## 8.5.4
+
+- Addon A11y: Make Vitest Axe optional - [#30442](https://github.com/storybookjs/storybook/pull/30442), thanks @valentinpalkovic!
+- Builder-Vite: Fix allowedHosts handling for custom hosts - [#30432](https://github.com/storybookjs/storybook/pull/30432), thanks @JSMike!
+- Builder-Vite: Fix resolve id warning - [#30511](https://github.com/storybookjs/storybook/pull/30511), thanks @valentinpalkovic!
+- React: Update react-docgen-typescript to fix CI hanging issues - [#30422](https://github.com/storybookjs/storybook/pull/30422), thanks @yannbf!
+
 ## 8.5.3
 
 - Preview: Add `globals` to `extract()` - [#30415](https://github.com/storybookjs/storybook/pull/30415), thanks @ndelangen!

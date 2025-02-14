@@ -1,6 +1,6 @@
 {
   "name": "@storybook/addon-docs",
-  "version": "8.6.0-alpha.4",
+  "version": "8.6.0-beta.0",
   "description": "Document component usage and properties in Markdown",
   "keywords": [
     "addon",
@@ -81,6 +81,25 @@
   "main": "dist/index.js",
   "module": "dist/index.mjs",
   "types": "dist/index.d.ts",
+  "typesVersions": {
+    "*": {
+      "*": [
+        "dist/index.d.ts"
+      ],
+      "angular": [
+        "angular/index.d.ts"
+      ],
+      "blocks": [
+        "dist/blocks.d.ts"
+      ],
+      "ember": [
+        "ember/index.d.ts"
+      ],
+      "preview": [
+        "dist/preview.d.ts"
+      ]
+    }
+  },
   "files": [
     "dist/**/*",
     "angular/**/*",
