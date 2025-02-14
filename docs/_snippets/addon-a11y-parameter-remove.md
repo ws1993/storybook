@@ -8,7 +8,7 @@ const meta: Meta<typeof Button> = {
   component: Button,
   parameters: {
     // 👇 Remove this once all stories pass accessibility tests
-    // a11y: { test: 'error' },
+    // a11y: { test: 'todo' },
   },
 };
 export default meta;
@@ -24,7 +24,7 @@ const meta = {
   component: Button,
   parameters: {
     // 👇 Remove this once all stories pass accessibility tests
-    // a11y: { test: 'error' },
+    // a11y: { test: 'todo' },
   },
 } satisfies Meta<typeof Button>;
 export default meta;
@@ -37,7 +37,7 @@ export default {
   component: Button,
   parameters: {
     // 👇 Remove this once all stories pass accessibility tests
-    // a11y: { test: 'error' },
+    // a11y: { test: 'todo' },
   },
 };
 ```
