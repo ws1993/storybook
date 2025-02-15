@@ -296,7 +296,7 @@
   },
   "devDependencies": {
     "@aw-web-design/x-default-browser": "1.4.126",
-    "@babel/core": "^7.26.8",
+    "@babel/core": "^7.26.0",
     "@babel/generator": "^7.26.8",
     "@babel/parser": "^7.26.8",
     "@babel/preset-react": "^7.26.3",
