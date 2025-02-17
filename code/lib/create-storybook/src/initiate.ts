@@ -300,9 +300,11 @@ export async function doInitiate(options: CommandOptions): Promise<
   };
   let selectedFeatures = new Set<GeneratorFeature>();
   selectedFeatures.toString = () =>
-    Array.from(selectedFeatures)
-      .map((f) => selectableFeatures[f])
-      .join(', ');
+    selectedFeatures.size === 0
+      ? 'none'
+      : Array.from(selectedFeatures)
+          .map((f) => selectableFeatures[f])
+          .join(', ');
 
   if (options.features?.length > 0) {
     if (options.features.includes('docs')) {
