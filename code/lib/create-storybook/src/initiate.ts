@@ -523,7 +523,7 @@ export async function doInitiate(options: CommandOptions): Promise<
     boxen(
       dedent`
           Storybook was successfully installed in your project! 🎉
-          Included features: ${selectedFeatures}
+          Additional features: ${selectedFeatures}
 
           To run Storybook manually, run ${picocolors.yellow(
             picocolors.bold(storybookCommand)
