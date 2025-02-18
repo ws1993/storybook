@@ -6,6 +6,7 @@ import { MissingBuilderError } from '@storybook/core/server-errors';
 
 import compression from '@polka/compression';
 import polka from 'polka';
+import { nextTick } from 'process';
 import invariant from 'tiny-invariant';
 
 import type { StoryIndexGenerator } from './utils/StoryIndexGenerator';
@@ -114,6 +115,12 @@ export async function storybookDevServer(options: Options) {
     // We need to catch here or node will treat any errors thrown by `previewStarted` as
     // unhandled and exit (even though they are very much handled below)
     previewStarted.catch(() => {}).then(() => next());
+  });
+
+  // The preview builder may add middleware for the iframe.html route asynchronously
+  // We want to wait for that to happen before we start listening for requests
+  await new Promise((res) => {
+    nextTick(res);
   });
 
   const listening = new Promise<void>((resolve, reject) => {

@@ -16,7 +16,7 @@ export { hasVitePlugins } from './utils/has-vite-plugins';
 
 export * from './types';
 
-function iframeMiddleware(options: Options, server: ViteDevServer): Middleware {
+function iframeMiddleware(options: Options, server: Promise<ViteDevServer>): Middleware {
   return async (req, res, next) => {
     if (!req.url || !req.url.match(/^\/iframe\.html($|\?)/)) {
       next();
@@ -35,7 +35,7 @@ function iframeMiddleware(options: Options, server: ViteDevServer): Middleware {
     const indexHtml = await readFile(require.resolve('@storybook/builder-vite/input/iframe.html'), {
       encoding: 'utf8',
     });
-    const transformed = await server.transformIndexHtml('/iframe.html', indexHtml);
+    const transformed = await (await server).transformIndexHtml('/iframe.html', indexHtml);
     res.setHeader('Content-Type', 'text/html');
     res.statusCode = 200;
     res.write(transformed);
@@ -43,10 +43,10 @@ function iframeMiddleware(options: Options, server: ViteDevServer): Middleware {
   };
 }
 
-let server: ViteDevServer;
+let server: Promise<ViteDevServer>;
 
 export async function bail(): Promise<void> {
-  return server?.close();
+  return (await server)?.close();
 }
 
 export const start: ViteBuilder['start'] = async ({
@@ -55,10 +55,10 @@ export const start: ViteBuilder['start'] = async ({
   router,
   server: devServer,
 }) => {
-  server = await createViteServer(options as Options, devServer);
+  server = createViteServer(options as Options, devServer);
 
   router.use(iframeMiddleware(options as Options, server));
-  router.use(server.middlewares);
+  router.use((await server).middlewares);
 
   return {
     bail,
