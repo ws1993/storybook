@@ -1,3 +1,8 @@
+## 8.6.0-beta.2
+
+- CLI: Reimplement features prompt logic to handle `--yes` and fix `--features` - [#30534](https://github.com/storybookjs/storybook/pull/30534), thanks @ghengeveld!
+- Telemetry: Don't count example stories towards CSF feature stats - [#30561](https://github.com/storybookjs/storybook/pull/30561), thanks @shilman!
+
 ## 8.6.0-beta.1
 
 - Builder-Vite: Fix defaulting to allowing all hosts - [#30523](https://github.com/storybookjs/storybook/pull/30523), thanks @JReinhold!
