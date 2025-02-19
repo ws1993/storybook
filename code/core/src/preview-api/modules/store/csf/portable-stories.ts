@@ -41,8 +41,6 @@ declare global {
   var globalProjectAnnotations: NormalizedProjectAnnotations<any>;
   // eslint-disable-next-line no-var
   var defaultProjectAnnotations: ProjectAnnotations<any>;
-  // eslint-disable-next-line no-var
-  var csf4Preview: Preview<any>;
 }
 
 export function setDefaultProjectAnnotations<TRenderer extends Renderer = Renderer>(
