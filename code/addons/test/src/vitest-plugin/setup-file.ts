@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/naming-convention */
 
 /* eslint-disable no-underscore-dangle */
-import { afterEach, vi } from 'vitest';
+import { afterEach, beforeAll, vi } from 'vitest';
 import type { RunnerTask } from 'vitest';
 
 import { Channel } from 'storybook/internal/channels';
@@ -34,5 +34,11 @@ export const modifyErrorMessage = ({ task }: { task: Task }) => {
     currentError.message = `\n\x1B[34mClick to debug the error directly in Storybook: ${storyUrl}\x1B[39m\n\n${currentError.message}`;
   }
 };
+
+beforeAll(() => {
+  if (globalThis.csf4Preview) {
+    return globalThis.csf4Preview.composed.beforeAll();
+  }
+});
 
 afterEach(modifyErrorMessage);
