@@ -287,7 +287,31 @@ All of the story properties are now contained within a new property called `comp
   When running the [codemod](#codemod), it will automatically update usages of `Story.args` to `Story.input.args`. This is to ensure that your stories continue to work as expected. However, using `Story.composed.args` is likely more helpful in most cases.
 </Callout>
 
-### 5. Reusing stories in test files
+### 5. Update your Vitest setup file
+
+Whether because you're using [Storybook's Test addon](../../writing-tests/test-addon.mdx) or [portable stories in Vitest](../portable-stories/portable-stories-vitest.mdx), you may be using a Vitest setup file to configure your stories. This file will need to be updated to use the new CSF Factories format.
+
+<Callout variant="warning">
+Note that this means you must be using CSF Factories for _all_ of your tested stories. If you are using a mix of CSF 1, 2, or 3 and CSF Factories, you will need to maintain two separate setup files.
+</Callout>
+
+```diff title="vitest.setup.js|ts"
+import { beforeAll } from 'vitest';
+// 👇 No longer necessary
+- import { setProjectAnnotations } from '@storybook/react';
+- import * as addonAnnotations from 'my-addon/preview';
++ import preview from './.storybook/preview';
+- import * as previewAnnotations from './.storybook/preview';
+
+// No longer necessary
+- const annotations = setProjectAnnotations([previewAnnotations, addonAnnotations]);
+ 
+// Run Storybook's beforeAll hook
++ beforeAll(preview.composed.beforeAll);
+- beforeAll(annotations.beforeAll);
+```
+
+### 6. Reusing stories in test files
 
 [Storybook's Test addon](../../writing-tests/test-addon.mdx) allows you to test your components directly inside Storybook. All the stories are automatically turned into Vitest tests, making integration seamless in your testing suite.
 
