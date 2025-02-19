@@ -5,7 +5,6 @@ import {
   TESTING_MODULE_CANCEL_TEST_RUN_REQUEST,
   TESTING_MODULE_PROGRESS_REPORT,
   TESTING_MODULE_RUN_REQUEST,
-  TESTING_MODULE_WATCH_MODE_REQUEST,
 } from 'storybook/internal/core-events';
 
 // eslint-disable-next-line depend/ban-dependencies
@@ -99,13 +98,6 @@ describe('bootTestRunner', () => {
       args: ['foo'],
       from: 'server',
       type: TESTING_MODULE_RUN_REQUEST,
-    });
-
-    mockChannel.emit(TESTING_MODULE_WATCH_MODE_REQUEST, 'baz');
-    expect(child.send).toHaveBeenCalledWith({
-      args: ['baz'],
-      from: 'server',
-      type: TESTING_MODULE_WATCH_MODE_REQUEST,
     });
 
     mockChannel.emit(TESTING_MODULE_CANCEL_TEST_RUN_REQUEST, 'qux');

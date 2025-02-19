@@ -1,18 +1,14 @@
-import { deprecate, logger } from 'storybook/internal/client-logger';
+import { storyNameFromExport, toId } from 'storybook/internal/csf';
 import type {
   ArgTypes,
   LegacyStoryAnnotationsOrFn,
+  NormalizedComponentAnnotations,
+  NormalizedStoryAnnotations,
   Renderer,
   StoryAnnotations,
   StoryFn,
   StoryId,
 } from 'storybook/internal/types';
-import type {
-  NormalizedComponentAnnotations,
-  NormalizedStoryAnnotations,
-} from 'storybook/internal/types';
-
-import { storyNameFromExport, toId } from '@storybook/csf';
 
 import { dedent } from 'ts-dedent';
 

@@ -1,4 +1,4 @@
-import React, { type ComponentProps, type FC, useCallback, useMemo, useRef, useState } from 'react';
+import React, { type ComponentProps, type FC, useMemo, useState } from 'react';
 
 import {
   Button,
@@ -7,12 +7,8 @@ import {
   TooltipNote,
   WithTooltip,
 } from 'storybook/internal/components';
-import {
-  TESTING_MODULE_CONFIG_CHANGE,
-  type TestProviderConfig,
-  type TestProviderState,
-} from 'storybook/internal/core-events';
-import { addons } from 'storybook/internal/manager-api';
+import { type TestProviderConfig, type TestProviderState } from 'storybook/internal/core-events';
+import { addons, experimental_useUniversalStore } from 'storybook/internal/manager-api';
 import type { API } from 'storybook/internal/manager-api';
 import { styled, useTheme } from 'storybook/internal/theming';
 
@@ -26,14 +22,13 @@ import {
   StopAltIcon,
 } from '@storybook/icons';
 
-import { isEqual } from 'es-toolkit';
-import { debounce } from 'es-toolkit/compat';
+import { store } from '#manager-store';
 
 import {
   ADDON_ID as A11Y_ADDON_ID,
   PANEL_ID as A11y_ADDON_PANEL_ID,
 } from '../../../a11y/src/constants';
-import { type Config, type Details, PANEL_ID } from '../constants';
+import { type Details, PANEL_ID } from '../constants';
 import { type TestStatus } from '../node/reporter';
 import { Description } from './Description';
 import { TestStatusIcon } from './TestStatusIcon';
@@ -106,24 +101,25 @@ const statusMap: Record<TestStatus, ComponentProps<typeof TestStatusIcon>['statu
   pending: 'pending',
 };
 
-export const TestProviderRender: FC<
-  {
-    api: API;
-    state: TestProviderConfig & TestProviderState<Details, Config>;
-    entryId?: string;
-  } & ComponentProps<typeof Container>
-> = ({ state, api, entryId, ...props }) => {
+type TestProviderRenderProps = {
+  api: API;
+  state: TestProviderConfig & TestProviderState<Details>;
+  entryId?: string;
+} & ComponentProps<typeof Container>;
+
+export const TestProviderRender: FC<TestProviderRenderProps> = ({
+  state,
+  api,
+  entryId,
+  ...props
+}) => {
   const [isEditing, setIsEditing] = useState(false);
   const theme = useTheme();
   const coverageSummary = state.details?.coverageSummary;
 
   const isA11yAddon = addons.experimental_getRegisteredAddons().includes(A11Y_ADDON_ID);
 
-  const [config, updateConfig] = useConfig(
-    api,
-    state.id,
-    state.config || { a11y: false, coverage: false }
-  );
+  const [{ config, watching }, setStoreState] = experimental_useUniversalStore(store);
 
   const isStoryEntry = entryId?.includes('--') ?? false;
 
@@ -167,15 +163,13 @@ export const TestProviderRender: FC<
     return 'positive';
   }, [state.running, isA11yAddon, config.a11y, a11yResults]);
 
-  const a11yNotPassedAmount = state.config?.a11y
+  const a11yNotPassedAmount = config?.a11y
     ? a11yResults?.filter((result) => result?.status === 'failed' || result?.status === 'warning')
         .length
     : undefined;
 
   const a11ySkippedAmount =
-    state.running || !state?.details.config?.a11y || !state.config?.a11y
-      ? null
-      : a11yResults?.filter((result) => !result).length;
+    state.running || !config?.a11y ? null : a11yResults?.filter((result) => !result).length;
 
   const a11ySkippedLabel = a11ySkippedAmount
     ? a11ySkippedAmount === 1 && isStoryEntry
@@ -216,6 +210,7 @@ export const TestProviderRender: FC<
             state={state}
             entryId={entryId}
             results={results}
+            watching={watching}
           />
         </Info>
 
@@ -238,18 +233,23 @@ export const TestProviderRender: FC<
               </Button>
             </WithTooltip>
           )}
-          {!entryId && state.watchable && (
+          {!entryId && (
             <WithTooltip
               hasChrome={false}
               trigger="hover"
-              tooltip={<TooltipNote note={`${state.watching ? 'Disable' : 'Enable'} watch mode`} />}
+              tooltip={<TooltipNote note={`${watching ? 'Disable' : 'Enable'} watch mode`} />}
             >
               <Button
-                aria-label={`${state.watching ? 'Disable' : 'Enable'} watch mode`}
+                aria-label={`${watching ? 'Disable' : 'Enable'} watch mode`}
                 variant="ghost"
                 padding="small"
-                active={state.watching}
-                onClick={() => api.setTestProviderWatchMode(state.id, !state.watching)}
+                active={watching}
+                onClick={() =>
+                  setStoreState((s) => ({
+                    ...s,
+                    watching: !watching,
+                  }))
+                }
                 disabled={state.running || isEditing}
               >
                 <EyeIcon />
@@ -315,7 +315,12 @@ export const TestProviderRender: FC<
                 <Checkbox
                   type="checkbox"
                   checked={config.a11y}
-                  onChange={() => updateConfig({ a11y: !config.a11y })}
+                  onChange={() =>
+                    setStoreState((s) => ({
+                      ...s,
+                      config: { ...s.config, a11y: !config.a11y },
+                    }))
+                  }
                 />
               }
             />
@@ -328,9 +333,14 @@ export const TestProviderRender: FC<
               right={
                 <Checkbox
                   type="checkbox"
-                  checked={state.watching ? false : config.coverage}
-                  disabled={state.watching}
-                  onChange={() => updateConfig({ coverage: !config.coverage })}
+                  checked={watching ? false : config.coverage}
+                  disabled={watching}
+                  onChange={() =>
+                    setStoreState((s) => ({
+                      ...s,
+                      config: { ...s.config, coverage: !config.coverage },
+                    }))
+                  }
                 />
               }
             />
@@ -355,7 +365,7 @@ export const TestProviderRender: FC<
             icon={
               state.crashed ? (
                 <TestStatusIcon status="critical" aria-label="status: crashed" />
-              ) : // @ts-expect-error: TODO: Fix types
+              ) : // @ts-expect-error @ghengeveld should check whether this is a bug or not
               status === 'unknown' ? (
                 <TestStatusIcon status="unknown" aria-label="status: unknown" />
               ) : (
@@ -423,32 +433,3 @@ export const TestProviderRender: FC<
     </Container>
   );
 };
-
-function useConfig(api: API, providerId: string, initialConfig: Config) {
-  const [currentConfig, setConfig] = useState<Config>(initialConfig);
-  const lastConfig = useRef(initialConfig);
-
-  const saveConfig = useCallback(
-    debounce((config: Config) => {
-      if (!isEqual(config, lastConfig.current)) {
-        api.updateTestProviderState(providerId, { config });
-        api.emit(TESTING_MODULE_CONFIG_CHANGE, { providerId, config });
-        lastConfig.current = config;
-      }
-    }, 500),
-    [api, providerId]
-  );
-
-  const updateConfig = useCallback(
-    (update: Partial<Config>) => {
-      setConfig((value) => {
-        const updated = { ...value, ...update };
-        saveConfig(updated);
-        return updated;
-      });
-    },
-    [saveConfig]
-  );
-
-  return [currentConfig, updateConfig] as const;
-}

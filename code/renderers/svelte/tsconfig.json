@@ -1,7 +1,8 @@
 {
   "extends": "../../tsconfig.json",
   "compilerOptions": {
-    "rootDir": "../../../"
+    "module": "ESNext",
+    "verbatimModuleSyntax": true
   },
   "include": ["src/**/*", "src/**/*.svelte", "template/**/*", "template/**/*.svelte"]
 }

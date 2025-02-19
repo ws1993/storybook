@@ -1,13 +1,12 @@
 // @vitest-environment node
 import { describe, expect, it, vi } from 'vitest';
 
+import type { ProjectAnnotations } from 'storybook/internal/csf';
 import type {
   ComponentAnnotations as Meta,
   Store_CSFExports,
   StoryAnnotationsOrFn as Story,
 } from 'storybook/internal/types';
-
-import type { ProjectAnnotations } from '@storybook/csf';
 
 import * as defaultExportAnnotations from './__mocks__/defaultExportAnnotations.mockfile';
 import * as namedExportAnnotations from './__mocks__/namedExportAnnotations.mockfile';

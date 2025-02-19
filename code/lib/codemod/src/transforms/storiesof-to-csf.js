@@ -1,6 +1,4 @@
-import { logger } from 'storybook/internal/node-logger';
-
-import { storyNameFromExport } from '@storybook/csf';
+import { storyNameFromExport } from 'storybook/internal/csf';
 
 import prettier from 'prettier';
 

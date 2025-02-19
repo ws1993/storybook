@@ -4,9 +4,8 @@ import { readFile } from 'node:fs/promises';
 import { dirname, extname, join, normalize, relative, resolve, sep } from 'node:path';
 
 import { commonGlobOptions, normalizeStoryPath } from 'storybook/internal/common';
-import { getStorySortParameter, loadConfig } from 'storybook/internal/csf-tools';
-import { logger, once } from 'storybook/internal/node-logger';
-import { sortStoriesV7, userOrAutoTitleFromSpecifier } from 'storybook/internal/preview-api';
+import { combineTags, storyNameFromExport, toId } from 'storybook/internal/csf';
+import { isExampleStoryId } from 'storybook/internal/telemetry';
 import type {
   DocsIndexEntry,
   DocsOptions,
@@ -20,8 +19,6 @@ import type {
   StorybookConfigRaw,
   Tag,
 } from 'storybook/internal/types';
-
-import { combineTags, storyNameFromExport, toId } from '@storybook/csf';
 
 import { findUp } from 'find-up';
 import picocolors from 'picocolors';
@@ -269,7 +266,10 @@ export class StoryIndexGenerator {
             return item;
           }
 
-          addStats(item.extra.stats, statsSummary);
+          // don't count example stories towards feature usage stats
+          if (!isExampleStoryId(item.id)) {
+            addStats(item.extra.stats, statsSummary);
+          }
 
           // Drop extra data used for internal bookkeeping
           const { extra, ...existing } = item;
@@ -397,7 +397,7 @@ export class StoryIndexGenerator {
     //  a) autodocs is globally enabled
     //  b) we have autodocs enabled for this file
     const hasAutodocsTag = entries.some((entry) => entry.tags.includes(AUTODOCS_TAG));
-    const createDocEntry = hasAutodocsTag && this.options.docs.autodocs !== false;
+    const createDocEntry = hasAutodocsTag && !!this.options.docs.autodocs;
 
     if (createDocEntry && this.options.build?.test?.disableAutoDocs !== true) {
       const name = this.options.docs.defaultName ?? 'Docs';
@@ -480,12 +480,14 @@ export class StoryIndexGenerator {
 
         invariant(
           csfEntry,
-          dedent`Could not find or load CSF file at path "${result.of}" referenced by \`of={}\` in docs file "${relativePath}".
-            
-        - Does that file exist?
-        - If so, is it a CSF file (\`.stories.*\`)?
-        - If so, is it matched by the \`stories\` glob in \`main.js\`?
-        - If so, has the file successfully loaded in Storybook and are its stories visible?`
+          dedent`
+            Could not find or load CSF file at path "${result.of}" referenced by \`of={}\` in docs file "${relativePath}".
+
+            - Does that file exist?
+            - If so, is it a CSF file (\`.stories.*\`)?
+            - If so, is it matched by the \`stories\` glob in \`main.js\`?
+            - If so, has the file successfully loaded in Storybook and are its stories visible?
+          `
         );
       }
 
@@ -771,15 +773,15 @@ export class StoryIndexGenerator {
       } catch (err) {
         once.warn(dedent`
           Unable to parse tags from project configuration. If defined, tags should be specified inline, e.g.
-      
+
           export default {
             tags: ['foo'],
           }
-      
+
           ---
-      
+
           Received:
-      
+
           ${previewCode}
         `);
       }

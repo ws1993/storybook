@@ -399,13 +399,17 @@ export function useSharedState<S>(stateId: string, defaultState?: S) {
     }
   }, [quicksync]);
 
-  const setState = async (s: S | API_StateMerger<S>, options?: Options) => {
-    await api.setAddonState<S>(stateId, s, options);
-    const result = api.getAddonState(stateId);
+  const setState = useCallback(
+    async (s: S | API_StateMerger<S>, options?: Options) => {
+      await api.setAddonState<S>(stateId, s, options);
+      const result = api.getAddonState(stateId);
 
-    STORYBOOK_ADDON_STATE[stateId] = result;
-    return result;
-  };
+      STORYBOOK_ADDON_STATE[stateId] = result;
+      return result;
+    },
+    [api, stateId]
+  );
+
   const allListeners = useMemo(() => {
     const stateChangeHandlers = {
       [`${SHARED_STATE_CHANGED}-client-${stateId}`]: setState,
@@ -445,14 +449,20 @@ export function useSharedState<S>(stateId: string, defaultState?: S) {
   }, [stateId]);
 
   const emit = useChannel(allListeners);
-  return [
-    state,
+
+  const stateSetter = useCallback(
     async (newStateOrMerger: S | API_StateMerger<S>, options?: Options) => {
       await setState(newStateOrMerger, options);
       const result = api.getAddonState(stateId);
       emit(`${SHARED_STATE_CHANGED}-manager-${stateId}`, result);
     },
-  ] as [S, (newStateOrMerger: S | API_StateMerger<S>, options?: Options) => void];
+    [api, emit, setState, stateId]
+  );
+
+  return [state, stateSetter] as [
+    S,
+    (newStateOrMerger: S | API_StateMerger<S>, options?: Options) => void,
+  ];
 }
 
 export function useAddonState<S>(addonId: string, defaultState?: S) {
@@ -502,6 +512,10 @@ export function useArgTypes(): ArgTypes {
   const current = useCurrentStory();
   return (current?.type === 'story' && current.argTypes) || {};
 }
+
+export { UniversalStore as experimental_UniversalStore } from '../shared/universal-store';
+export { useUniversalStore as experimental_useUniversalStore } from '../shared/universal-store/use-universal-store-manager';
+export { MockUniversalStore as experimental_MockUniversalStore } from '../shared/universal-store/mock';
 
 export { addons } from './lib/addons';
 

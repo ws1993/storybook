@@ -1,37 +1,27 @@
-import { deprecate } from 'storybook/internal/client-logger';
-import {
-  CalledExtractOnStoreError,
-  MissingStoryFromCsfFileError,
-} from 'storybook/internal/preview-errors';
+import type { Canvas, CleanupCallback } from 'storybook/internal/csf';
 import type {
+  BoundStory,
+  CSFFile,
   ComponentTitle,
+  IndexEntry,
+  ModuleExports,
+  ModuleImportFn,
+  NormalizedProjectAnnotations,
   Parameters,
   Path,
+  PreparedMeta,
+  PreparedStory,
+  ProjectAnnotations,
   Renderer,
   StoryContext,
   StoryContextForEnhancers,
   StoryId,
-} from 'storybook/internal/types';
-import type {
-  BoundStory,
-  CSFFile,
-  ModuleExports,
-  ModuleImportFn,
-  NormalizedProjectAnnotations,
-  PreparedMeta,
-  PreparedStory,
-  ProjectAnnotations,
-} from 'storybook/internal/types';
-import type {
-  IndexEntry,
   StoryIndex,
   StoryIndexV3,
   V3CompatIndexEntry,
 } from 'storybook/internal/types';
 
-import type { Canvas, CleanupCallback } from '@storybook/csf';
-
-import { mapValues, omitBy, pick, toMerged } from 'es-toolkit';
+import { mapValues, omitBy, pick } from 'es-toolkit';
 import memoize from 'memoizerific';
 
 import { HooksContext } from '../addons';
@@ -215,7 +205,7 @@ export class StoryStore<TRenderer extends Renderer> {
     const story = this.prepareStoryWithCache(
       storyAnnotations,
       componentAnnotations,
-      this.projectAnnotations
+      csfFile.projectAnnotations ?? this.projectAnnotations
     );
     this.args.setInitial(story);
     this.hooks[story.id] = this.hooks[story.id] || new HooksContext();
@@ -323,7 +313,15 @@ export class StoryStore<TRenderer extends Renderer> {
             }
             return Object.assign(storyAcc, { [key]: value });
           },
-          { args: story.initialArgs }
+          {
+            //
+            args: story.initialArgs,
+            globals: {
+              ...this.userGlobals.initialGlobals,
+              ...this.userGlobals.globals,
+              ...story.storyGlobals,
+            },
+          }
         );
         return acc;
       },

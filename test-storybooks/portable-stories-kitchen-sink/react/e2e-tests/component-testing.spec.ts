@@ -8,7 +8,6 @@ import { SbPage } from "../../../../code/e2e-tests/util";
 
 const STORYBOOK_URL = "http://localhost:6006";
 const TEST_STORY_PATH = path.resolve(__dirname, "..", "stories", "AddonTest.stories.tsx");
-const BUTTON_COMPONENT_PATH = path.resolve(__dirname, "..", "stories", "Button.tsx");
 
 const setForceFailureFlag = async (value: boolean) => {
   // Read the story file content asynchronously
@@ -38,6 +37,23 @@ test.describe("component testing", () => {
     await page.goto(STORYBOOK_URL);
     await page.evaluate(() => window.sessionStorage.clear());
     await sbPage.waitUntilLoaded();
+
+    // Ensure that all features are disabled, as previous tests might have enabled them
+
+    await page.getByLabel('Expand testing module').click();
+    const disableWatch = page.getByLabel('Disable watch mode');
+    if (await disableWatch.isVisible()) {
+      await disableWatch.click();
+    }
+    await page.getByLabel("Show settings").click();
+
+    const configs = [page.getByLabel('Coverage'), page.getByLabel('Accessibility')];
+    for(const config of configs) {
+      if(await config.isChecked()){
+        await config.click();
+      }
+    }
+    await page.getByLabel("Hide settings").click();
   });
 
   test("should show discrepancy between test results", async ({
@@ -49,9 +65,6 @@ test.describe("component testing", () => {
     const sbPage = new SbPage(page, expect);
 
     await sbPage.navigateToStory("addons/group/test", "Mismatch Failure");
-
-    const expandButton = await page.getByLabel('Expand testing module')
-    await expandButton.click();
 
     // For whatever reason, sometimes it takes longer for the story to load
     const storyElement = sbPage
@@ -121,9 +134,6 @@ test.describe("component testing", () => {
     const sbPage = new SbPage(page, expect);
     await sbPage.navigateToStory("addons/group/test", "Expected Failure");
 
-    const expandButton = page.getByLabel('Expand testing module')
-    await expandButton.click();
-
     // For whatever reason, sometimes it takes longer for the story to load
     const storyElement = sbPage
       .getCanvasBodyElement()
@@ -192,9 +202,6 @@ test.describe("component testing", () => {
     const sbPage = new SbPage(page, expect);
     await sbPage.navigateToStory("addons/group/test", "Expected Failure");
 
-    const expandButton = await page.getByLabel('Expand testing module')
-    await expandButton.click();
-
     // For whatever reason, sometimes it takes longer for the story to load
     const storyElement = sbPage
       .getCanvasBodyElement()
@@ -207,9 +214,6 @@ test.describe("component testing", () => {
     await page.waitForTimeout(8000);
     await setForceFailureFlag(true);
     await page.waitForTimeout(500);
-
-    // Cleanup, to ensure watch mode is disabled in the other tests
-    await page.getByLabel("Disable watch mode").click();
 
     // Wait for test results to appear
     const errorFilter = page.getByLabel("Toggle errors");
@@ -253,9 +257,6 @@ test.describe("component testing", () => {
     const sbPage = new SbPage(page, expect);
     await sbPage.navigateToStory("addons/group/test", "Expected Failure");
 
-    const expandButton = await page.getByLabel('Expand testing module')
-    await expandButton.click();
-
     const storyElement = sbPage
       .getCanvasBodyElement()
       .getByRole("button", { name: "test" });
@@ -267,7 +268,6 @@ test.describe("component testing", () => {
     // Act - Enable coverage and run tests
     await page.getByLabel("Show settings").click();
     await page.getByLabel("Coverage").click();
-    await expect(page.getByText("Settings updated")).toBeVisible({ timeout: 3000 });
     await page.getByLabel("Hide settings").click();
     // Wait for Vitest to have (re)started
     await page.waitForTimeout(2000);
@@ -293,12 +293,7 @@ test.describe("component testing", () => {
     const htmlPercentage = Number.parseFloat(htmlPercentageText.replace('% ', ''));
     expect(Math.round(htmlPercentage)).toBe(sbPercentage);
 
-    // Cleanup - Disable coverage again
     await page.goBack();
-    await expandButton.click();
-    await page.getByLabel("Show settings").click();
-    await page.getByLabel("Coverage").click();
-    await expect(page.getByText("Settings updated")).toBeVisible({ timeout: 3000 });
   });
 
   test("should run focused test for a single story", async ({
@@ -311,9 +306,6 @@ test.describe("component testing", () => {
 
     const sbPage = new SbPage(page, expect);
     await sbPage.navigateToStory("addons/group/test", "Expected Failure");
-
-    const expandButton = await page.getByLabel('Expand testing module')
-    await expandButton.click();
 
     const storyElement = sbPage
       .getCanvasBodyElement()
@@ -343,9 +335,6 @@ test.describe("component testing", () => {
 
     const sbPage = new SbPage(page, expect);
     await sbPage.navigateToStory("addons/group/test", "Expected Failure");
-
-    const expandButton = await page.getByLabel('Expand testing module')
-    await expandButton.click();
 
     const storyElement = sbPage
       .getCanvasBodyElement()
@@ -380,9 +369,6 @@ test.describe("component testing", () => {
     const sbPage = new SbPage(page, expect);
     await sbPage.navigateToStory("addons/group/test", "Expected Failure");
 
-    const expandButton = await page.getByLabel('Expand testing module')
-    await expandButton.click();
-
     const storyElement = sbPage
       .getCanvasBodyElement()
       .getByRole("button", { name: "test" });
@@ -416,9 +402,6 @@ test.describe("component testing", () => {
     const sbPage = new SbPage(page, expect);
     await sbPage.navigateToStory("example/button", "CSF 3 Primary");
 
-    const expandButton = await page.getByLabel('Expand testing module')
-    await expandButton.click();
-
     const storyElement = sbPage
       .getCanvasBodyElement()
       .getByRole("button", { name: "foo" });
@@ -427,7 +410,6 @@ test.describe("component testing", () => {
     // Act - Enable coverage
     await page.getByLabel("Show settings").click();
     await page.getByLabel("Coverage").click();
-    await expect(page.getByText("Settings updated")).toBeVisible({ timeout: 3000 });
     await page.getByLabel("Hide settings").click();
     // Wait for Vitest to have (re)started
     await page.waitForTimeout(2000);

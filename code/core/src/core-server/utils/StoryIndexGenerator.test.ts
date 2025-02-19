@@ -4,18 +4,15 @@ import { join } from 'node:path';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { normalizeStoriesEntry } from 'storybook/internal/common';
-import { getStorySortParameter, readCsf } from 'storybook/internal/csf-tools';
-import { logger, once } from 'storybook/internal/node-logger';
+import { toId } from 'storybook/internal/csf';
 import type { NormalizedStoriesSpecifier, StoryIndexEntry } from 'storybook/internal/types';
-
-import { toId } from '@storybook/csf';
 
 import { csfIndexer } from '../presets/common-preset';
 import type { StoryIndexGeneratorOptions } from './StoryIndexGenerator';
 import { StoryIndexGenerator } from './StoryIndexGenerator';
 
-vi.mock('@storybook/csf', async (importOriginal) => {
-  const csf = await importOriginal<typeof import('@storybook/csf')>();
+vi.mock('storybook/internal/csf', async (importOriginal) => {
+  const csf = await importOriginal<typeof import('storybook/internal/csf')>();
   return {
     ...csf,
     toId: vi.fn(csf.toId),
@@ -95,6 +92,7 @@ describe('StoryIndexGenerator', () => {
         expect(stats).toMatchInlineSnapshot(`
           {
             "beforeEach": 0,
+            "factory": 0,
             "globals": 0,
             "loaders": 0,
             "moduleMock": 0,
@@ -102,6 +100,7 @@ describe('StoryIndexGenerator', () => {
             "play": 0,
             "render": 0,
             "storyFn": 0,
+            "tags": 1,
           }
         `);
       });
@@ -343,6 +342,19 @@ describe('StoryIndexGenerator', () => {
                 "title": "D",
                 "type": "story",
               },
+              "example-button--story-one": {
+                "componentPath": undefined,
+                "id": "example-button--story-one",
+                "importPath": "./src/Button.stories.ts",
+                "name": "Story One",
+                "tags": [
+                  "dev",
+                  "test",
+                  "foobar",
+                ],
+                "title": "Example/Button",
+                "type": "story",
+              },
               "first-nested-deeply-f--story-one": {
                 "componentPath": undefined,
                 "id": "first-nested-deeply-f--story-one",
@@ -463,6 +475,7 @@ describe('StoryIndexGenerator', () => {
         expect(stats).toMatchInlineSnapshot(`
           {
             "beforeEach": 1,
+            "factory": 0,
             "globals": 0,
             "loaders": 1,
             "moduleMock": 0,
@@ -470,6 +483,7 @@ describe('StoryIndexGenerator', () => {
             "play": 2,
             "render": 1,
             "storyFn": 1,
+            "tags": 5,
           }
         `);
       });
@@ -593,6 +607,19 @@ describe('StoryIndexGenerator', () => {
                   "autodocs",
                 ],
                 "title": "D",
+                "type": "story",
+              },
+              "example-button--story-one": {
+                "componentPath": undefined,
+                "id": "example-button--story-one",
+                "importPath": "./src/Button.stories.ts",
+                "name": "Story One",
+                "tags": [
+                  "dev",
+                  "test",
+                  "foobar",
+                ],
+                "title": "Example/Button",
                 "type": "story",
               },
               "first-nested-deeply-f--story-one": {
@@ -728,6 +755,7 @@ describe('StoryIndexGenerator', () => {
         expect(stats).toMatchInlineSnapshot(`
           {
             "beforeEach": 1,
+            "factory": 0,
             "globals": 0,
             "loaders": 1,
             "moduleMock": 0,
@@ -735,6 +763,7 @@ describe('StoryIndexGenerator', () => {
             "play": 2,
             "render": 1,
             "storyFn": 1,
+            "tags": 5,
           }
         `);
       });
@@ -761,6 +790,8 @@ describe('StoryIndexGenerator', () => {
             "a--story-one",
             "b--docs",
             "b--story-one",
+            "example-button--docs",
+            "example-button--story-one",
             "d--docs",
             "d--story-one",
             "h--docs",
@@ -803,6 +834,8 @@ describe('StoryIndexGenerator', () => {
             "a--story-one",
             "b--docs",
             "b--story-one",
+            "example-button--docs",
+            "example-button--story-one",
             "d--docs",
             "d--story-one",
             "h--docs",
@@ -1791,6 +1824,7 @@ describe('StoryIndexGenerator', () => {
           "second-nested-g--story-one",
           "componentreference--docs",
           "notitle--docs",
+          "example-button--story-one",
           "h--story-one",
           "componentpath-extension--story-one",
           "componentpath-noextension--story-one",
@@ -1819,7 +1853,7 @@ describe('StoryIndexGenerator', () => {
         const generator = new StoryIndexGenerator([specifier], options);
         await generator.initialize();
         await generator.getIndex();
-        expect(readCsfMock).toHaveBeenCalledTimes(11);
+        expect(readCsfMock).toHaveBeenCalledTimes(12);
 
         readCsfMock.mockClear();
         await generator.getIndex();
@@ -1877,7 +1911,7 @@ describe('StoryIndexGenerator', () => {
         const generator = new StoryIndexGenerator([specifier], options);
         await generator.initialize();
         await generator.getIndex();
-        expect(readCsfMock).toHaveBeenCalledTimes(11);
+        expect(readCsfMock).toHaveBeenCalledTimes(12);
 
         generator.invalidate(specifier, './src/B.stories.ts', false);
 
@@ -1962,7 +1996,7 @@ describe('StoryIndexGenerator', () => {
         const generator = new StoryIndexGenerator([specifier], options);
         await generator.initialize();
         await generator.getIndex();
-        expect(readCsfMock).toHaveBeenCalledTimes(11);
+        expect(readCsfMock).toHaveBeenCalledTimes(12);
 
         generator.invalidate(specifier, './src/B.stories.ts', true);
 
@@ -2001,7 +2035,7 @@ describe('StoryIndexGenerator', () => {
         const generator = new StoryIndexGenerator([specifier], options);
         await generator.initialize();
         await generator.getIndex();
-        expect(readCsfMock).toHaveBeenCalledTimes(11);
+        expect(readCsfMock).toHaveBeenCalledTimes(12);
 
         generator.invalidate(specifier, './src/B.stories.ts', true);
 

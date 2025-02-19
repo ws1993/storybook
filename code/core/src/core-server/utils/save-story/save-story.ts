@@ -15,12 +15,11 @@ import {
   SAVE_STORY_RESPONSE,
   STORY_RENDERED,
 } from 'storybook/internal/core-events';
+import { storyNameFromExport, toId } from 'storybook/internal/csf';
 import { printCsf, readCsf } from 'storybook/internal/csf-tools';
 import { logger } from 'storybook/internal/node-logger';
 import { isExampleStoryId, telemetry } from 'storybook/internal/telemetry';
 import type { CoreConfig, Options } from 'storybook/internal/types';
-
-import { storyNameFromExport, toId } from '@storybook/csf';
 
 import { duplicateStoryWithNewName } from './duplicate-story-with-new-name';
 import { updateArgsInCsfFile } from './update-args-in-csf-file';
