@@ -1,3 +1,4 @@
+import { deprecate, logger } from 'storybook/internal/client-logger';
 import { storyNameFromExport, toId } from 'storybook/internal/csf';
 import type {
   ArgTypes,

@@ -1,3 +1,24 @@
+import { logger } from 'storybook/internal/client-logger';
+import {
+  CONFIG_ERROR,
+  CURRENT_STORY_WAS_SET,
+  DOCS_PREPARED,
+  PRELOAD_ENTRIES,
+  RESET_STORY_ARGS,
+  SELECT_STORY,
+  SET_CONFIG,
+  SET_CURRENT_STORY,
+  SET_FILTER,
+  SET_INDEX,
+  SET_STORIES,
+  STORY_ARGS_UPDATED,
+  STORY_CHANGED,
+  STORY_INDEX_INVALIDATED,
+  STORY_MISSING,
+  STORY_PREPARED,
+  STORY_SPECIFIED,
+  UPDATE_STORY_ARGS,
+} from 'storybook/internal/core-events';
 import { sanitize, toId } from 'storybook/internal/csf';
 import type {
   API_ComposedRef,

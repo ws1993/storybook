@@ -2,6 +2,7 @@
 
 /* eslint-disable @typescript-eslint/naming-convention */
 import { type CleanupCallback, isExportStory } from 'storybook/internal/csf';
+import { MountMustBeDestructuredError } from 'storybook/internal/preview-errors';
 import type {
   Args,
   Canvas,

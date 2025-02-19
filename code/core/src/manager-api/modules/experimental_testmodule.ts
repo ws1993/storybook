@@ -7,6 +7,7 @@ import {
   type TestProviders,
   type TestingModuleRunRequestPayload,
 } from 'storybook/internal/core-events';
+import { Addon_TypesEnum, type StoryId } from 'storybook/internal/types';
 
 import invariant from 'tiny-invariant';
 

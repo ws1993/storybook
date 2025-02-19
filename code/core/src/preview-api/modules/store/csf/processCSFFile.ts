@@ -1,3 +1,4 @@
+import { logger } from 'storybook/internal/client-logger';
 import { isExportStory, isStory } from 'storybook/internal/csf';
 import type { ComponentTitle, Parameters, Path, Renderer } from 'storybook/internal/types';
 import type {

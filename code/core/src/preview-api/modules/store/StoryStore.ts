@@ -1,4 +1,9 @@
+import { deprecate } from 'storybook/internal/client-logger';
 import type { Canvas, CleanupCallback } from 'storybook/internal/csf';
+import {
+  CalledExtractOnStoreError,
+  MissingStoryFromCsfFileError,
+} from 'storybook/internal/preview-errors';
 import type {
   BoundStory,
   CSFFile,

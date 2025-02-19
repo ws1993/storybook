@@ -1,5 +1,30 @@
 import type { Channel } from 'storybook/internal/channels';
+import { deprecate, logger } from 'storybook/internal/client-logger';
+import {
+  ARGTYPES_INFO_REQUEST,
+  ARGTYPES_INFO_RESPONSE,
+  type ArgTypesRequestPayload,
+  type ArgTypesResponsePayload,
+  CONFIG_ERROR,
+  FORCE_REMOUNT,
+  FORCE_RE_RENDER,
+  GLOBALS_UPDATED,
+  RESET_STORY_ARGS,
+  type RequestData,
+  type ResponseData,
+  SET_GLOBALS,
+  STORY_ARGS_UPDATED,
+  STORY_INDEX_INVALIDATED,
+  UPDATE_GLOBALS,
+  UPDATE_STORY_ARGS,
+} from 'storybook/internal/core-events';
 import type { CleanupCallback } from 'storybook/internal/csf';
+import {
+  CalledPreviewMethodBeforeInitializationError,
+  MissingRenderToCanvasError,
+  StoryIndexFetchError,
+  StoryStoreAccessedBeforeInitializationError,
+} from 'storybook/internal/preview-errors';
 import type {
   Args,
   Globals,

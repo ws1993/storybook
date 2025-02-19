@@ -2,6 +2,7 @@ import { relative } from 'node:path';
 
 import { normalizeStories, normalizeStoryPath } from 'storybook/internal/common';
 import { sanitize, storyNameFromExport, toId } from 'storybook/internal/csf';
+import { userOrAutoTitleFromSpecifier } from 'storybook/internal/preview-api';
 import type { Options, StoriesEntry } from 'storybook/internal/types';
 
 import { dedent } from 'ts-dedent';
