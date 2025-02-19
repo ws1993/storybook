@@ -16,7 +16,7 @@ export { hasVitePlugins } from './utils/has-vite-plugins';
 
 export * from './types';
 
-function iframeMiddleware(options: Options, server: Promise<ViteDevServer>): Middleware {
+function iframeMiddleware(options: Options, server: ViteDevServer): Middleware {
   return async (req, res, next) => {
     if (!req.url || !req.url.match(/^\/iframe\.html($|\?)/)) {
       next();
@@ -43,7 +43,7 @@ function iframeMiddleware(options: Options, server: Promise<ViteDevServer>): Mid
   };
 }
 
-let server: Promise<ViteDevServer>;
+let server: ViteDevServer;
 
 export async function bail(): Promise<void> {
   return (await server)?.close();
@@ -55,10 +55,10 @@ export const start: ViteBuilder['start'] = async ({
   router,
   server: devServer,
 }) => {
-  server = createViteServer(options as Options, devServer);
+  server = await createViteServer(options as Options, devServer);
 
   router.use(iframeMiddleware(options as Options, server));
-  router.use((await server).middlewares);
+  router.use(server.middlewares);
 
   return {
     bail,

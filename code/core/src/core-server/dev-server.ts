@@ -117,12 +117,6 @@ export async function storybookDevServer(options: Options) {
     previewStarted.catch(() => {}).then(() => next());
   });
 
-  // The preview builder may add middleware for the iframe.html route asynchronously
-  // We want to wait for that to happen before we start listening for requests
-  await new Promise((res) => {
-    nextTick(res);
-  });
-
   const listening = new Promise<void>((resolve, reject) => {
     server.once('error', reject);
     app.listen({ port, host }, resolve);
