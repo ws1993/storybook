@@ -18,6 +18,7 @@
     "listEmittedFiles": false,
     "noUnusedLocals": false,
     "baseUrl": ".",
+    "rootDir": "./src",
     "paths": {
       "storybook/internal/*": ["../../lib/cli/core/*"]
     }

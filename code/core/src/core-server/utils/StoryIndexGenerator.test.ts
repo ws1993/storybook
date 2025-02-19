@@ -5,6 +5,8 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { normalizeStoriesEntry } from 'storybook/internal/common';
 import { toId } from 'storybook/internal/csf';
+import { getStorySortParameter, readCsf } from 'storybook/internal/csf-tools';
+import { logger, once } from 'storybook/internal/node-logger';
 import type { NormalizedStoriesSpecifier, StoryIndexEntry } from 'storybook/internal/types';
 
 import { csfIndexer } from '../presets/common-preset';
