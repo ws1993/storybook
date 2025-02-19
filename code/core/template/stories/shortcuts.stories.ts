@@ -1,3 +1,4 @@
+import { PREVIEW_KEYDOWN } from 'storybook/internal/core-events';
 import type { PlayFunctionContext } from 'storybook/internal/csf';
 
 import { global as globalThis } from '@storybook/global';
