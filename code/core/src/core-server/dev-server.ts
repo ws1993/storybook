@@ -78,7 +78,8 @@ export async function storybookDevServer(options: Options) {
     channel: serverChannel,
   });
 
-  let previewResult: Awaited<ReturnType<(typeof previewBuilder)['start']>> | undefined;
+  let previewResult: Awaited<ReturnType<(typeof previewBuilder)['start']>> =
+    await Promise.resolve();
 
   if (!options.ignorePreview) {
     if (!options.quiet) {
