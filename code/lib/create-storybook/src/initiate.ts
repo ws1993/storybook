@@ -337,7 +337,11 @@ export async function doInitiate(options: CommandOptions): Promise<
     selectedFeatures = new Set(out.features);
   }
 
-  const telemetryFeatures = ['dev', ...selectedFeatures];
+  const telemetryFeatures = {
+    docs: selectedFeatures.has('docs'),
+    test: selectedFeatures.has('test'),
+    dev: true,
+  };
 
   // Check if the current directory is empty.
   if (options.force !== true && currentDirectoryIsEmpty(packageManager.type)) {
