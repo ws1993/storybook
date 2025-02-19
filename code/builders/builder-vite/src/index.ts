@@ -15,7 +15,7 @@ export { hasVitePlugins } from './utils/has-vite-plugins';
 
 export * from './types';
 
-function iframeMiddleware(options: Options, server: ViteDevServer): Middleware {
+function iframeRouter(options: Options, server: ViteDevServer): Middleware {
   return async (req, res) => {
     const indexHtml = await readFile(require.resolve('@storybook/builder-vite/input/iframe.html'), {
       encoding: 'utf8',
@@ -42,7 +42,7 @@ export const start: ViteBuilder['start'] = async ({
 }) => {
   server = await createViteServer(options as Options, devServer);
 
-  router.get('/iframe.html', iframeMiddleware(options as Options, server));
+  router.get('/iframe.html', iframeRouter(options as Options, server));
   router.use(server.middlewares);
 
   return {
