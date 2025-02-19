@@ -152,6 +152,7 @@ const INCLUDE_CANDIDATES = [
   'slash',
   'store2',
   'storybook/internal/preview/runtime',
+  'storybook/internal/csf',
   'synchronous-promise',
   'telejson',
   'ts-dedent',
