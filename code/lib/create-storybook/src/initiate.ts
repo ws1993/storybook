@@ -338,9 +338,9 @@ export async function doInitiate(options: CommandOptions): Promise<
   }
 
   const telemetryFeatures = {
+    dev: true,
     docs: selectedFeatures.has('docs'),
     test: selectedFeatures.has('test'),
-    dev: true,
   };
 
   // Check if the current directory is empty.
