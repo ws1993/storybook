@@ -6,7 +6,6 @@ import { MissingBuilderError } from '@storybook/core/server-errors';
 
 import compression from '@polka/compression';
 import polka from 'polka';
-import { nextTick } from 'process';
 import invariant from 'tiny-invariant';
 
 import type { StoryIndexGenerator } from './utils/StoryIndexGenerator';
