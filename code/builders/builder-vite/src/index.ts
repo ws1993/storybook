@@ -42,7 +42,7 @@ export const start: ViteBuilder['start'] = async ({
 }) => {
   server = await createViteServer(options as Options, devServer);
 
-  router.use(iframeMiddleware(options as Options, server));
+  router.get('/iframe.html', iframeMiddleware(options as Options, server));
   router.use(server.middlewares);
 
   return {
