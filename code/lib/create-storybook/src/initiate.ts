@@ -299,13 +299,14 @@ export async function doInitiate(options: CommandOptions): Promise<
     test: { name: 'Testing', description: 'Fast browser-based component tests, watch mode' },
   };
 
-  let selectedFeatures = new Set<GeneratorFeature>();
-  selectedFeatures.toString = () =>
-    selectedFeatures.size === 0
+  const printFeatures = (features: Set<GeneratorFeature>) =>
+    features.size === 0
       ? 'none'
-      : Array.from(selectedFeatures)
+      : Array.from(features)
           .map((f) => selectableFeatures[f].name)
           .join(', ');
+
+  let selectedFeatures = new Set<GeneratorFeature>();
 
   if (options.features?.length > 0) {
     if (options.features.includes('docs')) {
@@ -314,7 +315,7 @@ export async function doInitiate(options: CommandOptions): Promise<
     if (options.features.includes('test')) {
       selectedFeatures.add('test');
     }
-    logger.log(`Selected features: ${selectedFeatures}`);
+    logger.log(`Selected features: ${printFeatures(selectedFeatures)}`);
   } else if (options.yes || !isInteractive) {
     selectedFeatures.add('docs');
 
@@ -322,7 +323,7 @@ export async function doInitiate(options: CommandOptions): Promise<
       // Don't automatically add test feature in CI
       selectedFeatures.add('test');
     }
-    logger.log(`Selected features: ${selectedFeatures}`);
+    logger.log(`Selected features: ${printFeatures(selectedFeatures)}`);
   } else {
     const out = await prompts({
       type: 'multiselect',
@@ -527,7 +528,7 @@ export async function doInitiate(options: CommandOptions): Promise<
     boxen(
       dedent`
           Storybook was successfully installed in your project! 🎉
-          Additional features: ${selectedFeatures}
+          Additional features: ${printFeatures(selectedFeatures)}
 
           To run Storybook manually, run ${picocolors.yellow(
             picocolors.bold(storybookCommand)
