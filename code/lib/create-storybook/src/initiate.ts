@@ -300,11 +300,9 @@ export async function doInitiate(options: CommandOptions): Promise<
   };
 
   const printFeatures = (features: Set<GeneratorFeature>) =>
-    features.size === 0
-      ? 'none'
-      : Array.from(features)
-          .map((f) => selectableFeatures[f].name)
-          .join(', ');
+    Array.from(features)
+      .map((f) => selectableFeatures[f].name)
+      .join(', ') || 'none';
 
   let selectedFeatures = new Set<GeneratorFeature>();
 
