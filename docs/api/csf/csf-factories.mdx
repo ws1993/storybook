@@ -264,10 +264,10 @@ All of the story properties are now contained within a new property called `comp
 
 ### 5. Update your Vitest setup file
 
-Whether because you're using [Storybook's Test addon](../../writing-tests/test-addon.mdx) or [portable stories in Vitest](../portable-stories/portable-stories-vitest.mdx), you may be using a Vitest setup file to configure your stories. This file will need to be updated to use the new CSF Factories format.
+Whether you're using [Storybook's Test addon](../../writing-tests/test-addon.mdx) or [portable stories in Vitest](../portable-stories/portable-stories-vitest.mdx), you may use a Vitest setup file to configure your stories. This file must be updated to use the new CSF Factories format.
 
 <Callout variant="warning">
-Note that this means you must be using CSF Factories for _all_ of your tested stories. If you are using a mix of CSF 1, 2, or 3 and CSF Factories, you will need to maintain two separate setup files.
+Note that this only applies if you use CSF Factories for all your tested stories. If you use a mix of CSF 1, 2, or 3 and CSF Factories, you must maintain two separate setup files.
 </Callout>
 
 ```diff title="vitest.setup.js|ts"
