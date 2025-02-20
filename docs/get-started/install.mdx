@@ -16,7 +16,15 @@ Use the Storybook CLI to install it in a single command. Run this inside your pr
 <details id="custom-storybook-version">
   <summary>Install a specific version</summary>
 
-  Use the `init` command to install a Storybook version prior to 8.3:
+  For installing Storybook 8.3 or newer, you can use the `create` command with a specific version:
+
+  {/* prettier-ignore-start */}
+
+  <CodeSnippets path="create-command-custom-version.md" />
+
+  {/* prettier-ignore-end */}
+
+  To install a Storybook version prior to 8.3, you must use the `init` command:
 
   {/* prettier-ignore-start */}
 
@@ -24,19 +32,13 @@ Use the Storybook CLI to install it in a single command. Run this inside your pr
 
   {/* prettier-ignore-end */}
 
-  You can specify either an npm tag such as `latest` or `next`, or a (partial) version number. For example:
+  For either command, you can specify either an npm tag such as `latest` or `next`, or a (partial) version number. For example:
 
   * `storybook@latest init` will initialize the latest version
   * `storybook@7.6.10 init` will initialize `7.6.10`
   * `storybook@7 init` will initialize the newest `7.x.x` version
 
-  From Storybook 8.3 and beyond, you can use the `create` command with a specific version:
-
-  {/* prettier-ignore-start */}
-
-  <CodeSnippets path="create-command-custom-version.md" />
-
-  {/* prettier-ignore-end */}
+  
 </details>
 
 Storybook will look into your project's dependencies during its install process and provide you with the best configuration available.
@@ -91,7 +93,7 @@ There are some noteworthy items here:
 
   {/* prettier-ignore-start */}
 
-  <CodeSnippets path="init-command-custom-package-manager.md" />
+  <CodeSnippets path="create-command-custom-package-manager.md" />
 
   {/* prettier-ignore-end */}
 
@@ -116,7 +118,7 @@ There are some noteworthy items here:
 
   {/* prettier-ignore-start */}
 
-  <CodeSnippets path="init-command-manual-framework.md" />
+  <CodeSnippets path="create-command-manual-framework.md" />
 
   {/* prettier-ignore-end */}
 

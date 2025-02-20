@@ -92,17 +92,17 @@ Options include:
 
 ### `init`
 
-Installs and initializes the specified version (e.g., `@latest`, `@8`, `@next`) of Storybook into your project. Read more in the [installation guide](../get-started/install.mdx).
+<Callout variant="info">
+  We recommend [`create-storybook`](#create-storybook) for new projects. The `init` command will remain available for backwards compatibility.
+</Callout>
+
+Installs and initializes the specified version (e.g., `@latest`, `@8`, `@next`) of Storybook into your project. If no version is specified, the latest version is installed. Read more in the [installation guide](../get-started/install.mdx).
 
 ```shell
 storybook[@version] init [options]
 ```
 
-For example, `storybook@latest init` will install the latest version of Storybook into your project.
-
-<Callout variant="info">
-  This command is also available via [`create-storybook`](#create-storybook), which is generally recommended for new projects.
-</Callout>
+For example, `storybook@8.4 init` will install Storybook 8.4 into your project.
 
 Options include:
 
@@ -319,12 +319,29 @@ Options include:
 
 ## `create-storybook`
 
-To streamline the process of creating a new Storybook project, a separate CLI called `create-storybook` is provided. Package managers such as npm, Yarn, and pnpm will execute this when running `create storybook`:
+To streamline the process of creating a new Storybook project, a separate CLI called `create-storybook` is provided. Package managers such as npm, pnpm, and Yarn will execute this command when running `create storybook`. You can specify a version (e.g., `@latest`, `@8`, `@next`) or it will default to the latest version. Read more in the [installation guide](../get-started/install.mdx).
 
-{/* prettier-ignore-start */}
+```shell
+create storybook[@version] [options]
+```
 
-<CodeSnippets path="create-command.md" />
+For example, `create storybook@8.6` will install Storybook 8.6 into your project.
 
-{/* prettier-ignore-end */}
+Options include:
 
-`create-storybook` is mostly a wrapper around `storybook init` and provides an optimized experience for [creating new Storybook projects](../get-started/install.mdx). Refer to [`init`](#init) for options.
+| Option                   | Description                                                                                                                                                                                      |
+| ------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `-h`, `--help`           | Output usage information.<br />`create storybook --help`                                                                                                                                         |
+| `-b`, `--builder`        | Defines the [builder](../builders/index.mdx) to use for your Storybook instance.<br />`create storybook --builder webpack5`                                                                      |
+| `-f`, `--force`          | Forcefully installs Storybook into your project, prompting you to overwrite existing files.<br />`create storybook --force`                                                                      |
+| `-s`, `--skip-install`   | Skips the dependency installation step. Used only when you need to configure Storybook manually.<br />`create storybook --skip-install`                                                          |
+| `-t`, `--type`           | Defines the [framework](../configure/integration/frameworks.mdx) to use for your Storybook instance.<br />`create storybook --type solid`                                                        |
+| `-y`, `--yes`            | Skips interactive prompts and automatically installs Storybook per specified version, including all features.<br />`create storybook --yes`                                                      |
+| `--features [...values]` | Use these features when installing, skipping the prompt. Supported values are `docs` and `test`, space separated.<br />`create storybook --features docs test`                                   |
+| `--package-manager`      | Sets the package manager to use when installing Storybook.<br />Available package managers include `npm`, `yarn`, and `pnpm`.<br />`create storybook --package-manager pnpm`                     |
+| `--use-pnp`              | Enables [Plug'n'Play](https://yarnpkg.com/features/pnp) support for Yarn. This option is only available when using Yarn as your package manager.<br />`create storybook --use-pnp`               |
+| `-p`, `--parser`         | Sets the [jscodeshift parser](https://github.com/facebook/jscodeshift#parser).<br />Available parsers include `babel`, `babylon`, `flow`, `ts`, and `tsx`.<br />`create storybook --parser tsx`  |
+| `--debug`                | Outputs more logs in the CLI to assist debugging.<br />`create storybook --debug`                                                                                                                |
+| `--disable-telemetry`    | Disables Storybook's telemetry. Learn more about it [here](../configure/telemetry.mdx#how-to-opt-out).<br />`create storybook --disable-telemetry`                                               |
+| `--enable-crash-reports` | Enables sending crash reports to Storybook's telemetry. Learn more about it [here](../configure/telemetry.mdx#crash-reports-disabled-by-default).<br />`create storybook --enable-crash-reports` |
+| `--no-dev`               | Complete the initialization of Storybook without running the Storybook dev server.<br />`create storybook --no-dev`                                                                              |
