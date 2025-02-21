@@ -250,6 +250,27 @@ export const doUpgrade = async ({
     const upgradedDependencies = toUpgradedDependencies(packageJson.dependencies);
     const upgradedDevDependencies = toUpgradedDependencies(packageJson.devDependencies);
 
+    // Users struggle to upgrade Storybook with npm because of conflicting peer-dependencies
+    // GitHub Issue: https://github.com/storybookjs/storybook/issues/30306
+    // Solution: Remove all Storybook packages (except 'storybook') from the package.json and install them again
+    if (packageManager.type === 'npm') {
+      await packageManager.removeDependencies(
+        {
+          skipInstall: false,
+        },
+        [...upgradedDependencies, ...upgradedDevDependencies]
+          .map((dep) => {
+            const lastAtIndex = dep.lastIndexOf('@');
+            return lastAtIndex > 0 ? dep.slice(0, lastAtIndex) : dep;
+          })
+          // We don't want to remove the storybook package from the package.json
+          // because third-party packages which we don't remove may depend on it via peer-dependency requirements
+          .filter((dep) => dep !== 'storybook')
+      );
+
+      await packageManager.installDependencies();
+    }
+
     logger.info(`Updating dependencies in ${picocolors.cyan('package.json')}..`);
     if (upgradedDependencies.length > 0) {
       await packageManager.addDependencies(

@@ -1,3 +1,8 @@
+## 8.6.0-beta.6
+
+- CLI: Fix printing of selected features - [#30605](https://github.com/storybookjs/storybook/pull/30605), thanks @ghengeveld!
+- CLI: Remove Storybook dependencies before adding re-adding them - [#30600](https://github.com/storybookjs/storybook/pull/30600), thanks @valentinpalkovic!
+
 ## 8.6.0-beta.5
 
 - Addon-Test: Make sure that only one global portable story config is ever loaded - [#30582](https://github.com/storybookjs/storybook/pull/30582), thanks @kasperpeulen!
