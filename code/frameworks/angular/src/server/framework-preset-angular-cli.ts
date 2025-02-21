@@ -41,7 +41,7 @@ export async function webpackFinal(baseConfig: webpack.Configuration, options: P
   );
 
   try {
-    require.resolve('@angular/platform-browser/animations');
+    require.resolve('@angular/animations');
   } catch (e) {
     webpackConfig.plugins.push(
       new WebpackIgnorePlugin({
