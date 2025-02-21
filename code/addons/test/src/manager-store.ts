@@ -4,5 +4,5 @@ import { type StoreState, storeOptions } from './constants';
 
 export const store = experimental_UniversalStore.create<StoreState>({
   ...storeOptions,
-  leader: globalThis.CONFIG_TYPE === 'PRODUCTION',
+  leader: (globalThis as any).CONFIG_TYPE === 'PRODUCTION',
 });
