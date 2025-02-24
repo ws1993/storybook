@@ -15,7 +15,7 @@ import { checkWebpackVersion } from '@storybook/core-webpack';
 import prettyTime from 'pretty-hrtime';
 import sirv from 'sirv';
 import type { Configuration, Stats, StatsOptions } from 'webpack';
-import webpackDep, { DefinePlugin, ProgressPlugin } from 'webpack';
+import webpackDep, { DefinePlugin, IgnorePlugin, ProgressPlugin } from 'webpack';
 import webpackDevMiddleware from 'webpack-dev-middleware';
 import webpackHotMiddleware from 'webpack-hot-middleware';
 
@@ -23,6 +23,7 @@ export * from './types';
 export * from './preview/virtual-module-mapping';
 
 export const WebpackDefinePlugin = DefinePlugin;
+export const WebpackIgnorePlugin = IgnorePlugin;
 
 export const printDuration = (startTime: [number, number]) =>
   prettyTime(process.hrtime(startTime))
