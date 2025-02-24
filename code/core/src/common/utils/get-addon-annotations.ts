@@ -32,7 +32,6 @@ export async function getAddonAnnotations(addon: string) {
       isCoreAddon: isCorePackage(addon),
     };
 
-    // TODO: current workaround needed only for essentials, fix this once we change the preview entry-point for that package
     if (addon === '@storybook/addon-essentials') {
       data.importPath = '@storybook/addon-essentials/entry-preview';
       return data;
