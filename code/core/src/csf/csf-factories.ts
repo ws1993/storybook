@@ -21,19 +21,26 @@ export interface Preview<TRenderer extends Renderer = Renderer> {
 }
 
 export function definePreview<TRenderer extends Renderer>(
-  preview: Preview<TRenderer>['input']
+  input: Preview<TRenderer>['input']
 ): Preview<TRenderer> {
-  return {
+  let composed: NormalizedProjectAnnotations<TRenderer>;
+  const preview: Preview<TRenderer> = {
     _tag: 'Preview',
-    input: preview,
+    input,
     get composed() {
-      const { addons, ...rest } = preview;
-      return normalizeProjectAnnotations<TRenderer>(composeConfigs([...(addons ?? []), rest]));
+      if (composed) {
+        return composed;
+      }
+      const { addons, ...rest } = input;
+      composed = normalizeProjectAnnotations<TRenderer>(composeConfigs([...(addons ?? []), rest]));
+      return composed;
     },
     meta(meta: ComponentAnnotations<TRenderer>) {
       return defineMeta(meta, this);
     },
   };
+  globalThis.globalProjectAnnotations = preview.composed;
+  return preview;
 }
 
 export function isPreview(input: unknown): input is Preview<Renderer> {
@@ -46,7 +53,7 @@ export interface Meta<TRenderer extends Renderer, TArgs extends Args = Args> {
   composed: NormalizedComponentAnnotations<TRenderer>;
   preview: Preview<TRenderer>;
 
-  story(input: ComponentAnnotations<TRenderer, TArgs>): Story<TRenderer, TArgs>;
+  story(input: StoryAnnotations<TRenderer, TArgs>): Story<TRenderer, TArgs>;
 }
 
 export function isMeta(input: unknown): input is Meta<Renderer> {

@@ -1,3 +1,13 @@
+## 8.5.8
+
+- Core: Support `esbuild@^0.25` - [#30574](https://github.com/storybookjs/storybook/pull/30574), thanks @JReinhold!
+
+## 8.5.7
+
+- Tags: Add story/meta usage telemetry - [#30555](https://github.com/storybookjs/storybook/pull/30555), thanks @shilman!
+- Telemetry: Don't count example stories towards CSF feature stats - [#30561](https://github.com/storybookjs/storybook/pull/30561), thanks @shilman!
+- Vite: Fix not stripping all HMR boundaries - [#30562](https://github.com/storybookjs/storybook/pull/30562), thanks @JReinhold!
+
 ## 8.5.6
 
 - Builder-Vite: Fix defaulting to allowing all hosts - [#30523](https://github.com/storybookjs/storybook/pull/30523), thanks @JReinhold!
