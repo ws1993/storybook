@@ -267,9 +267,6 @@ export async function storyToCsfFactory(
     programNode.body.unshift(configImport);
   }
 
-  // Remove type imports – now inferred – from @storybook/* packages
-  programNode.body = cleanupTypeImports(programNode, typesDisallowList);
-
   // Remove unused type aliases e.g. `type Story = StoryObj<typeof meta>;`
   programNode.body.forEach((node, index) => {
     if (t.isTSTypeAliasDeclaration(node)) {
@@ -288,6 +285,9 @@ export async function storyToCsfFactory(
       }
     }
   });
+
+  // Remove type imports – now inferred – from @storybook/* packages
+  programNode.body = cleanupTypeImports(programNode, typesDisallowList);
 
   return printCsf(csf).code;
 }
