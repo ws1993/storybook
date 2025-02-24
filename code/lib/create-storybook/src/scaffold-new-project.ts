@@ -177,7 +177,18 @@ export const scaffoldNewProject = async (
     // If target directory has a .cache folder, remove it
     // so that it does not block the creation of the new project
     await rm(`${targetDir}/.cache`, { recursive: true, force: true });
+  } catch (e) {
+    //
+  }
+  try {
+    // If target directory has a node_modules folder, remove it
+    // so that it does not block the creation of the new project
+    await rm(`${targetDir}/node_modules`, { recursive: true, force: true });
+  } catch (e) {
+    //
+  }
 
+  try {
     // Create new project in temp directory
     await execa.command(createScript, {
       stdio: 'pipe',
