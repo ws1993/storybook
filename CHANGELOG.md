@@ -1,3 +1,6 @@
+## 8.6.0
+
+
 ## 8.5.8
 
 - Core: Support `esbuild@^0.25` - [#30574](https://github.com/storybookjs/storybook/pull/30574), thanks @JReinhold!
