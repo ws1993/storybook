@@ -3117,8 +3117,8 @@ __metadata:
   linkType: hard
 
 "@chromatic-com/storybook@npm:^4.0.0-0":
-  version: 4.0.0-next.0
-  resolution: "@chromatic-com/storybook@npm:4.0.0-next.0"
+  version: 4.0.0-next.1
+  resolution: "@chromatic-com/storybook@npm:4.0.0-next.1"
   dependencies:
     chromatic: "npm:^11.15.0"
     filesize: "npm:^10.0.12"
@@ -3126,8 +3126,8 @@ __metadata:
     react-confetti: "npm:^6.1.0"
     strip-ansi: "npm:^7.1.0"
   peerDependencies:
-    storybook: ^9.0.0 || ^9.0.0-0
-  checksum: 10c0/3f0c2df5c8f0509092a2d5db48ca832633a1dada6eea36b9504362fc58ce802faf2bd63cc255d39efd2d6a55a5465dd567b7486b76a5ac24e5dcc9705dd340f4
+    storybook: ^0.0.0-0 || ^9.0.0 || ^9.0.0-0
+  checksum: 10c0/b97e5f63186c95959ca3bbea1db08d55561554f79bed89b4d0e462c13e656dbccce7063ce0ec7a1efc66ae67d066ed5a186a45a2abf2e495085d0781ffd4e133
   languageName: node
   linkType: hard
 
