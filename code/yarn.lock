@@ -3116,9 +3116,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@chromatic-com/storybook@npm:^3.2.4":
-  version: 3.2.4
-  resolution: "@chromatic-com/storybook@npm:3.2.4"
+"@chromatic-com/storybook@npm:^4.0.0-0":
+  version: 4.0.0-next.0
+  resolution: "@chromatic-com/storybook@npm:4.0.0-next.0"
   dependencies:
     chromatic: "npm:^11.15.0"
     filesize: "npm:^10.0.12"
@@ -3126,8 +3126,8 @@ __metadata:
     react-confetti: "npm:^6.1.0"
     strip-ansi: "npm:^7.1.0"
   peerDependencies:
-    storybook: ^8.2.0 || ^8.3.0-0 || ^8.4.0-0 || ^8.5.0-0 || ^8.6.0-0
-  checksum: 10c0/57d466644d859ca58a853cc8316d3b0a64c617216ccf30d743c5fbf24c90859271a5708f05253a3b48c9ce64bc12749dd5a5b00fd1310f5d8a2ee64da9ceebe3
+    storybook: ^9.0.0 || ^9.0.0-0
+  checksum: 10c0/3f0c2df5c8f0509092a2d5db48ca832633a1dada6eea36b9504362fc58ce802faf2bd63cc255d39efd2d6a55a5465dd567b7486b76a5ac24e5dcc9705dd340f4
   languageName: node
   linkType: hard
 
@@ -8436,7 +8436,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@storybook/root@workspace:."
   dependencies:
-    "@chromatic-com/storybook": "npm:^3.2.4"
+    "@chromatic-com/storybook": "npm:^4.0.0-0"
     "@happy-dom/global-registrator": "npm:^14.12.0"
     "@nx/eslint": "npm:20.2.2"
     "@nx/vite": "npm:20.2.2"
