@@ -1,3 +1,8 @@
+## 8.6.0-beta.10
+
+- Codemod: Always get real path of files - [#30650](https://github.com/storybookjs/storybook/pull/30650), thanks @yannbf!
+- Core: Don't set process.env.NODE_ENV and process.env.DEV - [#30651](https://github.com/storybookjs/storybook/pull/30651), thanks @valentinpalkovic!
+
 ## 8.6.0-beta.9
 
 - CLI: Prompt users for RN vs RNW on init - [#30635](https://github.com/storybookjs/storybook/pull/30635), thanks @shilman!
