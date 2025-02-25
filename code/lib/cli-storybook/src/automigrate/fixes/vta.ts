@@ -44,7 +44,7 @@ export const vta: Fix<Options> = {
       const packageJson = await packageManager.retrievePackageJson();
       await packageManager.addDependencies(
         { installAsDevDependencies: true, skipInstall, packageJson },
-        [`@chromatic-com/storybook@^3`]
+        [`@chromatic-com/storybook@^4.0.0-0`]
       );
 
       await updateMainConfig({ mainConfigPath, dryRun: !!dryRun }, async (main) => {
