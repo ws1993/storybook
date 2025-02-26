@@ -1,4 +1,4 @@
-/* eslint-disable no-underscore-dangle */
+/* eslint-disable no-underscore-dangle,@typescript-eslint/naming-convention */
 import { composeConfigs, normalizeProjectAnnotations } from 'storybook/internal/preview-api';
 import type {
   Args,
@@ -19,7 +19,8 @@ export interface Preview<TRenderer extends Renderer = Renderer> {
   meta(input: ComponentAnnotations<TRenderer>): Meta<TRenderer>;
 }
 
-export function definePreview<TRenderer extends Renderer>(
+/** Do not use, use the definePreview exported from the framework instead. */
+export function __definePreview<TRenderer extends Renderer>(
   input: Preview<TRenderer>['input']
 ): Preview<TRenderer> {
   let composed: NormalizedProjectAnnotations<TRenderer>;
