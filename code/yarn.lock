@@ -6207,7 +6207,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@storybook/builder-manager@workspace:deprecated/builder-manager"
   peerDependencies:
-    storybook: ^8.2.0 || ^8.3.0-0 || ^8.4.0-0 || ^8.5.0-0 || ^8.6.0-0
+    storybook: ^8.2.0 || ^8.3.0-0 || ^8.4.0-0 || ^8.5.0-0 || ^8.6.0-0 || ^9.0.0-0
   languageName: unknown
   linkType: soft
 
@@ -6284,7 +6284,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@storybook/channels@workspace:deprecated/channels"
   peerDependencies:
-    storybook: ^8.2.0 || ^8.3.0-0 || ^8.4.0-0 || ^8.5.0-0 || ^8.6.0-0
+    storybook: ^8.2.0 || ^8.3.0-0 || ^8.4.0-0 || ^8.5.0-0 || ^8.6.0-0 || ^9.0.0-0
   languageName: unknown
   linkType: soft
 
@@ -6329,7 +6329,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@storybook/client-logger@workspace:deprecated/client-logger"
   peerDependencies:
-    storybook: ^8.2.0 || ^8.3.0-0 || ^8.4.0-0 || ^8.5.0-0 || ^8.6.0-0
+    storybook: ^8.2.0 || ^8.3.0-0 || ^8.4.0-0 || ^8.5.0-0 || ^8.6.0-0 || ^9.0.0-0
   languageName: unknown
   linkType: soft
 
@@ -6370,7 +6370,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@storybook/components@workspace:deprecated/components"
   peerDependencies:
-    storybook: ^8.2.0 || ^8.3.0-0 || ^8.4.0-0 || ^8.5.0-0 || ^8.6.0-0
+    storybook: ^8.2.0 || ^8.3.0-0 || ^8.4.0-0 || ^8.5.0-0 || ^8.6.0-0 || ^9.0.0-0
   languageName: unknown
   linkType: soft
 
@@ -6378,7 +6378,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@storybook/core-common@workspace:deprecated/core-common"
   peerDependencies:
-    storybook: ^8.2.0 || ^8.3.0-0 || ^8.4.0-0 || ^8.5.0-0 || ^8.6.0-0
+    storybook: ^8.2.0 || ^8.3.0-0 || ^8.4.0-0 || ^8.5.0-0 || ^8.6.0-0 || ^9.0.0-0
   languageName: unknown
   linkType: soft
 
@@ -6386,7 +6386,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@storybook/core-events@workspace:deprecated/core-events"
   peerDependencies:
-    storybook: ^8.2.0 || ^8.3.0-0 || ^8.4.0-0 || ^8.5.0-0 || ^8.6.0-0
+    storybook: ^8.2.0 || ^8.3.0-0 || ^8.4.0-0 || ^8.5.0-0 || ^8.6.0-0 || ^9.0.0-0
   languageName: unknown
   linkType: soft
 
@@ -6394,7 +6394,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@storybook/core-server@workspace:deprecated/core-server"
   peerDependencies:
-    storybook: ^8.2.0 || ^8.3.0-0 || ^8.4.0-0 || ^8.5.0-0 || ^8.6.0-0
+    storybook: ^8.2.0 || ^8.3.0-0 || ^8.4.0-0 || ^8.5.0-0 || ^8.6.0-0 || ^9.0.0-0
   languageName: unknown
   linkType: soft
 
@@ -6427,7 +6427,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@storybook/csf-tools@workspace:deprecated/csf-tools"
   peerDependencies:
-    storybook: ^8.2.0 || ^8.3.0-0 || ^8.4.0-0 || ^8.5.0-0 || ^8.6.0-0
+    storybook: ^8.2.0 || ^8.3.0-0 || ^8.4.0-0 || ^8.5.0-0 || ^8.6.0-0 || ^9.0.0-0
   languageName: unknown
   linkType: soft
 
@@ -6462,7 +6462,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@storybook/docs-tools@workspace:deprecated/docs-tools"
   peerDependencies:
-    storybook: ^8.2.0 || ^8.3.0-0 || ^8.4.0-0 || ^8.5.0-0 || ^8.6.0-0
+    storybook: ^8.2.0 || ^8.3.0-0 || ^8.4.0-0 || ^8.5.0-0 || ^8.6.0-0 || ^9.0.0-0
   languageName: unknown
   linkType: soft
 
@@ -6684,7 +6684,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@storybook/manager-api@workspace:deprecated/manager-api"
   peerDependencies:
-    storybook: ^8.2.0 || ^8.3.0-0 || ^8.4.0-0 || ^8.5.0-0 || ^8.6.0-0
+    storybook: ^8.2.0 || ^8.3.0-0 || ^8.4.0-0 || ^8.5.0-0 || ^8.6.0-0 || ^9.0.0-0
   languageName: unknown
   linkType: soft
 
@@ -6692,7 +6692,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@storybook/manager@workspace:deprecated/manager"
   peerDependencies:
-    storybook: ^8.2.0 || ^8.3.0-0 || ^8.4.0-0 || ^8.5.0-0 || ^8.6.0-0
+    storybook: ^8.2.0 || ^8.3.0-0 || ^8.4.0-0 || ^8.5.0-0 || ^8.6.0-0 || ^9.0.0-0
   languageName: unknown
   linkType: soft
 
@@ -6769,7 +6769,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@storybook/node-logger@workspace:deprecated/node-logger"
   peerDependencies:
-    storybook: ^8.2.0 || ^8.3.0-0 || ^8.4.0-0 || ^8.5.0-0 || ^8.6.0-0
+    storybook: ^8.2.0 || ^8.3.0-0 || ^8.4.0-0 || ^8.5.0-0 || ^8.6.0-0 || ^9.0.0-0
   languageName: unknown
   linkType: soft
 
@@ -6954,7 +6954,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@storybook/preview-api@workspace:deprecated/preview-api"
   peerDependencies:
-    storybook: ^8.2.0 || ^8.3.0-0 || ^8.4.0-0 || ^8.5.0-0 || ^8.6.0-0
+    storybook: ^8.2.0 || ^8.3.0-0 || ^8.4.0-0 || ^8.5.0-0 || ^8.6.0-0 || ^9.0.0-0
   languageName: unknown
   linkType: soft
 
@@ -6962,7 +6962,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@storybook/preview@workspace:deprecated/preview"
   peerDependencies:
-    storybook: ^8.2.0 || ^8.3.0-0 || ^8.4.0-0 || ^8.5.0-0 || ^8.6.0-0
+    storybook: ^8.2.0 || ^8.3.0-0 || ^8.4.0-0 || ^8.5.0-0 || ^8.6.0-0 || ^9.0.0-0
   languageName: unknown
   linkType: soft
 
@@ -7278,7 +7278,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@storybook/router@workspace:deprecated/router"
   peerDependencies:
-    storybook: ^8.2.0 || ^8.3.0-0 || ^8.4.0-0 || ^8.5.0-0 || ^8.6.0-0
+    storybook: ^8.2.0 || ^8.3.0-0 || ^8.4.0-0 || ^8.5.0-0 || ^8.6.0-0 || ^9.0.0-0
   languageName: unknown
   linkType: soft
 
@@ -7415,7 +7415,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@storybook/telemetry@workspace:deprecated/telemetry"
   peerDependencies:
-    storybook: ^8.2.0 || ^8.3.0-0 || ^8.4.0-0 || ^8.5.0-0 || ^8.6.0-0
+    storybook: ^8.2.0 || ^8.3.0-0 || ^8.4.0-0 || ^8.5.0-0 || ^8.6.0-0 || ^9.0.0-0
   languageName: unknown
   linkType: soft
 
@@ -7455,7 +7455,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@storybook/theming@workspace:deprecated/theming"
   peerDependencies:
-    storybook: ^8.2.0 || ^8.3.0-0 || ^8.4.0-0 || ^8.5.0-0 || ^8.6.0-0
+    storybook: ^8.2.0 || ^8.3.0-0 || ^8.4.0-0 || ^8.5.0-0 || ^8.6.0-0 || ^9.0.0-0
   languageName: unknown
   linkType: soft
 
@@ -7463,7 +7463,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@storybook/types@workspace:deprecated/types"
   peerDependencies:
-    storybook: ^8.2.0 || ^8.3.0-0 || ^8.4.0-0 || ^8.5.0-0 || ^8.6.0-0
+    storybook: ^8.2.0 || ^8.3.0-0 || ^8.4.0-0 || ^8.5.0-0 || ^8.6.0-0 || ^9.0.0-0
   languageName: unknown
   linkType: soft
 
