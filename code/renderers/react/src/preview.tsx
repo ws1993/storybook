@@ -18,6 +18,10 @@ import * as reactDocsAnnotations from './entry-preview-docs';
 import type { AddMocks } from './public-types';
 import type { ReactRenderer } from './types';
 
+/**
+ * @deprecated Do not use, use the definePreview exported from the framework instead
+ * @internal
+ */
 export function definePreview(preview: ReactPreview['input']) {
   return definePreviewBase({
     ...preview,
