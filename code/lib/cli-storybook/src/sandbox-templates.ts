@@ -551,28 +551,28 @@ export const baseTemplates = {
     },
     skipTasks: ['e2e-tests-dev', 'bench', 'vitest-integration'],
   },
-  'svelte-kit/skeleton-js': {
-    name: 'SvelteKit Latest (Vite | JavaScript)',
-    script:
-      'yarn create svelte-with-args --name=svelte-kit/skeleton-js --directory={{beforeDir}} --template=skeleton --types=null --no-prettier --no-eslint --no-playwright --no-vitest --no-svelte5',
-    expected: {
-      framework: '@storybook/sveltekit',
-      renderer: '@storybook/svelte',
-      builder: '@storybook/builder-vite',
-    },
-    skipTasks: ['e2e-tests-dev', 'bench', 'test-runner'],
-  },
-  'svelte-kit/skeleton-ts': {
-    name: 'SvelteKit Latest (Vite | TypeScript)',
-    script:
-      'yarn create svelte-with-args --name=svelte-kit/skeleton-ts --directory={{beforeDir}} --template=skeleton --types=typescript --no-prettier --no-eslint --no-playwright --no-vitest --no-svelte5',
-    expected: {
-      framework: '@storybook/sveltekit',
-      renderer: '@storybook/svelte',
-      builder: '@storybook/builder-vite',
-    },
-    skipTasks: ['e2e-tests-dev', 'bench', 'test-runner'],
-  },
+  // 'svelte-kit/skeleton-js': {
+  //   name: 'SvelteKit Latest (Vite | JavaScript)',
+  //   script:
+  //     'yarn create svelte-with-args --name=svelte-kit/skeleton-js --directory={{beforeDir}} --template=skeleton --types=null --no-prettier --no-eslint --no-playwright --no-vitest --no-svelte5',
+  //   expected: {
+  //     framework: '@storybook/sveltekit',
+  //     renderer: '@storybook/svelte',
+  //     builder: '@storybook/builder-vite',
+  //   },
+  //   skipTasks: ['e2e-tests-dev', 'bench', 'test-runner'],
+  // },
+  // 'svelte-kit/skeleton-ts': {
+  //   name: 'SvelteKit Latest (Vite | TypeScript)',
+  //   script:
+  //     'yarn create svelte-with-args --name=svelte-kit/skeleton-ts --directory={{beforeDir}} --template=skeleton --types=typescript --no-prettier --no-eslint --no-playwright --no-vitest --no-svelte5',
+  //   expected: {
+  //     framework: '@storybook/sveltekit',
+  //     renderer: '@storybook/svelte',
+  //     builder: '@storybook/builder-vite',
+  //   },
+  //   skipTasks: ['e2e-tests-dev', 'bench', 'test-runner'],
+  // },
   'svelte-kit/prerelease-ts': {
     name: 'SvelteKit Prerelease (Vite | TypeScript)',
     script:
