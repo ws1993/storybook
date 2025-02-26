@@ -53,7 +53,6 @@ describe('renders', () => {
   it.skip('onclick handler is called', async () => {
     const onClickSpy = vi.fn();
     const { component } = render(Secondary.Component, { ...Secondary.props, onClick: onClickSpy });
-    // @ts-expect-error (deprecated: This method only exists when using one of the legacy compatibility helpers)
     component.$on('click', onClickSpy);
     const buttonElement = screen.getByRole('button');
     buttonElement.click();
@@ -160,7 +159,6 @@ describe('ComposeStories types', () => {
        * }; size: { control: { type: string; }; options: string[]; }; }' has no properties in common
        * with type 'Partial<ArgTypes<ComponentType>>'.
        */
-      // @ts-expect-error fix this later
       default: stories.default satisfies Meta<typeof Button>,
     }).toMatchTypeOf<ComposeStoriesParam>();
   });
