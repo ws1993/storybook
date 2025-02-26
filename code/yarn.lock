@@ -2228,9 +2228,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@chromatic-com/storybook@npm:^3.2.4":
-  version: 3.2.4
-  resolution: "@chromatic-com/storybook@npm:3.2.4"
+"@chromatic-com/storybook@npm:^4.0.0-0":
+  version: 4.0.0-next.1
+  resolution: "@chromatic-com/storybook@npm:4.0.0-next.1"
   dependencies:
     chromatic: "npm:^11.15.0"
     filesize: "npm:^10.0.12"
@@ -2238,8 +2238,8 @@ __metadata:
     react-confetti: "npm:^6.1.0"
     strip-ansi: "npm:^7.1.0"
   peerDependencies:
-    storybook: ^8.2.0 || ^8.3.0-0 || ^8.4.0-0 || ^8.5.0-0 || ^8.6.0-0
-  checksum: 10c0/57d466644d859ca58a853cc8316d3b0a64c617216ccf30d743c5fbf24c90859271a5708f05253a3b48c9ce64bc12749dd5a5b00fd1310f5d8a2ee64da9ceebe3
+    storybook: ^0.0.0-0 || ^9.0.0 || ^9.0.0-0
+  checksum: 10c0/b97e5f63186c95959ca3bbea1db08d55561554f79bed89b4d0e462c13e656dbccce7063ce0ec7a1efc66ae67d066ed5a186a45a2abf2e495085d0781ffd4e133
   languageName: node
   linkType: hard
 
@@ -6539,7 +6539,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@storybook/builder-manager@workspace:deprecated/builder-manager"
   peerDependencies:
-    storybook: ^8.2.0 || ^8.3.0-0 || ^8.4.0-0 || ^8.5.0-0 || ^8.6.0-0
+    storybook: ^8.2.0 || ^8.3.0-0 || ^8.4.0-0 || ^8.5.0-0 || ^8.6.0-0 || ^9.0.0-0
   languageName: unknown
   linkType: soft
 
@@ -6616,7 +6616,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@storybook/channels@workspace:deprecated/channels"
   peerDependencies:
-    storybook: ^8.2.0 || ^8.3.0-0 || ^8.4.0-0 || ^8.5.0-0 || ^8.6.0-0
+    storybook: ^8.2.0 || ^8.3.0-0 || ^8.4.0-0 || ^8.5.0-0 || ^8.6.0-0 || ^9.0.0-0
   languageName: unknown
   linkType: soft
 
@@ -6661,7 +6661,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@storybook/client-logger@workspace:deprecated/client-logger"
   peerDependencies:
-    storybook: ^8.2.0 || ^8.3.0-0 || ^8.4.0-0 || ^8.5.0-0 || ^8.6.0-0
+    storybook: ^8.2.0 || ^8.3.0-0 || ^8.4.0-0 || ^8.5.0-0 || ^8.6.0-0 || ^9.0.0-0
   languageName: unknown
   linkType: soft
 
@@ -6702,7 +6702,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@storybook/components@workspace:deprecated/components"
   peerDependencies:
-    storybook: ^8.2.0 || ^8.3.0-0 || ^8.4.0-0 || ^8.5.0-0 || ^8.6.0-0
+    storybook: ^8.2.0 || ^8.3.0-0 || ^8.4.0-0 || ^8.5.0-0 || ^8.6.0-0 || ^9.0.0-0
   languageName: unknown
   linkType: soft
 
@@ -6710,7 +6710,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@storybook/core-common@workspace:deprecated/core-common"
   peerDependencies:
-    storybook: ^8.2.0 || ^8.3.0-0 || ^8.4.0-0 || ^8.5.0-0 || ^8.6.0-0
+    storybook: ^8.2.0 || ^8.3.0-0 || ^8.4.0-0 || ^8.5.0-0 || ^8.6.0-0 || ^9.0.0-0
   languageName: unknown
   linkType: soft
 
@@ -6718,7 +6718,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@storybook/core-events@workspace:deprecated/core-events"
   peerDependencies:
-    storybook: ^8.2.0 || ^8.3.0-0 || ^8.4.0-0 || ^8.5.0-0 || ^8.6.0-0
+    storybook: ^8.2.0 || ^8.3.0-0 || ^8.4.0-0 || ^8.5.0-0 || ^8.6.0-0 || ^9.0.0-0
   languageName: unknown
   linkType: soft
 
@@ -6726,7 +6726,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@storybook/core-server@workspace:deprecated/core-server"
   peerDependencies:
-    storybook: ^8.2.0 || ^8.3.0-0 || ^8.4.0-0 || ^8.5.0-0 || ^8.6.0-0
+    storybook: ^8.2.0 || ^8.3.0-0 || ^8.4.0-0 || ^8.5.0-0 || ^8.6.0-0 || ^9.0.0-0
   languageName: unknown
   linkType: soft
 
@@ -6904,7 +6904,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@storybook/csf-tools@workspace:deprecated/csf-tools"
   peerDependencies:
-    storybook: ^8.2.0 || ^8.3.0-0 || ^8.4.0-0 || ^8.5.0-0 || ^8.6.0-0
+    storybook: ^8.2.0 || ^8.3.0-0 || ^8.4.0-0 || ^8.5.0-0 || ^8.6.0-0 || ^9.0.0-0
   languageName: unknown
   linkType: soft
 
@@ -6939,7 +6939,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@storybook/docs-tools@workspace:deprecated/docs-tools"
   peerDependencies:
-    storybook: ^8.2.0 || ^8.3.0-0 || ^8.4.0-0 || ^8.5.0-0 || ^8.6.0-0
+    storybook: ^8.2.0 || ^8.3.0-0 || ^8.4.0-0 || ^8.5.0-0 || ^8.6.0-0 || ^9.0.0-0
   languageName: unknown
   linkType: soft
 
@@ -7161,7 +7161,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@storybook/manager-api@workspace:deprecated/manager-api"
   peerDependencies:
-    storybook: ^8.2.0 || ^8.3.0-0 || ^8.4.0-0 || ^8.5.0-0 || ^8.6.0-0
+    storybook: ^8.2.0 || ^8.3.0-0 || ^8.4.0-0 || ^8.5.0-0 || ^8.6.0-0 || ^9.0.0-0
   languageName: unknown
   linkType: soft
 
@@ -7169,7 +7169,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@storybook/manager@workspace:deprecated/manager"
   peerDependencies:
-    storybook: ^8.2.0 || ^8.3.0-0 || ^8.4.0-0 || ^8.5.0-0 || ^8.6.0-0
+    storybook: ^8.2.0 || ^8.3.0-0 || ^8.4.0-0 || ^8.5.0-0 || ^8.6.0-0 || ^9.0.0-0
   languageName: unknown
   linkType: soft
 
@@ -7246,7 +7246,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@storybook/node-logger@workspace:deprecated/node-logger"
   peerDependencies:
-    storybook: ^8.2.0 || ^8.3.0-0 || ^8.4.0-0 || ^8.5.0-0 || ^8.6.0-0
+    storybook: ^8.2.0 || ^8.3.0-0 || ^8.4.0-0 || ^8.5.0-0 || ^8.6.0-0 || ^9.0.0-0
   languageName: unknown
   linkType: soft
 
@@ -7431,7 +7431,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@storybook/preview-api@workspace:deprecated/preview-api"
   peerDependencies:
-    storybook: ^8.2.0 || ^8.3.0-0 || ^8.4.0-0 || ^8.5.0-0 || ^8.6.0-0
+    storybook: ^8.2.0 || ^8.3.0-0 || ^8.4.0-0 || ^8.5.0-0 || ^8.6.0-0 || ^9.0.0-0
   languageName: unknown
   linkType: soft
 
@@ -7439,7 +7439,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@storybook/preview@workspace:deprecated/preview"
   peerDependencies:
-    storybook: ^8.2.0 || ^8.3.0-0 || ^8.4.0-0 || ^8.5.0-0 || ^8.6.0-0
+    storybook: ^8.2.0 || ^8.3.0-0 || ^8.4.0-0 || ^8.5.0-0 || ^8.6.0-0 || ^9.0.0-0
   languageName: unknown
   linkType: soft
 
@@ -7595,7 +7595,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@storybook/root@workspace:."
   dependencies:
-    "@chromatic-com/storybook": "npm:^3.2.4"
+    "@chromatic-com/storybook": "npm:^4.0.0-0"
     "@happy-dom/global-registrator": "npm:^14.12.0"
     "@nx/eslint": "npm:20.2.2"
     "@nx/vite": "npm:20.2.2"
@@ -7756,7 +7756,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@storybook/router@workspace:deprecated/router"
   peerDependencies:
-    storybook: ^8.2.0 || ^8.3.0-0 || ^8.4.0-0 || ^8.5.0-0 || ^8.6.0-0
+    storybook: ^8.2.0 || ^8.3.0-0 || ^8.4.0-0 || ^8.5.0-0 || ^8.6.0-0 || ^9.0.0-0
   languageName: unknown
   linkType: soft
 
@@ -7893,7 +7893,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@storybook/telemetry@workspace:deprecated/telemetry"
   peerDependencies:
-    storybook: ^8.2.0 || ^8.3.0-0 || ^8.4.0-0 || ^8.5.0-0 || ^8.6.0-0
+    storybook: ^8.2.0 || ^8.3.0-0 || ^8.4.0-0 || ^8.5.0-0 || ^8.6.0-0 || ^9.0.0-0
   languageName: unknown
   linkType: soft
 
@@ -7933,7 +7933,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@storybook/theming@workspace:deprecated/theming"
   peerDependencies:
-    storybook: ^8.2.0 || ^8.3.0-0 || ^8.4.0-0 || ^8.5.0-0 || ^8.6.0-0
+    storybook: ^8.2.0 || ^8.3.0-0 || ^8.4.0-0 || ^8.5.0-0 || ^8.6.0-0 || ^9.0.0-0
   languageName: unknown
   linkType: soft
 
@@ -7941,7 +7941,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@storybook/types@workspace:deprecated/types"
   peerDependencies:
-    storybook: ^8.2.0 || ^8.3.0-0 || ^8.4.0-0 || ^8.5.0-0 || ^8.6.0-0
+    storybook: ^8.2.0 || ^8.3.0-0 || ^8.4.0-0 || ^8.5.0-0 || ^8.6.0-0 || ^9.0.0-0
   languageName: unknown
   linkType: soft
 
@@ -8628,19 +8628,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/express-serve-static-core@npm:*":
-  version: 5.0.6
-  resolution: "@types/express-serve-static-core@npm:5.0.6"
-  dependencies:
-    "@types/node": "npm:*"
-    "@types/qs": "npm:*"
-    "@types/range-parser": "npm:*"
-    "@types/send": "npm:*"
-  checksum: 10c0/aced8cc88c1718adbbd1fc488756b0f22d763368d9eff2ae21b350698fab4a77d8d13c3699056dc662a887e43a8b67a3e8f6289ff76102ecc6bad4a7710d31a6
-  languageName: node
-  linkType: hard
-
-"@types/express-serve-static-core@npm:^4.17.33":
+"@types/express-serve-static-core@npm:*, @types/express-serve-static-core@npm:^4.17.33":
   version: 4.19.6
   resolution: "@types/express-serve-static-core@npm:4.19.6"
   dependencies:
