@@ -1,16 +1,31 @@
 <script>
-  const { 
-    decorator: Decorator, 
-    decoratorProps = {}, 
-    component: Component, 
-    props = {}
-  } = $props();
-</script>
+  import { onMount } from 'svelte';
+  export let svelteVersion;
+  export let decorator;
+  export let decoratorProps = {};
+  export let component;
+  export let props = {};
+  export let on;
 
-{#if Decorator}
-  <Decorator {...decoratorProps} bind:this={decoratorInstance}>
-    <Component {...props} bind:this={instance}/>
-  </Decorator>
+  let instance;
+  let decoratorInstance;
+
+  function getInstance() {
+    // instance can be undefined if a decorator doesn't have <slot/>
+    return instance || decoratorInstance;
+  }
+
+  if (on && svelteVersion < 5) {
+    // Attach svelte event listeners.
+    Object.keys(on).forEach((eventName) => {
+      onMount(() => getInstance().$on(eventName, on[eventName]));
+    });
+  }
+</script>
+{#if decorator}
+  <svelte:component this={decorator} {...decoratorProps} bind:this={decoratorInstance}>
+    <svelte:component this={component} {...props} bind:this={instance}/>
+  </svelte:component>
 {:else}
-  <Component {...props} bind:this={instance}/>
+  <svelte:component this={component} {...props} bind:this={instance}/>
 {/if}
