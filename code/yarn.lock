@@ -6120,7 +6120,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@storybook/addon-designs@npm:^9.0.0--canary.29cd50d.0":
+"@storybook/addon-designs@npm:^9.0.0--canary.1499c1a.0":
   version: 9.0.0--canary.93d28f8.0
   resolution: "@storybook/addon-designs@npm:9.0.0--canary.93d28f8.0"
   dependencies:
@@ -7293,7 +7293,7 @@ __metadata:
     "@storybook/addon-actions": "workspace:*"
     "@storybook/addon-backgrounds": "workspace:*"
     "@storybook/addon-controls": "workspace:*"
-    "@storybook/addon-designs": "npm:^9.0.0--canary.29cd50d.0"
+    "@storybook/addon-designs": "npm:^9.0.0--canary.1499c1a.0"
     "@storybook/addon-docs": "workspace:*"
     "@storybook/addon-essentials": "workspace:*"
     "@storybook/addon-highlight": "workspace:*"
