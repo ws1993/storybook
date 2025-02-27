@@ -1,4 +1,4 @@
-import type { StorybookConfig, TypescriptOptions } from '@storybook/core/types';
+import type { StorybookConfig, TypescriptOptions } from 'storybook/internal/types';
 
 import type { PM } from 'detect-package-manager';
 
@@ -83,6 +83,7 @@ export interface Options {
   configDir?: string;
   enableCrashReports?: boolean;
   stripMetadata?: boolean;
+  notify?: boolean;
 }
 
 export interface TelemetryData {

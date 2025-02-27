@@ -1,6 +1,6 @@
 {
   "name": "@storybook/react",
-  "version": "8.6.0-alpha.3",
+  "version": "9.0.0-alpha.0",
   "description": "Storybook React renderer",
   "keywords": [
     "storybook"
@@ -25,6 +25,11 @@
       "import": "./dist/index.mjs",
       "require": "./dist/index.js"
     },
+    "./preview": {
+      "types": "./dist/preview.d.ts",
+      "import": "./dist/preview.mjs",
+      "require": "./dist/preview.js"
+    },
     "./experimental-playwright": {
       "types": "./dist/playwright.d.ts",
       "import": "./dist/playwright.mjs",
@@ -43,6 +48,9 @@
     "*": {
       "*": [
         "dist/index.d.ts"
+      ],
+      "preview": [
+        "dist/preview.d.ts"
       ],
       "experimental-playwright": [
         "dist/playwright.d.ts"
@@ -71,7 +79,7 @@
   },
   "devDependencies": {
     "@storybook/test": "workspace:*",
-    "@types/babel-plugin-react-docgen": "^4",
+    "@types/babel-plugin-react-docgen": "^4.2.3",
     "@types/escodegen": "^0.0.6",
     "@types/estree": "^0.0.51",
     "@types/node": "^22.0.0",
@@ -116,6 +124,7 @@
     "entries": [
       "./src/index.ts",
       "./src/preset.ts",
+      "./src/preview.tsx",
       "./src/entry-preview.tsx",
       "./src/entry-preview-docs.ts",
       "./src/entry-preview-rsc.tsx",

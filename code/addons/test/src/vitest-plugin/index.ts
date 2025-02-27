@@ -224,15 +224,6 @@ export const storybookTest = async (options?: UserOptions): Promise<Plugin[]> =>
                   },
                 };
               },
-              getTags: () => {
-                const envConfig = JSON.parse(process.env.VITEST_STORYBOOK_CONFIG ?? '{}');
-
-                const shouldSetTag = process.env.VITEST_STORYBOOK
-                  ? (envConfig.a11y ?? false)
-                  : false;
-
-                return shouldSetTag ? ['a11y-test'] : [];
-              },
             },
             // if there is a test.browser config AND test.browser.screenshotFailures is not explicitly set, we set it to false
             ...(inputConfig_ONLY_MUTATE_WHEN_STRICTLY_NEEDED_OR_YOU_WILL_BE_FIRED.test?.browser &&
@@ -304,7 +295,7 @@ export const storybookTest = async (options?: UserOptions): Promise<Plugin[]> =>
 
             The values you passed to "test.include" will be ignored, please remove them from your Vitest configuration where the Storybook plugin is applied.
             
-            More info: https://github.com/storybookjs/storybook/blob/next/MIGRATION.md#indexing-behavior-of-storybookexperimental-addon-test-is-changed
+            More info: https://github.com/storybookjs/storybook/blob/next/MIGRATION.md#addon-test-indexing-behavior-of-storybookexperimental-addon-test-is-changed
           `)
         );
       }

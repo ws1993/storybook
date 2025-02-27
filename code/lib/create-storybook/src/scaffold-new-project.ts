@@ -1,11 +1,6 @@
 import { readdirSync } from 'node:fs';
 import { rm } from 'node:fs/promises';
 
-import type { PackageManagerName } from 'storybook/internal/common';
-import { logger } from 'storybook/internal/node-logger';
-import { GenerateNewProjectOnInitError } from 'storybook/internal/server-errors';
-import { telemetry } from 'storybook/internal/telemetry';
-
 import boxen from 'boxen';
 // eslint-disable-next-line depend/ban-dependencies
 import execa from 'execa';
@@ -13,6 +8,10 @@ import picocolors from 'picocolors';
 import prompts from 'prompts';
 import { dedent } from 'ts-dedent';
 
+import type { PackageManagerName } from '../../../core/src/common/js-package-manager/JsPackageManager';
+import { logger } from '../../../core/src/node-logger';
+import { GenerateNewProjectOnInitError } from '../../../core/src/server-errors';
+import { telemetry } from '../../../core/src/telemetry';
 import type { CommandOptions } from './generators/types';
 
 type CoercedPackageManagerName = 'npm' | 'yarn' | 'pnpm';
@@ -178,7 +177,18 @@ export const scaffoldNewProject = async (
     // If target directory has a .cache folder, remove it
     // so that it does not block the creation of the new project
     await rm(`${targetDir}/.cache`, { recursive: true, force: true });
+  } catch (e) {
+    //
+  }
+  try {
+    // If target directory has a node_modules folder, remove it
+    // so that it does not block the creation of the new project
+    await rm(`${targetDir}/node_modules`, { recursive: true, force: true });
+  } catch (e) {
+    //
+  }
 
+  try {
     // Create new project in temp directory
     await execa.command(createScript, {
       stdio: 'pipe',
@@ -221,7 +231,7 @@ export const scaffoldNewProject = async (
   logger.line(1);
 };
 
-const BASE_IGNORED_FILES = ['.git', '.gitignore', '.DS_Store', '.cache'];
+const BASE_IGNORED_FILES = ['.git', '.gitignore', '.DS_Store', '.cache', 'node_modules'];
 
 const IGNORED_FILES_BY_PACKAGE_MANAGER: Record<CoercedPackageManagerName, string[]> = {
   npm: [...BASE_IGNORED_FILES],

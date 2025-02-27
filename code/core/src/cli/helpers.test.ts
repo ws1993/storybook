@@ -3,7 +3,7 @@ import fsp from 'node:fs/promises';
 
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
-import type { JsPackageManager } from '@storybook/core/common';
+import type { JsPackageManager } from 'storybook/internal/common';
 
 import { sep } from 'path';
 
@@ -165,6 +165,7 @@ describe('Helpers', () => {
         language,
         packageManager: packageManagerMock,
         commonAssetsDir: normalizePath('create-storybook/rendererAssets/common'),
+        features: ['dev', 'docs', 'test'],
       });
 
       expect(fsp.cp).toHaveBeenNthCalledWith(
@@ -187,6 +188,7 @@ describe('Helpers', () => {
       renderer: 'react',
       language: SupportedLanguage.JAVASCRIPT,
       packageManager: packageManagerMock,
+      features: ['dev', 'docs', 'test'],
     });
     expect(fsp.cp).toHaveBeenCalledWith(expect.anything(), './src/stories', expect.anything());
   });
@@ -199,6 +201,7 @@ describe('Helpers', () => {
       renderer: 'react',
       language: SupportedLanguage.JAVASCRIPT,
       packageManager: packageManagerMock,
+      features: ['dev', 'docs', 'test'],
     });
     expect(fsp.cp).toHaveBeenCalledWith(expect.anything(), './stories', expect.anything());
   });
@@ -211,6 +214,7 @@ describe('Helpers', () => {
         renderer,
         language: SupportedLanguage.JAVASCRIPT,
         packageManager: packageManagerMock,
+        features: ['dev', 'docs', 'test'],
       })
     ).rejects.toThrowError(expectedMessage);
   });

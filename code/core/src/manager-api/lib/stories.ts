@@ -1,3 +1,4 @@
+import { sanitize } from 'storybook/internal/csf';
 import type {
   API_BaseEntry,
   API_ComponentEntry,
@@ -18,8 +19,7 @@ import type {
   StoryIndexV2,
   StoryIndexV3,
   Tag,
-} from '@storybook/core/types';
-import { sanitize } from '@storybook/csf';
+} from 'storybook/internal/types';
 
 import { countBy, mapValues } from 'es-toolkit';
 import memoize from 'memoizerific';

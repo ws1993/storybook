@@ -1,1 +1,1 @@
-{"version":"8.6.0-alpha.3","info":{"plain":"- Core: Fix invalid Websocket termination - [#30408](https://github.com/storybookjs/storybook/pull/30408), thanks @valentinpalkovic!\n- Core: Improve type compatibility with React 19 - [#30031](https://github.com/storybookjs/storybook/pull/30031), thanks @mrginglymus!\n- Preview: Add `globals` to `extract()` - [#30415](https://github.com/storybookjs/storybook/pull/30415), thanks @ndelangen!"}}
+{"version":"9.0.0-alpha.0","info":{"plain":""}}

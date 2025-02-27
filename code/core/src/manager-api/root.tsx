@@ -10,8 +10,15 @@ import React, {
   useRef,
 } from 'react';
 
-import type { Listener } from '@storybook/core/channels';
-import type { RouterData } from '@storybook/core/router';
+import type { Listener } from 'storybook/internal/channels';
+import { deprecate } from 'storybook/internal/client-logger';
+import {
+  SET_STORIES,
+  SHARED_STATE_CHANGED,
+  SHARED_STATE_SET,
+  STORY_CHANGED,
+} from 'storybook/internal/core-events';
+import type { RouterData } from 'storybook/internal/router';
 import type {
   API_ComponentEntry,
   API_ComposedRef,
@@ -31,15 +38,7 @@ import type {
   Globals,
   Parameters,
   StoryId,
-} from '@storybook/core/types';
-
-import { deprecate } from '@storybook/core/client-logger';
-import {
-  SET_STORIES,
-  SHARED_STATE_CHANGED,
-  SHARED_STATE_SET,
-  STORY_CHANGED,
-} from '@storybook/core/core-events';
+} from 'storybook/internal/types';
 
 import { isEqual } from 'es-toolkit';
 
@@ -513,6 +512,10 @@ export function useArgTypes(): ArgTypes {
   const current = useCurrentStory();
   return (current?.type === 'story' && current.argTypes) || {};
 }
+
+export { UniversalStore as experimental_UniversalStore } from '../shared/universal-store';
+export { useUniversalStore as experimental_useUniversalStore } from '../shared/universal-store/use-universal-store-manager';
+export { MockUniversalStore as experimental_MockUniversalStore } from '../shared/universal-store/mock';
 
 export { addons } from './lib/addons';
 

@@ -9,15 +9,16 @@ import {
   resolveAddonName,
   resolvePathInStorybookCache,
   serverResolve,
+  syncStorybookAddons,
   validateFrameworkName,
   versions,
-} from '@storybook/core/common';
-import { oneWayHash, telemetry } from '@storybook/core/telemetry';
-import type { BuilderOptions, CLIOptions, LoadOptions, Options } from '@storybook/core/types';
-import { global } from '@storybook/global';
+} from 'storybook/internal/common';
+import { deprecate } from 'storybook/internal/node-logger';
+import { MissingBuilderError, NoStatsForViteDevError } from 'storybook/internal/server-errors';
+import { oneWayHash, telemetry } from 'storybook/internal/telemetry';
+import type { BuilderOptions, CLIOptions, LoadOptions, Options } from 'storybook/internal/types';
 
-import { deprecate } from '@storybook/core/node-logger';
-import { MissingBuilderError, NoStatsForViteDevError } from '@storybook/core/server-errors';
+import { global } from '@storybook/global';
 
 import prompts from 'prompts';
 import invariant from 'tiny-invariant';
@@ -114,6 +115,10 @@ export async function buildDevStandalone(
   }
 
   try {
+    await syncStorybookAddons(config, previewConfigPath!);
+  } catch (e) {}
+
+  try {
     await warnWhenUsingArgTypesRegex(previewConfigPath, config);
   } catch (e) {}
 
@@ -123,7 +128,7 @@ export async function buildDevStandalone(
   let presets = await loadAllPresets({
     corePresets,
     overridePresets: [
-      require.resolve('@storybook/core/core-server/presets/common-override-preset'),
+      require.resolve('storybook/internal/core-server/presets/common-override-preset'),
     ],
     ...options,
     isCritical: true,
@@ -170,7 +175,7 @@ export async function buildDevStandalone(
   // Load second pass: all presets are applied in order
   presets = await loadAllPresets({
     corePresets: [
-      require.resolve('@storybook/core/core-server/presets/common-preset'),
+      require.resolve('storybook/internal/core-server/presets/common-preset'),
       ...(managerBuilder.corePresets || []),
       ...(previewBuilder.corePresets || []),
       ...(resolvedRenderer ? [resolvedRenderer] : []),
@@ -178,7 +183,7 @@ export async function buildDevStandalone(
     ],
     overridePresets: [
       ...(previewBuilder.overridePresets || []),
-      require.resolve('@storybook/core/core-server/presets/common-override-preset'),
+      require.resolve('storybook/internal/core-server/presets/common-override-preset'),
     ],
     ...options,
   });

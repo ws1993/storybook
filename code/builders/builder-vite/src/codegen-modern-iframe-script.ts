@@ -6,7 +6,7 @@ import { filename } from 'pathe/utils';
 import { dedent } from 'ts-dedent';
 
 import { processPreviewAnnotation } from './utils/process-preview-annotation';
-import { SB_VIRTUAL_FILES, getResolvedVirtualModuleId } from './virtual-file-names';
+import { SB_VIRTUAL_FILES } from './virtual-file-names';
 
 export async function generateModernIframeScriptCode(options: Options, projectRoot: string) {
   const { presets, configDir } = options;
@@ -34,7 +34,7 @@ export async function generateModernIframeScriptCodeFromPreviews(options: {
   frameworkName: string;
 }) {
   const { projectRoot, frameworkName } = options;
-  const previewAnnotationURLs = options.previewAnnotations
+  const [previewFileUrl, ...previewAnnotationURLs] = options.previewAnnotations
     .filter((path) => path !== undefined)
     .map((path) => processPreviewAnnotation(path as string, projectRoot));
 
@@ -55,6 +55,12 @@ export async function generateModernIframeScriptCodeFromPreviews(options: {
   // However, only the changed modules are provided, the rest are null.
   const getPreviewAnnotationsFunction = dedent`
   const getProjectAnnotations = (hmrPreviewAnnotationModules = []) => {
+    const preview = await import('${previewFileUrl}');
+ 
+    if (isPreview(preview.default)) {
+      return preview.default.composed;
+    }
+   
     const configs = ${genArrayFromRaw(
       variables.map(
         (previewAnnotation, index) =>
@@ -63,13 +69,13 @@ export async function generateModernIframeScriptCodeFromPreviews(options: {
       ),
       '  '
     )}
-    return composeConfigs(configs);
+    return composeConfigs([...configs, preview]);
   }`;
 
   const generateHMRHandler = (): string => {
     // Web components are not compatible with HMR, so disable HMR, reload page instead.
     if (frameworkName === '@storybook/web-components-vite') {
-      return `
+      return dedent`
       if (import.meta.hot) {
         import.meta.hot.decline();
       }`.trim();
@@ -77,7 +83,7 @@ export async function generateModernIframeScriptCodeFromPreviews(options: {
 
     return dedent`
     if (import.meta.hot) {
-      import.meta.hot.accept('${getResolvedVirtualModuleId(SB_VIRTUAL_FILES.VIRTUAL_STORIES_FILE)}', (newModule) => {
+      import.meta.hot.accept('${SB_VIRTUAL_FILES.VIRTUAL_STORIES_FILE}', (newModule) => {
         // importFn has changed so we need to patch the new one in
         window.__STORYBOOK_PREVIEW__.onStoriesChanged({ importFn: newModule.importFn });
       });
@@ -104,7 +110,8 @@ export async function generateModernIframeScriptCodeFromPreviews(options: {
 
   setup();
  
-  import { composeConfigs, PreviewWeb, ClientApi } from 'storybook/internal/preview-api';
+  import { composeConfigs, PreviewWeb } from 'storybook/internal/preview-api';
+  import { isPreview } from 'storybook/internal/csf';
   import { importFn } from '${SB_VIRTUAL_FILES.VIRTUAL_STORIES_FILE}';
   
   ${imports.join('\n')}

@@ -18,7 +18,20 @@ import { DocsContext } from '@storybook/blocks';
 import { global } from '@storybook/global';
 import type { Decorator, Loader, ReactRenderer } from '@storybook/react';
 
+// TODO add empty preview
+// import * as storysource from '@storybook/addon-storysource';
+// import * as designs from '@storybook/addon-designs/preview';
+import addonTest from '@storybook/experimental-addon-test';
+import { definePreview } from '@storybook/react-vite';
+
+import addonA11y from '@storybook/addon-a11y';
+import * as addonEssentials from '@storybook/addon-essentials/entry-preview';
+import addonThemes from '@storybook/addon-themes';
+
+import * as addonsPreview from '../addons/toolbars/template/stories/preview';
+import * as templatePreview from '../core/template/stories/preview';
 import { DocsPageWrapper } from '../lib/blocks/src/components';
+import '../renderers/react/template/components/index';
 import { isChromatic } from './isChromatic';
 
 const { document } = global;
@@ -117,7 +130,7 @@ const ThemedSetRoot = () => {
   return null;
 };
 
-export const loaders = [
+const loaders = [
   /**
    * This loader adds a DocsContext to the story, which is required for the most Blocks to work. A
    * story will specify which stories they need in the index with:
@@ -169,7 +182,7 @@ export const loaders = [
   },
 ] as Loader[];
 
-export const decorators = [
+const decorators = [
   // This decorator adds the DocsContext created in the loader above
   (Story, { loaded: { docsContext } }) =>
     docsContext ? (
@@ -307,11 +320,7 @@ export const decorators = [
   },
 ] satisfies Decorator[];
 
-export const parameters = {
-  options: {
-    storySort: (a, b) =>
-      a.title === b.title ? 0 : a.id.localeCompare(b.id, undefined, { numeric: true }),
-  },
+const parameters = {
   docs: {
     theme: themes.light,
     toc: {},
@@ -360,4 +369,17 @@ export const parameters = {
   },
 };
 
-export const tags = ['test', 'vitest'];
+export default definePreview({
+  addons: [
+    addonThemes(),
+    addonEssentials,
+    addonA11y(),
+    addonTest(),
+    addonsPreview,
+    templatePreview,
+  ],
+  decorators,
+  loaders,
+  tags: ['test', 'vitest'],
+  parameters,
+});
