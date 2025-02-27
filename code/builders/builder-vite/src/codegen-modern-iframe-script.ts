@@ -20,8 +20,8 @@ export async function generateModernIframeScriptCode(options: Options, projectRo
   );
   return generateModernIframeScriptCodeFromPreviews({
     previewAnnotations: [
-      ...previewAnnotations.map((p) => (typeof p === 'string' ? p : p.absolute)),
       previewOrConfigFile,
+      ...previewAnnotations.map((p) => (typeof p === 'string' ? p : p.absolute)),
     ],
     projectRoot,
     frameworkName,
@@ -34,7 +34,7 @@ export async function generateModernIframeScriptCodeFromPreviews(options: {
   frameworkName: string;
 }) {
   const { projectRoot, frameworkName } = options;
-  const [previewFileUrl, ...previewAnnotationURLs] = options.previewAnnotations
+  const previewAnnotationURLs = options.previewAnnotations
     .filter((path) => path !== undefined)
     .map((path) => processPreviewAnnotation(path as string, projectRoot));
 
@@ -49,23 +49,24 @@ export async function generateModernIframeScriptCodeFromPreviews(options: {
     imports.push(genImport(previewAnnotation, { name: '*', as: variable }));
   }
 
+  const [previewFileVariable, ...otherVariables] = variables;
   // This is pulled out to a variable because it is reused in both the initial page load
   // and the HMR handler.
   // The `hmrPreviewAnnotationModules` parameter is used to pass the updated modules from HMR.
   // However, only the changed modules are provided, the rest are null.
   const getPreviewAnnotationsFunction = dedent`
   const getProjectAnnotations = (hmrPreviewAnnotationModules = []) => {
-    const preview = await import('${previewFileUrl}');
+    const preview = hmrPreviewAnnotationModules[0] ? ${previewFileVariable};
  
     if (isPreview(preview.default)) {
       return preview.default.composed;
     }
    
     const configs = ${genArrayFromRaw(
-      variables.map(
+      otherVariables.map(
         (previewAnnotation, index) =>
           // Prefer the updated module from an HMR update, otherwise the original module
-          `hmrPreviewAnnotationModules[${index}] ?? ${previewAnnotation}`
+          `hmrPreviewAnnotationModules[${index + 1}] ?? ${previewAnnotation}`
       ),
       '  '
     )}
