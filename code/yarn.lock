@@ -6120,26 +6120,23 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@storybook/addon-designs@npm:^7.0.4":
-  version: 7.0.7
-  resolution: "@storybook/addon-designs@npm:7.0.7"
+"@storybook/addon-designs@npm:^9.0.0--canary.29cd50d.0":
+  version: 9.0.0--canary.93d28f8.0
+  resolution: "@storybook/addon-designs@npm:9.0.0--canary.93d28f8.0"
   dependencies:
     "@figspec/react": "npm:^1.0.0"
   peerDependencies:
-    "@storybook/addon-docs": ^7.0.0
-    "@storybook/addons": ^7.0.0
-    "@storybook/components": ^7.0.0
-    "@storybook/manager-api": ^7.0.0
-    "@storybook/preview-api": ^7.0.0
-    "@storybook/theming": ^7.0.0
-    react: ^16.8.0 || ^17.0.0 || ^18.0.0
-    react-dom: ^16.8.0 || ^17.0.0 || ^18.0.0
+    react: ^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0
+    react-dom: ^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0
+    storybook: ^0.0.0-0 || ^9.0.0 || ^9.0.0-0
   peerDependenciesMeta:
+    "@storybook/blocks":
+      optional: true
     react:
       optional: true
     react-dom:
       optional: true
-  checksum: 10c0/650cb4254a2e12b5c80cc999fb9048efc6ce9bf0d9a29b78a5b5e4fc1e9a67d0b1e5f58ee3fa14780efcb3c896967017d56b11dde989ea1931db409e3ca534f1
+  checksum: 10c0/1087fd0fa44bec2eddccb5332da2251e952f7799843d2e92adaa07a93914398deaaea78811bbdb807208d81edd8ef6a2df557831f47a7d36c04c67cd37131424
   languageName: node
   linkType: hard
 
@@ -7296,7 +7293,7 @@ __metadata:
     "@storybook/addon-actions": "workspace:*"
     "@storybook/addon-backgrounds": "workspace:*"
     "@storybook/addon-controls": "workspace:*"
-    "@storybook/addon-designs": "npm:^7.0.4"
+    "@storybook/addon-designs": "npm:^9.0.0--canary.29cd50d.0"
     "@storybook/addon-docs": "workspace:*"
     "@storybook/addon-essentials": "workspace:*"
     "@storybook/addon-highlight": "workspace:*"
