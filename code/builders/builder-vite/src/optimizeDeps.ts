@@ -125,6 +125,7 @@ const INCLUDE_CANDIDATES = [
   'qs',
   'react-dom',
   'react-dom/client',
+  'react-dom/test-utils',
   'react-fast-compare',
   'react-is',
   'react-textarea-autosize',
