@@ -70,7 +70,7 @@ describe('generateModernIframeScriptCodeFromPreviews', () => {
        import * as preview_2408 from "/user/.storybook/preview";
        const getProjectAnnotations = (hmrPreviewAnnotationModules = []) => {
          const preview = hmrPreviewAnnotationModules[0] ?? preview_2408;
-         return preview.composed;
+         return preview.default.composed;
        }
 
        window.__STORYBOOK_PREVIEW__ = window.__STORYBOOK_PREVIEW__ || new PreviewWeb(importFn, getProjectAnnotations);
@@ -158,7 +158,7 @@ describe('generateModernIframeScriptCodeFromPreviews', () => {
        import * as preview_2408 from "/user/.storybook/preview";
        const getProjectAnnotations = (hmrPreviewAnnotationModules = []) => {
          const preview = hmrPreviewAnnotationModules[0] ?? preview_2408;
-         return preview.composed;
+         return preview.default.composed;
        }
 
        window.__STORYBOOK_PREVIEW__ = window.__STORYBOOK_PREVIEW__ || new PreviewWeb(importFn, getProjectAnnotations);
