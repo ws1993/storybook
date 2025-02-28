@@ -69,7 +69,7 @@ describe('generateModernIframeScriptCodeFromPreviews', () => {
        
        import * as preview_2408 from "/user/.storybook/preview";
        const getProjectAnnotations = (hmrPreviewAnnotationModules = []) => {
-         const preview = hmrPreviewAnnotationModules[0] ? preview_2408;
+         const preview = hmrPreviewAnnotationModules[0] ?? preview_2408;
          return preview.composed;
        }
 
@@ -157,7 +157,7 @@ describe('generateModernIframeScriptCodeFromPreviews', () => {
        
        import * as preview_2408 from "/user/.storybook/preview";
        const getProjectAnnotations = (hmrPreviewAnnotationModules = []) => {
-         const preview = hmrPreviewAnnotationModules[0] ? preview_2408;
+         const preview = hmrPreviewAnnotationModules[0] ?? preview_2408;
          return preview.composed;
        }
 

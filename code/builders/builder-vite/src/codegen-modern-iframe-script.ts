@@ -66,7 +66,7 @@ export async function generateModernIframeScriptCodeFromPreviews(options: {
   const getPreviewAnnotationsFunction = options.isCsf4
     ? dedent`
   const getProjectAnnotations = (hmrPreviewAnnotationModules = []) => {
-    const preview = hmrPreviewAnnotationModules[0] ? ${previewFileVariable};
+    const preview = hmrPreviewAnnotationModules[0] ?? ${previewFileVariable};
     return preview.composed;
   }`
     : dedent`
