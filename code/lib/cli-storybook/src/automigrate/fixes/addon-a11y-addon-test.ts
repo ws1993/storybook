@@ -37,7 +37,7 @@ interface AddonA11yAddonTestOptions {
 }
 
 /**
- * If addon-a11y and experimental-addon-test are already installed, we need to update
+ * If addon-a11y and addon-test are already installed, we need to update
  *
  * - `.storybook/vitest.setup.<ts|js>` to set up project annotations from addon-a11y.
  * - `.storybook/preview.<ts|js>` to set up tags.

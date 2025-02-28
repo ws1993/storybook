@@ -36,7 +36,7 @@ const INCLUDE_CANDIDATES = [
   '@storybook/addon-viewport/preview',
   '@storybook/blocks',
   '@storybook/components',
-  '@storybook/experimental-addon-test/preview',
+  '@storybook/addon-test/preview',
   '@storybook/experimental-nextjs-vite/dist/preview.mjs',
   '@storybook/html',
   '@storybook/html/dist/entry-preview-docs.mjs',
