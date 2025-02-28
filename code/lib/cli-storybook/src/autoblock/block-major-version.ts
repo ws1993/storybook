@@ -2,7 +2,7 @@ import { getStorybookVersionSpecifier } from 'storybook/internal/cli';
 import { versions } from 'storybook/internal/common';
 
 import picocolors from 'picocolors';
-import { coerce, major, parse, prerelease } from 'semver';
+import { coerce, gt, major, parse, prerelease } from 'semver';
 import { dedent } from 'ts-dedent';
 
 import { createBlocker } from './types';
@@ -37,8 +37,8 @@ export function checkUpgrade(currentVersion: string, targetVersion: string): Upg
     return 'ok';
   }
 
-  // Check for downgrade
-  if (target.major < current.major) {
+  // Check for downgrade (when current version is greater than target)
+  if (gt(currentVersion, targetVersion)) {
     return 'downgrade';
   }
 

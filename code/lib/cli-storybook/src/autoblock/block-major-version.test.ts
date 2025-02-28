@@ -52,13 +52,24 @@ describe('checkUpgrade', () => {
     expect(checkUpgrade('6.5.0', '8.0.0')).toBe('gap-too-large');
   });
 
-  it('downgrade - detects all downgrades between stable versions', () => {
-    expect(checkUpgrade('7.0.0', '6.0.0')).toBe('downgrade');
-    expect(checkUpgrade('8.0.0', '7.0.0')).toBe('downgrade');
-    expect(checkUpgrade('7.5.0', '6.0.0')).toBe('downgrade');
-    expect(checkUpgrade('8.0.0', '6.0.0')).toBe('downgrade');
-    expect(checkUpgrade('7.0.0', '5.0.0')).toBe('downgrade');
-    expect(checkUpgrade('8.5.0', '6.0.0')).toBe('downgrade');
+  describe('downgrade', () => {
+    it('detects major version downgrades', () => {
+      expect(checkUpgrade('7.0.0', '6.0.0')).toBe('downgrade');
+      expect(checkUpgrade('8.0.0', '7.0.0')).toBe('downgrade');
+      expect(checkUpgrade('8.0.0', '6.0.0')).toBe('downgrade');
+    });
+
+    it('detects minor version downgrades', () => {
+      expect(checkUpgrade('7.2.0', '7.1.0')).toBe('downgrade');
+      expect(checkUpgrade('7.1.0', '7.0.0')).toBe('downgrade');
+      expect(checkUpgrade('8.5.0', '8.4.9')).toBe('downgrade');
+    });
+
+    it('detects patch version downgrades', () => {
+      expect(checkUpgrade('7.1.2', '7.1.1')).toBe('downgrade');
+      expect(checkUpgrade('7.0.1', '7.0.0')).toBe('downgrade');
+      expect(checkUpgrade('8.0.5', '8.0.4')).toBe('downgrade');
+    });
   });
 
   it('special - allows any version zero upgrades or downgrades', () => {
