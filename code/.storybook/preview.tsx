@@ -190,10 +190,7 @@ const decorators = [
         <Story />
       </DocsContext.Provider>
     ) : (
-      <div>
-        helloasdf
-        <Story />
-      </div>
+      <Story />
     ),
   /**
    * This decorator adds wrappers that contains global styles for stories to be targeted by.
@@ -386,5 +383,3 @@ export default definePreview({
   tags: ['test', 'vitest'],
   parameters,
 });
-
-console.log(2);
