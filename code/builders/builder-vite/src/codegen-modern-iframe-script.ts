@@ -23,10 +23,7 @@ export async function generateModernIframeScriptCode(options: Options, projectRo
     options
   );
   return generateModernIframeScriptCodeFromPreviews({
-    previewAnnotations: [
-      ...previewAnnotations.map((p) => (typeof p === 'string' ? p : p.absolute)),
-      previewOrConfigFile,
-    ],
+    previewAnnotations: [...previewAnnotations, previewOrConfigFile],
     projectRoot,
     frameworkName,
     isCsf4,
@@ -34,7 +31,7 @@ export async function generateModernIframeScriptCode(options: Options, projectRo
 }
 
 export async function generateModernIframeScriptCodeFromPreviews(options: {
-  previewAnnotations: (string | undefined)[];
+  previewAnnotations: (PreviewAnnotation | undefined)[];
   projectRoot: string;
   frameworkName: string;
   isCsf4: boolean;
@@ -42,7 +39,7 @@ export async function generateModernIframeScriptCodeFromPreviews(options: {
   const { projectRoot, frameworkName } = options;
   const previewAnnotationURLs = options.previewAnnotations
     .filter((path) => path !== undefined)
-    .map((path) => processPreviewAnnotation(path as string, projectRoot));
+    .map((path) => processPreviewAnnotation(path, projectRoot));
 
   const variables: string[] = [];
   const imports: string[] = [];
