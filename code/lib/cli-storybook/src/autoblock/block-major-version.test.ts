@@ -2,72 +2,85 @@ import { describe, expect, it, vi } from 'vitest';
 
 import { versions } from 'storybook/internal/common';
 
-import { blocker, shouldBlockUpgrade } from './block-major-version';
+import { blocker, checkUpgrade } from './block-major-version';
 
-describe('shouldBlockUpgrade', () => {
-  // Test invalid versions
-  it('returns false for invalid versions', () => {
-    expect(shouldBlockUpgrade('', '8.0.0')).toBe(false);
-    expect(shouldBlockUpgrade('7.0.0', '')).toBe(false);
-    expect(shouldBlockUpgrade('invalid', '8.0.0')).toBe(false);
-    expect(shouldBlockUpgrade('7.0.0', 'invalid')).toBe(false);
+vi.mock('storybook/internal/common', () => ({
+  versions: {
+    storybook: '8.0.0',
+  },
+}));
+
+describe('checkUpgrade', () => {
+  it('invalid versions - returns ok for empty or invalid versions', () => {
+    expect(checkUpgrade('', '8.0.0')).toBe('ok');
+    expect(checkUpgrade('7.0.0', '')).toBe('ok');
+    expect(checkUpgrade('invalid', '8.0.0')).toBe('ok');
+    expect(checkUpgrade('7.0.0', 'invalid')).toBe('ok');
   });
 
-  // Test prerelease versions
-  it('returns false when upgrading from a prerelease', () => {
-    expect(shouldBlockUpgrade('6.0.0-canary.1', '8.0.0')).toBe(false);
-    expect(shouldBlockUpgrade('6.0.0-alpha.0', '8.0.0')).toBe(false);
-    expect(shouldBlockUpgrade('6.0.0-beta.1', '8.0.0')).toBe(false);
-    expect(shouldBlockUpgrade('6.0.0-rc.1', '8.0.0')).toBe(false);
-    expect(shouldBlockUpgrade('0.0.0-bla-0', '8.0.0')).toBe(false);
+  it('prerelease - allows upgrades from any prerelease version', () => {
+    expect(checkUpgrade('6.0.0-canary.1', '8.0.0')).toBe('ok');
+    expect(checkUpgrade('6.0.0-alpha.0', '8.0.0')).toBe('ok');
+    expect(checkUpgrade('6.0.0-beta.1', '8.0.0')).toBe('ok');
+    expect(checkUpgrade('6.0.0-rc.1', '8.0.0')).toBe('ok');
+    expect(checkUpgrade('0.0.0-bla-0', '8.0.0')).toBe('ok');
   });
 
-  it('returns false when upgrading to a prerelease', () => {
-    expect(shouldBlockUpgrade('6.0.0', '8.0.0-alpha.1')).toBe(false);
-    expect(shouldBlockUpgrade('6.0.0', '8.0.0-canary.0')).toBe(false);
-    expect(shouldBlockUpgrade('6.0.0', '8.0.0-beta.1')).toBe(false);
-    expect(shouldBlockUpgrade('6.0.0', '8.0.0-rc.0')).toBe(false);
-    expect(shouldBlockUpgrade('6.0.0', '0.0.0-bla-0')).toBe(false);
+  it('prerelease - allows upgrades to any prerelease version', () => {
+    expect(checkUpgrade('6.0.0', '8.0.0-alpha.1')).toBe('ok');
+    expect(checkUpgrade('6.0.0', '8.0.0-canary.0')).toBe('ok');
+    expect(checkUpgrade('6.0.0', '8.0.0-beta.1')).toBe('ok');
+    expect(checkUpgrade('6.0.0', '8.0.0-rc.0')).toBe('ok');
+    expect(checkUpgrade('6.0.0', '0.0.0-bla-0')).toBe('ok');
   });
 
-  // Test version gaps
-  it('returns false when versions are one major apart', () => {
-    expect(shouldBlockUpgrade('6.0.0', '7.0.0')).toBe(false);
-    expect(shouldBlockUpgrade('7.0.0', '8.0.0')).toBe(false);
-    expect(shouldBlockUpgrade('6.5.0', '7.0.0')).toBe(false);
+  it('prerelease - allows downgrades to and from prereleases', () => {
+    expect(checkUpgrade('8.0.0', '6.0.0-alpha.1')).toBe('ok');
+    expect(checkUpgrade('8.0.0-beta.1', '6.0.0')).toBe('ok');
+    expect(checkUpgrade('8.0.0-rc.1', '6.0.0-alpha.1')).toBe('ok');
   });
 
-  it('returns true when versions are more than one major apart', () => {
-    expect(shouldBlockUpgrade('6.0.0', '8.0.0')).toBe(true);
-    expect(shouldBlockUpgrade('5.0.0', '7.0.0')).toBe(true);
-    expect(shouldBlockUpgrade('6.5.0', '8.0.0')).toBe(true);
+  it('upgrade - allows upgrades one major version apart', () => {
+    expect(checkUpgrade('6.0.0', '7.0.0')).toBe('ok');
+    expect(checkUpgrade('7.0.0', '8.0.0')).toBe('ok');
+    expect(checkUpgrade('6.5.0', '7.0.0')).toBe('ok');
   });
 
-  // Test with current CLI version
-  it('correctly handles upgrades to current CLI version', () => {
-    const cliVersion = versions.storybook;
-    const cliMajor = parseInt(cliVersion.split('.')[0], 10);
-
-    // Should block if more than one major behind
-    expect(shouldBlockUpgrade(`${cliMajor - 2}.0.0`, cliVersion)).toBe(true);
-    expect(shouldBlockUpgrade(`${cliMajor - 3}.5.0`, cliVersion)).toBe(true);
-
-    // Should not block if one major behind or on same major
-    expect(shouldBlockUpgrade(`${cliMajor - 1}.0.0`, cliVersion)).toBe(false);
-    expect(shouldBlockUpgrade(`${cliMajor}.0.0`, cliVersion)).toBe(false);
-
-    // Should not block if upgrading from a prerelease
-    expect(shouldBlockUpgrade(`${cliMajor - 2}.0.0-canary.1`, cliVersion)).toBe(false);
-    expect(shouldBlockUpgrade(`${cliMajor - 2}.0.0-alpha.0`, cliVersion)).toBe(false);
-    expect(shouldBlockUpgrade(`${cliMajor - 2}.0.0-beta.1`, cliVersion)).toBe(false);
-    expect(shouldBlockUpgrade(`${cliMajor - 2}.0.0-rc.0`, cliVersion)).toBe(false);
+  it('upgrade - detects gaps more than one major version apart', () => {
+    expect(checkUpgrade('6.0.0', '8.0.0')).toBe('gap-too-large');
+    expect(checkUpgrade('5.0.0', '7.0.0')).toBe('gap-too-large');
+    expect(checkUpgrade('6.5.0', '8.0.0')).toBe('gap-too-large');
   });
 
-  // Test version zero
-  it('returns false for version zero', () => {
-    expect(shouldBlockUpgrade('0.1.0', '8.0.0')).toBe(false);
-    expect(shouldBlockUpgrade('6.0.0', '0.1.0')).toBe(false);
-    expect(shouldBlockUpgrade('0.0.1', '0.0.2')).toBe(false);
+  it('downgrade - detects all downgrades between stable versions', () => {
+    expect(checkUpgrade('7.0.0', '6.0.0')).toBe('downgrade');
+    expect(checkUpgrade('8.0.0', '7.0.0')).toBe('downgrade');
+    expect(checkUpgrade('7.5.0', '6.0.0')).toBe('downgrade');
+    expect(checkUpgrade('8.0.0', '6.0.0')).toBe('downgrade');
+    expect(checkUpgrade('7.0.0', '5.0.0')).toBe('downgrade');
+    expect(checkUpgrade('8.5.0', '6.0.0')).toBe('downgrade');
+  });
+
+  it('special - allows any version zero upgrades or downgrades', () => {
+    expect(checkUpgrade('0.1.0', '8.0.0')).toBe('ok');
+    expect(checkUpgrade('6.0.0', '0.1.0')).toBe('ok');
+    expect(checkUpgrade('0.0.1', '0.0.2')).toBe('ok');
+  });
+
+  it('special - handles upgrades to current CLI version (8.0.0)', () => {
+    // Detects multi-major gaps
+    expect(checkUpgrade('6.0.0', '8.0.0')).toBe('gap-too-large');
+    expect(checkUpgrade('5.0.0', '8.0.0')).toBe('gap-too-large');
+
+    // Allows single major and same version
+    expect(checkUpgrade('7.0.0', '8.0.0')).toBe('ok');
+    expect(checkUpgrade('8.0.0', '8.0.0')).toBe('ok');
+
+    // Allows any prerelease
+    expect(checkUpgrade('6.0.0-canary.1', '8.0.0')).toBe('ok');
+    expect(checkUpgrade('6.0.0-alpha.0', '8.0.0')).toBe('ok');
+    expect(checkUpgrade('6.0.0-beta.1', '8.0.0')).toBe('ok');
+    expect(checkUpgrade('6.0.0-rc.0', '8.0.0')).toBe('ok');
   });
 });
 
@@ -76,41 +89,56 @@ describe('blocker', () => {
     retrievePackageJson: vi.fn(),
   };
 
-  it('returns false if no version found', async () => {
+  it('check - returns false if no version found', async () => {
     mockPackageManager.retrievePackageJson.mockResolvedValue({});
     const result = await blocker.check({ packageManager: mockPackageManager } as any);
     expect(result).toBe(false);
   });
 
-  it('returns false if version check fails', async () => {
+  it('check - returns false if version check fails', async () => {
     mockPackageManager.retrievePackageJson.mockRejectedValue(new Error('test'));
     const result = await blocker.check({ packageManager: mockPackageManager } as any);
     expect(result).toBe(false);
   });
 
-  it('returns version data if upgrade should be blocked', async () => {
+  it('check - returns version data with reason if upgrade should be blocked', async () => {
     mockPackageManager.retrievePackageJson.mockResolvedValue({
       dependencies: {
         '@storybook/react': '6.0.0',
       },
     });
-    versions.storybook = '8.0.0';
     const result = await blocker.check({ packageManager: mockPackageManager } as any);
-    expect(result).toEqual({ currentVersion: '6.0.0' });
+    expect(result).toEqual({
+      currentVersion: '6.0.0',
+      reason: 'gap-too-large',
+    });
   });
 
   describe('log', () => {
-    it('includes upgrade command for valid versions', () => {
+    it('includes upgrade command for gap-too-large', () => {
       const message = blocker.log({ packageManager: mockPackageManager } as any, {
         currentVersion: '6.0.0',
+        reason: 'gap-too-large',
       });
       expect(message).toContain('You can upgrade to version 7 by running:');
       expect(message).toContain('npx storybook@7 upgrade');
+      expect(message).toContain('Major Version Gap Detected');
+    });
+
+    it('shows downgrade message for downgrade attempts', () => {
+      const message = blocker.log({ packageManager: mockPackageManager } as any, {
+        currentVersion: '8.0.0',
+        reason: 'downgrade',
+      });
+      expect(message).toContain('Downgrade Not Supported');
+      expect(message).toContain('Creating a new project with the desired Storybook version');
+      expect(message).not.toContain('You can upgrade to version');
     });
 
     it('omits upgrade command for invalid versions', () => {
       const message = blocker.log({ packageManager: mockPackageManager } as any, {
         currentVersion: 'invalid',
+        reason: 'gap-too-large',
       });
       expect(message).not.toContain('You can upgrade to version');
       expect(message).toContain('Major Version Gap Detected');

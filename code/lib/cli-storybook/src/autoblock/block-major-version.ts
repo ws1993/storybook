@@ -7,35 +7,44 @@ import { dedent } from 'ts-dedent';
 
 import { createBlocker } from './types';
 
+type UpgradeCheckResult = 'downgrade' | 'gap-too-large' | 'ok';
+
 interface MajorVersionData {
   currentVersion: string;
+  reason: Exclude<UpgradeCheckResult, 'ok'>;
 }
 
-/** Returns true if upgrading should be blocked due to major version gap */
-export function shouldBlockUpgrade(currentVersion: string, targetVersion: string): boolean {
+/** Returns the status of the upgrade check */
+export function checkUpgrade(currentVersion: string, targetVersion: string): UpgradeCheckResult {
   // Skip check for missing versions
   if (!currentVersion || !targetVersion) {
-    return false;
+    return 'ok';
   }
 
   const current = parse(currentVersion);
   const target = parse(targetVersion);
   if (!current || !target) {
-    return false;
+    return 'ok';
   }
 
   // Never block if upgrading from or to a prerelease
   if (prerelease(currentVersion) || prerelease(targetVersion)) {
-    return false;
+    return 'ok';
   }
 
-  // Never block if upgrading from or to a canary
+  // Never block if upgrading from or to version zero
   if (current.major === 0 || target.major === 0) {
-    return false;
+    return 'ok';
   }
 
+  // Check for downgrade
+  if (target.major < current.major) {
+    return 'downgrade';
+  }
+
+  // Check for version gap
   const gap = target.major - current.major;
-  return gap > 1;
+  return gap > 1 ? 'gap-too-large' : 'ok';
 }
 
 export const blocker = createBlocker<MajorVersionData>({
@@ -51,20 +60,33 @@ export const blocker = createBlocker<MajorVersionData>({
       }
 
       const target = versions.storybook;
-      if (shouldBlockUpgrade(current, target)) {
-        return {
-          currentVersion: current,
-        };
+      const result = checkUpgrade(current, target);
+      if (result === 'ok') {
+        return false;
       }
+
+      return {
+        currentVersion: current,
+        reason: result,
+      };
     } catch (e) {
       // If we can't determine the version, don't block
       return false;
     }
-
-    return false;
   },
   log(options, data) {
     const coercedVersion = coerce(data.currentVersion);
+
+    if (data.reason === 'downgrade') {
+      return dedent`
+        ${picocolors.red('Downgrade Not Supported')}
+        Your Storybook version (v${data.currentVersion}) is newer than the target release (v${versions.storybook}).
+        Downgrading is not supported.
+
+        For more information about upgrading and version compatibility, visit:
+        ${picocolors.cyan('https://storybook.js.org/docs/react/configure/upgrading')}`;
+    }
+
     const message = dedent`
       ${picocolors.red('Major Version Gap Detected')}
       Your Storybook version (v${data.currentVersion}) is more than one major version behind the target release (v${versions.storybook}).
