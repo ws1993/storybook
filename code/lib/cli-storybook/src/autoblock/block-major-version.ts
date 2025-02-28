@@ -51,8 +51,8 @@ export const blocker = createBlocker<MajorVersionData>({
   id: 'major-version-gap',
   async check(options) {
     const { packageManager } = options;
-    const packageJson = await packageManager.retrievePackageJson();
 
+    const packageJson = await packageManager.retrievePackageJson();
     try {
       const current = getStorybookVersionSpecifier(packageJson);
       if (!current) {

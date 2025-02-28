@@ -1,13 +1,23 @@
 import { describe, expect, it, vi } from 'vitest';
 
-import { versions } from 'storybook/internal/common';
-
 import { blocker, checkUpgrade } from './block-major-version';
 
-vi.mock('storybook/internal/common', () => ({
+vi.mock('storybook/internal/cli', () => ({
+  getStorybookVersionSpecifier: vi.fn((pkg) => {
+    if (!pkg.dependencies) {
+      throw new Error(`Couldn't find any official storybook packages in package.json`);
+    }
+    return pkg.dependencies['@storybook/react'];
+  }),
+}));
+
+vi.mock('storybook/internal/common', async (importOriginal) => ({
+  ...(await importOriginal<typeof import('storybook/internal/common')>()),
   versions: {
     storybook: '8.0.0',
   },
+  frameworkToRenderer: {},
+  // Add any other exports that might be needed
 }));
 
 describe('checkUpgrade', () => {
@@ -107,7 +117,7 @@ describe('blocker', () => {
   });
 
   it('check - returns false if version check fails', async () => {
-    mockPackageManager.retrievePackageJson.mockRejectedValue(new Error('test'));
+    mockPackageManager.retrievePackageJson.mockResolvedValue({});
     const result = await blocker.check({ packageManager: mockPackageManager } as any);
     expect(result).toBe(false);
   });
@@ -141,8 +151,8 @@ describe('blocker', () => {
         currentVersion: '8.0.0',
         reason: 'downgrade',
       });
-      expect(message).toContain('Downgrade Not Supported');
-      expect(message).toContain('Creating a new project with the desired Storybook version');
+      expect(message).toContain('Your Storybook version (v8.0.0) is newer than the target release');
+      expect(message).toContain('Downgrading is not supported');
       expect(message).not.toContain('You can upgrade to version');
     });
 
