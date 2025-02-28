@@ -18,13 +18,13 @@ import { DocsContext } from '@storybook/blocks';
 import { global } from '@storybook/global';
 import type { Decorator, Loader, ReactRenderer } from '@storybook/react';
 
-import { definePreview } from '@storybook/react-vite';
-
-import addonA11y from '@storybook/addon-a11y';
-import * as addonEssentials from '@storybook/addon-essentials/entry-preview';
 // TODO add empty preview
 // import * as storysource from '@storybook/addon-storysource';
 // import * as designs from '@storybook/addon-designs/preview';
+import { definePreview } from '@storybook/react-vite';
+
+import addonA11y from '@storybook/addon-a11y';
+import addonEssentials from '@storybook/addon-essentials';
 import addonTest from '@storybook/addon-test';
 import addonThemes from '@storybook/addon-themes';
 
@@ -130,9 +130,6 @@ const ThemedSetRoot = () => {
   return null;
 };
 
-// eslint-disable-next-line no-underscore-dangle
-const preview = (window as any).__STORYBOOK_PREVIEW__ as PreviewWeb<ReactRenderer> | undefined;
-const channel = (window as any).__STORYBOOK_ADDONS_CHANNEL__ as Channel | undefined;
 const loaders = [
   /**
    * This loader adds a DocsContext to the story, which is required for the most Blocks to work. A
@@ -147,6 +144,9 @@ const loaders = [
    * The DocsContext will then be added via the decorator below.
    */
   async ({ parameters: { relativeCsfPaths, attached = true } }) => {
+    // eslint-disable-next-line no-underscore-dangle
+    const preview = (window as any).__STORYBOOK_PREVIEW__ as PreviewWeb<ReactRenderer> | undefined;
+    const channel = (window as any).__STORYBOOK_ADDONS_CHANNEL__ as Channel | undefined;
     // __STORYBOOK_PREVIEW__ and __STORYBOOK_ADDONS_CHANNEL__ is set in the PreviewWeb constructor
     // which isn't loaded in portable stories/vitest
     if (!relativeCsfPaths || !preview || !channel) {
@@ -372,7 +372,7 @@ const parameters = {
 export default definePreview({
   addons: [
     addonThemes(),
-    addonEssentials,
+    addonEssentials(),
     addonA11y(),
     addonTest(),
     addonsPreview,
