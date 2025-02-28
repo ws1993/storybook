@@ -84,7 +84,7 @@ export const blocker = createBlocker<MajorVersionData>({
         Downgrading is not supported.
 
         For more information about upgrading and version compatibility, visit:
-        ${picocolors.cyan('https://storybook.js.org/docs/react/configure/upgrading')}`;
+        ${picocolors.cyan('https://storybook.js.org/docs/configure/upgrading')}`;
     }
 
     const message = dedent`
@@ -103,13 +103,13 @@ export const blocker = createBlocker<MajorVersionData>({
         ${picocolors.cyan(cmd)}
 
         For more information about upgrading, visit:
-        ${picocolors.cyan('https://storybook.js.org/docs/react/configure/upgrading')}`;
+        ${picocolors.cyan('https://storybook.js.org/docs/configure/upgrading')}`;
     }
 
     return dedent`
       ${message}
 
       For more information about upgrading, visit:
-      ${picocolors.cyan('https://storybook.js.org/docs/react/configure/upgrading')}`;
+      ${picocolors.cyan('https://storybook.js.org/docs/configure/upgrading')}`;
   },
 });
