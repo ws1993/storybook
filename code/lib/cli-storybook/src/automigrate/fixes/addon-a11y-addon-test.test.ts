@@ -349,9 +349,9 @@ describe('addonA11yAddonTest', () => {
         skipVitestSetupTransformation: false,
       });
       expect(result).toMatchInlineSnapshot(`
-        "We have detected that you have @storybook/addon-a11y and @storybook/addon-test
+        "We have detected that you have @storybook/addon-a11y and @storybook/addon-test installed.
 
-        @storybook/addon-a11y now integrates with @storybook/addon-testutomatic accessibility checks for your stories, powered by Axe and Vitest.
+        @storybook/addon-a11y now integrates with @storybook/addon-test to provide automatic accessibility checks for your stories, powered by Axe and Vitest.
 
         1) We couldn't find or automatically update .storybook/vitest.setup.<ts|js> in your project to smoothly set up project annotations from @storybook/addon-a11y. 
         Please manually update your vitest.setup.ts file to include the following:
@@ -393,9 +393,9 @@ describe('addonA11yAddonTest', () => {
         skipVitestSetupTransformation: false,
       });
       expect(result).toMatchInlineSnapshot(`
-        "We have detected that you have @storybook/addon-a11y and @storybook/addon-test
+        "We have detected that you have @storybook/addon-a11y and @storybook/addon-test installed.
 
-        @storybook/addon-a11y now integrates with @storybook/addon-testutomatic accessibility checks for your stories, powered by Axe and Vitest.
+        @storybook/addon-a11y now integrates with @storybook/addon-test to provide automatic accessibility checks for your stories, powered by Axe and Vitest.
 
         1) We couldn't find or automatically update .storybook/vitest.setup.<ts|js> in your project to smoothly set up project annotations from @storybook/addon-a11y. 
         Please manually update your vitest.setup.ts file to include the following:
@@ -427,9 +427,9 @@ describe('addonA11yAddonTest', () => {
         skipVitestSetupTransformation: false,
       });
       expect(result).toMatchInlineSnapshot(`
-        "We have detected that you have @storybook/addon-a11y and @storybook/addon-test
+        "We have detected that you have @storybook/addon-a11y and @storybook/addon-test installed.
 
-        @storybook/addon-a11y now integrates with @storybook/addon-testutomatic accessibility checks for your stories, powered by Axe and Vitest.
+        @storybook/addon-a11y now integrates with @storybook/addon-test to provide automatic accessibility checks for your stories, powered by Axe and Vitest.
 
         1) We have to update your .storybook/vitest.setup.ts file to set up project annotations from @storybook/addon-a11y.
 
@@ -460,9 +460,9 @@ describe('addonA11yAddonTest', () => {
         skipVitestSetupTransformation: false,
       });
       expect(result).toMatchInlineSnapshot(`
-        "We have detected that you have @storybook/addon-a11y and @storybook/addon-test
+        "We have detected that you have @storybook/addon-a11y and @storybook/addon-test installed.
 
-        @storybook/addon-a11y now integrates with @storybook/addon-testutomatic accessibility checks for your stories, powered by Axe and Vitest.
+        @storybook/addon-a11y now integrates with @storybook/addon-test to provide automatic accessibility checks for your stories, powered by Axe and Vitest.
 
         1) We have to update your .storybook/vitest.setup.ts file to set up project annotations from @storybook/addon-a11y.
 
@@ -481,9 +481,9 @@ describe('addonA11yAddonTest', () => {
         skipVitestSetupTransformation: true,
       });
       expect(result).toMatchInlineSnapshot(`
-        "We have detected that you have @storybook/addon-a11y and @storybook/addon-test
+        "We have detected that you have @storybook/addon-a11y and @storybook/addon-test installed.
 
-        @storybook/addon-a11y now integrates with @storybook/addon-testutomatic accessibility checks for your stories, powered by Axe and Vitest.
+        @storybook/addon-a11y now integrates with @storybook/addon-test to provide automatic accessibility checks for your stories, powered by Axe and Vitest.
 
         1) We have to update your .storybook/preview.js file to set up parameters.a11y.test from @storybook/addon-a11y.
 
