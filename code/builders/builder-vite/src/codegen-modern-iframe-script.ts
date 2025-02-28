@@ -1,4 +1,5 @@
 import { getFrameworkName, loadPreviewOrConfigFile } from 'storybook/internal/common';
+import { isCsfFactoryPreview, readConfig } from 'storybook/internal/csf-tools';
 import type { Options, PreviewAnnotation } from 'storybook/internal/types';
 
 import { genArrayFromRaw, genImport, genSafeVariableName } from 'knitwork';
@@ -13,6 +14,9 @@ export async function generateModernIframeScriptCode(options: Options, projectRo
   const frameworkName = await getFrameworkName(options);
 
   const previewOrConfigFile = loadPreviewOrConfigFile({ configDir });
+  const previewConfig = await readConfig(previewOrConfigFile!);
+  const isCsf4 = isCsfFactoryPreview(previewConfig);
+
   const previewAnnotations = await presets.apply<PreviewAnnotation[]>(
     'previewAnnotations',
     [],
@@ -20,11 +24,12 @@ export async function generateModernIframeScriptCode(options: Options, projectRo
   );
   return generateModernIframeScriptCodeFromPreviews({
     previewAnnotations: [
-      previewOrConfigFile,
       ...previewAnnotations.map((p) => (typeof p === 'string' ? p : p.absolute)),
+      previewOrConfigFile,
     ],
     projectRoot,
     frameworkName,
+    isCsf4,
   });
 }
 
@@ -32,6 +37,7 @@ export async function generateModernIframeScriptCodeFromPreviews(options: {
   previewAnnotations: (string | undefined)[];
   projectRoot: string;
   frameworkName: string;
+  isCsf4: boolean;
 }) {
   const { projectRoot, frameworkName } = options;
   const previewAnnotationURLs = options.previewAnnotations
@@ -49,28 +55,31 @@ export async function generateModernIframeScriptCodeFromPreviews(options: {
     imports.push(genImport(previewAnnotation, { name: '*', as: variable }));
   }
 
-  const [previewFileVariable, ...otherVariables] = variables;
+  const previewFileURL = previewAnnotationURLs[previewAnnotationURLs.length - 1];
+  const previewFileVariable = variables[variables.length - 1];
+  const previewFileImport = imports[imports.length - 1];
+
   // This is pulled out to a variable because it is reused in both the initial page load
   // and the HMR handler.
   // The `hmrPreviewAnnotationModules` parameter is used to pass the updated modules from HMR.
   // However, only the changed modules are provided, the rest are null.
-  const getPreviewAnnotationsFunction = dedent`
+  const getPreviewAnnotationsFunction = options.isCsf4
+    ? dedent`
   const getProjectAnnotations = (hmrPreviewAnnotationModules = []) => {
     const preview = hmrPreviewAnnotationModules[0] ? ${previewFileVariable};
- 
-    if (isPreview(preview.default)) {
-      return preview.default.composed;
-    }
-   
+    return preview.composed;
+  }`
+    : dedent`
+  const getProjectAnnotations = (hmrPreviewAnnotationModules = []) => {
     const configs = ${genArrayFromRaw(
-      otherVariables.map(
+      variables.map(
         (previewAnnotation, index) =>
           // Prefer the updated module from an HMR update, otherwise the original module
-          `hmrPreviewAnnotationModules[${index + 1}] ?? ${previewAnnotation}`
+          `hmrPreviewAnnotationModules[${index}] ?? ${previewAnnotation}`
       ),
       '  '
     )}
-    return composeConfigs([...configs, preview]);
+    return composeConfigs(configs);
   }`;
 
   const generateHMRHandler = (): string => {
@@ -89,7 +98,7 @@ export async function generateModernIframeScriptCodeFromPreviews(options: {
         window.__STORYBOOK_PREVIEW__.onStoriesChanged({ importFn: newModule.importFn });
       });
 
-      import.meta.hot.accept(${JSON.stringify(previewAnnotationURLs)}, (previewAnnotationModules) => {
+      import.meta.hot.accept(${JSON.stringify(options.isCsf4 ? [previewFileURL] : previewAnnotationURLs)}, (previewAnnotationModules) => {
         // getProjectAnnotations has changed so we need to patch the new one in
         window.__STORYBOOK_PREVIEW__.onGetProjectAnnotationsChanged({ getProjectAnnotations: () => getProjectAnnotations(previewAnnotationModules) });
       });
@@ -115,7 +124,7 @@ export async function generateModernIframeScriptCodeFromPreviews(options: {
   import { isPreview } from 'storybook/internal/csf';
   import { importFn } from '${SB_VIRTUAL_FILES.VIRTUAL_STORIES_FILE}';
   
-  ${imports.join('\n')}
+  ${options.isCsf4 ? previewFileImport : imports.join('\n')}
   ${getPreviewAnnotationsFunction}
 
   window.__STORYBOOK_PREVIEW__ = window.__STORYBOOK_PREVIEW__ || new PreviewWeb(importFn, getProjectAnnotations);
