@@ -67,7 +67,7 @@ export async function generateModernIframeScriptCodeFromPreviews(options: {
     ? dedent`
   const getProjectAnnotations = (hmrPreviewAnnotationModules = []) => {
     const preview = hmrPreviewAnnotationModules[0] ?? ${previewFileVariable};
-    return preview.composed;
+    return preview.default.composed;
   }`
     : dedent`
   const getProjectAnnotations = (hmrPreviewAnnotationModules = []) => {
